@@ -1,0 +1,27 @@
+<!-- Para hacer la inclusión de lo que quitamos entonces hacemos los siguiente -->
+<%- include layouts/header.ejs %>
+
+    <main class="Contenedor Contenido-centrado Seccion">
+            <h2 class="FW-300"><%=title %></h2>
+            <form action="SchoolClient" name="Formulario" method="post">
+                <fieldset>
+                    <!--Nombre-->
+                    <div class="field">
+                        <label class="label">Usuario:</label>
+                        <input autocomplete="off" type="text" name="Nombre" id="Nombre" placeholder="Ingresa tu usuario">
+                    </div>
+                    <!--Contraseña-->
+                    <div class="field">
+                        <label class="label">Contraseña:</label>
+                        <input autocomplete="off" type="text" name="Contrasena" id="Contrasena" placeholder="Ingresa tu contraseña" >
+                    </div>
+                </fieldset>
+
+                <input type="submit" value="Aceptar">
+                <!--<input type="button" style="margin-left: 1rem;" onclick="location.href='SchoolClient'" value="Buscar datos" >
+                -->
+            </form>
+        </main>
+    </body>
+
+</html>
