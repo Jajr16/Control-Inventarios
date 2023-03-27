@@ -1,7 +1,6 @@
-<!-- Para hacer la inclusión de lo que quitamos entonces hacemos los siguiente -->
 <%- include layouts/header.ejs %>
     <script>
-            var socket = io();
+            var socket = io.connect("http://localhost:3000");
             //Eventos socket de cliente
             socket.on("connect", function(){
             console.log("Conectado al servidor");
@@ -15,13 +14,18 @@
             console.log("No se pudo conectar con el servidor");
             });
             
-            $("#Formulario").submit(function(event){
-                event.preventDefault();
-
+            function IniciarS(){
                 if($("#Nombre").val() != "" && $("#Contrasena").val() != ""){
-                    socket.emit("Server", {User:$("#Nombre").val(), Pass: $("#Contrasena").val() });
+                    socket.emit('LG', {User:$("#Nombre").val(), Pass: $("#Contrasena").val() });
+
+                    socket.on('LG', function(Respuesta){
+                        if(Respuesta == "Usuario o contraseña incorrectos"){
+                            alert(Respuesta);
+                        }
+                    });
                 }
-            });
+            }
+                
     </script>
         <main class="Seccion">
             <center style="padding: 6rem;">
@@ -36,7 +40,7 @@
                         <label class="label">Contraseña:</label>
                         <input autocomplete="off" type="text" name="Contrasena" id="Contrasena" placeholder="Ingresa tu contraseña" >
                     </div>
-                    <input type="submit" value="Aceptar" class="BotonAE">
+                    <input type="submit" value="Aceptar" class="BotonAE" onclick="IniciarS()">
                     <!--<input type="button" style="margin-left: 1rem;" onclick="location.href='SchoolClient'" value="Buscar datos" >
                     -->
                 </form>

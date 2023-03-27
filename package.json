@@ -1,5 +1,5 @@
 {
-  "name": "inventario---trabajo",
+  "name": "inventario-prueba",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -13,8 +13,6 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
-    "nodemon": "^2.0.21",
-    "socket.io": "^4.6.1",
-    "socket.io-client": "^4.6.1"
+    "socket.io": "^4.6.1"
   }
 }
