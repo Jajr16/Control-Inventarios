@@ -1,0 +1,55 @@
+<%- include layouts/header_Login.ejs %>
+    <main class="Seccion">
+        <center style="padding: 6rem;">
+            <form name="Formulario" id="Formulario" class="LogIn FS-M">
+                <!--Nombre-->
+                <div class="field">
+                    <label class="label">Usuario:</label>
+                    <input autocomplete="off" type="text" name="Nombre" id="Nombre" placeholder="Ingresa tu usuario">
+                </div>
+                <!--Contraseña-->
+                <div class="field">
+                    <label class="label">Contraseña:</label>
+                    <input autocomplete="off" type="text" name="Contrasena" id="Contrasena"
+                        placeholder="Ingresa tu contraseña">
+                </div>
+                <input type="submit" value="Aceptar" class="BotonAE">
+                <!--<input type="button" style="margin-left: 1rem;" onclick="location.href='SchoolClient'" value="Buscar datos" >
+                    -->
+            </form>
+        </center>
+    </main>
+    <script>
+        var socket = io.connect("http://localhost:3000");
+        const InicioSesion = document.querySelector("#Formulario");
+
+        InicioSesion.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if ($("#Nombre").val() != "" && $("#Contrasena").val() != "") {
+
+                socket.emit('LG', { User: $("#Nombre").val(), Pass: $("#Contrasena").val() });
+
+                socket.on('LG', function (Respuesta) {
+
+                    console.log("Hola: " + Respuesta);
+
+                    if (Respuesta.length == 0) {
+                        alert("Inténtelo de nuevo");
+                        location.href = "/LogIn";
+                    } else {
+                        alert("Redirigiendo...");
+                        location.href = "/Inicio";
+                    }
+                });
+            }
+
+        });
+
+
+    </script>
+    </body>
+    <!--
+     src="./public/javascripts/socketC.js" type="text/javascript"
+-->
+
+    </html>
