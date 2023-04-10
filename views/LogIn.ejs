@@ -29,17 +29,16 @@
 
                 socket.emit('LG', { User: $("#Nombre").val(), Pass: $("#Contrasena").val() });
 
-                socket.on('LG', function (Respuesta) {
+                socket.on('logInOK', function (Respuesta) {
+                    // Usuario autenticado correctamente, guardar el token en localStorage
+                    localStorage.setItem('token', Respuesta.token);
+                    location.href = "/Inicio";
+                });
 
-                    console.log("Hola: " + Respuesta);
-
-                    if (Respuesta.length == 0) {
-                        alert("Inténtelo de nuevo");
-                        location.href = "/LogIn";
-                    } else {
-                        alert("Redirigiendo...");
-                        location.href = "/Inicio";
-                    }
+                socket.on('logInError', (Respuesta) => {
+                    // Mostrar el mensaje de error correspondiente
+                    alert(Respuesta.mensaje);
+                    location.href = "/";
                 });
             }
 
