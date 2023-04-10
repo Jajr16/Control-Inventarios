@@ -18,26 +18,11 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-//Parte de servidor y conexión a BD
+
 var server = http.createServer(app);
-var BaseClarac = require("../Conexion/BD");
-
-const io = require('socket.io')(server);
-// Configuración de socket.io
-io.on('connection', (socket) => {
-  console.log('Cliente conectado');
-
-  // Recepción de datos a través de socket.io
-  socket.on('LG', (data) => {
-    console.log('Datos recibidos:', data);
-    //Se va a la Clase de Base de Datos y recibe el return
-    var ResultLogIn = BaseClarac.LogIn(data);
-    
-    console.log(ResultLogIn);
-    socket.emit('LG', ResultLogIn);
-    
-  });
-});
+//Parte de servidor y conexión a BD
+var socketsJS = require('../sockServ.js');
+socketsJS.Iniciar(server);
 
 /**
  * Listen on provided port, on all network interfaces.
