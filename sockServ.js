@@ -1,4 +1,3 @@
-const _ = require('lodash');
 var app = require('./app');
 
 var http = require('http');
@@ -6,7 +5,6 @@ var server = http.createServer(app);
 const io = require('socket.io')(server);
 
 const mysql = require('mysql');
-const async = require('async');
 
 server.listen(3000, () => {
     console.log('Servidor iniciado en el puerto 3000.');
