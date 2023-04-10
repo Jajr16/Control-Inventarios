@@ -9,8 +9,6 @@ body{
     font-family: Noto Sans JP, sans-serif;
     line-height: 2;
     font-size: 1.2rem;
-    background: linear-gradient(rgba(22, 37, 78, 0.4), rgba(22, 37, 78, 0.4)), url('/images/Fondo.jpg') no-repeat fixed; 
-    background-size: cover;
 }
 
 form{
@@ -35,6 +33,10 @@ table td{
     vertical-align: top;
 }
 
+.Inter_100{
+    line-height: 100%;
+}
+
 table th{
     vertical-align: bottom;
 }
@@ -53,39 +55,85 @@ table tbody tr:nth-child(odd) {
     background-color: #EBEDEF;
 }
 
+.botonA, .botonB{
+    color: black;
+    cursor: context-menu;
+}
+.botonA:hover{
+    color: white;
+    background-color: limegreen;
+}
 
-input:not([type="submit"]), textarea, select{
-    padding: .8rem;    
-    display: block;
-    margin-bottom: 2rem;
-    width: 100%;
-    background-color: rgb(101, 125, 145);
-    border: rgb(10,3,47) solid 1px;
-    border-radius: .5rem;
+.botonB:hover{
+    color: white;
+    background-color: #BE0101;
+}
+
+.BotonAE{
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background-color: limegreen;
     color: white;
 }
 
-label{
-    display: block;
-    font-weight: 700;
+.BotonAE:hover:not(h5){
+    background-color: #007000;
+    color: white;
+    border-bottom: 1px solid;
 }
 
-legend {
-    font-size: 2rem;
-    color: #333333;
+.BotonBE{
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background-color: red;
+    color: white;
+}
 
-}   
+.Separacion > a{
+    margin: 2rem 0 3rem 4rem;
+}
+
+.Quitar-margin{
+    margin: 0;
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+}
+
+.Campo_Ovalado{
+  	border: blue 5px solid;
+  	border-radius: 20px;
+    display:block !important;
+    width: 45% !important; 
+}
+
+.BotonBE:hover:not(h5){
+    background-color: #BE0101;
+    color: white;
+    border-bottom: 1px solid;
+}
 
 /* Encabezado */
 
 .Cabecera{
-    background-color: white;
+    background-color: #151A85;
     padding: 1rem 0 3rem 0;
-    
 }
-
+.Cabecera.Inicio{
+    background-size: cover;
+    height: 100vh;
+    min-height: 60rem;
+    position: relative;
+}
 .Encabezado{
     color: darkred;
+}
+.Contenido-Header{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
 }
 
 .Contenido-Header h1{
@@ -99,7 +147,21 @@ legend {
     justify-content: space-between;
     align-items: center;
     padding-top: 3rem;
-    max-height: 10rem;
+}
+/*Navegador*/
+.Navegar a{
+    font-family: Lato, sans-serif;
+    text-decoration: none;
+    color: white;
+    font-size: 1.7rem;
+    margin-right: 2.5rem;
+}
+.Navegar a:last-of-type{
+    margin: 0;
+}
+
+.Navegar a:hover{
+    color:cyan;
 }
 
 /*Globales*/
@@ -127,72 +189,6 @@ h5{
 }
 
 /*Utilidades*/
-
-.Inter_100{
-    line-height: 100%;
-}
-
-.botonA, .botonB{
-    color: black;
-    cursor: context-menu;
-}
-.botonA:hover{
-    color: white;
-    background-color: limegreen;
-}
-
-.botonB:hover{
-    color: white;
-    background-color: #BE0101;
-}
-
-.BotonAE{
-    text-decoration: none;
-    padding: 0.5rem;
-    text-align: center;
-    background-color: rgb(10,3,47);
-    color: white;
-    border-radius: 20%;
-    border: gray solid 2px;
-}
-
-.BotonAE:hover:not(h5){
-    background-color: #007000;
-    color: white;
-    border-bottom: 1px solid;
-}
-
-.BotonBE{
-    text-decoration: none;
-    padding: 0.5rem;
-    text-align: center;
-    background-color: red;
-    color: white;
-}
-
-.Separacion > a{
-    margin: 2rem 0 3rem 4rem;
-}
-
-.Campo_Ovalado{
-  	border: blue 5px solid;
-  	border-radius: 20px;
-    display:block !important;
-    width: 45% !important; 
-}
-
-.BotonBE:hover:not(h5){
-    background-color: #BE0101;
-    color: white;
-    border-bottom: 1px solid;
-}
-
-.Quitar-margin{
-    margin: 0;
-    border-top-right-radius: 15px;
-    border-top-left-radius: 15px;
-}
-
 .Seccion{
     margin-top: 2rem;
     margin-bottom: 2rem;
@@ -224,6 +220,36 @@ h5{
 .D-B{
     display:block!important;
 }
+.Contenido-Centrado{
+    max-width: 800px;
+}
+
+input:not([type="submit"]), textarea, select{
+    padding: .8rem;    
+    display: block;
+    margin-bottom: 2rem;
+    width: 100%;
+    background-color: #e1e1e1;
+    border: none;
+    border-radius: .5rem;
+}
+
+label{
+    display: block;
+    font-weight: 700;
+    text-transform: uppercase;
+
+}
+
+legend {
+    font-size: 2rem;
+    color: #333333;
+
+}   
+
+.BajaR{
+    background-color: crimson !important;
+}
 
 /* Inscripciones */
 .Dos_Column{
@@ -243,23 +269,18 @@ h5{
     margin-left: 3rem;
 }
 
-/* LogIn */
-
-.LogIn{
-    border-radius: 10%;
-    font-weight: 800;
-    text-align: left;
-    background: rgb(208, 216, 234);
-    width: 40rem;
-    height: 30rem;
-    max-width: 50rem;
-    max-height: 50rem;
-    padding: 4rem 4rem;
+.Nombre{
+    width: 4rem;
 }
 
-.Contenido-Centrado{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
+.T75_25{
+    width: 75%;
 }
+.T50{
+    width: 50%;
+}
+
+.Sangria{
+    margin-left: 1.3rem;
+}
+

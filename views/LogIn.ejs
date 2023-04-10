@@ -1,35 +1,10 @@
+<!-- Para hacer la inclusión de lo que quitamos entonces hacemos los siguiente -->
 <%- include layouts/header.ejs %>
-    <script>
-            var socket = io.connect("http://localhost:3000");
-            //Eventos socket de cliente
-            socket.on("connect", function(){
-            console.log("Conectado al servidor");
-            });
 
-            socket.on("reconnecting", function(){
-            console.log("Conexión perdida, reconectando...");
-            });
-
-            socket.on("reconnect_failed", function(){
-            console.log("No se pudo conectar con el servidor");
-            });
-            
-            function IniciarS(){
-                if($("#Nombre").val() != "" && $("#Contrasena").val() != ""){
-                    socket.emit('LG', {User:$("#Nombre").val(), Pass: $("#Contrasena").val() });
-
-                    socket.on('LG', function(Respuesta){
-                        if(Respuesta == "Usuario o contraseña incorrectos"){
-                            alert(Respuesta);
-                        }
-                    });
-                }
-            }
-                
-    </script>
-        <main class="Seccion">
-            <center style="padding: 6rem;">
-                <form name="Formulario" id="Formulario" class="LogIn FS-M">
+    <main class="Contenedor Contenido-centrado Seccion">
+            <h2 class="FW-300"><%=title %></h2>
+            <form action="SchoolClient" name="Formulario" method="post">
+                <fieldset>
                     <!--Nombre-->
                     <div class="field">
                         <label class="label">Usuario:</label>
@@ -40,11 +15,12 @@
                         <label class="label">Contraseña:</label>
                         <input autocomplete="off" type="text" name="Contrasena" id="Contrasena" placeholder="Ingresa tu contraseña" >
                     </div>
-                    <input type="submit" value="Aceptar" class="BotonAE" onclick="IniciarS()">
-                    <!--<input type="button" style="margin-left: 1rem;" onclick="location.href='SchoolClient'" value="Buscar datos" >
-                    -->
-                </form>
-            </center>
+                </fieldset>
+
+                <input type="submit" value="Aceptar">
+                <!--<input type="button" style="margin-left: 1rem;" onclick="location.href='SchoolClient'" value="Buscar datos" >
+                -->
+            </form>
         </main>
     </body>
 
