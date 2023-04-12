@@ -2,16 +2,22 @@
 <html>
 
 <head>
-
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script defer src="javascripts/navbar.js"></script>
-  <link rel='stylesheet' href='/stylesheets/inicio.css' />
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap" rel="stylesheet" />
   <title>
-    <%= title %>
+    <%= title%>
   </title>
+  <meta http-equiv="Expires" content="0">
+  <meta http-equiv="Last-Modified" content="0">
+  <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap"
+    rel="stylesheet">
+  <link rel='stylesheet' href='/stylesheets/general.css' />
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <script src="/socket.io/socket.io.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css">
 </head>
 
 <body>
@@ -21,91 +27,48 @@
     </div>
     <nav>
       <ul class="nav-links">
-        <li><a href="#">Botón 1</a></li>
-        <li><a href="#">Botón 2</a></li>
-        <li><a href="#">Botón 3</a></li>
-        <li><a href="#">Botón 3</a></li>
+        <li><a href="#">Equipos</a></li>
+        <li><a href="#">Productos</a></li>
+        <li><a href="#">Mobiliario</a></li>
       </ul>
     </nav>
-    <a class="btn" href="#"><button>Iniciar sesión</button></a>
+    <a class="btn" href="#"><button>Cerrar sesión</button></a>
     <a class="btn" href="#"><button><img src="images/moon.png" width="20px" height="20px"></button></a>
     <a onclick="openNav()" class="menu" href="#"><button>Menu</button></a>
     <div id="mobile-menu" class="overlay">
       <a onclick="closeNav()" href="" class="close">&times;</a>
       <div class="overlay-content">
-        <a href="#">Botón 1</a>
-        <a href="#">Botón 2</a>
-        <a href="#">Botón 3</a>
-        <a href="#">Iniciar Sesión</a>
+        <a href="#">Equipos</a>
+        <a href="#">Productos</a>
+        <a href="#">Mobiliario</a>
+        <a href="#">Cerrar Sesión</a>
         <a href="#">Tema</a>
       </div>
     </div>
   </header>
   <script type="text/javascript" src="javascripts/navbar.js"></script>
-  <main>
-      <h1>¡Bienvenido!</h1>
-      <p>
-        Control-Inventarios
-        Escuela Clarac **** URGENTE **** Departamento de compras tendrá dos almacenes 
-        (Básicamente se manejan en una sola tabla SQL) en donde guardarán productos de papelería, 
-        ferretería y limpieza. En esta tabla de almacén se registrará la fecha de ingreso del material, 
-        la categoría(ferretería, papelería, limpieza), un código que lo identifique, la marca del 
-        producto, el nombre propio del artículo, su descripción, el proveedor, se requiere el número de 
-        factura de los artículos, la fecha en que se facturó, la unidad en que se adquirieron estos 
-        productos(Unidades, litros), la cantidad existente de cada producto, la salida(bajas) para ver 
-        quién ha pedido artículos (historial de quién pidió, cuánto pidió) y cuántos hay en existencia.
-        Para la parte de las salidas, se requerirá la fecha en que un producto fue sacado del almacén, 
-        el número de empleado que lo sacó, su nombre, el producto, y la cantidad que sacó. 
-        **** PARA FUTURO **** Se requerirá generar un 'reporte' en el cuál se registre cada 
-        salida(probablemente electrónico). Habrá otras dos tablas, en una se guardará el mobiliario en el
-        cuál se registrará solo el número de inventario, su descripción que es con el que se identificarán 
-        inicialmente y el responsable de dicho mobiliario. En la tabla de Equipo lo que se registrará es 
-        el equipo, marca, modelo, número de serie, marca del mouse, marca del teclado, marca del monitor 
-        y el responsable del mismo.
-        mobiliario y equipo almacen (insumos de limpieza, papelería, ferretería)
-        EQUIPOS Equipo Marca Modelo Número de serie Marca Mouse Marca teclado Marca Monitor Responsable 
-        MOBILIARIO Número de inventario Descripción Responsable ALMACEN FECHA_Ingreso CATEGORIA CAT No 
-        CODIGO ARTICULO DESCRIPCION MARCA PROVEEDOR No FACTURA "FECHA FACTURA" UNIDAD CANT SALIDA 
-        EXISTENCIA. Debe sacar responsivas junto con el nombre de a quién se le entrega, y qué se le da. 
-        Usuarios hacen peticiones, y esas peticiones le aparecen a otro usuario para que este mismo les 
-        de autorización, hasta que aparezca autorización se les da Si ya no hay en inventario que 
-        aparezca el estatus como pedidos pendientes. Un usuario da de alta, baja y pide Un usuario que 
-        autorice y que vea los reprotes de lo que se ha prestado, dos apartados, uno en el que autoriza 
-        y otro en el que checa lo que se debe de pedir Un administrador que puede hacer todo, dar de alta
-        usuarios. Nombre usuario y contraseña, departamento, puesto. Poner quién autorizó y nota si es 
-        que el administrador autoriza a nombre del jefe de área.
-      </p>
-      <p>
-        Control-Inventarios
-        Escuela Clarac **** URGENTE **** Departamento de compras tendrá dos almacenes 
-        (Básicamente se manejan en una sola tabla SQL) en donde guardarán productos de papelería, 
-        ferretería y limpieza. En esta tabla de almacén se registrará la fecha de ingreso del material, 
-        la categoría(ferretería, papelería, limpieza), un código que lo identifique, la marca del 
-        producto, el nombre propio del artículo, su descripción, el proveedor, se requiere el número de 
-        factura de los artículos, la fecha en que se facturó, la unidad en que se adquirieron estos 
-        productos(Unidades, litros), la cantidad existente de cada producto, la salida(bajas) para ver 
-        quién ha pedido artículos (historial de quién pidió, cuánto pidió) y cuántos hay en existencia.
-        Para la parte de las salidas, se requerirá la fecha en que un producto fue sacado del almacén, 
-        el número de empleado que lo sacó, su nombre, el producto, y la cantidad que sacó. 
-        **** PARA FUTURO **** Se requerirá generar un 'reporte' en el cuál se registre cada 
-        salida(probablemente electrónico). Habrá otras dos tablas, en una se guardará el mobiliario en el
-        cuál se registrará solo el número de inventario, su descripción que es con el que se identificarán 
-        inicialmente y el responsable de dicho mobiliario. En la tabla de Equipo lo que se registrará es 
-        el equipo, marca, modelo, número de serie, marca del mouse, marca del teclado, marca del monitor 
-        y el responsable del mismo.
-        mobiliario y equipo almacen (insumos de limpieza, papelería, ferretería)
-        EQUIPOS Equipo Marca Modelo Número de serie Marca Mouse Marca teclado Marca Monitor Responsable 
-        MOBILIARIO Número de inventario Descripción Responsable ALMACEN FECHA_Ingreso CATEGORIA CAT No 
-        CODIGO ARTICULO DESCRIPCION MARCA PROVEEDOR No FACTURA "FECHA FACTURA" UNIDAD CANT SALIDA 
-        EXISTENCIA. Debe sacar responsivas junto con el nombre de a quién se le entrega, y qué se le da. 
-        Usuarios hacen peticiones, y esas peticiones le aparecen a otro usuario para que este mismo les 
-        de autorización, hasta que aparezca autorización se les da Si ya no hay en inventario que 
-        aparezca el estatus como pedidos pendientes. Un usuario da de alta, baja y pide Un usuario que 
-        autorice y que vea los reprotes de lo que se ha prestado, dos apartados, uno en el que autoriza 
-        y otro en el que checa lo que se debe de pedir Un administrador que puede hacer todo, dar de alta
-        usuarios. Nombre usuario y contraseña, departamento, puesto. Poner quién autorizó y nota si es 
-        que el administrador autoriza a nombre del jefe de área.
-      </p>
+  <main class="Contenedor Contenido-centrado Seccion">
+    <h1 class="FW-300" style="text-align: center;">¡Bienvenido!</h1>
+    <h2 class="FW-300" style="text-align: center;" >¿Qué deseas hacer?</h2>
+    <div class="Dos_Column">
+      <div class="CampoForm">
+        <h5 class="BotonIZ">Agregar productos</h5>
+        <div class="Dos_Column Separacion">
+          <a href="/EquipoA" class="BotonAG">Agregar Equipos</a>
+          <a href="/Productos" class="BotonAG">Agregar Productos</a>
+          <a href="/EquipoA" class="BotonAG">Agregar Mobiliario</a>
+        </div>
+      </div>
+
+      <div class="CampoForm">
+        <h5 class="BotonDE">Retirar productos</h5>
+        <div class="Dos_Column Separacion">
+          <a href="/EquipoA" class="BotonER">Eliminar Equipos</a>
+          <a href="/EquipoA" class="BotonER">Eliminar Productos</a>
+          <a href="/EquipoA" class="BotonER">Eliminar Mobiliario</a>
+        </div>
+      </div>
+    </div>
   </main>
 </body>
 

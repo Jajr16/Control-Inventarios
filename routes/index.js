@@ -2,19 +2,46 @@ const express = require('express');
 var router = express.Router();
 
 
-/* GET home page. (index.ejs)*/
+/* Pagina inicial - iniciar sesion */
 router.get('/', function (req, res) {
-  res.render('LogIn', { title: 'Inicie Sesión' });
+  res.render('login', { title: 'Inicie Sesión' });
 });
 
-/* GET home page. (nosotros.ejs)*/
-router.get('/Inicio', function (req, res, next) {
-  res.render('Inicio', { title: '--- Menú ---' });
+/* Menu */
+router.get('/index', function (req, res, next) {
+  res.render('index', { title: 'Menú' });
 });
 
-/* GET home page. (Productos.ejs)*/
-router.get('/Productos', function (req, res, next) {
-  res.render('Productos', { title: 'Agregar productos' });
+/*** Consultas ***/
+
+// Consulta de equipos
+router.get('/consulEqp', function (req, res, next) {
+  res.render('consulEqp', { title: 'Consultar Equipos' });
+});
+// Consulta de mobiliario
+router.get('/consulMob', function (req, res, next) {
+  res.render('consulMob', { title: 'Consultar Mobiliario' });
+});
+// Consulta de Productos
+router.get('/consulPro', function (req, res, next) {
+  res.render('consulPro', { title: 'Consultar Productos' });
+});
+
+/*** Finaliza consultas ***/
+
+/* Altas */
+router.get('/altas', function (req, res, next) {
+  res.render('altas', { title: 'Agregar productos' });
+});
+
+/* Bajas */
+router.get('/bajas', function (req, res, next) {
+  res.render('bajas', { title: 'Eliminar productos' });
+});
+
+/* Cambios */
+router.get('/cambios', function (req, res, next) {
+  res.render('cambios', { title: 'Modificar productos' });
 });
 
 module.exports = router;

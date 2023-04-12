@@ -14,7 +14,7 @@ server.listen(3000, () => {
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'n0m3l0',
+    password: 'Alice_07',
     database: 'Inventarios'
 });
 // Conexión a la base de datos
