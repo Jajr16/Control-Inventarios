@@ -13,7 +13,6 @@ router.get('/index', function (req, res, next) {
 });
 
 /*** Consultas ***/
-
 // Consulta de equipos
 router.get('/consulEqp', function (req, res, next) {
   res.render('consulEqp', { title: 'Consultar Equipos' });
@@ -22,26 +21,58 @@ router.get('/consulEqp', function (req, res, next) {
 router.get('/consulMob', function (req, res, next) {
   res.render('consulMob', { title: 'Consultar Mobiliario' });
 });
-// Consulta de Productos
+// Consulta de productos
 router.get('/consulPro', function (req, res, next) {
   res.render('consulPro', { title: 'Consultar Productos' });
 });
-
 /*** Finaliza consultas ***/
 
-/* Altas */
-router.get('/altas', function (req, res, next) {
-  res.render('altas', { title: 'Agregar productos' });
-});
 
-/* Bajas */
-router.get('/bajas', function (req, res, next) {
-  res.render('bajas', { title: 'Eliminar productos' });
+/*** Altas ***/
+// Altas de equipos
+router.get('/altasEqp', function (req, res, next) {
+  res.render('altasEqp', { title: 'Agregar Equipos' });
 });
+// Altas de mobiliario
+router.get('/altasMob', function (req, res, next) {
+  res.render('altasMob', { title: 'Agregar Mobiliario' });
+});
+// Altas de productos
+router.get('/altasPro', function (req, res, next) {
+  res.render('altasPro', { title: 'Agregar Productos' });
+});
+/*** Finaliza altas ***/
 
-/* Cambios */
-router.get('/cambios', function (req, res, next) {
-  res.render('cambios', { title: 'Modificar productos' });
+
+/*** Bajas ***/
+// Bajas de equipos
+router.get('/bajasEqp', function (req, res, next) {
+  res.render('bajasEqp', { title: 'Eliminar Equipos' });
 });
+// Bajas de mobiliario
+router.get('/bajasMob', function (req, res, next) {
+  res.render('bajasMob', { title: 'Eliminar Mobiliario' });
+});
+// Bajas de productos
+router.get('/bajasPro', function (req, res, next) {
+  res.render('bajasPro', { title: 'Eliminar Productos' });
+});
+/*** Finaliza bajas ***/
+
+
+/*** Cambios ***/
+// cambios de equipos
+router.get('/cambiosEqp', function (req, res, next) {
+  res.render('cambiosEqp', { title: 'Modificar Equipos' });
+});
+// cambios de mobiliario
+router.get('/cambiosMob', function (req, res, next) {
+  res.render('cambiosMob', { title: 'Modificar Mobiliario' });
+});
+// cambios de productos
+router.get('/cambiosPro', function (req, res, next) {
+  res.render('cambiosPro', { title: 'Modificar Productos' });
+});
+/*** Finaliza cambios ***/
 
 module.exports = router;

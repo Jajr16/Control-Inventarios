@@ -67,7 +67,7 @@
                 socket.on('logInOK', function (Respuesta) {
                     // Usuario autenticado correctamente, guardar el token en localStorage
                     localStorage.setItem('token', Respuesta.token);
-                    location.href = "/Inicio";
+                    location.href = "/index";
                 });
 
                 socket.on('logInError', (Respuesta) => {
