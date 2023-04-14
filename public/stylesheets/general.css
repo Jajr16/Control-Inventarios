@@ -1,0 +1,338 @@
+html{
+    font-size: 62.5%;
+    box-sizing: border-box;
+}
+*, *:before, *:after{
+    box-sizing: inherit;
+}
+body{
+    line-height: 2;
+    background: linear-gradient(rgba(22, 37, 78, 0.4), rgba(22, 37, 78, 0.4)), url('/images/Fondo.jpg') no-repeat fixed; 
+    background-size: cover;
+}
+
+form{
+    font-size: 1.3rem;
+}
+
+thead{
+    border-bottom: 2px solid black;
+}
+
+table{
+    border: 1px solid #cccccc;
+    border-collapse: collapse;
+    table-layout: auto;
+    width: 100%;
+    margin-top: 3rem; 
+    font-family: Noto Sans JP, sans-serif; 
+    font-size: 1.4rem;
+}
+
+table td{
+    vertical-align: top;
+}
+
+table th{
+    vertical-align: bottom;
+}
+
+td, th {
+    border: 1px solid #ccc;
+    text-align: left;
+    padding: 8px;
+}
+
+table tbody tr:nth-child(even) {
+    background: #e1e1e1;
+}
+
+table tbody tr:nth-child(odd) {
+    background-color: #EBEDEF;
+}
+
+
+input:not([type="submit"]), textarea, select{
+    padding: .8rem;    
+    display: block;
+    margin-bottom: 2rem;
+    width: 100%;
+    background-color: rgb(101, 125, 145);
+    border: rgb(10,3,47) solid 1px;
+    border-radius: .5rem;
+    color: white;
+}
+
+label{
+    display: block;
+    font-weight: 700;
+}
+
+legend {
+    font-size: 2rem;
+    color: #333333;
+
+}   
+
+/* Encabezado */
+.Encabezado{
+    color: darkred;
+}
+
+.Contenido-Header h1{
+    color: white;
+    padding-bottom: 3rem;
+    max-width: 70rem;
+    line-height: 2;
+}
+.Barra{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 3rem;
+    max-height: 10rem;
+}
+
+/*Globales*/
+img{
+    max-width: 100%;
+}
+.Contenedor{
+    max-width: 120rem;
+    margin: 0 auto;
+}
+h1{
+    font-size: 3.8rem;
+}
+h2{
+    font-size: 3.4rem;
+}
+h3{
+    font-size: 3rem;
+}
+h4{
+    font-size: 2.6rem;
+}
+h5{
+    font-size: 2rem;
+}
+
+/*Utilidades*/
+
+.Inter_100{
+    line-height: 100%;
+}
+
+.botonA, .botonB{
+    color: black;
+    cursor: context-menu;
+}
+.botonA:hover{
+    color: white;
+    background-color: limegreen;
+}
+
+.botonB:hover{
+    color: white;
+    background-color: #BE0101;
+}
+
+.botonV{
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background-color: limegreen;
+    color: white;
+}
+
+.botonV:hover:not(h5){
+    background-color: #007000;
+    color: white;
+    border-bottom: 1px solid;
+}
+
+.BotonAE{
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background-color: rgb(10,3,47);
+    color: white;
+    border-radius: 20%;
+    border: gray solid 2px;
+}
+
+.BotonAE:hover:not(h5){
+    background-color: #007000;
+    color: white;
+    border-bottom: 1px solid;
+}
+
+.BotonBE{
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background-color: red;
+    color: white;
+}
+
+.Separacion > a{
+    margin: 2rem 0 3rem 4rem;
+}
+
+.Campo_Ovalado{
+  	border: blue 5px solid;
+  	border-radius: 20px;
+    display:block !important;
+    width: 45% !important; 
+}
+
+.BotonBE:hover:not(h5){
+    background-color: #BE0101;
+    color: white;
+    border-bottom: 1px solid;
+}
+
+.Quitar-margin{
+    margin: 0;
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+}
+
+.Seccion{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.FW-300{
+    font-weight: 300;
+}
+
+.FW-200{
+    font-weight: 200;
+}
+
+.FW-700{
+    font-weight: 700;
+}
+
+.FS-M{
+    font-size: medium;
+}
+
+.FW-Bold{
+    font-weight: bolder;
+}
+
+.TA-C{
+    text-align: center;
+}
+.D-B{
+    display:block!important;
+}
+
+/* Generales */
+.Cuatro_Column{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.Cuatro_Column div{
+    display: inline-flex;
+    width: 22%;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 2rem;
+}
+
+.Dos_Columnas{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.Dos_Columnas div{
+    display: inline-flex;
+    width: 47%;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 2rem;
+}
+.Dos_Column{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.Dos_Column a, input{
+    margin-bottom: 1rem;
+}
+
+.Dos_Column div{
+    display: flex;
+    width: 90%;
+    align-items: baseline;
+}
+
+.Dos_Column div label{
+    width: 40%;
+    margin-left: 3rem;
+}
+
+/* LogIn */
+
+.LogIn{
+    border-radius: 10%;
+    font-weight: 800;
+    text-align: left;
+    background: rgb(208, 216, 234);
+    width: 40rem;
+    height: 30rem;
+    max-width: 50rem;
+    max-height: 50rem;
+    padding: 4rem 4rem;
+}
+
+.Contenido-Centrado{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+/* RESPONSIVE PÁGINA INICIO */
+@media screen and (max-width:880px) {
+    .Dos_Column a {
+        display: block;
+        margin: 1rem;
+    }
+
+    .Dos_Column div {
+        display: block;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width:475px){
+    .Dos_Column{
+        display: block;
+    }
+
+    .Campo_Ovalado{
+        width: 100%!important;
+        margin-bottom: 5rem;
+    }
+}
+
+/* AÑADIR PRODUCTOS */
+.AltaP{
+    background-color: rgba(238, 213, 242, 0.6);
+}
+
+.Mini-Header{
+    background-color: rgb(10,3,47);
+    text-align: center;
+    color: white;
+}

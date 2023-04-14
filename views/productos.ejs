@@ -1,5 +1,76 @@
 <%- include layouts/header.ejs %>
-
-        <h1>
-            <%= title %>
-        </h1>
+    <main class="Contenedor Contenido-centrado Seccion">
+        <script>
+            console.log(localStorage.getItem("token"));
+            if (localStorage.getItem("token") == null) {
+                location.href = "/";
+            }
+        </script>
+        <div class="Contenedor Contenido-centrado AltaP">
+            <div class="Mini-Header">
+                <h4>Añadiendo productos</h4>
+            </div>
+            <form name="AltaProductos" id="AltaProductos">
+                <div class="Cuatro_Column">
+                    <div>
+                        <label>Fecha de Ingreso</label>
+                        <input autocomplete="off" type="date" id="FecActu" name="FecActu" disabled>
+                    </div>
+                    <div>
+                        <label>Código de barras</label>
+                        <input autocomplete="off" type="text" id="Cod_Barras" min="1" name="Cod_Barras" required>
+                    </div>
+                    <div>
+                        <label>Categoría</label>
+                        <input autocomplete="off" type="text" id="Categoria" name="Categoria" required>
+                    </div>
+                    <div>
+                        <label>Nombre del artículo</label>
+                        <input autocomplete="off" type="text" id="NomP" name="NomP" required>
+                    </div>
+                </div>
+                <div class="Cuatro_Column">
+                    <div>
+                        <label>Marca del artículo</label>
+                        <input autocomplete="off" type="text" id="MarcActi" name="MarcActi" required>
+                    </div>
+                    <div>
+                        <label>Descripción</label>
+                        <input autocomplete="off" type="text" id="DescripcionP" name="DescripcionP" required>
+                    </div>
+                    <div>
+                        <label>Proveedor</label>
+                        <input autocomplete="off" type="text" id="Proveedor" name="Proveedor" required>
+                    </div>
+                    <div>
+                        <label>Unidad</label>
+                        <input autocomplete="off" type="text" id="UnidadP" name="UnidadP" required>
+                    </div>
+                    
+                </div>
+                <div class="Dos_Columnas">
+                    
+                    <div>
+                        <label>Cantidad</label>
+                        <input autocomplete="off" type="number" id="CantidadP" name="CantidadP" required min="1" onKeyPress="return validar(event)">
+                    </div>
+                    <div>
+                        <label>Número de Factura</label>
+                        <input autocomplete="off" type="text" id="NumFact" name="NumFact" required>
+                    </div>
+                    <div>
+                        <label>Fecha de Factura</label>
+                        <input autocomplete="off" type="date" id="FecFact" name="FecFact" required>
+                    </div>
+                </div>
+                <div class="Dos_Columnas">
+                    <input type="submit" style="height: 5rem; width: 15rem;" value="Aceptar" class="botonV">
+                    <a class="BotonBE" href="/users/Inicio" style="height: 5rem; width: 15rem;">Regresar</a>
+                </div>
+            </form>
+        </div>
+    </main>
+    </body>
+    <script src="/javascripts/FechaActual.js" type="text/javascript"></script>
+    <script src="/javascripts/SocketsC.js" type="text/javascript"></script>
+    </html>
