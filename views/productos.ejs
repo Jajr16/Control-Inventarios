@@ -43,18 +43,24 @@
                         <input autocomplete="off" type="text" id="Proveedor" name="Proveedor" required>
                     </div>
                     <div>
-                        <label>Número de Factura</label>
-                        <input autocomplete="off" type="text" id="NumFact" name="NumFact" required onKeyPress="return validar(event)">
-                    </div>
-                </div>
-                <div class="Dos_Columnas">
-                    <div>
                         <label>Unidad</label>
                         <input autocomplete="off" type="text" id="UnidadP" name="UnidadP" required>
                     </div>
+                    
+                </div>
+                <div class="Dos_Columnas">
+                    
                     <div>
                         <label>Cantidad</label>
                         <input autocomplete="off" type="number" id="CantidadP" name="CantidadP" required min="1" onKeyPress="return validar(event)">
+                    </div>
+                    <div>
+                        <label>Número de Factura</label>
+                        <input autocomplete="off" type="text" id="NumFact" name="NumFact" required>
+                    </div>
+                    <div>
+                        <label>Fecha de Factura</label>
+                        <input autocomplete="off" type="date" id="FecFact" name="FecFact" required>
                     </div>
                 </div>
                 <div class="Dos_Columnas">
