@@ -1,16 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;800&display=swap');
-
 html{
     font-size: 62.5%;
     box-sizing: border-box;
 }
-
-*{
-    margin: 0;
-    font-family: 'Nunito', sans-serif;
-    font-size: 20px;
-}
-
 *, *:before, *:after{
     box-sizing: inherit;
 }
@@ -19,169 +10,6 @@ body{
     background: linear-gradient(rgba(22, 37, 78, 0.4), rgba(22, 37, 78, 0.4)), url('/images/Fondo.jpg') no-repeat fixed; 
     background-size: cover;
 }
-
-:root{
-    scroll-behavior: smooth;
-}
-
-body::-webkit-scrollbar{
-    width: 1rem;
-}
-
-body::-webkit-scrollbar-track{
-    background-color: #2b2b2b;
-}
-
-body::-webkit-scrollbar-thumb{
-    background: linear-gradient(to top, #7060ff 0%, #000e8d 100%);
-    border-radius: 7px;
-}
-body::-webkit-scrollbar-thumb:hover{
-    background: linear-gradient(to top, #7060ff 0%, #ebedff 100%);
-    border-radius: 7px;
-}
-
-.header{
-    background-color: #8cbaff;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    height: 12rem;
-    padding: 5px 10%;
-}
-
-.header .logo{
-    cursor: pointer;
-    margin-right: auto;
-}
-
-.header .logo img{
-    height: 70px;
-    width: auto;
-    transition: all 0.3s;
-}
-
-.header .logo img:hover{
-    transform: scale(1.2);
-}
-
-.header .nav-links{
-    list-style: none;
-}
-
-.header .nav-links li{
-    display: inline-block;
-    padding: 0 20px;    
-}
-
-.header .nav-links li:hover,
-/**/.overlay a:hover{
-    transform: scale(1.1);
-}
-
-.header .nav-links a{
-    font-size: 700;
-    color: #eceff1; 
-}
-
-.header .nav-links a:hover{
-    color: #00025f;
-}
-
-/**/.menu {
-    display:none;
-}
-
-.header .btn button,
-/**/.header .menu button{
-    margin-left: 20px;
-    font-weight: 700;
-    color: #00025f;
-    padding: 9px 25px;
-    background: #eceff1;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease 0s;
-}
-
-.header .btn button:hover,
-/**/.header .menu button:hover{
-    background-color: #e2f1f8;
-    color: #00025f;
-    transform: scale(1.1);
-}
-
-
-/**/@media screen and (max-width: 800px){
-    .nav-links, .btn {
-        display: none;
-    }
-    .menu {
-        display: inherit;
-    }
-}
-
-/*Nav Mobile*/
-
-.header a{
-    text-decoration: none;  
-    /*borramos el que teniamos en .header .nav-links a*/ 
-}
-
-.header .overlay {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    background-color: rgba(0, 10, 145, 0.514);
-    overflow: hidden;
-    transition: all 0.3s ease 0s;
-}
-
-.header .overlay .overlay-content{
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;    
-}
-
-.header .overlay a{
-    padding: 15px;
-    font-size: 36px;
-    display: block;
-    transition: all 0.3s ease 0s;
-    font-weight: 700;
-    color: #eceff1;
-}
-
-.header .overlay a:hover, 
-.header .overlay a:focus{
-    color: #0004fd;
-}
-
-.header .overlay .close{
-    position: absolute;
-    top: 20px;
-    right: 45px;
-    font-size: 65px;
-}
-
-@media screen and (max-height:450px) {
-    .header .overlay a{
-        font-size: 20px;
-    }
-    .header .overlay .close{
-        font-size: 40px;
-        top: 15px;
-        right: 35px;
-    }
-}
-
-/***** Fin de ajustes basicos *****/
 
 form{
     font-size: 1.3rem;
@@ -229,11 +57,10 @@ input:not([type="submit"]), textarea, select{
     display: block;
     margin-bottom: 2rem;
     width: 100%;
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(101, 125, 145);
     border: rgb(10,3,47) solid 1px;
     border-radius: .5rem;
     color: white;
-    transition: all 0.3s ease 0s;
 }
 
 label{
@@ -243,7 +70,7 @@ label{
 
 legend {
     font-size: 2rem;
-    color: #c4c4c4;
+    color: #333333;
 
 }   
 
@@ -310,84 +137,65 @@ h5{
     background-color: #BE0101;
 }
 
+.botonV{
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background-color: limegreen;
+    color: white;
+}
+
+.botonV:hover:not(h5){
+    background-color: #007000;
+    color: white;
+    border-bottom: 1px solid;
+}
+
 .BotonAE{
-    width: 32rem;
-    border: none;
-    background: linear-gradient(to right, #003afa, #3056ff);
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 20px;
-    transition: all 0.3s ease 0s;
-}
-
-.BotonAE:hover{
-    background: linear-gradient(to right, #3056ff, #c8d2fd);
-    transform: scale(1.1);
-}
-
-.BotonAG{
     text-decoration: none;
     padding: 0.5rem;
     text-align: center;
-    background: linear-gradient(to top, #09ff00, #00810b);
-    color: rgb(195, 245, 195);
-    border-radius: 10%;
-    transition: all 0.3s ease 0s;
+    background-color: rgb(10,3,47);
+    color: white;
+    border-radius: 20%;
+    border: gray solid 2px;
 }
 
-.BotonAG:hover{
-    background: linear-gradient(to top, #09ff00, #aefdb4);
-    color: rgb(35, 39, 35);
-    transform: scale(1.1);
+.BotonAE:hover:not(h5){
+    background-color: #007000;
+    color: white;
+    border-bottom: 1px solid;
 }
 
-.BotonER{
+.BotonBE{
     text-decoration: none;
     padding: 0.5rem;
     text-align: center;
-    background: linear-gradient(to top, #f3647c, #d80036);
-    color: rgb(245, 199, 217);
-    border-radius: 10%;
-    transition: all 0.3s ease 0s;
-}
-
-.BotonER:hover{
-    background: linear-gradient(to top, #f3647c, #ffd6dd);
-    color: rgb(104, 0, 22);
-    transform: scale(1.1);
-}
-
-.BotonIZ{
-    text-decoration: none;
-    padding: 0.5rem;
-    text-align: center;
-    background: linear-gradient(to top, #c5ffc3, #03fa18);
-    color: rgb(53, 88, 53);
-    transition: all 0.3s ease 0s;
-}
-
-.BotonDE{
-    text-decoration: none;
-    padding: 0.5rem;
-    text-align: center;
-    background: linear-gradient(to top, #fcbdc7, #fa0341);
-    color: rgb(112, 0, 43);
-    transition: all 0.3s ease 0s;
+    background-color: red;
+    color: white;
 }
 
 .Separacion > a{
     margin: 2rem 0 3rem 4rem;
 }
 
-.CampoForm{
-    background: linear-gradient(rgba(0, 67, 252, 0.4), rgba(255, 255, 255, 0.4));
+.Campo_Ovalado{
+  	border: blue 5px solid;
+  	border-radius: 20px;
     display:block !important;
     width: 45% !important; 
-    transition: all 0.3s ease 0s;
 }
 
-.CampoForm:hover{
-    transform: scale(1.1);
+.BotonBE:hover:not(h5){
+    background-color: #BE0101;
+    color: white;
+    border-bottom: 1px solid;
+}
+
+.Quitar-margin{
+    margin: 0;
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
 }
 
 .Seccion{
@@ -397,7 +205,6 @@ h5{
 
 .FW-300{
     font-weight: 300;
-    color: #eceff1;
 }
 
 .FW-200{
@@ -423,11 +230,44 @@ h5{
     display:block!important;
 }
 
-/* Inscripciones */
+/* Generales */
+.Cuatro_Column{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.Cuatro_Column div{
+    display: inline-flex;
+    width: 22%;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 2rem;
+}
+
+.Dos_Columnas{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.Dos_Columnas div{
+    display: inline-flex;
+    width: 47%;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 2rem;
+}
 .Dos_Column{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+}
+
+.Dos_Column a, input{
+    margin-bottom: 1rem;
 }
 
 .Dos_Column div{
@@ -442,19 +282,17 @@ h5{
 }
 
 /* LogIn */
+
 .LogIn{
+    border-radius: 10%;
     font-weight: 800;
     text-align: left;
-    background: linear-gradient(rgba(0, 67, 252, 0.4), rgba(255, 255, 255, 0.4));
+    background: rgb(208, 216, 234);
     width: 40rem;
-    height: 45rem;
+    height: 30rem;
     max-width: 50rem;
     max-height: 50rem;
     padding: 4rem 4rem;
-    transition: all 0.3s ease 0s;
-}
-.LogIn:hover{
-    transform: scale(1.1);
 }
 
 .Contenido-Centrado{
@@ -462,4 +300,39 @@ h5{
     justify-content: center;
     align-items: center;
 
+}
+
+/* RESPONSIVE PÁGINA INICIO */
+@media screen and (max-width:880px) {
+    .Dos_Column a {
+        display: block;
+        margin: 1rem;
+    }
+
+    .Dos_Column div {
+        display: block;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width:475px){
+    .Dos_Column{
+        display: block;
+    }
+
+    .Campo_Ovalado{
+        width: 100%!important;
+        margin-bottom: 5rem;
+    }
+}
+
+/* AÑADIR PRODUCTOS */
+.AltaP{
+    background-color: rgba(238, 213, 242, 0.6);
+}
+
+.Mini-Header{
+    background-color: rgb(10,3,47);
+    text-align: center;
+    color: white;
 }
