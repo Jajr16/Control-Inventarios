@@ -15,19 +15,35 @@ io.on('connection', (socket) => {
     console.log('Cliente conectado');
     // Recepción de datos a través de socket.io
 
-    //Login
+    // Login
     socket.on('LG', async (data) => {
 
         console.log('Datos recibidos:', data);
         // Autenticar al usuario utilizando la lógica definida anteriormente
         db.query(`select*from usuario where User = "${data.User}" and Pass = "${data.Pass}"`, function (err, result) {
             console.log(result);
-            if (err) console.log(err);//Se imprime algún error que haya ocurridp
+            if (err) console.log(err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
                 console.log(result[0].token);
                 socket.emit('logInOK', { Usuario: result[0].User, token: result[0].token });//Mandar usuario y token al cliente
             } else {
                 socket.emit('logInError', { mensaje: 'Nombre de usuario o contraseña incorrectos.' });//Mandar mensaje de error a cliente
+            }
+        });
+
+    });
+
+    // Consultas de productos
+    socket.on('Consul_Prod', async (data) => {
+        console.log('Productos: ', data);
+        // Autenticar al usuario utilizando la lógica definida anteriormente
+        db.query(`select*from almacen`, function (err, result) {
+            console.log(result);
+            if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
+            if (result.length > 0) {//Si sí hizo una búsqueda
+                socket.emit('Productos', { Cod_Barras: result[0].CodBarras, FIngreso: result[0].FecAct });//Mandar usuario y token al cliente
+            } else {
+                socket.emit('Productos_Inexistentes', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
             }
         });
 
