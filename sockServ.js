@@ -14,6 +14,8 @@ server.listen(3000, () => {
 io.on('connection', (socket) => {
     console.log('Cliente conectado');
     // Recepción de datos a través de socket.io
+
+    //Login
     socket.on('LG', async (data) => {
 
         console.log('Datos recibidos:', data);
@@ -31,6 +33,7 @@ io.on('connection', (socket) => {
 
     });
 
+    // Altas de productos
     socket.on('Alta_Prod', async (data) => {
         console.log('Productos: ', data);
         //Autentificar que no exista un producto igual
@@ -65,6 +68,3 @@ io.on('connection', (socket) => {
         console.log('Cliente desconectado.');
     });
 });
-
-
-

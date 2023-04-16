@@ -14,6 +14,7 @@
         href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap"
         rel="stylesheet">
     <link rel='stylesheet' href='/stylesheets/general.css' />
+    <link rel='stylesheet' href='/stylesheets/consultas.css' />
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script src="/socket.io/socket.io.js" type="text/javascript"></script>
@@ -23,31 +24,69 @@
 <body>
     <header class="header">
         <div class="logo">
-            <a href="/index">
-                <img src="images/logoC.png" alt="Logo de la empresa">
+            <a href="/users/index">
+                <img src="/images/logoC.png" alt="Logo de la empresa">
             </a>
         </div>
         <nav>
             <ul class="nav-links">
-                <li><a href="/consulEqp">Equipos</a></li>
-                <li><a href="/consulMob">Mobiliario</a></li>
+                <li><a href="/users/consulEqp">Equipos</a></li>
+                <li><a href="/users/consulMob">Mobiliario</a></li>
             </ul>
         </nav>
-        <a class="btn" href="#"><button>Cerrar sesión</button></a>
-        <a class="btn" href="#"><button><img src="images/moon.png" width="20px" height="20px"></button></a>
+        <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
+        <a class="btn" href="#"><button><img src="/images/moon.png" width="20px" height="20px"></button></a>
         <a onclick="openNav()" class="menu" href="#"><button>Menu</button></a>
         <div id="mobile-menu" class="overlay">
             <a onclick="closeNav()" href="" class="close">&times;</a>
             <div class="overlay-content">
-                <a href="/consulEqp">Equipos</a>
-                <a href="/consulMob">Mobiliario</a>
-                <a href="#">Cerrar Sesión</a>
+                <a href="/users/consulEqp">Equipos</a>
+                <a href="/users/consulMob">Mobiliario</a>
+                <a onclick="CerrarSesion()">Cerrar Sesión</a>
                 <a href="#">Tema</a>
             </div>
         </div>
     </header>
-    <script type="text/javascript" src="javascripts/navbar.js"></script>
-    
+    <script type="text/javascript" src="/javascripts/navbar.js"></script>
+    <script type="text/javascript" src="/javascripts/ValidarSesion.js"></script>
+    <div class="card">
+        <div class="card-header"><h4>Productos en almacén</h4></div>
+        <div class="card-body">
+            <div class="table-responsive" name="productos" id="productos">
+                <table name="ConsultaProductos" id="ConsultaProductos">
+                    <tr id="firstrow">
+                        <th>Fecha de Ingreso</th>
+                        <th>Código de barras</th>
+                        <th>Categoría</th>
+                        <th>Nombre del artículo</th>
+                        <th>Marca del artículo</th>
+                        <th>Descripción</th>
+                        <th>Proveedor</th>
+                        <th>Unidad</th>
+                        <th>Cantidad</th>
+                        <th>Número de Factura</th>
+                        <th>Fecha de Factura</th>
+                        <th>Operación</th>
+                    </tr>
+                    <tr>
+                        <td id="Cod_Barras">consulProduct</td>
+                        <td id="FecActu"></td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td><a href="#" class="BotonER">Eliminar</a><a href="/users/cambiosPro"
+                                class="BotonMod">Modificar</a></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
 </body>
-
+<script src="/javascripts/SocketsC.js" type="text/javascript"></script>
 </html>

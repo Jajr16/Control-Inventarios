@@ -23,33 +23,33 @@
 <body>
     <header class="header">
         <div class="logo">
-            <a href="/index">
-                <img src="images/logoC.png" alt="Logo de la empresa">
+            <a href="/users/index">
+                <img src="/images/logoC.png" alt="Logo de la empresa">
             </a>
         </div>
         <nav>
             <ul class="nav-links">
-                <li><a href="/consulEqp">Equipos</a></li>
-                <li><a href="/consulPro">Productos</a></li>
-                <li><a href="/consulMob">Mobiliario</a></li>
+                <li><a href="/users/consulEqp">Equipos</a></li>
+                <li><a href="/users/consulPro">Productos</a></li>
+                <li><a href="/users/consulMob">Mobiliario</a></li>
             </ul>
         </nav>
-        <a class="btn" href="#"><button>Cerrar sesión</button></a>
-        <a class="btn" href="#"><button><img src="images/moon.png" width="20px" height="20px"></button></a>
+        <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
+        <a class="btn" href="#"><button><img src="/images/moon.png" width="20px" height="20px"></button></a>
         <a onclick="openNav()" class="menu" href="#"><button>Menu</button></a>
         <div id="mobile-menu" class="overlay">
             <a onclick="closeNav()" href="" class="close">&times;</a>
             <div class="overlay-content">
-                <a href="/consulEqp">Equipos</a>
-                <a href="/consulPro">Productos</a>
-                <a href="/consulMob">Mobiliario</a>
-                <a href="#">Cerrar Sesión</a>
+                <a href="/users/consulEqp">Equipos</a>
+                <a href="/users/consulPro">Productos</a>
+                <a href="/users/consulMob">Mobiliario</a>
+                <a onclick="CerrarSesion()">Cerrar Sesión</a>
                 <a href="#">Tema</a>
             </div>
         </div>
     </header>
-    <script type="text/javascript" src="javascripts/navbar.js"></script>
-
+    <script type="text/javascript" src="/javascripts/navbar.js"></script>
+    <script type="text/javascript" src="/javascripts/ValidarSesion.js"></script>
 </body>
 
 </html>

@@ -4,13 +4,19 @@ var router = express.Router();
 
 /* Pagina inicial - iniciar sesion */
 router.get('/', function (req, res) {
-  res.render('login', { title: 'Inicie Sesión' });
+  res.render('login', { title: 'Iniciar Sesión' });
 });
 
 /* Menu */
 router.get('/index', function (req, res, next) {
   res.render('index', { title: 'Menú' });
 });
+
+/* productos */
+router.get('/productos', function (req, res, next) {
+  res.render('productos', { title: 'Productos' });
+});
+
 
 /*** Consultas ***/
 // Consulta de equipos

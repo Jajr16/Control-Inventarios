@@ -13,11 +13,11 @@ InicioSesion.addEventListener('submit', (e) => {
 
             if (Respuesta.length == 0) {
                 alert("Inténtelo de nuevo");
-                location.href = "/LogIn";
+                location.href = "/login";
             } else {
 
                 alert("Redirigiendo...");
-                location.href = "/Inicio";
+                location.href = "/index";
             }
         });
     }
