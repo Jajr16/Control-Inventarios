@@ -496,6 +496,31 @@ h5{
 
 }
 
+
+/* RESPONSIVE PÁGINA INICIO */
+@media screen and (max-width:880px) {
+    .Dos_Column a {
+        display: block;
+        margin: 1rem;
+    }
+
+    .Dos_Column div {
+        display: block;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width:475px){
+    .Dos_Column{
+        display: block;
+    }
+
+    .Campo_Ovalado{
+        width: 100%!important;
+        margin-bottom: 5rem;
+    }
+}
+
 /* AÑADIR PRODUCTOS */
 .Alta{
     background: linear-gradient(rgba(0, 67, 252, 0.4), rgba(255, 255, 255, 0.4));
