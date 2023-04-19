@@ -41,7 +41,7 @@ body::-webkit-scrollbar-thumb:hover{
 }
 
 .header{
-    background-color: #8cbaff;
+    background-color: #eceff1;
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -82,11 +82,14 @@ body::-webkit-scrollbar-thumb:hover{
 
 .header .nav-links a{
     font-size: 700;
-    color: #eceff1; 
+    color: #000157; 
+    transition: all 0.3s ease 0s;
 }
 
 .header .nav-links a:hover{
-    color: #00025f;
+    color: #0004ff;
+    transform: scale(1.1);
+    
 }
 
 /**/.menu {
@@ -99,7 +102,7 @@ body::-webkit-scrollbar-thumb:hover{
     font-weight: 700;
     color: #00025f;
     padding: 9px 25px;
-    background: #eceff1;
+    background: #afafaf;
     border: none;
     border-radius: 50px;
     cursor: pointer;
@@ -108,7 +111,7 @@ body::-webkit-scrollbar-thumb:hover{
 
 .header .btn button:hover,
 /**/.header .menu button:hover{
-    background-color: #e2f1f8;
+    background-color: #afafaf;
     color: #00025f;
     transform: scale(1.1);
 }
