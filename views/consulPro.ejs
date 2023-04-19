@@ -49,44 +49,34 @@
     </header>
     <script type="text/javascript" src="/javascripts/navbar.js"></script>
     <script type="text/javascript" src="/javascripts/ValidarSesion.js"></script>
-    <div class="card">
-        <div class="card-header"><h4>Productos en almacén</h4></div>
+    <div class="card" id="productos">
+        <div class="card-header">
+            <h4>Productos en almacén</h4>
+        </div>
         <div class="card-body">
-            <div class="table-responsive" name="productos" id="productos">
-                <table name="ConsultaProductos" id="ConsultaProductos">
-                    <tr id="firstrow">
-                        <th>Fecha de Ingreso</th>
-                        <th>Código de barras</th>
-                        <th>Categoría</th>
-                        <th>Nombre del artículo</th>
-                        <th>Marca del artículo</th>
-                        <th>Descripción</th>
-                        <th>Proveedor</th>
-                        <th>Unidad</th>
-                        <th>Cantidad</th>
-                        <th>Número de Factura</th>
-                        <th>Fecha de Factura</th>
-                        <th>Operación</th>
-                    </tr>
-                    <tr>
-                        <td id="Cod_Barras">consulProduct</td>
-                        <td id="FecActu"></td>
-                        <td> - </td>
-                        <td> - </td>
-                        <td> - </td>
-                        <td> - </td>
-                        <td> - </td>
-                        <td> - </td>
-                        <td> - </td>
-                        <td> - </td>
-                        <td> - </td>
-                        <td><a href="#" class="BotonER">Eliminar</a><a href="/users/cambiosPro"
-                                class="BotonMod">Modificar</a></td>
-                    </tr>
+            <div class="table-responsive">
+                <table id="DatosProd">
+                    <tbody>
+                        <tr id="firstrow">
+                            <th>Fecha de Ingreso</th>
+                            <th>Código de barras</th>
+                            <th>Categoría</th>
+                            <th>Nombre del artículo</th>
+                            <th>Marca del artículo</th>
+                            <th>Descripción</th>
+                            <th>Proveedor</th>
+                            <th>Unidad</th>
+                            <th>Cantidad</th>
+                            <th>Número de Factura</th>
+                            <th>En Existencia</th>
+                            <th>Operación</th>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
     </div>
 </body>
 <script src="/javascripts/SocketsC.js" type="text/javascript"></script>
+
 </html>
