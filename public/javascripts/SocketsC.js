@@ -25,6 +25,7 @@ if (pathname == "/users/altasPro") {
     });
 
 } else if (pathname == "/users/consulPro") {
+
     socket.emit("Consul_Prod");
 
     // Consulta de productos
@@ -45,9 +46,44 @@ if (pathname == "/users/altasPro") {
             <td id="NumFact">${data.NFact}</td>
             <td id="Existencia">${data.Existencia}</td>
             <td id="Eliminar" class="BotonER"> Eliminar </td>
-            <td id="Eliminar" class="BotonAG"> Modificar </td>
+            <td id="Modificar" class="BotonMod"> Modificar </td>
         </tr>
         `;
 
     });
+
+    socket.on('ButtonDelete', () => {
+        
+        let BotonBajas = document.getElementsByClassName("BotonER");
+
+        for (var i = 0; i < BotonBajas.length; i++) {
+            BotonBajas[i].addEventListener("click", obtenerValoresDeBaja);
+            
+        }
+
+        function obtenerValoresDeBaja(e) {
+            var valoresBaja = "";
+
+            // vamos al elemento padre (<tr>) y buscamos todos los elementos <td>
+            // que contenga el elemento padre
+            var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+
+            // recorremos cada uno de los elementos del array de elementos <td>
+            for (let i = 0; i < elementosTD.length; i++) {
+
+                // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                valoresBaja = elementosTD[1].innerHTML;
+            }
+            socket.emit('Bajas_Prod', valoresBaja);
+            socket.on('Producto_Eliminado', (data) => {
+                alert(data.mensaje);
+                window.reload();
+            });
+            socket.on('Error', (data) =>{
+                alert(data.mensaje);
+            })
+        }
+
+    });
+    
 } 

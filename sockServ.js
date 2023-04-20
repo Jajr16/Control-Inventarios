@@ -39,10 +39,11 @@ io.on('connection', (socket) => {
         db.query('select*from almacen', function (err, result) {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
-                console.log(result[1].Cod_Barras);
+
                 for (var i = 0; i < result.length; i++) {
                     socket.emit('Desp_Productos', { Cod_Barras: result[i].Cod_Barras, FIngreso: result[i].FIngreso, Categoria: result[i].Categoria, NArt: result[i].Articulo, NMarca: result[i].Marca, Desc: result[i].Descripcion, Prov: result[i].Proveedor, Unidad: result[i].Unidad, Cant: result[i].Cantidad, NFact: result[i].NFact, Existencia: result[i].Existencia });//Mandar usuario y token al cliente
                 }
+                socket.emit('ButtonDelete');
             } else {
                 socket.emit('Productos_Inexistentes', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
             }
@@ -52,12 +53,12 @@ io.on('connection', (socket) => {
 
     // Altas de productos
     socket.on('Alta_Prod', async (data) => {
-        console.log('Productos: ', data);
+
         //Autentificar que no exista un producto igual
         db.query('select*from almacen where Cod_Barras = ?', [data.CodBarras], function (err, result) {
-            console.log("El resultado de la consulta es: ", result);
+
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
-            console.log(result);
+
             if (result.length > 0) {//Si sí hizo una búsqueda
                 socket.emit('Producto_Existente', { mensaje: "Este producto ya se encuentra en existencia." });//Mandar usuario y token al cliente
             } else {
@@ -66,7 +67,6 @@ io.on('connection', (socket) => {
                     if (result) {
                         //Se agrega productos a la BD
                         db.query('insert into almacen values (?,?,?,?,?,?,?,?,?,?,?)', [data.CodBarras, data.FecAct, data.Cate, data.Producto, data.Marca, data.Descripcion, data.Proveedor, data.NumFactura, data.Unidad, data.Cantidad, data.Cantidad], function (err2, result) {
-                            console.log("A");
                             if (err2) console.log("Error de inserción de productos: ", err2);
                             if (result) {
                                 console.log("Resultado de inserción de productos: ", result);
@@ -87,16 +87,17 @@ io.on('connection', (socket) => {
         db.query('select*from almacen', function (err, result) {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
-                console.log(result[1].Cod_Barras);
-                for (var i = 0; i < result.length; i++) {
-                    db.query('delete from almacen where Cod_Barras = ? and Articulo = ?', [data[i].CodBarras, data[i].Producto], function (err1, result) {
-                        if (err2) console.log("Error de inserción de productos: ", err2);
-                        if (result) {
-                            console.log("Resultado de eliminacion de productos: ", result);
-                            socket.emit('Producto_Eliminado', { mensaje: 'Producto dado de baja.' });//Mandar mensaje de error a cliente
-                        }
-                    });
-                }
+                db.query('delete from almacen where Cod_Barras = ?;', [data], function (err, result) {
+
+                    if (err) console.log("Error de inserción de productos: ", err);
+                    if (result.affectedRows > 0) {
+                        console.log("Resultado de eliminacion de productos: ", result);
+                        socket.emit('Producto_Eliminado', { mensaje: 'Producto dado de baja.' });//Mandar mensaje de éxito a cliente
+                    } else {
+                        socket.emit('Error', { mensaje: "Producto no eliminado, inténtelo de nuevo." });
+                    }
+                });
+
             } else {
                 socket.emit('Productos_Inexistentes', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
             }
