@@ -55,8 +55,10 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
+                <input type="text" id="buscar" onkeyup="buscar()" placeholder="Buscar en tabla"
+                    title="Empieza a escribir para buscar">
                 <table id="DatosProd">
-                    <tbody>
+                    <thead>
                         <tr id="firstrow">
                             <th>Fecha de Ingreso</th>
                             <th>Código de barras</th>
@@ -72,6 +74,8 @@
                             <th>Eliminar</th>
                             <th>Modificar</th>
                         </tr>
+                    </thead>
+                    <tbody>
                     </tbody>
                 </table>
             </div>
@@ -79,4 +83,5 @@
     </div>
 </body>
 <script src="/javascripts/SocketsC.js" type="text/javascript"></script>
+
 </html>

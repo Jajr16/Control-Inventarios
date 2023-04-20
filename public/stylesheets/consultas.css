@@ -58,7 +58,7 @@ tr, td {
     transition: .3s ease-in; 
 } 
 
-tr:first-child {
+thead tr:first-child {
     background: linear-gradient(to top, #ca4a00, #db6300);
 }
 

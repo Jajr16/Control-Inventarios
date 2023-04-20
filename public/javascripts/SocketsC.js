@@ -9,12 +9,12 @@ if (pathname == "/users/altasPro") {
     // Altas de productos
     FormProduct.addEventListener("submit", Enviar);
 
-    function Enviar(e){
+    function Enviar(e) {
         e.preventDefault();
         if ($("#Cod_Barras").val() != "" && $("#FecActu").val() != "" && $("#Categoria").val() != "" && $("#NomP").val() != "" && $("#MarcActi").val() != "" && $("#DescripcionP").val() != "" && $("#Proveedor").val() != "" && $("#NumFact").val() != "" && $("#CantidadP").val() != "" && $("#UnidadP").val() != "" && $("#FecFact").val()) {
             socket.emit('Alta_Prod', { CodBarras: $("#Cod_Barras").val(), FecAct: $("#FecActu").val(), Cate: $("#Categoria").val(), Producto: $("#NomP").val(), Marca: $("#MarcActi").val(), Descripcion: $("#DescripcionP").val(), Proveedor: $("#Proveedor").val(), NumFactura: $("#NumFact").val(), FechaFac: $("#FecFact").val(), Cantidad: $("#CantidadP").val(), Unidad: $("#UnidadP").val() });
 
-            socket.on('Fact_Exists',function(Respuesta){
+            socket.on('Fact_Exists', function (Respuesta) {
                 alert(Respuesta.mensaje);
             });
 
@@ -58,13 +58,36 @@ if (pathname == "/users/altasPro") {
 
     });
 
+    function buscar() {
+
+        var filtro = $("#buscar").val().toUpperCase();
+
+        $("#DatosProd td").each(function () {
+            var textoEnTd = $(this).text().toUpperCase();
+            if (textoEnTd.indexOf(filtro) >= 0) {
+                $(this).addClass("existe");
+            } else {
+                $(this).removeClass("existe");
+            }
+        })
+
+        $("#DatosProd tbody tr").each(function () { 
+            if ($(this).children(".existe").length > 0) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        })
+
+    }
+
     socket.on('ButtonDelete', () => {
-        
+
         let BotonBajas = document.getElementsByClassName("BotonER");
 
         for (var i = 0; i < BotonBajas.length; i++) {
             BotonBajas[i].addEventListener("click", obtenerValoresDeBaja);
-            
+
         }
 
         function obtenerValoresDeBaja(e) {
@@ -85,11 +108,11 @@ if (pathname == "/users/altasPro") {
                 alert(data.mensaje);
                 location.reload();
             });
-            socket.on('Error', (data) =>{
+            socket.on('Error', (data) => {
                 alert(data.mensaje);
             })
         }
 
     });
-    
+
 } 
