@@ -58,6 +58,7 @@ if (pathname == "/users/altasPro") {
 
     });
 
+    // Barra de busqueda
     function buscar() {
 
         var filtro = $("#buscar").val().toUpperCase();
@@ -81,6 +82,7 @@ if (pathname == "/users/altasPro") {
 
     }
 
+    // bajas de productos
     socket.on('ButtonDelete', () => {
 
         let BotonBajas = document.getElementsByClassName("BotonER");
