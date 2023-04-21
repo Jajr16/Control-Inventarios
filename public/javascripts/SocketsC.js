@@ -89,7 +89,6 @@ if (pathname == "/users/altasPro") {
 
         for (var i = 0; i < BotonBajas.length; i++) {
             BotonBajas[i].addEventListener("click", obtenerValoresDeBaja);
-
         }
 
         function obtenerValoresDeBaja(e) {
@@ -117,4 +116,34 @@ if (pathname == "/users/altasPro") {
 
     });
 
+    // Cambios de productos
+    socket.on('ButtonUpdate', () => {
+
+        const BotonBajas = document.getElementsByClassName("BotonAE");
+
+        // Cambios de productos
+        BotonBajas.addEventListener("click", Enviar);
+
+        // Comprueba que no haya otro igual
+        function Enviar(e) {
+            e.preventDefault();
+            if ($("#Cod_Barras").val() != "" && $("#FecActu").val() != "" && $("#Categoria").val() != "" && $("#NomP").val() != "" && $("#MarcActi").val() != "" && $("#DescripcionP").val() != "" && $("#Proveedor").val() != "" && $("#NumFact").val() != "" && $("#CantidadP").val() != "" && $("#UnidadP").val() != "" && $("#FecFact").val()) {
+                socket.emit('Cambios_Prod', { CodBarras: $("#Cod_Barras").val(), FecAct: $("#FecActu").val(), Cate: $("#Categoria").val(), Producto: $("#NomP").val(), Marca: $("#MarcActi").val(), Descripcion: $("#DescripcionP").val(), Proveedor: $("#Proveedor").val(), NumFactura: $("#NumFact").val(), FechaFac: $("#FecFact").val(), Cantidad: $("#CantidadP").val(), Unidad: $("#UnidadP").val() });
+    
+                socket.on('Fact_Exists', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                });
+    
+                socket.on('Producto_Existente', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                    location.reload();
+                });
+    
+                socket.on('Producto_Inexistente', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                    location.reload();
+                });
+            }
+        }
+    });
 } 

@@ -62,11 +62,11 @@ io.on('connection', (socket) => {
             if (result.length > 0) {//Si sí hizo una búsqueda
                 socket.emit('Producto_Existente', { mensaje: "Este producto ya se encuentra en existencia." });//Mandar usuario y token al cliente
             } else {
-                db.query('select*from Facturas_Almacen where Num_Fact = ?', [data.NumFactura], function(err,result){
-                    if(err) console.log("Error en búsqueda: ",err);
-                    if(result.length > 0){
-                        socket.emit('Fact_Exists', {mensaje: "Ese número de factura ya fue agregado con anterioridad."});
-                    }else{
+                db.query('select*from Facturas_Almacen where Num_Fact = ?', [data.NumFactura], function (err, result) {
+                    if (err) console.log("Error en búsqueda: ", err);
+                    if (result.length > 0) {
+                        socket.emit('Fact_Exists', { mensaje: "Ese número de factura ya fue agregado con anterioridad." });
+                    } else {
                         db.query('insert into Facturas_Almacen values(?,?)', [data.NumFactura, data.FechaFac], function (err1, result) {//Insertar factura
                             if (err1) console.log("Error en inserción de facturas: ", err1);
                             if (result) {
@@ -81,14 +81,14 @@ io.on('connection', (socket) => {
                             }
                         });
                     }
-                
-            });
+
+                });
             }
         });
         data.length = 0;
     });
 
-    // Bajas
+    // Bajas en productos
     socket.on('Bajas_Prod', async (data) => {
         // Autenticar que haga las consultas
         db.query('select*from almacen', function (err, result) {
@@ -109,6 +109,42 @@ io.on('connection', (socket) => {
                 socket.emit('Productos_Inexistentes', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
             }
         });
+    });
+
+    // Cambios en productos
+    socket.on('Cambios_Prod', async (data) => {
+        //Autentificar que no exista un producto igual
+        db.query('select*from almacen where Cod_Barras = ?', [data.CodBarras], function (err, result) {
+
+            if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
+
+            if (result.length > 0) {//Si sí hizo una búsqueda
+                socket.emit('Producto_Existente', { mensaje: "Este producto ya se encuentra en existencia." });//Mandar usuario y token al cliente
+            } else {
+                db.query('select*from Facturas_Almacen where Num_Fact = ?', [data.NumFactura], function (err, result) {
+                    if (err) console.log("Error en búsqueda: ", err);
+                    if (result.length > 0) { // Si sí hizo una búsqueda
+                        socket.emit('Fact_Exists', { mensaje: "Ese número de factura ya fue agregado con anterioridad." });
+                    } else { // Si no existe otro igual
+                        db.query('update Facturas_Almacen set values(?,?)', [data.NumFactura, data.FechaFac], function (err1, result) {//Insertar factura
+                            if (err1) console.log("Error en inserción de facturas: ", err1);
+                            if (result) {
+                                //Se agrega productos a la BD
+                                db.query('update almacen set values (?,?,?,?,?,?,?,?,?,?,?)', [data.CodBarras, data.FecAct, data.Cate, data.Producto, data.Marca, data.Descripcion, data.Proveedor, data.NumFactura, data.Unidad, data.Cantidad, data.Cantidad], function (err2, result) {
+                                    if (err2) console.log("Error de inserción de productos: ", err2);
+                                    if (result) {
+                                        console.log("Resultado de inserción de productos: ", result);
+                                        socket.emit('Producto_Inexistente', { mensaje: 'Producto dado de alta.' });//Mandar mensaje de error a cliente
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                });
+            }
+        });
+        data.length = 0;
     });
 
     socket.on('disconnect', () => {
