@@ -38,7 +38,6 @@ if (pathname == "/users/altasPro") {
     socket.on('Desp_Productos', async (data) => {
         console.log('Datos recibidos:', data.Cod_Barras);
 
-        console.log("Este esta: ",data.eliminado)
         if (data.eliminado == 1) {
             document.querySelector("#DatosProd tbody").innerHTML += `
             <tr style="background-color: #590C09">
@@ -155,7 +154,6 @@ if (pathname == "/users/altasPro") {
         var valores6 = "";
         var valores7 = "";
         var valores9 = "";
-        var valores10 = "";
 
         function obtenerValoresMod(e) {
 
@@ -174,10 +172,9 @@ if (pathname == "/users/altasPro") {
                 valores7 = elementosTD[7].innerHTML;
                 valores8 = elementosTD[8].innerHTML;
                 valores9 = elementosTD[9].innerHTML;
-                valores10 = elementosTD[10].innerHTML;
             }
 
-            document.getElementById("FecActuM").value = valores0;
+            document.getElementById("F_Ingreso").value = valores0;
             document.getElementById("Cod_BarrasM").value = valores1;
             document.getElementById("CategoriaM").value = valores2;
             document.getElementById("NomPM").value = valores3;
@@ -186,7 +183,6 @@ if (pathname == "/users/altasPro") {
             document.getElementById("ProveedorM").value = valores6;
             document.getElementById("UnidadPM").value = valores7;
             document.getElementById("NumFactM").value = valores8;
-            document.getElementById("FecFactM").value = valores10;
         }
 
 
