@@ -80,4 +80,20 @@ router.get('/cambiosPro', function (req, res, next) {
 });
 /*** Finaliza cambios ***/
 
+
+/*** Añadir o borrar registros existentes ***/
+// Añadir o borrar equipos existentes
+router.get('/ABEE', function (req, res, next) {
+  res.render('ABEE', { title: 'Equipos registrados' });
+});
+// Añadir o borrar productos existentes
+router.get('/ABPE', function (req, res, next) {
+  res.render('ABPE', { title: 'Productos registrados' });
+});
+// Añadir o borrar mobiliario existente
+router.get('/ABME', function (req, res, next) {
+  res.render('ABME', { title: 'Mobiliario registrado' });
+});
+/*** Termina añadir o borrar registros existentes ***/
+
 module.exports = router;

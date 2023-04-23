@@ -267,16 +267,13 @@ select*from almacen;
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Alice_07';
 flush privileges;
 
-
 select*from usuario where User = "armando" and Pass = "clarac";
 select*from almacen;
 select*from facturas_almacen;
 
-alter table usuario add column token int not null default 0;
 alter table usuario modify token nvarchar(20);
 
 update usuario set token = "4dnM3k0nl9z" where User = "armando";
-delete from almacen where Cod_Barras = "756981H83";
 delete from facturas_almacen where Ffact = "2023-04-14";
 delete from almacen where FIngreso = "2023-04-14";
 select*from usuario;

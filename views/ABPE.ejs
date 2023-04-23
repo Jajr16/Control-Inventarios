@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title%>
+    </title>
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Last-Modified" content="0">
+    <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap"
+        rel="stylesheet">
+    <link rel='stylesheet' href='/stylesheets/general.css' />
+    <link rel='stylesheet' href='/stylesheets/consultas.css' />
+    <link rel='stylesheet' href='/stylesheets/modal.css' />
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="/socket.io/socket.io.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <a href="/users/index">
+                <img src="/images/logoC.png" alt="Logo de la empresa">
+            </a>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="/users/consulEqp">Equipos</a></li>
+                <li><a href="/users/consulMob">Mobiliario</a></li>
+            </ul>
+        </nav>
+        <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
+        <a class="btn" href="#"><button><img src="/images/moon.png" width="20px" height="20px"></button></a>
+        <a onclick="openNav()" class="menu" href="#"><button>Menu</button></a>
+        <div id="mobile-menu" class="overlay">
+            <a onclick="closeNav()" href="" class="close">&times;</a>
+            <div class="overlay-content">
+                <a href="/users/consulEqp">Equipos</a>
+                <a href="/users/consulMob">Mobiliario</a>
+                <a onclick="CerrarSesion()">Cerrar Sesión</a>
+                <a href="#">Tema</a>
+            </div>
+        </div>
+    </header>
+    <script type="text/javascript" src="/javascripts/navbar.js"></script>
+    <script type="text/javascript" src="/javascripts/ValidarSesion.js"></script>
+    <div class="card" id="productos">
+        <div class="card-header">
+            <h4>Productos en almacén</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <input type="text" id="buscar" onkeyup="buscar()" placeholder="Buscar en tabla"
+                    title="Empieza a escribir para buscar">
+                <table id="DatosProd">
+                    <thead>
+                        <tr id="firstrow">
+                            <th>Fecha de Ingreso</th>
+                            <th>Código de barras</th>
+                            <th>Categoría</th>
+                            <th>Nombre del artículo</th>
+                            <th>Marca del artículo</th>
+                            <th>Descripción</th>
+                            <th>Proveedor</th>
+                            <th>Unidad</th>
+                            <th>Número de Factura</th>
+                            <th>En Existencia</th>
+                            <th>Eliminar</th>
+                            <th>Modificar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="pen">
+        <div class="controls">
+        </div>
+        <div class="overlay cancel-modal"></div>
+        <div class="modal-container cancel-modal">
+            <div class="Contenedor Contenido-centrado Alta">
+                <form name="ModProduct" id="ModProduct">
+                    <div class="Cuatro_Column">
+                        <div>
+                            <label>Fecha de Ingreso</label>
+                            <input autocomplete="off" type="date" id="FecActuM" name="FecActuM" disabled>
+                        </div>
+                        <div>
+                            <label>Código de barras</label>
+                            <input autocomplete="off" type="text" id="Cod_BarrasM" min="1" name="Cod_BarrasM" required>
+                        </div>
+                        <div>
+                            <label>Categoría</label>
+                            <input autocomplete="off" type="text" id="CategoriaM" name="CategoriaM" required>
+                        </div>
+                        <div>
+                            <label>Nombre del artículo</label>
+                            <input autocomplete="off" type="text" id="NomPM" name="NomPM" required>
+                        </div>
+                    </div>
+                    <div class="Cuatro_Column">
+                        <div>
+                            <label>Marca del artículo</label>
+                            <input autocomplete="off" type="text" id="MarcActiM" name="MarcActiM" required>
+                        </div>
+                        <div>
+                            <label>Descripción</label>
+                            <input autocomplete="off" type="text" id="DescripcionPM" name="DescripcionPM" required>
+                        </div>
+                        <div>
+                            <label>Proveedor</label>
+                            <input autocomplete="off" type="text" id="ProveedorM" name="ProveedorM" required>
+                        </div>
+                        <div>
+                            <label>Unidad</label>
+                            <input autocomplete="off" type="text" id="UnidadPM" name="UnidadPM" required>
+                        </div>
+
+                    </div>
+                    <div class="Cuatro_Column">
+
+                        <div>
+                            <label>Cantidad</label>
+                            <input autocomplete="off" type="number" id="CantidadPM" name="CantidadPM" required min="0">
+                        </div>
+                        <div>
+                            <label>Número de Factura</label>
+                            <input autocomplete="off" type="text" id="NumFactM" name="NumFactM" required>
+                        </div>
+                        <div>
+                            <label>Fecha de Factura</label>
+                            <input autocomplete="off" type="date" id="FecFactM" name="FecFactM" required>
+                        </div>
+                    </div>
+                    <div class="Cuatro_Column">
+                        <input type="submit" id="Modify" class="BotonAE">
+                        <button class="BotonReg"> Cancelar </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/javascripts/SocketsC.js" type="text/javascript"></script>
+<script src='https://s3.amazonaws.com/popmotion.io/static/dist/popmotion.min.js'></script>
+<script src="/javascripts/modal.js" type="text/javascript"></script>
+
+</html>
