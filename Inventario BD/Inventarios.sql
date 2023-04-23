@@ -11,24 +11,24 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema Inventarios
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS Inventarios DEFAULT CHARACTER SET utf8 ;
-USE Inventarios ;
+CREATE SCHEMA IF NOT EXISTS `Inventarios` DEFAULT CHARACTER SET utf8 ;
+USE `Inventarios` ;
 
 -- -----------------------------------------------------
--- Table Inventarios.`Empleado`
+-- Table `Inventarios`.`Empleado`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Inventarios.`Empleado` (
-  Num_emp INT NOT NULL AUTO_INCREMENT,
-  Nom NVARCHAR(45) NULL,
-  AP VARCHAR(45) NULL,
-  AM VARCHAR(45) NULL,
-  Área VARCHAR(45) NULL,
-  Num_Jefe INT NULL,
-  PRIMARY KEY (Num_emp),
-  INDEX Num_Jefe_idx (Num_Jefe ASC),
-  CONSTRAINT Num_Jefe
-    FOREIGN KEY (Num_Jefe)
-    REFERENCES Inventarios.`Empleado` (Num_emp)
+CREATE TABLE IF NOT EXISTS `Inventarios`.`Empleado` (
+  `Num_emp` INT NOT NULL AUTO_INCREMENT,
+  `Nom` NVARCHAR(45) NULL,
+  `AP` VARCHAR(45) NULL,
+  `AM` VARCHAR(45) NULL,
+  `Área` VARCHAR(45) NULL,
+  `Num_Jefe` INT NULL,
+  PRIMARY KEY (`Num_emp`),
+  INDEX `Num_Jefe_idx` (`Num_Jefe` ASC),
+  CONSTRAINT `Num_Jefe`
+    FOREIGN KEY (`Num_Jefe`)
+    REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -36,188 +36,188 @@ COMMENT = '			';
 
 
 -- -----------------------------------------------------
--- Table Inventarios.`Usuario`
+-- Table `Inventarios`.`Usuario`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Inventarios.`Usuario` (
-  Num_Emp INT NULL,
-  User VARCHAR(45) NOT NULL,
-  Pass VARCHAR(45) NULL,
-  PRIMARY KEY (User),
-  INDEX Num_emp_idx (Num_Emp ASC),
-  CONSTRAINT Num_EmpUser
-    FOREIGN KEY (Num_Emp)
-    REFERENCES Inventarios.`Empleado` (Num_emp)
+CREATE TABLE IF NOT EXISTS `Inventarios`.`Usuario` (
+  `Num_Emp` INT NULL,
+  `User` VARCHAR(45) NOT NULL,
+  `Pass` VARCHAR(45) NULL,
+  PRIMARY KEY (`User`),
+  INDEX `Num_emp_idx` (`Num_Emp` ASC),
+  CONSTRAINT `Num_EmpUser`
+    FOREIGN KEY (`Num_Emp`)
+    REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table Inventarios.`Equipo`
+-- Table `Inventarios`.`Equipo`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Inventarios.`Equipo` (
-  Num_Serie VARCHAR(45) NOT NULL,
-  Equipo VARCHAR(45) NULL,
-  Marca VARCHAR(45) NULL,
-  Modelo VARCHAR(45) NULL,
-  Marca_Mouse VARCHAR(45) NULL,
-  Marca_Teclado VARCHAR(45) NULL,
-  Marca_Monitor VARCHAR(45) NULL,
-  Num_emp INT NULL,
-  PRIMARY KEY (Num_Serie),
-  INDEX Num_emp_idx (Num_emp ASC),
-  CONSTRAINT Num_RespE
-    FOREIGN KEY (Num_emp)
-    REFERENCES Inventarios.`Empleado` (Num_emp)
+CREATE TABLE IF NOT EXISTS `Inventarios`.`Equipo` (
+  `Num_Serie` VARCHAR(45) NOT NULL,
+  `Equipo` VARCHAR(45) NULL,
+  `Marca` VARCHAR(45) NULL,
+  `Modelo` VARCHAR(45) NULL,
+  `Marca_Mouse` VARCHAR(45) NULL,
+  `Marca_Teclado` VARCHAR(45) NULL,
+  `Marca_Monitor` VARCHAR(45) NULL,
+  `Num_emp` INT NULL,
+  PRIMARY KEY (`Num_Serie`),
+  INDEX `Num_emp_idx` (`Num_emp` ASC),
+  CONSTRAINT `Num_RespE`
+    FOREIGN KEY (`Num_emp`)
+    REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table Inventarios.`Mobiliario`
+-- Table `Inventarios`.`Mobiliario`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Inventarios.`Mobiliario` (
-  Num_Inventario INT NOT NULL AUTO_INCREMENT,
-  Descripcion VARCHAR(400) NULL,
-  Num_emp INT NULL,
-  PRIMARY KEY (Num_Inventario),
-  INDEX Num_emp_idx (Num_emp ASC),
-  CONSTRAINT Num_RespM
-    FOREIGN KEY (Num_emp)
-    REFERENCES Inventarios.`Empleado` (Num_emp)
+CREATE TABLE IF NOT EXISTS `Inventarios`.`Mobiliario` (
+  `Num_Inventario` INT NOT NULL AUTO_INCREMENT,
+  `Descripcion` VARCHAR(400) NULL,
+  `Num_emp` INT NULL,
+  PRIMARY KEY (`Num_Inventario`),
+  INDEX `Num_emp_idx` (`Num_emp` ASC),
+  CONSTRAINT `Num_RespM`
+    FOREIGN KEY (`Num_emp`)
+    REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table Inventarios.`Facturas_Almacen`
+-- Table `Inventarios`.`Facturas_Almacen`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Inventarios.`Facturas_Almacen` (
-  Num_Fact INT NOT NULL AUTO_INCREMENT,
-  Ffact DATE NULL,
-  PRIMARY KEY (Num_Fact))
+CREATE TABLE IF NOT EXISTS `Inventarios`.`Facturas_Almacen` (
+  `Num_Fact` INT NOT NULL AUTO_INCREMENT,
+  `Ffact` DATE NULL,
+  PRIMARY KEY (`Num_Fact`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table Inventarios.`Almacen`
+-- Table `Inventarios`.`Almacen`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Inventarios.`Almacen` (
-  Cod_Barras NVARCHAR(45) NOT NULL,
-  FIngreso DATE NULL,
-  Categoria VARCHAR(45) NULL,
-  Articulo VARCHAR(45) NULL,
-  Marca VARCHAR(100) NULL,
-  Descripcion VARCHAR(400) NULL,
-  Proveedor VARCHAR(45) NULL,
-  NFact INT NULL,
-  Unidad VARCHAR(45) NULL,
-  Cantidad INT NULL,
-  Existencia INT NULL,
-  PRIMARY KEY (Cod_Barras),
-  INDEX NFact_idx (NFact ASC),
-  CONSTRAINT NFact
-    FOREIGN KEY (NFact)
-    REFERENCES Inventarios.`Facturas_Almacen` (Num_Fact)
+CREATE TABLE IF NOT EXISTS `Inventarios`.`Almacen` (
+  `Cod_Barras` NVARCHAR(45) NOT NULL,
+  `FIngreso` DATE NULL,
+  `Categoria` VARCHAR(45) NULL,
+  `Articulo` VARCHAR(45) NULL,
+  `Marca` VARCHAR(100) NULL,
+  `Descripcion` VARCHAR(400) NULL,
+  `Proveedor` VARCHAR(45) NULL,
+  `NFact` INT NULL,
+  `Unidad` VARCHAR(45) NULL,
+  `Cantidad` INT NULL,
+  `Existencia` INT NULL,
+  PRIMARY KEY (`Cod_Barras`),
+  INDEX `NFact_idx` (`NFact` ASC),
+  CONSTRAINT `NFact`
+    FOREIGN KEY (`NFact`)
+    REFERENCES `Inventarios`.`Facturas_Almacen` (`Num_Fact`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table Inventarios.`Salida_Almacen`
+-- Table `Inventarios`.`Salida_Almacen`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Inventarios.`Salida_Almacen` (
-  N_Reporte INT NOT NULL AUTO_INCREMENT,
-  Solicitante INT NOT NULL,
-  Cod_Barras NVARCHAR(45) NOT NULL,
-  FSalida DATE NULL,
-  Proveedor INT NULL,
-  Cantidad INT NULL,
-  PRIMARY KEY (N_Reporte, Solicitante, Cod_Barras),
-  INDEX Cod_Barras_idx (Cod_Barras ASC),
-  INDEX Proveedor_idx (Proveedor ASC),
-  CONSTRAINT Cod_BarrasBaja
-    FOREIGN KEY (Cod_Barras)
-    REFERENCES Inventarios.`Almacen` (Cod_Barras)
+CREATE TABLE IF NOT EXISTS `Inventarios`.`Salida_Almacen` (
+  `N_Reporte` INT NOT NULL AUTO_INCREMENT,
+  `Solicitante` INT NOT NULL,
+  `Cod_Barras` NVARCHAR(45) NOT NULL,
+  `FSalida` DATE NULL,
+  `Proveedor` INT NULL,
+  `Cantidad` INT NULL,
+  PRIMARY KEY (`N_Reporte`, `Solicitante`, `Cod_Barras`),
+  INDEX `Cod_Barras_idx` (`Cod_Barras` ASC),
+  INDEX `Proveedor_idx` (`Proveedor` ASC),
+  CONSTRAINT `Cod_BarrasBaja`
+    FOREIGN KEY (`Cod_Barras`)
+    REFERENCES `Inventarios`.`Almacen` (`Cod_Barras`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT Solicitante
-    FOREIGN KEY (Solicitante)
-    REFERENCES Inventarios.`Empleado` (Num_emp)
+  CONSTRAINT `Solicitante`
+    FOREIGN KEY (`Solicitante`)
+    REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT Proveedor
-    FOREIGN KEY (Proveedor)
-    REFERENCES Inventarios.`Empleado` (Num_emp)
+  CONSTRAINT `Proveedor`
+    FOREIGN KEY (`Proveedor`)
+    REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table Inventarios.`Peticion`
+-- Table `Inventarios`.`Peticion`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Inventarios.`Peticion` (
-  Num_Pet INT NOT NULL AUTO_INCREMENT,
-  User VARCHAR(45) NULL,
-  Cod_Barras NVARCHAR(45) NULL,
-  Cantidad VARCHAR(45) NULL,
-  PRIMARY KEY (Num_Pet),
-  INDEX User_idx (User ASC),
-  INDEX Cod_Barras_idx (Cod_Barras ASC),
-  CONSTRAINT User
-    FOREIGN KEY (User)
-    REFERENCES Inventarios.`Usuario` (User)
+CREATE TABLE IF NOT EXISTS `Inventarios`.`Peticion` (
+  `Num_Pet` INT NOT NULL AUTO_INCREMENT,
+  `User` VARCHAR(45) NULL,
+  `Cod_Barras` NVARCHAR(45) NULL,
+  `Cantidad` VARCHAR(45) NULL,
+  PRIMARY KEY (`Num_Pet`),
+  INDEX `User_idx` (`User` ASC),
+  INDEX `Cod_Barras_idx` (`Cod_Barras` ASC),
+  CONSTRAINT `User`
+    FOREIGN KEY (`User`)
+    REFERENCES `Inventarios`.`Usuario` (`User`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT Cod_BarrasPedido
-    FOREIGN KEY (Cod_Barras)
-    REFERENCES Inventarios.`Almacen` (Cod_Barras)
+  CONSTRAINT `Cod_BarrasPedido`
+    FOREIGN KEY (`Cod_Barras`)
+    REFERENCES `Inventarios`.`Almacen` (`Cod_Barras`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table Inventarios.`Responsivas_M`
+-- Table `Inventarios`.`Responsivas_M`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Inventarios.`Responsivas_M` (
-  Num_Emp INT NOT NULL,
-  Num_Inventario INT NOT NULL,
-  PRIMARY KEY (Num_Emp, Num_Inventario),
-  INDEX Num_Inventario_idx (Num_Inventario ASC),
-  CONSTRAINT Num_empRespM
-    FOREIGN KEY (Num_Emp)
-    REFERENCES Inventarios.`Empleado` (Num_emp)
+CREATE TABLE IF NOT EXISTS `Inventarios`.`Responsivas_M` (
+  `Num_Emp` INT NOT NULL,
+  `Num_Inventario` INT NOT NULL,
+  PRIMARY KEY (`Num_Emp`, `Num_Inventario`),
+  INDEX `Num_Inventario_idx` (`Num_Inventario` ASC),
+  CONSTRAINT `Num_empRespM`
+    FOREIGN KEY (`Num_Emp`)
+    REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT Num_Inventario
-    FOREIGN KEY (Num_Inventario)
-    REFERENCES Inventarios.`Mobiliario` (Num_Inventario)
+  CONSTRAINT `Num_Inventario`
+    FOREIGN KEY (`Num_Inventario`)
+    REFERENCES `Inventarios`.`Mobiliario` (`Num_Inventario`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table Inventarios.`Responsivas_E`
+-- Table `Inventarios`.`Responsivas_E`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Inventarios.`Responsivas_E` (
-  Num_emp INT NOT NULL,
-  Num_Serie NVARCHAR(45) NOT NULL,
-  PRIMARY KEY (Num_emp, Num_Serie),
-  INDEX Num_Serie_idx (Num_Serie ASC),
-  CONSTRAINT Num_empRespE
-    FOREIGN KEY (Num_emp)
-    REFERENCES Inventarios.`Empleado` (Num_emp)
+CREATE TABLE IF NOT EXISTS `Inventarios`.`Responsivas_E` (
+  `Num_emp` INT NOT NULL,
+  `Num_Serie` NVARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Num_emp`, `Num_Serie`),
+  INDEX `Num_Serie_idx` (`Num_Serie` ASC),
+  CONSTRAINT `Num_empRespE`
+    FOREIGN KEY (`Num_emp`)
+    REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT Num_Serie
-    FOREIGN KEY (Num_Serie)
-    REFERENCES Inventarios.`Equipo` (Num_Serie)
+  CONSTRAINT `Num_Serie`
+    FOREIGN KEY (`Num_Serie`)
+    REFERENCES `Inventarios`.`Equipo` (`Num_Serie`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -228,55 +228,99 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- -----------------------------------------------------
--- Data for table Inventarios.`Facturas_Almacen`
+-- Data for table `Inventarios`.`Facturas_Almacen`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE Inventarios;
+USE `Inventarios`;
+INSERT INTO `Inventarios`.`Facturas_Almacen` (`Num_Fact`, `Ffact`) VALUES (1, '2023-03-15');
+INSERT INTO `Inventarios`.`Facturas_Almacen` (`Num_Fact`, `Ffact`) VALUES (2, '2023-03-15');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table Inventarios.`Almacen`
+-- Data for table `Inventarios`.`Almacen`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE Inventarios;
+USE `Inventarios`;
+INSERT INTO `Inventarios`.`Almacen` (`Cod_Barras`, `FIngreso`, `Categoria`, `Articulo`, `Marca`, `Descripcion`, `Proveedor`, `NFact`, `Unidad`, `Cantidad`, `Existencia`) VALUES ('756981H83', '2023-03-15', 'Papelería', 'Hojas Blancas', 'Scribd', 'Pliego de hojas blancas', 'Lumen', 1, 'Unidad', 10, 10);
+INSERT INTO `Inventarios`.`Almacen` (`Cod_Barras`, `FIngreso`, `Categoria`, `Articulo`, `Marca`, `Descripcion`, `Proveedor`, `NFact`, `Unidad`, `Cantidad`, `Existencia`) VALUES ('684F4GFR8', '2023-03-15', 'Limpieza', 'Fabuloso', 'Fab', 'Jabón líquido', 'Chedrahui', 2, 'Unidad', 5, 5);
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table Inventarios.`Responsivas_M`
+-- Data for table `Inventarios`.`Responsivas_M`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE Inventarios;
+USE `Inventarios`;
+INSERT INTO `Inventarios`.`Responsivas_M` (`Num_Emp`, `Num_Inventario`) VALUES (758, 2);
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table Inventarios.`Responsivas_E`
+-- Data for table `Inventarios`.`Responsivas_E`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE Inventarios;
+USE `Inventarios`;
+INSERT INTO `Inventarios`.`Responsivas_E` (`Num_emp`, `Num_Serie`) VALUES (758, '5415');
 
 COMMIT;
 
-select*from almacen;
+-- TABLAS
 
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Alice_07';
+create table Factus_Productos(
+Cod_Barras nvarchar(45) not null,
+Nfactura nvarchar(10) not null,
+ constraint cPFPS primary key(Cod_Barras, Nfactura)
+);
+
+alter table almacen add constraint FK_NFact foreign key(NFact) references facturas_almacen(Num_Fact);
+alter table almacen drop constraint FK_NFact;
+alter table Factus_Productos add constraint FK_CBA foreign key(Cod_Barras) references almacen(Cod_Barras);
+alter table Factus_Productos add constraint FK_NDFA foreign key(Nfactura) references facturas_almacen(Num_Fact);
+
+
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'n0m3l0';
 flush privileges;
 
-
-select*from usuario where User = "armando" and Pass = "clarac";
-select*from almacen;
-select*from facturas_almacen;
+create unique index LDRecom on almacen(Cod_Barras);
+alter table facturas_almacen add constraint CBFK foreign key (Cod_Barras) References almacen(Cod_Barras);
+alter table facturas_almacen drop constraint CBFK;
 
 alter table usuario add column token int not null default 0;
 alter table usuario modify token nvarchar(20);
 
 update usuario set token = "4dnM3k0nl9z" where User = "armando";
 delete from almacen where Cod_Barras = "756981H83";
-delete from facturas_almacen where Ffact = "2023-04-14";
-delete from almacen where FIngreso = "2023-04-14";
+-- DELETES
+delete from factus_productos where FIngreso = "2023-04-23";
+delete from facturas_almacen where Ffact = "2023-03-15";
+delete from almacen where eliminado = 1;
+-- Quitar columnas
+alter table facturas_almacen drop column Cod_Barras;
+alter table almacen drop column Cantidad;
+alter table almacen drop column NFact;
+alter table almacen drop column FIngreso;
+alter table almacen drop column Proveedor;
+alter table facturas_almacen drop column Cantidad;
+alter table facturas_almacen drop column FIngreso;
+-- Agregar columnas
+alter table factus_productos add column Cantidad int;
+alter table facturas_almacen add column FIngreso date;
+alter table facturas_almacen add column Proveedor nvarchar(45);
+alter table almacen add column eliminado TINYINT(1) not null default 0;
+alter table factus_productos add column FIngreso date;
+-- Busquedas
+
+-- almacen.Cod_Barras, almacen.FIngreso, almacen.Categoria, almacen.Articulo, almacen.Marca, almacen.Descripcion, almacen.Proveedor, almacen.NFact
+select*from usuario where User = "armando" and Pass = "clarac";
+
+select almacen.Cod_Barras, factus_productos.FIngreso, almacen.Categoria, almacen.Articulo, almacen.Marca, almacen.Descripcion, almacen.Unidad, almacen.Existencia, facturas_almacen.Proveedor, facturas_almacen.Num_Fact, facturas_almacen.Ffact, almacen.eliminado from factus_productos inner join almacen on factus_productos.Cod_Barras = almacen.Cod_Barras inner join facturas_almacen on factus_productos.Nfactura = facturas_almacen.Num_Fact  order by almacen.eliminado;
+select*from facturas_almacen;
+select*from almacen;
+select*from factus_productos;
+select*from almacen where Cod_Barras = 'd' and eliminado = 1;
+update almacen set eliminado = 1 where Cod_Barras = 'd';
 select*from usuario;
