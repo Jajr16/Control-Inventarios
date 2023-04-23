@@ -278,14 +278,37 @@ h5{
     background-color: #BE0101;
 }
 
-.BotonAE{
-    width: 32rem;
+.BotonModF{
+    text-decoration: none;
+    width: 100%;
     border: none;
+    margin-bottom: 2rem;
+    text-align: center;
+    background: linear-gradient(to top, #00f7ff, #008286);
+    color: rgb(212, 255, 248);
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonModF:hover{
+    background: linear-gradient(to right, #3056ff, #c8d2fd);
+    transform: scale(1.1);
+}
+
+.BotonAE{
+    text-decoration: none;
+    width: 100%;
+    border: none;
+    margin-bottom: 2rem;
+    text-align: center;
     background: linear-gradient(to right, #003afa, #3056ff);
     padding: 10px 15px;
     cursor: pointer;
     font-size: 20px;
     transition: all 0.3s ease 0s;
+    
 }
 
 .BotonAE:hover{
@@ -442,6 +465,20 @@ h5{
 }
 
 /* Generales */
+.Tres_Column{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.Tres_Column div{
+    display: inline-flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 2rem;
+}
+
 .Cuatro_Column{
     display: flex;
     justify-content: space-evenly;

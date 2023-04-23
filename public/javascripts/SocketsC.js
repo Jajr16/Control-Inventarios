@@ -38,23 +38,44 @@ if (pathname == "/users/altasPro") {
     socket.on('Desp_Productos', async (data) => {
         console.log('Datos recibidos:', data.Cod_Barras);
 
-        document.querySelector("#DatosProd tbody").innerHTML += `
-        <tr>
-            <td id="F_Ingreso">${data.FIngreso}</td>
-            <td id="Cod_Barras">${data.Cod_Barras}</td>
-            <td id="Categoria">${data.Categoria}</td>
-            <td id="NomP">${data.NArt}</td>
-            <td id="MarcActi">${data.NMarca}</td>
-            <td id="DescripcionP">${data.Desc}</td>
-            <td id="Proveedor">${data.Prov}</td>
-            <td id="UnidadP">${data.Unidad}</td>
-            <td id="NumFact">${data.NFact}</td>
-            <td id="Existencia">${data.Existencia}</td>
-            <td id="Ffact" style="display:none;">${data.Ffact}</td>
-            <td id="Eliminar" class="BotonER"> Eliminar </td>
-            <td id="Modificar" class="BotonMod"> Modificar </td>
-        </tr>
-        `;
+        if (data.eliminado == 1) {
+            document.querySelector("#DatosProd tbody").innerHTML += `
+            <tr style="background-color: #590C09">
+                <td id="F_Ingreso">${data.FIngreso}</td>
+                <td id="Cod_Barras">${data.Cod_Barras}</td>
+                <td id="Categoria">${data.Categoria}</td>
+                <td id="NomP">${data.NArt}</td>
+                <td id="MarcActi">${data.NMarca}</td>
+                <td id="DescripcionP">${data.Desc}</td>
+                <td id="Proveedor">${data.Prov}</td>
+                <td id="UnidadP">${data.Unidad}</td>
+                <td id="NumFact">${data.NFact}</td>
+                <td id="Existencia">${data.Existencia}</td>
+                <td id="Ffact" style="display:none;">${data.Ffact}</td>
+            </tr>
+            `;
+        } else {
+            document.querySelector("#DatosProd tbody").innerHTML += `
+            <tr>
+                <td id="F_Ingreso">${data.FIngreso}</td>
+                <td id="Cod_Barras">${data.Cod_Barras}</td>
+                <td id="Categoria">${data.Categoria}</td>
+                <td id="NomP">${data.NArt}</td>
+                <td id="MarcActi">${data.NMarca}</td>
+                <td id="DescripcionP">${data.Desc}</td>
+                <td id="Proveedor">${data.Prov}</td>
+                <td id="UnidadP">${data.Unidad}</td>
+                <td id="NumFact">${data.NFact}</td>
+                <td id="Existencia">${data.Existencia}</td>
+                <td id="Ffact" style="display:none;">${data.Ffact}</td>
+                <td id="Eliminar" class="BotonER"> Eliminar </td>
+                <td id="Modificar" class="BotonMod"> Modificar </td>
+            </tr>
+            `;
+        }
+
+
+
 
     });
 
@@ -133,7 +154,6 @@ if (pathname == "/users/altasPro") {
         var valores6 = "";
         var valores7 = "";
         var valores9 = "";
-        var valores10 = "";
 
         function obtenerValoresMod(e) {
 
@@ -152,10 +172,9 @@ if (pathname == "/users/altasPro") {
                 valores7 = elementosTD[7].innerHTML;
                 valores8 = elementosTD[8].innerHTML;
                 valores9 = elementosTD[9].innerHTML;
-                valores10 = elementosTD[10].innerHTML;
             }
 
-            document.getElementById("FecActuM").value = valores0;
+            document.getElementById("F_Ingreso").value = valores0;
             document.getElementById("Cod_BarrasM").value = valores1;
             document.getElementById("CategoriaM").value = valores2;
             document.getElementById("NomPM").value = valores3;
@@ -164,7 +183,6 @@ if (pathname == "/users/altasPro") {
             document.getElementById("ProveedorM").value = valores6;
             document.getElementById("UnidadPM").value = valores7;
             document.getElementById("NumFactM").value = valores8;
-            document.getElementById("FecFactM").value = valores10;
         }
 
 
@@ -176,11 +194,11 @@ if (pathname == "/users/altasPro") {
 
         // Comprueba que no haya otro igual
         function Enviar(e) {
-            
+
             e.preventDefault();
 
             if ($("#Cod_BarrasM").val() != "" && $("#FecActuM").val() != "" && $("#CategoriaM").val() != "" && $("#NomPM").val() != "" && $("#MarcActiM").val() != "" && $("#DescripcionPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#CantidadPM").val() != "" && $("#UnidadPM").val() != "" && $("#FecFactM").val()) {
-                socket.emit('Cambios_Prod', { CodBarras: $("#Cod_BarrasM").val(), FecAct: $("#FecActuM").val(), Cate: $("#CategoriaM").val(), Producto: $("#NomPM").val(), Marca: $("#MarcActiM").val(), Descripcion: $("#DescripcionPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFactM").val(), Existencia: (parseInt($("#CantidadPM").val()) +  parseInt(valores9)), Unidad: $("#UnidadPM").val() }, { FIO: valores0, CBO: valores1, CO: valores2, NAO: valores3, MAO: valores4, DO: valores5, PO: valores6, UO: valores7, NFO: valores8, FFactO: valores10 });
+                socket.emit('Cambios_Prod', { CodBarras: $("#Cod_BarrasM").val(), FecAct: $("#FecActuM").val(), Cate: $("#CategoriaM").val(), Producto: $("#NomPM").val(), Marca: $("#MarcActiM").val(), Descripcion: $("#DescripcionPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFactM").val(), Existencia: (parseInt($("#CantidadPM").val()) + parseInt(valores9)), Unidad: $("#UnidadPM").val() }, { FIO: valores0, CBO: valores1, CO: valores2, NAO: valores3, MAO: valores4, DO: valores5, PO: valores6, UO: valores7, NFO: valores8, FFactO: valores10 });
 
                 socket.on('Producto_Inexistente', function (Respuesta) {
                     alert(Respuesta.mensaje);

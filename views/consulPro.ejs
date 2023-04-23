@@ -16,7 +16,7 @@
     <link rel='stylesheet' href='/stylesheets/general.css' />
     <link rel='stylesheet' href='/stylesheets/consultas.css' />
     <link rel='stylesheet' href='/stylesheets/modal.css' />
-
+    <link rel='stylesheet' href='/stylesheets/modal2.css' />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script src="/socket.io/socket.io.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css">
@@ -88,11 +88,7 @@
         <div class="modal-container cancel-modal">
             <div class="Contenedor Contenido-centrado Alta">
                 <form name="ModProduct" id="ModProduct">
-                    <div class="Cuatro_Column">
-                        <div>
-                            <label>Fecha de Ingreso</label>
-                            <input autocomplete="off" type="date" id="FecActuM" name="FecActuM" disabled>
-                        </div>
+                    <div class="Tres_Column">
                         <div>
                             <label>Código de barras</label>
                             <input autocomplete="off" type="text" id="Cod_BarrasM" min="1" name="Cod_BarrasM" required>
@@ -106,7 +102,7 @@
                             <input autocomplete="off" type="text" id="NomPM" name="NomPM" required>
                         </div>
                     </div>
-                    <div class="Cuatro_Column">
+                    <div class="Tres_Column">
                         <div>
                             <label>Marca del artículo</label>
                             <input autocomplete="off" type="text" id="MarcActiM" name="MarcActiM" required>
@@ -116,16 +112,40 @@
                             <input autocomplete="off" type="text" id="DescripcionPM" name="DescripcionPM" required>
                         </div>
                         <div>
-                            <label>Proveedor</label>
-                            <input autocomplete="off" type="text" id="ProveedorM" name="ProveedorM" required>
-                        </div>
-                        <div>
                             <label>Unidad</label>
                             <input autocomplete="off" type="text" id="UnidadPM" name="UnidadPM" required>
                         </div>
 
                     </div>
+
                     <div class="Cuatro_Column">
+                        <input type="submit" id="Modify" class="BotonAE">
+                        <input type="button" class="BotonModF" onclick="Abrir1()" value="Modificar Facturas">
+                        <input type="button" class="BotonReg" value="Cancelar">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="Contenedor_Modal ContMod1">
+        <div class="modal modal1-close mod1 modC1">
+            <div class="header-modal">
+                <p class="close title_modal" onclick="Cerrar1()">X</p>
+                dd
+            </div>
+dd
+        </div>
+    </div>
+</body>
+<script src="/javascripts/SocketsC.js" type="text/javascript"></script>
+<script src='https://s3.amazonaws.com/popmotion.io/static/dist/popmotion.min.js'></script>
+<script src="/javascripts/modal.js" type="text/javascript"></script>
+<script src="/javascripts/Modal2.js" type="text/javascript"></script>
+
+</html>
+<!--
+<div class="Cuatro_Column">
 
                         <div>
                             <label>Cantidad</label>
@@ -140,17 +160,5 @@
                             <input autocomplete="off" type="date" id="FecFactM" name="FecFactM" required>
                         </div>
                     </div>
-                    <div class="Cuatro_Column">
-                        <input type="submit" id="Modify" class="BotonAE">
-                        <button class="BotonReg"> Cancelar </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</body>
-<script src="/javascripts/SocketsC.js" type="text/javascript"></script>
-<script src='https://s3.amazonaws.com/popmotion.io/static/dist/popmotion.min.js'></script>
-<script src="/javascripts/modal.js" type="text/javascript"></script>
 
-</html>
+-->
