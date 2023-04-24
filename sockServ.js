@@ -186,10 +186,11 @@ io.on('connection', (socket) => {
             
             if (result) {
                 db.query('insert into Factus_Productos values (?,?,?,?)',[data.Cod_Barras, data.NumFactura, data.Cantidad, data.FecAct], function(err, result){
+                    console.log(result);
                     if (result){
                         socket.emit('Factura_Agregada', { mensaje: 'Factura agregada con éxito.' });//Mandar mensaje a cliente
                     } else {
-                        socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura." })
+                        socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura de productos." })
                     }
                 });
             } else {

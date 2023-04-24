@@ -328,14 +328,14 @@ if (pathname == "/users/altasPro") {
 
     }
 
-    var formProdExist = document.querySelector("#AltaExist");
-
-    FormProduct.addEventListener("submit", EnviarAlta);
+    // Agregar producto existente
+    const formProdExist = document.querySelector("#AltaExist");
+    formProdExist.addEventListener("submit", EnviarAlta);
 
     function EnviarAlta(e) {
         e.preventDefault();
-        if ($("#FecActuM").val() != "" && $("#CantidadPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#FecFactM").val() != "") {
-            socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActuM").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFactM").val()});
+        if ($("#FecActu").val() != "" && $("#CantidadPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#FecFact").val() != "") {
+            socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActu").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFact").val()});
 
             socket.on('Factura_Agregada', function (Respuesta) {
                 alert(Respuesta.mensaje);
