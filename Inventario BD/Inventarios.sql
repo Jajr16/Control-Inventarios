@@ -293,6 +293,7 @@ alter table usuario add column token int not null default 0;
 alter table usuario modify token nvarchar(20);
 
 update usuario set token = "4dnM3k0nl9z" where User = "armando";
+update almacen set Existencia = 10 where Cod_Barras = 'b';
 delete from almacen where Cod_Barras = "756981H83";
 -- DELETES
 delete from factus_productos where FIngreso = "2023-04-23";
@@ -322,10 +323,14 @@ select almacen.Cod_Barras, factus_productos.FIngreso, almacen.Categoria, almacen
 select*from facturas_almacen;
 select*from factus_productos;
 select*from almacen;
-select factus_productos.Cod_Barras, factus_productos.Nfactura, factus_productos.Cantidad, factus_productos.FIngreso, facturas_almacen.Ffact, facturas_almacen.Proveedor from factus_productos inner join facturas_almacen on facturas_almacen.Num_Fact = factus_productos.Nfactura where Cod_Barras = 's';
+select almacen.Articulo, factus_productos.Nfactura, factus_productos.Cantidad, factus_productos.FIngreso, facturas_almacen.Ffact, facturas_almacen.Proveedor from factus_productos inner join facturas_almacen on facturas_almacen.Num_Fact = factus_productos.Nfactura inner join almacen on factus_productos.Cod_Barras = almacen.Cod_Barras where factus_productos.Cod_Barras = 's';
 select*from almacen where Cod_Barras = 'd' and eliminado = 1;
 update almacen set eliminado = 1 where Cod_Barras = 'd';
-select*from usuario;
+select*from usuario where Usuario = 'a' and Pass = '123';
+
+ALTER TABLE usuario CHANGE `User` `Usuario` nvarchar(45);
+
 insert into usuario values(
-3, "prueba", 123, "4dnM3k0nl9s");
+3, "a", '123', "4dnM3k0nl9s");
+delete from usuario where Num_Emp = 3;
 select*from empleado;
