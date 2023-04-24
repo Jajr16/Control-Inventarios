@@ -550,7 +550,7 @@ h5{
     background: linear-gradient(rgba(0, 67, 252, 0.4), rgba(255, 255, 255, 0.4));
     width: 40rem;
     max-width: 50rem;
-    max-height: 80rem;
+    max-height: 85rem;
     padding: 4rem 4rem;
     transition: all 0.3s ease 0s;
 }

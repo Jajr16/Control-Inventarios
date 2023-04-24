@@ -276,9 +276,9 @@ if (pathname == "/users/altasPro") {
 
     function EnviarReg(e) {
         e.preventDefault();
-        if ($("#NombreEmp").val() != "" && $("#AP").val() != "" && $("#AM").val() != "" && $("#Area").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
+        if ($("#NombreEmp").val() != "" && $("#AP").val() != "" && $("#AM").val() != "" && $("#Area").val() != "" && $("#NumJefe").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
         
-            socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), ApePat: $("#AP").val(), ApeMat: $("#AM").val(), Area: $("#Area").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
+            socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), ApePat: $("#AP").val(), ApeMat: $("#AM").val(), Area: $("#Area").val(), NumJefe: $("#NumJefe").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
 
             socket.on('Usuario_Existente', function (Respuesta) {
                 alert(Respuesta.mensaje);
