@@ -382,6 +382,23 @@ h5{
     color: rgb(104, 0, 22);
     transform: scale(1.1);
 }
+
+.BotonABE{
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background: linear-gradient(to top, #00f7ff, #008286);
+    color: rgb(212, 255, 248);
+    border-radius: 10%;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonABE:hover{
+    background: linear-gradient(to top, #00f7ff, #c8fbfd);
+    color: rgb(0, 53, 54);
+    transform: scale(1.1);
+}
+
 .BotonMod{
     text-decoration: none;
     padding: 0.5rem;
@@ -411,8 +428,8 @@ h5{
     text-decoration: none;
     padding: 0.5rem;
     text-align: center;
-    background: linear-gradient(to top, #fcbdc7, #fa0341);
-    color: rgb(112, 0, 43);
+    background: linear-gradient(to top, #bdfcf9, #00c7bd);
+    color: rgb(0, 58, 53);
     transition: all 0.3s ease 0s;
 }
 

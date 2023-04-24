@@ -178,20 +178,23 @@ io.on('connection', (socket) => {
     });
 
     // Cambios en productos existentes
-    socket.on('Altas_ProdExist', async (data, dataOld) => {
+    socket.on('Altas_ProdExist', async (data) => {
 
         //Se agrega productos a la BD
-        db.query('update almacen set Existencia = ? where Cod_Barras = ?', [data.Existencia], function (err2, result) {
+        db.query('insert into facturas_almacen values (?,?,?)', [data.NumFactura, data.FechaFac, data.Proveedor], function (err2, result) {
             if (err2) console.log("Error de inserción de productos: ", err2);
-
-            console.log("Resultado de inserción de productos: ", result);
-            console.log(data);
-            console.log(dataOld);
-
-            if (result.affectedRows > 0) {
-                socket.emit('Producto_Inexistente', { mensaje: 'Artículo modificado con éxito.' });//Mandar mensaje a cliente
+            
+            if (result) {
+                db.query('insert into Factus_Productos values (?,?,?,?)',[data.Cod_Barras, data.NumFactura, data.Cantidad, data.FecAct], function(err, result){
+                    console.log(result);
+                    if (result){
+                        socket.emit('Factura_Agregada', { mensaje: 'Factura agregada con éxito.' });//Mandar mensaje a cliente
+                    } else {
+                        socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura de productos." })
+                    }
+                });
             } else {
-                socket.emit('Fallo_Mod', { mensaje: "No se pudo modificar el artículo." })
+                socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura." })
             }
         });
     });
@@ -200,7 +203,7 @@ io.on('connection', (socket) => {
     socket.on('Bajas_ProdExist', async (data, dataOld) => {
 
         //Se agrega productos a la BD
-        db.query('update almacen set Existencia = ? where Cod_Barras = ?', [data.Existencia], function (err2, result) {
+        db.query('update almacen set Existencia = ?', [data.Existencia], function (err2, result) {
             if (err2) console.log("Error de inserción de productos: ", err2);
 
             console.log("Resultado de inserción de productos: ", result);

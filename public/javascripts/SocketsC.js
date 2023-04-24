@@ -302,132 +302,48 @@ if (pathname == "/users/altasPro") {
             </tr>
             `;
         }
-
     });
 
 
-        var filtro = $("#buscar").val().toUpperCase();
+    var filtro = $("#buscar").val().toUpperCase();
 
-        $("#DatosProd td").each(function () {
-            var textoEnTd = $(this).text().toUpperCase();
-            if (textoEnTd.indexOf(filtro) >= 0) {
-                $(this).addClass("existe");
-            } else {
-                $(this).removeClass("existe");
-            }
-        })
+    $("#DatosProd td").each(function () {
+        var textoEnTd = $(this).text().toUpperCase();
+        if (textoEnTd.indexOf(filtro) >= 0) {
+            $(this).addClass("existe");
+        } else {
+            $(this).removeClass("existe");
+        }
+    })
 
-        $("#DatosProd tbody tr").each(function () {
-            if ($(this).children(".existe").length > 0) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
-        })
+    $("#DatosProd tbody tr").each(function () {
+        if ($(this).children(".existe").length > 0) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    })
 
+}
+
+// Agregar producto existente
+const formProdExist = document.querySelector("#AltaExist");
+formProdExist.addEventListener("submit", EnviarAlta);
+
+function EnviarAlta(e) {
+    e.preventDefault();
+    if ($("#FecActu").val() != "" && $("#CantidadPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#FecFact").val() != "") {
+        socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActu").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFact").val() });
+
+        socket.on('Factura_Agregada', function (Respuesta) {
+            alert(Respuesta.mensaje);
+            location.reload();
+        });
+
+        socket.on('Fallo_Factura', function (Respuesta) {
+            alert(Respuesta.mensaje);
+            location.reload();
+        });
     }
+}
 
-    // Boton para altas existentes
-    socket.on('ButtonUp', () => {
-        let BotonMod = document.getElementsByClassName("BotonMod");
-
-        for (let i = 0; i < BotonMod.length; i++) {
-            BotonMod[i].addEventListener("click", obtenerValoresMod);
-        }
-
-        //Llenar datos en automático
-        var valores0 = "";
-
-
-        function obtenerValoresMod(e) {
-
-
-            var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
-            // recorremos cada uno de los elementos del array de elementos <td>
-            for (let i = 0; i < elementosTD.length; i++) {
-                // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                valores0 = elementosTD[6].innerHTML;
-            }
-
-            document.getElementById("Existencia").value = valores0;
-        }
-
-
-        // Cambios de productos
-        const FormMod = document.querySelector("#ModProduct");
-
-        // Cambios de productos
-        FormMod.addEventListener("submit", Enviar);
-
-        // Comprueba que no haya otro igual
-        function Enviar(e) {
-            
-            e.preventDefault();
-
-            if ($("#FCod_Barras").val() != "") {
-                socket.emit('Altas_ProdExist', {Existencia: (parseInt($("Existencia").val()))});
-
-                socket.on('Producto_Inexistente', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
-
-                socket.on('Fallo_Mod', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                });
-            }
-        }
-    });
-
-    // Boton para bajas existentes
-    socket.on('ButtonDelete', () => {
-        let BotonMod = document.getElementsByClassName("BotonER");
-
-        for (let i = 0; i < BotonMod.length; i++) {
-            BotonMod[i].addEventListener("click", obtenerValoresMod);
-        }
-
-        //Llenar datos en automático
-        var valores0 = "";
-
-
-        function obtenerValoresMod(e) {
-
-
-            var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
-            // recorremos cada uno de los elementos del array de elementos <td>
-            for (let i = 0; i < elementosTD.length; i++) {
-                // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                valores0 = elementosTD[6].innerHTML;
-            }
-
-            document.getElementById("Existencia").value = valores0;
-        }
-
-
-        // Cambios de productos
-        const FormMod = document.querySelector("#ModProduct");
-
-        // Cambios de productos
-        FormMod.addEventListener("submit", Enviar);
-
-        // Comprueba que no haya otro igual
-        function Enviar(e) {
-            
-            e.preventDefault();
-
-            if ($("#FCod_Barras").val() != "" && $("#Existencia").val() != "" && $("#Existencia").val() != 0) {
-                socket.emit('Bajas_ProdExist', {Existencia: (parseInt($("Existencia").val()))});
-
-                socket.on('Producto_Inexistente', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
-
-                socket.on('Fallo_Mod', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                });
-            }
-        }
-    });
- 
