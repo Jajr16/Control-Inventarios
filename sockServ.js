@@ -60,37 +60,30 @@ io.on('connection', (socket) => {
         db.query('select almacen.Articulo, factus_productos.Nfactura, factus_productos.Cantidad, factus_productos.FIngreso, facturas_almacen.Ffact, facturas_almacen.Proveedor from factus_productos inner join facturas_almacen on facturas_almacen.Num_Fact = factus_productos.Nfactura inner join almacen on factus_productos.Cod_Barras = almacen.Cod_Barras where factus_productos.Cod_Barras = ?', data, function (err, result) {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
+                let FecFactura = [];
+                let NumFactu = [];
+                let Canti = [];
+                let FIngre = [];
+                let Prove = [];
+
                 for (var i = 0; i < result.length; i++) {
                     var FechasIngresos = new Date(result[i].FIngreso);
                     var Fecha_Factura = new Date(result[i].Ffact);
+                    //Agregar datos al arreglo
+                    FecFactura.push(Fecha_Factura.toISOString().slice(0, 10));
+                    NumFactu.push(result[i].Nfactura);
+                    Canti.push(result[i].Cantidad);
+                    FIngre.push(FechasIngresos.toISOString().slice(0, 10));
+                    Prove.push(result[i].Proveedor);
 
-                    socket.emit("Fact_Enviadas", { NomProd: result[i].Articulo, NFactura: result[i].Nfactura, Cantidad: result[i].Cantidad, FIngreso: FechasIngresos.toISOString().slice(0, 10), FFactura: Fecha_Factura.toISOString().slice(0, 10), Proveedor: result[i].Proveedor });
                 }
+                socket.emit("Fact_Enviadas", { NomProd: result[0].Articulo, NFactura: NumFactu, Cantidad: Canti, FIngreso: FIngre, FFactura: FecFactura, Proveedor: Prove });
+
                 socket.emit("BotonModalFacturas");
             } else {
                 socket.emit("Facturas_Vacias", "No se encontraron facturas");
             }
         });
-
-        // let FecFactura = [];
-        //         let NumFactu = [];
-        //         let Canti = [];
-        //         let FIngre = [];
-        //         let Prove = [];
-
-        //         for (var i = 0; i < result.length; i++) {
-        //             var FechasIngresos = new Date(result[i].FIngreso);
-        //             var Fecha_Factura = new Date(result[i].Ffact);
-        //             //Agregar datos al arreglo
-        //             FecFactura.push(Fecha_Factura.toISOString().slice(0, 10));
-        //             NumFactu.push(result[i].Nfactura);
-        //             Canti.push(result[i].Cantidad);
-        //             FIngre.push(FechasIngresos.toISOString().slice(0, 10));
-        //             Prove.push(result[i].Proveedor);
-
-        //         }
-        //         socket.emit("Fact_Enviadas", { NomProd: result[0].Articulo, NFactura: NumFactu, Cantidad: Canti, FIngreso: FIngre, FFactura: FecFactura, Proveedor: Prove });
-
     });
 
     // Altas de productos
@@ -275,10 +268,10 @@ io.on('connection', (socket) => {
     // Bajas en productos existentes
     socket.on('Bajas_ProdExist', async (data) => {
         db.query('select Existencia from almacen where Cod_Barras = ?', [data.Cod_Barras], function (err, result) {
-            
+
             if (err) console.log("Error de eliminación de productos: ", err);
-            if (result.length > 0) { 
-                if(parseInt(result[0].Existencia) > 0 && parseInt(data.Cantidad) <= parseInt(result[0].Existencia)){
+            if (result.length > 0) {
+                if (parseInt(result[0].Existencia) > 0 && parseInt(data.Cantidad) <= parseInt(result[0].Existencia)) {
                     db.query('update almacen set Existencia = ? where Cod_Barras = ?', [(parseInt(result[0].Existencia) - parseInt(data.Cantidad)), data.Cod_Barras], function (err2, result) {
                         if (err2) console.log("Error de inserción de productos: ", err2);
                         if (result.affectedRows > 0) {
