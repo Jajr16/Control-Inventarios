@@ -624,7 +624,7 @@ h5{
 
 /* RESPONSIVE PÁGINA INICIO */
 @media screen and (max-width:880px) {
-    .Dos_Column a {
+    .Dos_Column a{
         display: block;
         margin: 1rem;
     }
@@ -633,10 +633,33 @@ h5{
         display: block;
         width: 100%;
     }
+
+    .Cuatro_Column a{
+        display: flex;
+        width: 100%;
+        justify-content: center
+    }
+
+    .Cuatro_Column div{
+        display: block;
+        width: 100%;
+    }
+}
+
+
+@media screen and (max-width:665px){
+    .Cuatro_Column{
+        display: block;
+        width: 100%;
+    }
 }
 
 @media screen and (max-width:475px){
     .Dos_Column{
+        display: block;
+    }
+
+    .Cuatro_Column{
         display: block;
     }
 
