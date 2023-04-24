@@ -172,20 +172,35 @@ if (pathname == "/users/altasPro") {
 
                 Titulotable.innerHTML = `Modificar facturas del artículo '${valores2}'`;
                 //Se imprimen todos los productos
-                socket.on("Fact_Enviadas", (data) => {
-                    document.querySelector("#DatosFacturas tbody").innerHTML += `
-                        <tr>           
-                            <td id="FIngresoV">${data.FIngreso}</td>
-                            <td id="CantidadV">${data.Cantidad}</td>
-                            <td id="NFactV">${data.NFactura}</td>
-                            <td id="FFacturaV">${data.FFactura}</td>
-                            <td id="ProveedorV">${data.Proveedor}</td>
-                            <td onclick="Abrir2()" class="BotonModF BotonModifyF">Modificar</td>                           
-                        </tr> 
-                    `;
-
-                });
             });
+
+            socket.on("Fact_Enviadas", (data) => {
+                document.querySelector("#DatosFacturas tbody").innerHTML += `
+                    <tr>           
+                        <td id="FIngresoV">${data.FIngreso}</td>
+                        <td id="CantidadV">${data.Cantidad}</td>
+                        <td id="NFactV">${data.NFactura}</td>
+                        <td id="FFacturaV">${data.FFactura}</td>
+                        <td id="ProveedorV">${data.Proveedor}</td>
+                        <td onclick="Abrir2()" class="BotonModF BotonModifyF">Modificar</td>                           
+                    </tr> 
+                `;
+
+            });
+
+            // socket.on("Fact_Enviadas", (data) => {
+            //     document.querySelector("#DatosFacturas tbody").innerHTML += `
+            //         <tr>           
+            //             <td id="FIngresoV">${data.FIngreso.pop()}</td>
+            //             <td id="CantidadV">${data.Cantidad.pop()}</td>
+            //             <td id="NFactV">${data.NFactura.pop()}</td>
+            //             <td id="FFacturaV">${data.FFactura.pop()}</td>
+            //             <td id="ProveedorV">${data.Proveedor.pop()}</td>
+            //             <td onclick="Abrir2()" class="BotonModF BotonModifyF">Modificar</td>                           
+            //         </tr> 
+            //     `;
+
+            // });
 
             socket.on("BotonModalFacturas", () => {
 

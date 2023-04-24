@@ -43,6 +43,7 @@ io.on('connection', (socket) => {
             if (result.length > 0) {//Si sí hizo una búsqueda
                 for (var i = 0; i < result.length; i++) {
                     //FIngreso: FechasIngresos.toISOString().slice(0, 10),
+
                     socket.emit('Desp_Productos', { Cod_Barras: result[i].Cod_Barras, Categoria: result[i].Categoria, NArt: result[i].Articulo, NMarca: result[i].Marca, Desc: result[i].Descripcion, Unidad: result[i].Unidad, Existencia: result[i].Existencia, eliminado: result[i].eliminado });//Mandar usuario y token al cliente
                 }
                 socket.emit('ButtonDelete');
@@ -62,9 +63,6 @@ io.on('connection', (socket) => {
                 for (var i = 0; i < result.length; i++) {
                     var FechasIngresos = new Date(result[i].FIngreso);
                     var Fecha_Factura = new Date(result[i].Ffact);
-                    //Arreglo para cada variable
-                    let FechaIng = [];
-                    let Cantidad = [];
 
                     socket.emit("Fact_Enviadas", { NomProd: result[i].Articulo, NFactura: result[i].Nfactura, Cantidad: result[i].Cantidad, FIngreso: FechasIngresos.toISOString().slice(0, 10), FFactura: Fecha_Factura.toISOString().slice(0, 10), Proveedor: result[i].Proveedor });
                 }
@@ -73,6 +71,26 @@ io.on('connection', (socket) => {
                 socket.emit("Facturas_Vacias", "No se encontraron facturas");
             }
         });
+
+        // let FecFactura = [];
+        //         let NumFactu = [];
+        //         let Canti = [];
+        //         let FIngre = [];
+        //         let Prove = [];
+
+        //         for (var i = 0; i < result.length; i++) {
+        //             var FechasIngresos = new Date(result[i].FIngreso);
+        //             var Fecha_Factura = new Date(result[i].Ffact);
+        //             //Agregar datos al arreglo
+        //             FecFactura.push(Fecha_Factura.toISOString().slice(0, 10));
+        //             NumFactu.push(result[i].Nfactura);
+        //             Canti.push(result[i].Cantidad);
+        //             FIngre.push(FechasIngresos.toISOString().slice(0, 10));
+        //             Prove.push(result[i].Proveedor);
+
+        //         }
+        //         socket.emit("Fact_Enviadas", { NomProd: result[0].Articulo, NFactura: NumFactu, Cantidad: Canti, FIngreso: FIngre, FFactura: FecFactura, Proveedor: Prove });
+
     });
 
     // Altas de productos
