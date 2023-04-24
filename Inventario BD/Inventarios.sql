@@ -252,6 +252,9 @@ COMMIT;
 -- -----------------------------------------------------
 -- Data for table `Inventarios`.`Responsivas_M`
 -- -----------------------------------------------------
+
+insert into empleado values (758,"armando","Jimenez", "Rivera", "Administracion", 758),(3,"Martha Lidia", "Navarro", "Jimenez", "Direccion general adjunta", 758);
+
 START TRANSACTION;
 USE `Inventarios`;
 INSERT INTO `Inventarios`.`Responsivas_M` (`Num_Emp`, `Num_Inventario`) VALUES (758, 2);
@@ -276,13 +279,14 @@ Nfactura nvarchar(10) not null,
  constraint cPFPS primary key(Cod_Barras, Nfactura)
 );
 
+
 alter table almacen add constraint FK_NFact foreign key(NFact) references facturas_almacen(Num_Fact);
 alter table almacen drop constraint FK_NFact;
 alter table Factus_Productos add constraint FK_CBA foreign key(Cod_Barras) references almacen(Cod_Barras);
 alter table Factus_Productos add constraint FK_NDFA foreign key(Nfactura) references facturas_almacen(Num_Fact);
 
 
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'n0m3l0';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Bocchi26##';
 flush privileges;
 
 create unique index LDRecom on almacen(Cod_Barras);
@@ -310,7 +314,7 @@ alter table facturas_almacen drop column FIngreso;
 -- Agregar columnas
 alter table factus_productos add column Cantidad int;
 alter table facturas_almacen add column Ffact date;
-alter table facturas_almacen add column Proveedor nvarchar(45);
+alter table factus_productos add column Proveedor nvarchar(45);
 alter table almacen add column eliminado TINYINT(1) not null default 0;
 alter table factus_productos add column FIngreso date;
 -- Busquedas
@@ -331,6 +335,6 @@ select*from usuario where Usuario = 'a' and Pass = '123';
 ALTER TABLE usuario CHANGE `User` `Usuario` nvarchar(45);
 
 insert into usuario values(
-3, "a", '123', "4dnM3k0nl9s");
+758, "armando", "clarac", "4dnM3k0nl9w");
 delete from usuario where Num_Emp = 3;
 select*from empleado;
