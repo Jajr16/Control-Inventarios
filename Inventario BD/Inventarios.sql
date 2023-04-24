@@ -301,7 +301,7 @@ update almacen set Existencia = 10 where Cod_Barras = 'b';
 delete from almacen where Cod_Barras = "756981H83";
 -- DELETES
 delete from factus_productos where FIngreso = "2023-04-24";
-delete from facturas_almacen where Ffact = "2023-04-23";
+delete from facturas_almacen where Ffact = "2023-04-24";
 delete from almacen where eliminado = 1;
 -- Quitar columnas
 alter table facturas_almacen drop column Cod_Barras;

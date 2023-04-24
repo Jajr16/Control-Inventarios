@@ -316,6 +316,25 @@ h5{
     transform: scale(1.1);
 }
 
+.BotonAEB{
+    text-decoration: none;
+    width: 100%;
+    border: none;
+    margin-bottom: 2rem;
+    text-align: center;
+    background: linear-gradient(to right, #003afa, #3056ff);
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.3s ease 0s;
+    
+}
+
+.BotonAEB:hover{
+    background: linear-gradient(to right, #3056ff, #c8d2fd);
+    transform: scale(1.1);
+}
+
 .BotonAA{
     width: 32rem;
     border: none;
