@@ -351,6 +351,26 @@ h5{
     transform: scale(1.1);
 }
 
+.BotonCancelar{
+    text-decoration: none;
+    width: 32rem;
+    border: none;
+    margin-bottom: 2rem;
+    text-align: center;
+    background: linear-gradient(to top, #f3647c, #d80036);
+    color: rgb(70, 34, 0);
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonCancelar:hover{
+    background: linear-gradient(to top, #f3647c, #ffd6dd);
+    color: rgb(104, 0, 22);
+    transform: scale(1.1);
+}
+
 .BotonReg{
     text-decoration: none;
     width: 32rem;

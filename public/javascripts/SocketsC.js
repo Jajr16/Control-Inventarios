@@ -272,6 +272,8 @@ if (pathname == "/users/altasPro") {
 
     var valores0 = "";
     var valores1 = "";
+    var valores0E = "";
+    var valores2E = "";
 
     socket.emit("Consul_ProdExist");
     // Consulta de productos
@@ -301,7 +303,7 @@ if (pathname == "/users/altasPro") {
                 <td id="UnidadP">${data.Unidad}</td>
                 <td id="Existencia">${data.Existencia}</td>
                 <td id="Agregar" class="BotonMod"> Añadir producto existente </td>
-                <td id="Eliminar" class="BotonER"> Elimnar producto existente </td>
+                <td id="Eliminar" class="BotonER" onclick="Abrir1()"> Elimnar producto existente </td>
             </tr>
             `;
         }
@@ -360,16 +362,18 @@ if (pathname == "/users/altasPro") {
 
             for (let i = 0; i < elementosTD.length; i++) {
                 // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                valores0 = elementosTD[0].innerHTML;
-                valores1 = elementosTD[6].innerHTML;
+                valores0E = elementosTD[0].innerHTML;
+                valores2E = elementosTD[2].innerHTML;
             }
+
+            document.querySelector("#TituloEliminar").innerHTML = `¿Cuántos productos de "${valores2E}" desea sacar?`;
 
             const formProdExistBaja = document.querySelector("#BajaExist");
             formProdExistBaja.addEventListener("submit", EnviarBaja);
             function EnviarBaja(e) {
                 e.preventDefault();
-                if ($("#Cod_BarrasM").val() != "" && $("#CantidadPM").val() != "" && $("#Existencia").val() != "") {
-                    socket.emit('Bajas_ProdExist', { Cod_Barras: valores0, Cantidad: $("#CantidadPM").val(), Existencia: valores1 });
+                if ($("#CantidadP").val() != "") {
+                    socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val()});
 
                     socket.on('Eliminacion_Realizada', function (Respuesta) {
                         alert(Respuesta.mensaje);

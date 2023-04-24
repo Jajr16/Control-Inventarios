@@ -127,28 +127,35 @@
     </div>
 
     <div class="Contenedor_Modal ContMod1">
-        <div class="modal modal1-close mod1 modC1">
+        <div class="modal1 modal1-close mod1 modC1">
             <div class="header-modal">
                 <p class="close title_modal" onclick="Cerrar1()">X</p>
             </div>
             <div>
-                <table id="DatosFacturas">
-                    <caption id="title_table"></caption>
-                    <thead>
-                        <tr id="firstrow">
-                            <th>Fecha de ingreso</th>
-                            <th>Cantidad</th>
-                            <th>Número Factura</th>
-                            <th>Fecha de factura</th>
-                            <th>Proveedor</th>
-                            <th>Modificar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <input type="text" id="buscar" onkeyup="buscar()" placeholder="Buscar en tabla"
+                            title="Empieza a escribir para buscar">
+                        <table id="DatosFacturas">
+                            <caption id="title_table"></caption>
+                            <thead>
+                                <tr id="firstrow">
+                                    <th>Fecha de ingreso</th>
+                                    <th>Cantidad</th>
+                                    <th>Número Factura</th>
+                                    <th>Fecha de factura</th>
+                                    <th>Proveedor</th>
+                                    <th>Modificar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
     </div>
 
     <div class="Contenedor_Modal ContMod2">

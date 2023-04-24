@@ -16,7 +16,7 @@
     <link rel='stylesheet' href='/stylesheets/general.css' />
     <link rel='stylesheet' href='/stylesheets/consultas.css' />
     <link rel='stylesheet' href='/stylesheets/modal.css' />
-
+    <link rel='stylesheet' href='/stylesheets/modal2.css' />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script src="/socket.io/socket.io.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css">
@@ -115,10 +115,32 @@
             </div>
         </div>
     </div>
+
+    <div class="Contenedor_Modal ContMod1">
+        <div class="modal modal1-close mod1 modC1">
+            <div class="header-modal">
+                <h5 id="TituloEliminar" style="padding-bottom: 1rem;"></h5>
+                <p class="close title_modal" onclick="Cerrar1()">X</p>
+            </div>
+            <div style="width: 80%;">
+                <form id="BajaExist" name="BajaExist">
+                    <div class="Dos_Column">
+                        <input autocomplete="off" type="number" id="CantidadP" name="CantidadP" required min="1">
+                    </div>
+                    <div class="Dos_Columnas">
+                        <input type="submit" class="BotonAE">
+                        <input type="button" class="BotonCancelar" onclick="Cerrar1()" value="Cancelar">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </body>
 <script src="/javascripts/SocketsC.js" type="text/javascript"></script>
 <script src='https://s3.amazonaws.com/popmotion.io/static/dist/popmotion.min.js'></script>
 <script src="/javascripts/modalAltProd.js" type="text/javascript"></script>
+<script src="/javascripts/Modal2.js" type="text/javascript"></script>
 <script src="/javascripts/FechaActual.js" type="text/javascript"></script>
 
 </html>

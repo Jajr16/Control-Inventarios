@@ -41,10 +41,8 @@ io.on('connection', (socket) => {
         db.query('select *from almacen order by eliminado', function (err, result) {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
-                console.log(result);
                 for (var i = 0; i < result.length; i++) {
                     //FIngreso: FechasIngresos.toISOString().slice(0, 10),
-
                     socket.emit('Desp_Productos', { Cod_Barras: result[i].Cod_Barras, Categoria: result[i].Categoria, NArt: result[i].Articulo, NMarca: result[i].Marca, Desc: result[i].Descripcion, Unidad: result[i].Unidad, Existencia: result[i].Existencia, eliminado: result[i].eliminado });//Mandar usuario y token al cliente
                 }
                 socket.emit('ButtonDelete');
@@ -64,6 +62,9 @@ io.on('connection', (socket) => {
                 for (var i = 0; i < result.length; i++) {
                     var FechasIngresos = new Date(result[i].FIngreso);
                     var Fecha_Factura = new Date(result[i].Ffact);
+                    //Arreglo para cada variable
+                    let FechaIng = [];
+                    let Cantidad = [];
 
                     socket.emit("Fact_Enviadas", { NomProd: result[i].Articulo, NFactura: result[i].Nfactura, Cantidad: result[i].Cantidad, FIngreso: FechasIngresos.toISOString().slice(0, 10), FFactura: Fecha_Factura.toISOString().slice(0, 10), Proveedor: result[i].Proveedor });
                 }
@@ -143,10 +144,6 @@ io.on('connection', (socket) => {
         db.query('update almacen set Cod_Barras = ?, Categoria = ?, Articulo = ?, Marca = ?, Descripcion = ?, Unidad = ? where Cod_Barras = ?', [data.CodBarras, data.Cate, data.Producto, data.Marca, data.Descripcion, data.Unidad, dataOld.CBO], function (err2, result) {
             if (err2) console.log("Error de inserción de productos: ", err2);
 
-            console.log("Resultado de inserción de productos: ", result);
-            console.log(data);
-            console.log(dataOld);
-
             if (result.affectedRows > 0) {
                 socket.emit('Producto_Inexistente', { mensaje: 'Artículo modificado con éxito.' });//Mandar mensaje a cliente
             } else {
@@ -184,7 +181,6 @@ io.on('connection', (socket) => {
         db.query('select *from almacen order by eliminado', function (err, result) {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
-                console.log(result);
                 for (var i = 0; i < result.length; i++) {
                     //FIngreso: FechasIngresos.toISOString().slice(0, 10),
 
@@ -264,17 +260,17 @@ io.on('connection', (socket) => {
             
             if (err) console.log("Error de eliminación de productos: ", err);
             if (result.length > 0) { 
-                if(data.Existencia > 0 && data.Cantidad <= data.Existencia){
-                    db.query('update almacen set Existencia = ? where Cod_Barras = ?', [(parseInt(data.Existencia) - parseInt(data.Cantidad)), data.Cod_Barras], function (err2, result1) {
+                if(parseInt(result[0].Existencia) > 0 && parseInt(data.Cantidad) <= parseInt(result[0].Existencia)){
+                    db.query('update almacen set Existencia = ? where Cod_Barras = ?', [(parseInt(result[0].Existencia) - parseInt(data.Cantidad)), data.Cod_Barras], function (err2, result) {
                         if (err2) console.log("Error de inserción de productos: ", err2);
                         if (result.affectedRows > 0) {
-                            socket.emit('Eliminacion_Realizada', { mensaje: 'Eliminación realizada con éxito.' });//Mandar mensaje a cliente
+                            socket.emit('Eliminacion_Realizada', { mensaje: 'Productos sacados con éxito.' });//Mandar mensaje a cliente
                         } else {
                             socket.emit('Fallo_BajasExist', { mensaje: "No se pudo actualizar la existencia de productos." })
                         }
                     });
                 } else {
-                    socket.emit('Fallo_BajasExist', { mensaje: "Cantidad de productos a eliminar superior a existencia." })
+                    socket.emit('Fallo_BajasExist', { mensaje: "Cantidad de productos a sacar superior a existencia." })
                 }
             }
         });
