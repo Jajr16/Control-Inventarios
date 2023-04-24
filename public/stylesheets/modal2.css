@@ -40,6 +40,10 @@
     transform: translateY(-200%);
 }
 
+.modal2-close{
+    transform: translateY(-200%);
+}
+
 .close{
     position: absolute;
     top: 5px;

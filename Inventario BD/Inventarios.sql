@@ -293,6 +293,7 @@ alter table usuario add column token int not null default 0;
 alter table usuario modify token nvarchar(20);
 
 update usuario set token = "4dnM3k0nl9z" where User = "armando";
+update almacen set Existencia = 10 where Cod_Barras = 'b';
 delete from almacen where Cod_Barras = "756981H83";
 -- DELETES
 delete from factus_productos where FIngreso = "2023-04-23";
@@ -308,7 +309,7 @@ alter table facturas_almacen drop column Cantidad;
 alter table facturas_almacen drop column FIngreso;
 -- Agregar columnas
 alter table factus_productos add column Cantidad int;
-alter table facturas_almacen add column FIngreso date;
+alter table facturas_almacen add column Ffact date;
 alter table facturas_almacen add column Proveedor nvarchar(45);
 alter table almacen add column eliminado TINYINT(1) not null default 0;
 alter table factus_productos add column FIngreso date;
@@ -317,10 +318,19 @@ alter table factus_productos add column FIngreso date;
 -- almacen.Cod_Barras, almacen.FIngreso, almacen.Categoria, almacen.Articulo, almacen.Marca, almacen.Descripcion, almacen.Proveedor, almacen.NFact
 select*from usuario where User = "armando" and Pass = "clarac";
 
+select *from almacen order by eliminado;
 select almacen.Cod_Barras, factus_productos.FIngreso, almacen.Categoria, almacen.Articulo, almacen.Marca, almacen.Descripcion, almacen.Unidad, almacen.Existencia, facturas_almacen.Proveedor, facturas_almacen.Num_Fact, facturas_almacen.Ffact, almacen.eliminado from factus_productos inner join almacen on factus_productos.Cod_Barras = almacen.Cod_Barras inner join facturas_almacen on factus_productos.Nfactura = facturas_almacen.Num_Fact  order by almacen.eliminado;
 select*from facturas_almacen;
-select*from almacen;
 select*from factus_productos;
+select*from almacen;
+select almacen.Articulo, factus_productos.Nfactura, factus_productos.Cantidad, factus_productos.FIngreso, facturas_almacen.Ffact, facturas_almacen.Proveedor from factus_productos inner join facturas_almacen on facturas_almacen.Num_Fact = factus_productos.Nfactura inner join almacen on factus_productos.Cod_Barras = almacen.Cod_Barras where factus_productos.Cod_Barras = 's';
 select*from almacen where Cod_Barras = 'd' and eliminado = 1;
 update almacen set eliminado = 1 where Cod_Barras = 'd';
-select*from usuario;
+select*from usuario where Usuario = 'a' and Pass = '123';
+
+ALTER TABLE usuario CHANGE `User` `Usuario` nvarchar(45);
+
+insert into usuario values(
+3, "a", '123', "4dnM3k0nl9s");
+delete from usuario where Num_Emp = 3;
+select*from empleado;
