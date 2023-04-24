@@ -331,12 +331,6 @@ if (pathname == "/users/altasPro") {
         var valores1 = "";
         var valores2 = "";
         var valores3 = "";
-        var valores4 = "";
-        var valores5 = "";
-        var valores6 = "";
-        var valores7 = "";
-        var valores9 = "";
-        var valores10 = "";
 
         function obtenerValoresMod(e) {
 
