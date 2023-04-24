@@ -270,9 +270,11 @@ if (pathname == "/users/altasPro") {
     });
 } else if (pathname == "/users/ABPE") {
 
-    socket.emit("Consul_Prod");
+    var valores0 = "";
+
+    socket.emit("Consul_ProdExist");
     // Consulta de productos
-    socket.on('Desp_Productos', async (data) => {
+    socket.on('Desp_ProductosExist', async (data) => {
         console.log('Datos recibidos:', data.Cod_Barras);
 
         if (data.eliminado == 1) {
@@ -304,6 +306,42 @@ if (pathname == "/users/altasPro") {
         }
     });
 
+    // Agregar producto existente
+    socket.on('AgregarProdExist', async () => {
+        let AgregarProdExist = document.getElementsByClassName("BotonMod");
+
+        for (let i = 0; i < AgregarProdExist.length; i++) {
+            AgregarProdExist[i].addEventListener("click", exist);
+        }
+        function exist(e) {
+            var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+
+            for (let i = 0; i < elementosTD.length; i++) {
+                // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                valores0 = elementosTD[0].innerHTML;
+            }
+            const formProdExist = document.querySelector("#AltaExist");
+            formProdExist.addEventListener("submit", EnviarAlta);
+
+            function EnviarAlta(e) {
+                e.preventDefault();
+                if ($("#FecActu").val() != "" && $("#CantidadPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#FecFact").val() != "") {
+                    socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActu").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFact").val() });
+
+                    socket.on('Factura_Agregada', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+
+                    socket.on('Fallo_Factura', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+                }
+            }
+        }
+    });
+
 
     var filtro = $("#buscar").val().toUpperCase();
 
@@ -316,34 +354,13 @@ if (pathname == "/users/altasPro") {
         }
     })
 
-    $("#DatosProd tbody tr").each(function () {
-        if ($(this).children(".existe").length > 0) {
-            $(this).show();
-        } else {
-            $(this).hide();
-        }
-    })
-
-}
-
-// Agregar producto existente
-const formProdExist = document.querySelector("#AltaExist");
-formProdExist.addEventListener("submit", EnviarAlta);
-
-function EnviarAlta(e) {
-    e.preventDefault();
-    if ($("#FecActu").val() != "" && $("#CantidadPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#FecFact").val() != "") {
-        socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActu").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFact").val() });
-
-        socket.on('Factura_Agregada', function (Respuesta) {
-            alert(Respuesta.mensaje);
-            location.reload();
-        });
-
-        socket.on('Fallo_Factura', function (Respuesta) {
-            alert(Respuesta.mensaje);
-            location.reload();
-        });
+        $("#DatosProd tbody tr").each(function () {
+            if ($(this).children(".existe").length > 0) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        })
     }
-}
+
 

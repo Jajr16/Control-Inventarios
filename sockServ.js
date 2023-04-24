@@ -177,16 +177,39 @@ io.on('connection', (socket) => {
 
     });
 
+    // Consultas de productos existentes
+    socket.on('Consul_ProdExist', async () => {
+        
+        // Autenticar que haga las consultas
+        db.query('select *from almacen order by eliminado', function (err, result) {
+            if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
+            if (result.length > 0) {//Si sí hizo una búsqueda
+                console.log(result);
+                for (var i = 0; i < result.length; i++) {
+                    //FIngreso: FechasIngresos.toISOString().slice(0, 10),
+
+                    socket.emit('Desp_ProductosExist', { Cod_Barras: result[i].Cod_Barras, Categoria: result[i].Categoria, NArt: result[i].Articulo, NMarca: result[i].Marca, Desc: result[i].Descripcion, Unidad: result[i].Unidad, Existencia: result[i].Existencia, eliminado: result[i].eliminado });//Mandar usuario y token al cliente
+                }
+                socket.emit('AgregarProdExist');
+            } else {
+                socket.emit('Productos_Inexistentes', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
+            }
+            result.length = 0;
+        });
+
+    });
+
     // Cambios en productos existentes
     socket.on('Altas_ProdExist', async (data) => {
-
+        
         //Se agrega productos a la BD
         db.query('insert into facturas_almacen values (?,?,?)', [data.NumFactura, data.FechaFac, data.Proveedor], function (err2, result) {
             if (err2) console.log("Error de inserción de productos: ", err2);
             
             if (result) {
+                console.log(data);
+                
                 db.query('insert into Factus_Productos values (?,?,?,?)',[data.Cod_Barras, data.NumFactura, data.Cantidad, data.FecAct], function(err, result){
-                    console.log(result);
                     if (result){
                         socket.emit('Factura_Agregada', { mensaje: 'Factura agregada con éxito.' });//Mandar mensaje a cliente
                     } else {
@@ -195,25 +218,6 @@ io.on('connection', (socket) => {
                 });
             } else {
                 socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura." })
-            }
-        });
-    });
-
-    // Cambios en productos existentes
-    socket.on('Bajas_ProdExist', async (data, dataOld) => {
-
-        //Se agrega productos a la BD
-        db.query('update almacen set Existencia = ?', [data.Existencia], function (err2, result) {
-            if (err2) console.log("Error de inserción de productos: ", err2);
-
-            console.log("Resultado de inserción de productos: ", result);
-            console.log(data);
-            console.log(dataOld);
-
-            if (result.affectedRows > 0) {
-                socket.emit('Producto_Inexistente', { mensaje: 'Artículo modificado con éxito.' });//Mandar mensaje a cliente
-            } else {
-                socket.emit('Fallo_Mod', { mensaje: "No se pudo modificar el artículo." })
             }
         });
     });
