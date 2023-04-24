@@ -96,4 +96,8 @@ router.get('/ABME', function (req, res, next) {
 });
 /*** Termina añadir o borrar registros existentes ***/
 
+// Usuario nuevo
+router.get('/RegistrarUsuario', function (req, res, next) {
+  res.render('RegistrarUsuario', { title: 'Crear nuevo usuario' });
+});
 module.exports = router;
