@@ -1,6 +1,6 @@
 localStorage.clear();
         console.log(localStorage.getItem("token"));
-        var socket = io.connect("http://192.168.1.66:3000");
+        var socket = io.connect("http://localhost:3000");
         const InicioSesion = document.querySelector("#Formulario");
 
         InicioSesion.addEventListener('submit', (e) => {

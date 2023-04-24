@@ -1,5 +1,5 @@
 console.log(localStorage.getItem("token"));
-var socket = io.connect("http://192.168.1.66:3000");
+var socket = io.connect("http://localhost:3000");
 
 var pathname = window.location.pathname;
 
@@ -267,9 +267,43 @@ if (pathname == "/users/altasPro") {
                 });
             }
         }
-
-
     });
+} else if (pathname == "/users/RegistrarUsuario") {
+    const FormRegistro = document.querySelector("#Registro");
 
+    // Registro de usuario
+    FormRegistro.addEventListener("submit", EnviarReg);
 
-} 
+    function EnviarReg(e) {
+        e.preventDefault();
+        if ($("#NombreEmp").val() != "" && $("#AP").val() != "" && $("#AM").val() != "" && $("#Area").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
+            socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), ApePat: $("#AP").val(), ApeMat: $("#AM").val(), Area: $("#Area").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
+
+            socket.on('Usuario_Existente', function (Respuesta) {
+                alert(Respuesta.mensaje);
+            });
+
+            socket.on('Empleado_Existente', function (Respuesta) {
+                alert(Respuesta.mensaje);
+            });
+
+            socket.on('Usuario_Agregado', function (Respuesta) {
+                alert(Respuesta.mensaje);
+                location.reload();
+            });
+
+            socket.on('Usuario_Error', function (Respuesta) {
+                alert(Respuesta.mensaje);
+                location.reload();
+            });
+
+            socket.on('Empleado_Agregado', function (Respuesta) {
+                alert(Respuesta.mensaje);
+            });
+
+            socket.on('Empleado_Error', function (Respuesta) {
+                alert(Respuesta.mensaje);
+            });
+        }
+    }
+}

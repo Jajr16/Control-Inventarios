@@ -81,4 +81,8 @@ router.get('/cambiosPro', function (req, res, next) {
 });
 /*** Finaliza cambios ***/
 
+// Usuario nuevo
+router.get('/RegistrarUsuario', function (req, res, next) {
+  res.render('RegistrarUsuario', { title: 'Crear nuevo usuario' });
+});
 module.exports = router;

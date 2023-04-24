@@ -163,7 +163,7 @@ io.on('connection', (socket) => {
                 db.query('update Facturas_Almacen set Num_Fact = ?, Ffact = ?, Proveedor = ? where Num_Fact = ?', [data.NumFactura, data.FechaFac, data.Proveedor, dataOld.NFO], function (err1, result) {//Insertar factura
                     if (err1) console.log("Error en inserción de facturas: ", err1);
                     if (result.affectedRows > 0) {
-                        socket.emit("Factu_Exitosa", {mensaje: "La factura fue modificada con éxito."});
+                        socket.emit("Factu_Exitosa", { mensaje: "La factura fue modificada con éxito." });
                     } else {
                         socket.emit('Fallo_Fac', { mensaje: "No se pudo modificar la factura." })
                     }
@@ -172,10 +172,55 @@ io.on('connection', (socket) => {
                 socket.emit('Fallo_ModFac', { mensaje: "No se pudo modificar la factura de almacen." })
             }
         });
-
-
     });
 
+    // Altas de Usuarios
+    socket.on('Registro_Usuario', async (data) => {
+        //Autentificar que no exista un usuario igual
+        db.query('select*from Empleado where Nom = ? and AP = ? and AM = ?', [data.NombreEmp, data.ApePat, data.ApeMat], function (err, result) {
+
+            if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
+
+            if (result.length > 0) {//Si sí hizo una búsqueda
+                socket.emit('Usuario_Existente', { mensaje: "Este empleado ya está registrado." });
+            } else {
+
+                if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
+
+                if (result.length > 0) {//Si sí hizo una búsqueda
+                    db.query('select*from Usuario where User = ?', [data.N_User], function (err, result) {
+                        
+                        if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
+
+                        if (result.length > 0) {//Si sí hizo una búsqueda
+                            socket.emit('Usuario_Existente', { mensaje: "Este usuario ya está registrado." });
+                        }
+                    });
+                } else {
+                    db.query('insert into Empleado values (?,?,?,?)',[data.NombreEmp, data.ApePat, data.ApeMat, data.Area],function (err, result){
+                    
+                    if (err) console.log("Error de inserción de Empleados: ", err);
+                    if (result) {
+                        console.log("Resultado de inserción de Empleados: ", result);
+                        socket.emit('Empleado_Agregado', { mensaje: "Empleado agrregado con éxito." });
+                        db.query('insert into Usuario values (?,?)',[data.N_User, data.ContraNueva],function (err, result){
+                            
+                            if (err) console.log("Error de inserción de Usuario: ", err);
+                            if (result) {
+                                console.log("Resultado de inserción de Usuario: ", result);
+                                socket.emit('Usuario_Agregado', { mensaje: "Usuario agrregado con éxito." });
+                            } else {
+                                socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
+                            }
+                        });
+                    } else {
+                        socket.emit('Empleado_Error', { mensaje: "Error al agregar el empleado." });
+                    }
+                    });
+                }
+            }
+        });
+    });
     socket.on('disconnect', () => {
         console.log('Cliente desconectado.');
     });
