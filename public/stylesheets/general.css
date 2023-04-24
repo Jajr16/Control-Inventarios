@@ -465,6 +465,21 @@ h5{
 }
 
 /* Generales */
+.Dos_Columnas{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.Dos_Columnas div{
+    display: inline-flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 2rem;
+    width: 50%;
+}
+
 .Tres_Column{
     display: flex;
     justify-content: space-evenly;

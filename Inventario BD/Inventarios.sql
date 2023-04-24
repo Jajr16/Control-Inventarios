@@ -308,7 +308,7 @@ alter table facturas_almacen drop column Cantidad;
 alter table facturas_almacen drop column FIngreso;
 -- Agregar columnas
 alter table factus_productos add column Cantidad int;
-alter table facturas_almacen add column FIngreso date;
+alter table facturas_almacen add column Ffact date;
 alter table facturas_almacen add column Proveedor nvarchar(45);
 alter table almacen add column eliminado TINYINT(1) not null default 0;
 alter table factus_productos add column FIngreso date;
@@ -317,10 +317,15 @@ alter table factus_productos add column FIngreso date;
 -- almacen.Cod_Barras, almacen.FIngreso, almacen.Categoria, almacen.Articulo, almacen.Marca, almacen.Descripcion, almacen.Proveedor, almacen.NFact
 select*from usuario where User = "armando" and Pass = "clarac";
 
+select *from almacen order by eliminado;
 select almacen.Cod_Barras, factus_productos.FIngreso, almacen.Categoria, almacen.Articulo, almacen.Marca, almacen.Descripcion, almacen.Unidad, almacen.Existencia, facturas_almacen.Proveedor, facturas_almacen.Num_Fact, facturas_almacen.Ffact, almacen.eliminado from factus_productos inner join almacen on factus_productos.Cod_Barras = almacen.Cod_Barras inner join facturas_almacen on factus_productos.Nfactura = facturas_almacen.Num_Fact  order by almacen.eliminado;
 select*from facturas_almacen;
-select*from almacen;
 select*from factus_productos;
+select*from almacen;
+select factus_productos.Cod_Barras, factus_productos.Nfactura, factus_productos.Cantidad, factus_productos.FIngreso, facturas_almacen.Ffact, facturas_almacen.Proveedor from factus_productos inner join facturas_almacen on facturas_almacen.Num_Fact = factus_productos.Nfactura where Cod_Barras = 's';
 select*from almacen where Cod_Barras = 'd' and eliminado = 1;
 update almacen set eliminado = 1 where Cod_Barras = 'd';
 select*from usuario;
+insert into usuario values(
+3, "prueba", 123, "4dnM3k0nl9s");
+select*from empleado;

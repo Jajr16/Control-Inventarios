@@ -61,15 +61,12 @@
                 <table id="DatosProd">
                     <thead>
                         <tr id="firstrow">
-                            <th>Fecha de Ingreso</th>
                             <th>Código de barras</th>
                             <th>Categoría</th>
                             <th>Nombre del artículo</th>
                             <th>Marca del artículo</th>
                             <th>Descripción</th>
-                            <th>Proveedor</th>
                             <th>Unidad</th>
-                            <th>Número de Factura</th>
                             <th>En Existencia</th>
                             <th>Eliminar</th>
                             <th>Modificar</th>
@@ -120,7 +117,8 @@
 
                     <div class="Cuatro_Column">
                         <input type="submit" id="Modify" class="BotonAE">
-                        <input type="button" class="BotonModF" onclick="Abrir1()" value="Modificar Facturas">
+                        <input type="button" class="BotonModF" id="ModFact" onclick="Abrir1()"
+                            value="Modificar Facturas">
                         <input type="button" class="BotonReg" value="Cancelar">
                     </div>
                 </form>
@@ -132,9 +130,62 @@
         <div class="modal modal1-close mod1 modC1">
             <div class="header-modal">
                 <p class="close title_modal" onclick="Cerrar1()">X</p>
-                dd
             </div>
-dd
+            <div>
+                <table id="DatosFacturas">
+                    <caption id="title_table"></caption>
+                    <thead>
+                        <tr id="firstrow">
+                            <th>Fecha de ingreso</th>
+                            <th>Cantidad</th>
+                            <th>Número Factura</th>
+                            <th>Fecha de factura</th>
+                            <th>Proveedor</th>
+                            <th>Modificar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="Contenedor_Modal ContMod2">
+        <div class="modal modal2-close mod2 modC2">
+            <div class="header-modal">
+                <p class="close title_modal" onclick="Cerrar2()">X</p>
+            </div>
+            <div>
+                <form id="FacturasMody">
+                    <div class="Dos_Columnas">
+                        <div>
+                            <label>Cantidad</label>
+                            <input autocomplete="off" type="number" id="CantidadPMF" name="CantidadPM" required min="0">
+                        </div>
+
+                        <div>
+                            <label>Número de factura</label>
+                            <input autocomplete="off" type="text" id="NumFactMF" name="NumFactM" required>
+                        </div>
+                    </div>
+                    <div class="Dos_Columnas">
+                        <div>
+                            <label>Fecha de factura</label>
+                            <input autocomplete="off" type="date" id="FecFactMF" name="FecFactM" required>
+                        </div>
+
+                        <div>
+                            <label>Proveedor</label>
+                            <input autocomplete="off" type="text" id="ProveedorMF" name="ProveedorM" required>
+                        </div>
+                    </div>
+                    <div class="Dos_Column">
+                        <input type="submit" class="BotonAA" value="Enviar">
+                    </div>
+
+                </form>
+            </div>
         </div>
     </div>
 </body>

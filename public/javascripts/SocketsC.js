@@ -1,5 +1,5 @@
 console.log(localStorage.getItem("token"));
-var socket = io.connect("http://localhost:3000");
+var socket = io.connect("http://192.168.1.66:3000");
 
 var pathname = window.location.pathname;
 
@@ -33,7 +33,6 @@ if (pathname == "/users/altasPro") {
 } else if (pathname == "/users/consulPro") {
 
     socket.emit("Consul_Prod");
-    var FechaFactura = "";
     // Consulta de productos
     socket.on('Desp_Productos', async (data) => {
         console.log('Datos recibidos:', data.Cod_Barras);
@@ -41,41 +40,30 @@ if (pathname == "/users/altasPro") {
         if (data.eliminado == 1) {
             document.querySelector("#DatosProd tbody").innerHTML += `
             <tr style="background-color: #590C09">
-                <td id="F_Ingreso">${data.FIngreso}</td>
-                <td id="Cod_Barras">${data.Cod_Barras}</td>
-                <td id="Categoria">${data.Categoria}</td>
-                <td id="NomP">${data.NArt}</td>
-                <td id="MarcActi">${data.NMarca}</td>
-                <td id="DescripcionP">${data.Desc}</td>
-                <td id="Proveedor">${data.Prov}</td>
-                <td id="UnidadP">${data.Unidad}</td>
-                <td id="NumFact">${data.NFact}</td>
-                <td id="Existencia">${data.Existencia}</td>
-                <td id="Ffact" style="display:none;">${data.Ffact}</td>
+            <td id="Cod_Barras">${data.Cod_Barras}</td>
+            <td id="Categoria">${data.Categoria}</td>
+            <td id="NomP">${data.NArt}</td>
+            <td id="MarcActi">${data.NMarca}</td>
+            <td id="DescripcionP">${data.Desc}</td>
+            <td id="UnidadP">${data.Unidad}</td>
+            <td id="Existencia">${data.Existencia}</td>
             </tr>
             `;
         } else {
             document.querySelector("#DatosProd tbody").innerHTML += `
             <tr>
-                <td id="F_Ingreso">${data.FIngreso}</td>
                 <td id="Cod_Barras">${data.Cod_Barras}</td>
                 <td id="Categoria">${data.Categoria}</td>
                 <td id="NomP">${data.NArt}</td>
                 <td id="MarcActi">${data.NMarca}</td>
                 <td id="DescripcionP">${data.Desc}</td>
-                <td id="Proveedor">${data.Prov}</td>
                 <td id="UnidadP">${data.Unidad}</td>
-                <td id="NumFact">${data.NFact}</td>
                 <td id="Existencia">${data.Existencia}</td>
-                <td id="Ffact" style="display:none;">${data.Ffact}</td>
                 <td id="Eliminar" class="BotonER"> Eliminar </td>
                 <td id="Modificar" class="BotonMod"> Modificar </td>
             </tr>
             `;
         }
-
-
-
 
     });
 
@@ -137,6 +125,15 @@ if (pathname == "/users/altasPro") {
 
     });
 
+    //Llenar datos en automático
+    var valores0 = "";
+    var valores1 = "";
+    var valores2 = "";
+    var valores3 = "";
+    var valores4 = "";
+    var valores5 = "";
+    var valores6 = "";
+    //Modificar productos
     socket.on('ButtonUp', () => {
         let BotonMod = document.getElementsByClassName("BotonMod");
 
@@ -144,19 +141,7 @@ if (pathname == "/users/altasPro") {
             BotonMod[i].addEventListener("click", obtenerValoresMod);
         }
 
-        //Llenar datos en automático
-        var valores0 = "";
-        var valores1 = "";
-        var valores2 = "";
-        var valores3 = "";
-        var valores4 = "";
-        var valores5 = "";
-        var valores6 = "";
-        var valores7 = "";
-        var valores9 = "";
-
         function obtenerValoresMod(e) {
-
 
             var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
             // recorremos cada uno de los elementos del array de elementos <td>
@@ -169,22 +154,94 @@ if (pathname == "/users/altasPro") {
                 valores4 = elementosTD[4].innerHTML;
                 valores5 = elementosTD[5].innerHTML;
                 valores6 = elementosTD[6].innerHTML;
-                valores7 = elementosTD[7].innerHTML;
-                valores8 = elementosTD[8].innerHTML;
-                valores9 = elementosTD[9].innerHTML;
             }
 
-            document.getElementById("F_Ingreso").value = valores0;
-            document.getElementById("Cod_BarrasM").value = valores1;
-            document.getElementById("CategoriaM").value = valores2;
-            document.getElementById("NomPM").value = valores3;
-            document.getElementById("MarcActiM").value = valores4;
-            document.getElementById("DescripcionPM").value = valores5;
-            document.getElementById("ProveedorM").value = valores6;
-            document.getElementById("UnidadPM").value = valores7;
-            document.getElementById("NumFactM").value = valores8;
-        }
+            document.getElementById("Cod_BarrasM").value = valores0;
+            document.getElementById("CategoriaM").value = valores1;
+            document.getElementById("NomPM").value = valores2;
+            document.getElementById("MarcActiM").value = valores3;
+            document.getElementById("DescripcionPM").value = valores4;
+            document.getElementById("UnidadPM").value = valores5;
+            //Aqui iniciamos otra cosa para modificar las facturas una por una
+            let BotonFacturasMod = document.getElementById("ModFact");
+            let Titulotable = document.getElementById("title_table");
+            //Es el botón en el que al darle clic hará una búsqueda de todas las facturas del producto
+            BotonFacturasMod.addEventListener("click", function (e) {
 
+                socket.emit("Traer_Facturas", valores0);
+
+                Titulotable.innerHTML = `Modificar facturas del artículo '${valores2}'`;
+                //Se imprimen todos los productos
+                socket.on("Fact_Enviadas", (data) => {
+                    document.querySelector("#DatosFacturas tbody").innerHTML += `
+                        <tr>           
+                            <td id="FIngresoV">${data.FIngreso}</td>
+                            <td id="CantidadV">${data.Cantidad}</td>
+                            <td id="NFactV">${data.NFactura}</td>
+                            <td id="FFacturaV">${data.FFactura}</td>
+                            <td id="ProveedorV">${data.Proveedor}</td>
+                            <td onclick="Abrir2()" class="BotonModF BotonModifyF">Modificar</td>                           
+                        </tr> 
+                    `;
+
+                });
+            });
+
+            socket.on("BotonModalFacturas", () => {
+
+                //Se llenará el formulario dependiendo del producto en donde hace clic
+                let BotonModFacturas = document.getElementsByClassName("BotonModifyF");
+
+                for (let i = 0; i < BotonModFacturas.length; i++) {
+                    BotonModFacturas[i].addEventListener("click", LlenarFormFact);
+                }
+
+                var valoresF0 = "";
+                var valoresF1 = "";
+                var valoresF2 = "";
+                var valoresF3 = "";
+
+                function LlenarFormFact(e) {
+                    var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+
+                    for (let i = 0; i < elementosTD.length; i++) {
+                        // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                        valoresF0 = elementosTD[1].innerHTML;
+                        valoresF1 = elementosTD[2].innerHTML;
+                        valoresF2 = elementosTD[3].innerHTML;
+                        valoresF3 = elementosTD[4].innerHTML;
+                    }
+                    document.getElementById("CantidadPMF").value = valoresF0;
+                    document.getElementById("NumFactMF").value = valoresF1;
+                    document.getElementById("FecFactMF").value = valoresF2;
+                    document.getElementById("ProveedorMF").value = valoresF3;
+                }
+                //Formulario de facturas
+                let FormularioFac = document.querySelector("#FacturasMody");
+                FormularioFac.addEventListener("submit", function (e) {
+                    e.preventDefault();
+
+                    //Validamos que todo esté lleno para enviar el formulario
+                    if ($("#CantidadPMF").val() != "" && $("#NumFactMF").val() != "" && $("#FecFactMF").val() != "" && $("#ProveedorMF").val()) {
+                        socket.emit("Cambios_Facts", { CodBarras: valores0, Cantidad: $("#CantidadPMF").val(), NumFactura: $("#NumFactMF").val(), FechaFac: $("#FecFactMF").val(), Proveedor: $("#ProveedorMF").val() }, { NFO: valoresF1 });
+                        //Esperamos respuesta del servidor en caso de caso exitoso
+                        socket.on('Factu_Exitosa', function (Respuesta) {
+                            alert(Respuesta.mensaje);
+                            location.reload();
+                        });
+                        //Esperamos respuesta del servidor en caso de caso fallido
+                        socket.on('Fallo_Fac', function (Respuesta) {
+                            alert(Respuesta.mensaje);
+                        });
+                        //Esperamos respuesta del servidor en caso de caso fallido
+                        socket.on('Fallo_ModFac', function (Respuesta) {
+                            alert(Respuesta.mensaje);
+                        });
+                    }
+
+                });
+            })
+        }
 
         // Cambios de productos
         const FormMod = document.querySelector("#ModProduct");
@@ -197,8 +254,8 @@ if (pathname == "/users/altasPro") {
 
             e.preventDefault();
 
-            if ($("#Cod_BarrasM").val() != "" && $("#FecActuM").val() != "" && $("#CategoriaM").val() != "" && $("#NomPM").val() != "" && $("#MarcActiM").val() != "" && $("#DescripcionPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#CantidadPM").val() != "" && $("#UnidadPM").val() != "" && $("#FecFactM").val()) {
-                socket.emit('Cambios_Prod', { CodBarras: $("#Cod_BarrasM").val(), FecAct: $("#FecActuM").val(), Cate: $("#CategoriaM").val(), Producto: $("#NomPM").val(), Marca: $("#MarcActiM").val(), Descripcion: $("#DescripcionPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFactM").val(), Existencia: (parseInt($("#CantidadPM").val()) + parseInt(valores9)), Unidad: $("#UnidadPM").val() }, { FIO: valores0, CBO: valores1, CO: valores2, NAO: valores3, MAO: valores4, DO: valores5, PO: valores6, UO: valores7, NFO: valores8, FFactO: valores10 });
+            if ($("#Cod_BarrasM").val() != "" && $("#CategoriaM").val() != "" && $("#NomPM").val() != "" && $("#MarcActiM").val() != "" && $("#DescripcionPM").val() != "" && $("#UnidadPM").val() != "") {
+                socket.emit('Cambios_Prod', { CodBarras: $("#Cod_BarrasM").val(), Cate: $("#CategoriaM").val(), Producto: $("#NomPM").val(), Marca: $("#MarcActiM").val(), Descripcion: $("#DescripcionPM").val(), Unidad: $("#UnidadPM").val() }, { CBO: valores0, CO: valores1, NAO: valores2, MAO: valores3, DO: valores4, UO: valores5 });
 
                 socket.on('Producto_Inexistente', function (Respuesta) {
                     alert(Respuesta.mensaje);
@@ -210,6 +267,7 @@ if (pathname == "/users/altasPro") {
                 });
             }
         }
+
 
     });
 
