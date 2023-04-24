@@ -164,7 +164,7 @@ io.on('connection', (socket) => {
                 db.query('update Facturas_Almacen set Num_Fact = ?, Ffact = ?, Proveedor = ? where Num_Fact = ?', [data.NumFactura, data.FechaFac, data.Proveedor, dataOld.NFO], function (err1, result) {//Insertar factura
                     if (err1) console.log("Error en inserción de facturas: ", err1);
                     if (result.affectedRows > 0) {
-                        socket.emit("Factu_Exitosa", {mensaje: "La factura fue modificada con éxito."});
+                        socket.emit("Factu_Exitosa", { mensaje: "La factura fue modificada con éxito." });
                     } else {
                         socket.emit('Fallo_Fac', { mensaje: "No se pudo modificar la factura." })
                     }
@@ -196,8 +196,26 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Cambios en productos existentes
+    socket.on('Bajas_ProdExist', async (data, dataOld) => {
+
+        //Se agrega productos a la BD
+        db.query('update almacen set Existencia = ? where Cod_Barras = ?', [data.Existencia], function (err2, result) {
+            if (err2) console.log("Error de inserción de productos: ", err2);
+
+            console.log("Resultado de inserción de productos: ", result);
+            console.log(data);
+            console.log(dataOld);
+
+            if (result.affectedRows > 0) {
+                socket.emit('Producto_Inexistente', { mensaje: 'Artículo modificado con éxito.' });//Mandar mensaje a cliente
+            } else {
+                socket.emit('Fallo_Mod', { mensaje: "No se pudo modificar el artículo." })
+            }
+        });
+    });
+
     socket.on('disconnect', () => {
         console.log('Cliente desconectado.');
     });
-
 });
