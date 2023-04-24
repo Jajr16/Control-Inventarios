@@ -155,6 +155,7 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Cambios en facturas
     socket.on("Cambios_Facts", async (data, dataOld) => {
 
         db.query('update factus_productos set Cantidad = ? where Nfactura = ? and Cod_Barras = ?', [data.Cantidad, dataOld.NFO, data.CodBarras], function (err, result) {
@@ -176,30 +177,23 @@ io.on('connection', (socket) => {
 
     });
 
-    // Cambios en productos
-    socket.on('Cambios_Prod', async (data, dataOld) => {
+    // Cambios en productos existentes
+    socket.on('Altas_ProdExist', async (data, dataOld) => {
 
         //Se agrega productos a la BD
-        db.query('update almacen set Cod_Barras = ?, FIngreso = ?, Categoria = ?, Articulo = ?, Marca = ?, Descripcion = ?, Proveedor = ?, Unidad = ?, Existencia = ? where Cod_Barras = ?', [data.CodBarras, data.FecAct, data.Cate, data.Producto, data.Marca, data.Descripcion, data.Proveedor, data.Unidad, data.Existencia, dataOld.CBO], function (err2, result) {
+        db.query('update almacen set Existencia = ? where Cod_Barras = ?', [data.Existencia], function (err2, result) {
             if (err2) console.log("Error de inserción de productos: ", err2);
-            if (result) {
-                db.query('update Facturas_Almacen set Num_Fact = ?, Ffact = ?, Cod_Barras = ? where Num_Fact = ?', [data.NumFactura, data.FechaFac, data.CodBarras, dataOld.NFO], function (err1, result) {//Insertar factura
-                    if (err1) console.log("Error en inserción de facturas: ", err1);
-                    if (result) {
-                        console.log("Resultado de inserción de productos: ", result);
-                        socket.emit('Producto_Inexistente', { mensaje: 'Artículo modificado con éxito.' });//Mandar mensaje a cliente
-                    }else {
-                        socket.emit('Fallo_Mod', {mensaje: "No se pudo modificar el artículo."})
-                    }
-                });
+
+            console.log("Resultado de inserción de productos: ", result);
+            console.log(data);
+            console.log(dataOld);
+
+            if (result.affectedRows > 0) {
+                socket.emit('Producto_Inexistente', { mensaje: 'Artículo modificado con éxito.' });//Mandar mensaje a cliente
+            } else {
+                socket.emit('Fallo_Mod', { mensaje: "No se pudo modificar el artículo." })
             }
         });
-
-
-
-
-
-        data.length = 0;
     });
 
     socket.on('disconnect', () => {
