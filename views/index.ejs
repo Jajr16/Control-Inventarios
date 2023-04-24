@@ -23,14 +23,13 @@
 <body>
   <header class="header">
     <div class="logo">
-        <img src="/images/logoC.png" alt="Logo de la empresa">
+      <img src="/images/logoC.png" alt="Logo de la empresa">
     </div>
-    <nav>
-      <ul class="nav-links">
+    <nav class="Dos_Column">
+      <ul class="nav-links" id="Linksnav">
         <!-- <li><a href="/users/consulEqp">Equipos</a></li> -->
-        <li><a href="/users/consulPro">Ver Productos</a></li>
         <li><a href="/users/index">Inicio</a></li>
-        <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
+        <li><a href="/users/consulPro">Ver Productos</a></li>
         <!-- <li><a href="/users/consulMob">Mobiliario</a></li> -->
       </ul>
     </nav>
@@ -39,11 +38,10 @@
     <a onclick="openNav()" class="menu" href="#"><button>Menu</button></a>
     <div id="mobile-menu" class="overlay">
       <a onclick="closeNav()" href="" class="close">&times;</a>
-      <div class="overlay-content">
+      <div class="overlay-content" id="MenuCel">
         <!-- <a href="/users/consulEqp">Equipos</a> -->
         <a href="/users/consulPro"> Ver Productos</a>
         <a href="/users/index">Inicio</a>
-        <a href="/users/RegistrarUsuario">Registrar Usuario</a>
         <!-- <a href="/users/consulMob">Mobiliario</a> -->
         <a onclick="CerrarSesion()">Cerrar Sesión</a>
         <a href="#">Tema</a>
@@ -65,24 +63,40 @@
         </div>
       </div>
     </div>
-    <!-- <div class="Dos_Column">
+    <div class="Dos_Column">
       <div class="CampoForm">
-        <h5 class="BotonDE">Añadir productos existentes</h5>
+        <h5 class="BotonDE" id="TituloOpciones"></h5>
         <div class="Dos_Column Separacion" id="ProdExistentes">
           <a href="/users/ABEE" class="BotonABE">Equipos existentes</a>
           <a href="/users/ABPE" class="BotonABE">Productos existentes</a>
           <a href="/users/ABME" class="BotonABE">Mobiliario existente</a>
         </div>
       </div>
-    </div> -->
+    </div>
   </main>
   <script>
     var tok = localStorage.getItem("token");
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A") {
+
+      if(tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
+            document.getElementById("Linksnav").innerHTML += `
+                <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
+            `;
+
+            document.getElementById("MenuCel").innerHTML += `
+                <a href="/users/RegistrarUsuario">Registrar Usuario</a>
+            `;
+
+            document.querySelector("#TituloOpciones").innerHTML = "Más opciones";
+        }      
       document.querySelector("#RegistrosProd").innerHTML = `
         <a href="/users/consulPro" class="BotonAG">Ver productos</a>
         <a href="/users/altasPro" class="BotonAG">Registrar Productos</a>
         <a href="/users/ABPE" class="BotonAG">Agregar productos existentes</a>
+      `;
+
+      document.getElementById("ProdExistentes").innerHTML = `
+        <a href="/users/RegistrarUsuario" class="BotonABE">Registrar Usuario</a
       `;
     }
   </script>

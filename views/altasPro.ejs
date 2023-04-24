@@ -25,20 +25,20 @@
     <div class="logo">
         <img src="/images/logoC.png" alt="Logo de la empresa">
     </div>
-    <nav>
-        <ul class="nav-links">
-            <!-- <li><a href="/users/consulEqp">Equipos</a></li> -->
-            <li><a href="/users/consulPro">Ver Productos</a></li>
-            <li><a href="/users/index">Inicio</a></li>
-            <!-- <li><a href="/users/consulMob">Mobiliario</a></li> -->
-        </ul>
-    </nav>
+    <nav class="Dos_Column">
+      <ul class="nav-links" id="Linksnav">
+          <!-- <li><a href="/users/consulEqp">Equipos</a></li> -->
+          <li><a href="/users/index">Inicio</a></li>
+          <li><a href="/users/consulPro">Ver Productos</a></li>
+          <!-- <li><a href="/users/consulMob">Mobiliario</a></li> -->
+      </ul>
+  </nav>
     <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
     <a class="btn" href="#"><button><img src="/images/moon.png" width="20px" height="20px"></button></a>
     <a onclick="openNav()" class="menu" href="#"><button>Menu</button></a>
     <div id="mobile-menu" class="overlay">
         <a onclick="closeNav()" href="" class="close">&times;</a>
-        <div class="overlay-content">
+        <div class="overlay-content" id="MenuCel">
             <!-- <a href="/users/consulEqp">Equipos</a> -->
             <a href="/users/consulPro"> Ver Productos</a>
             <a href="/users/index">Inicio</a>
@@ -63,33 +63,33 @@
           </div>
           <div>
             <label>Código de barras</label>
-            <input autocomplete="off" type="text" id="Cod_Barras" min="1" name="Cod_Barras" required>
+            <input autocomplete="off" type="text" id="Cod_Barras" min="1" name="Cod_Barras" required maxlength="45">
           </div>
           <div>
             <label>Categoría</label>
-            <input autocomplete="off" type="text" id="Categoria" name="Categoria" required>
+            <input autocomplete="off" type="text" id="Categoria" name="Categoria" required maxlength="45">
           </div>
           <div>
             <label>Nombre del artículo</label>
-            <input autocomplete="off" type="text" id="NomP" name="NomP" required>
+            <input autocomplete="off" type="text" id="NomP" name="NomP" required maxlength="45">
           </div>
         </div>
         <div class="Cuatro_Column">
           <div>
             <label>Marca del artículo</label>
-            <input autocomplete="off" type="text" id="MarcActi" name="MarcActi" required>
+            <input autocomplete="off" type="text" id="MarcActi" name="MarcActi" required maxlength="100">
           </div>
           <div>
             <label>Descripción</label>
-            <input autocomplete="off" type="text" id="DescripcionP" name="DescripcionP" required>
+            <input autocomplete="off" type="text" id="DescripcionP" name="DescripcionP" required maxlength="400">
           </div>
           <div>
             <label>Proveedor</label>
-            <input autocomplete="off" type="text" id="Proveedor" name="Proveedor" required>
+            <input autocomplete="off" type="text" id="Proveedor" name="Proveedor" required maxlength="45">
           </div>
           <div>
             <label>Unidad</label>
-            <input autocomplete="off" type="text" id="UnidadP" name="UnidadP" required>
+            <input autocomplete="off" type="text" id="UnidadP" name="UnidadP" required maxlength="45">
           </div>
 
         </div>
@@ -102,7 +102,7 @@
           </div>
           <div>
             <label>Número de Factura</label>
-            <input autocomplete="off" type="text" id="NumFact" name="NumFact" required>
+            <input autocomplete="off" type="text" id="NumFact" name="NumFact" required maxlength="10">
           </div>
           <div>
             <label>Fecha de Factura</label>

@@ -27,29 +27,29 @@
         <div class="logo">
             <img src="/images/logoC.png" alt="Logo de la empresa">
         </div>
-        <nav>
-          <ul class="nav-links">
-            <!-- <li><a href="/users/consulEqp">Equipos</a></li> -->
-            <li><a href="/users/consulPro">Ver Productos</a></li>
-            <li><a href="/users/index">Inicio</a></li>
-            <!-- <li><a href="/users/consulMob">Mobiliario</a></li> -->
-          </ul>
+        <nav class="Dos_Column">
+            <ul class="nav-links" id="Linksnav">
+                <!-- <li><a href="/users/consulEqp">Equipos</a></li> -->
+                <li><a href="/users/index">Inicio</a></li>
+                <li><a href="/users/consulPro">Ver Productos</a></li>
+                <!-- <li><a href="/users/consulMob">Mobiliario</a></li> -->
+            </ul>
         </nav>
         <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
         <a class="btn" href="#"><button><img src="/images/moon.png" width="20px" height="20px"></button></a>
         <a onclick="openNav()" class="menu" href="#"><button>Menu</button></a>
         <div id="mobile-menu" class="overlay">
-          <a onclick="closeNav()" href="" class="close">&times;</a>
-          <div class="overlay-content">
-            <!-- <a href="/users/consulEqp">Equipos</a> -->
-            <a href="/users/consulPro"> Ver Productos</a>
-            <a href="/users/index">Inicio</a>
-            <!-- <a href="/users/consulMob">Mobiliario</a> -->
-            <a onclick="CerrarSesion()">Cerrar Sesión</a>
-            <a href="#">Tema</a>
-          </div>
+            <a onclick="closeNav()" href="" class="close">&times;</a>
+            <div class="overlay-content" id="MenuCel">
+                <!-- <a href="/users/consulEqp">Equipos</a> -->
+                <a href="/users/consulPro"> Ver Productos</a>
+                <a href="/users/index">Inicio</a>
+                <!-- <a href="/users/consulMob">Mobiliario</a> -->
+                <a onclick="CerrarSesion()">Cerrar Sesión</a>
+                <a href="#">Tema</a>
+            </div>
         </div>
-      </header>
+    </header>
     <script type="text/javascript" src="/javascripts/navbar.js"></script>
     <script type="text/javascript" src="/javascripts/ValidarSesion.js"></script>
     <div class="card" id="productos">
@@ -98,11 +98,11 @@
                         </div>
                         <div>
                             <label>Proveedor</label>
-                            <input autocomplete="off" type="text" id="ProveedorM" name="ProveedorM" required>
+                            <input autocomplete="off" type="text" id="ProveedorM" name="ProveedorM" required maxlength="45">
                         </div>
                         <div>
                             <label>Número de Factura</label>
-                            <input autocomplete="off" type="text" id="NumFactM" name="NumFactM" required>
+                            <input autocomplete="off" type="text" id="NumFactM" name="NumFactM" required maxlength="10">
                         </div>
                         <div>
                             <label>Fecha de Factura</label>

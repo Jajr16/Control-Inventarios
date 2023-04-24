@@ -6,7 +6,15 @@ var pathname = window.location.pathname;
 
 if (pathname == "/users/altasPro") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A") {
+        if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
+            document.getElementById("Linksnav").innerHTML += `
+                <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
+            `;
 
+            document.getElementById("MenuCel").innerHTML += `
+                <a href="/users/RegistrarUsuario">Registrar Usuario</a>
+            `;
+        }
 
         const FormProduct = document.querySelector("#AltaProductos");
 
@@ -38,6 +46,15 @@ if (pathname == "/users/altasPro") {
     }
 } else if (pathname == "/users/consulPro") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A") {
+        if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
+            document.getElementById("Linksnav").innerHTML += `
+                <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
+            `;
+
+            document.getElementById("MenuCel").innerHTML += `
+                <a href="/users/RegistrarUsuario">Registrar Usuario</a>
+            `;
+        }
         socket.emit("Consul_Prod");
         // Consulta de productos
         socket.on('Desp_Productos', async (data) => {
@@ -314,6 +331,15 @@ if (pathname == "/users/altasPro") {
     }
 } else if (pathname == "/users/ABPE") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A") {
+        if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
+            document.getElementById("Linksnav").innerHTML += `
+                <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
+            `;
+
+            document.getElementById("MenuCel").innerHTML += `
+                <a href="/users/RegistrarUsuario">Registrar Usuario</a>
+            `;
+        }
 
         var valores0 = "";
         var valores1 = "";
@@ -458,42 +484,52 @@ if (pathname == "/users/altasPro") {
         }
     }
 } else if (pathname == "/users/RegistrarUsuario") {
-    const FormRegistro = document.querySelector("#Registro");
+    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
+        document.getElementById("Linksnav").innerHTML += `
+            <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
+        `;
 
-    // Registro de usuario
-    FormRegistro.addEventListener('submit', EnviarReg);
+        document.getElementById("MenuCel").innerHTML += `
+            <a href="/users/RegistrarUsuario">Registrar Usuario</a>
+        `;
 
-    function EnviarReg(e) {
-        e.preventDefault();
-        if ($("#NombreEmp").val() != "" && $("#AP").val() != "" && $("#AM").val() != "" && $("#Area").val() != "" && $("#NumJefe").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
-        
-            socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), ApePat: $("#AP").val(), ApeMat: $("#AM").val(), Area: $("#Area").val(), NumJefe: $("#NumJefe").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
+        const FormRegistro = document.querySelector("#Registro");
 
-            socket.on('Usuario_Existente', function (Respuesta) {
-                alert(Respuesta.mensaje);
-            });
+        // Registro de usuario
+        FormRegistro.addEventListener('submit', EnviarReg);
 
-            socket.on('Empleado_Existente', function (Respuesta) {
-                alert(Respuesta.mensaje);
-            });
+        function EnviarReg(e) {
+            e.preventDefault();
+            if ($("#NombreEmp").val() != "" && $("#AP").val() != "" && $("#AM").val() != "" && $("#Area").val() != "" && $("#NumJefe").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
 
-            socket.on('Usuario_Agregado', function (Respuesta) {
-                alert(Respuesta.mensaje);
-                location.reload();
-            });
+                socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), ApePat: $("#AP").val(), ApeMat: $("#AM").val(), Area: $("#Area").val(), NumJefe: $("#NumJefe").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
 
-            socket.on('Usuario_Error', function (Respuesta) {
-                alert(Respuesta.mensaje);
-                location.reload();
-            });
+                socket.on('Usuario_Existente', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                });
 
-            socket.on('Empleado_Agregado', function (Respuesta) {
-                alert(Respuesta.mensaje);
-            });
+                socket.on('Empleado_Existente', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                });
 
-            socket.on('Empleado_Error', function (Respuesta) {
-                alert(Respuesta.mensaje);
-            });
+                socket.on('Usuario_Agregado', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                    location.reload();
+                });
+
+                socket.on('Usuario_Error', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                    location.reload();
+                });
+
+                socket.on('Empleado_Agregado', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                });
+
+                socket.on('Empleado_Error', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                });
+            }
         }
     }
 }

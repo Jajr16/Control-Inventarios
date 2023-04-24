@@ -23,15 +23,14 @@
 <body>
     <header class="header">
         <div class="logo">
-            <a href="/users/index">
-                <img src="/images/logoC.png" alt="Logo de la empresa">
-            </a>
+            <img src="/images/logoC.png" alt="Logo de la empresa">
         </div>
-        <nav>
-            <ul class="nav-links">
-                <li><a href="/users/consulEqp">Equipos</a></li>
-                <li><a href="/users/consulPro">Productos</a></li>
-                <li><a href="/users/consulMob">Mobiliario</a></li>
+        <nav class="Dos_Column">
+            <ul class="nav-links" id="Linksnav">
+                <!-- <li><a href="/users/consulEqp">Equipos</a></li> -->
+                <li><a href="/users/index">Inicio</a></li>
+                <li><a href="/users/consulPro">Ver Productos</a></li>
+                <!-- <li><a href="/users/consulMob">Mobiliario</a></li> -->
             </ul>
         </nav>
         <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
@@ -40,9 +39,11 @@
         <div id="mobile-menu" class="overlay">
             <a onclick="closeNav()" href="" class="close">&times;</a>
             <div class="overlay-content">
-                <a href="/users/consulEqp">Equipos</a>
-                <a href="/users/consulPro">Productos</a>
-                <a href="/users/consulMob">Mobiliario</a>
+                <!-- <a href="/users/consulEqp">Equipos</a> -->
+                <a href="/users/consulPro"> Ver Productos</a>
+                <a href="/users/index">Inicio</a>
+                <a href="/users/RegistrarUsuario">Registrar Usuario</a>
+                <!-- <a href="/users/consulMob">Mobiliario</a> -->
                 <a onclick="CerrarSesion()">Cerrar Sesión</a>
                 <a href="#">Tema</a>
             </div>
@@ -57,26 +58,26 @@
                 <!--Nombre empleado-->
                 <div class="field">
                     <label class="label">Nombre de empleado</label>
-                    <input autocomplete="off" type="text" name="NombreEmp" id="NombreEmp" placeholder="Nombre de empleado"
-                        required>
+                    <input autocomplete="off" type="text" name="NombreEmp" id="NombreEmp"
+                        placeholder="Nombre de empleado" required maxlength="45">
                 </div>
                 <!--Apellido paterno-->
                 <div class="field">
                     <label class="label">Apellido paterno</label>
-                    <input autocomplete="off" type="text" name="AP" id="AP" placeholder="Apellido paterno"
-                        required>
+                    <input autocomplete="off" type="text" name="AP" id="AP" placeholder="Apellido paterno" required
+                        maxlength="45">
                 </div>
                 <!--Apellido materno-->
                 <div class="field">
                     <label class="label">Apellido materno</label>
-                    <input autocomplete="off" type="text" name="AM" id="AM" placeholder="Apellido materno"
-                        required>
+                    <input autocomplete="off" type="text" name="AM" id="AM" placeholder="Apellido materno" required
+                        maxlength="45">
                 </div>
                 <!--Area-->
                 <div class="field">
                     <label class="label">Área</label>
-                    <input autocomplete="off" type="text" name="Area" id="Area" placeholder="Área"
-                        required>
+                    <input autocomplete="off" type="text" name="Area" id="Area" placeholder="Área" required
+                        maxlength="45">
                 </div>
                 <!--Numero de jefe-->
                 <div class="field">
@@ -87,14 +88,14 @@
                 <!--Nombre usuario-->
                 <div class="field">
                     <label class="label">Nombre de usuario</label>
-                    <input autocomplete="off" type="text" name="NombreUser" id="NombreUser" placeholder="Nombre de usuario"
-                        required>
+                    <input autocomplete="off" type="text" name="NombreUser" id="NombreUser"
+                        placeholder="Nombre de usuario" required maxlength="45">
                 </div>
                 <!--Contraseña-->
                 <div class="field">
                     <label class="label">Contraseña nueva</label>
                     <input autocomplete="off" type="password" name="ContraNueva" id="ContraNueva"
-                        placeholder="Contraseña nueva" required>
+                        placeholder="Contraseña nueva" required maxlength="45">
                 </div>
                 <input type="submit" value="Aceptar" class="BotonAE">
             </form>

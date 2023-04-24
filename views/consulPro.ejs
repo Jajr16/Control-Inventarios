@@ -25,14 +25,14 @@
 <body>
     <header class="header">
         <div class="logo">
-            <a href="/users/index">
-                <img src="/images/logoC.png" alt="Logo de la empresa">
-            </a>
+            <img src="/images/logoC.png" alt="Logo de la empresa">
         </div>
-        <nav>
-            <ul class="nav-links">
-                <li><a href="/users/consulEqp">Equipos</a></li>
-                <li><a href="/users/consulMob">Mobiliario</a></li>
+        <nav class="Dos_Column">
+            <ul class="nav-links" id="Linksnav">
+                <!-- <li><a href="/users/consulEqp">Equipos</a></li> -->
+                <li><a href="/users/index">Inicio</a></li>
+                <li><a href="/users/consulPro">Ver Productos</a></li>
+                <!-- <li><a href="/users/consulMob">Mobiliario</a></li> -->
             </ul>
         </nav>
         <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
@@ -40,9 +40,11 @@
         <a onclick="openNav()" class="menu" href="#"><button>Menu</button></a>
         <div id="mobile-menu" class="overlay">
             <a onclick="closeNav()" href="" class="close">&times;</a>
-            <div class="overlay-content">
-                <a href="/users/consulEqp">Equipos</a>
-                <a href="/users/consulMob">Mobiliario</a>
+            <div class="overlay-content" id="MenuCel">
+                <!-- <a href="/users/consulEqp">Equipos</a> -->
+                <a href="/users/consulPro"> Ver Productos</a>
+                <a href="/users/index">Inicio</a>
+                <!-- <a href="/users/consulMob">Mobiliario</a> -->
                 <a onclick="CerrarSesion()">Cerrar Sesión</a>
                 <a href="#">Tema</a>
             </div>
@@ -88,29 +90,33 @@
                     <div class="Tres_Column">
                         <div>
                             <label>Código de barras</label>
-                            <input autocomplete="off" type="text" id="Cod_BarrasM" min="1" name="Cod_BarrasM" required>
+                            <input autocomplete="off" type="text" id="Cod_BarrasM" min="1" name="Cod_BarrasM" required
+                                maxlength="45">
                         </div>
                         <div>
                             <label>Categoría</label>
-                            <input autocomplete="off" type="text" id="CategoriaM" name="CategoriaM" required>
+                            <input autocomplete="off" type="text" id="CategoriaM" name="CategoriaM" required
+                                maxlength="45">
                         </div>
                         <div>
                             <label>Nombre del artículo</label>
-                            <input autocomplete="off" type="text" id="NomPM" name="NomPM" required>
+                            <input autocomplete="off" type="text" id="NomPM" name="NomPM" required maxlength="45">
                         </div>
                     </div>
                     <div class="Tres_Column">
                         <div>
                             <label>Marca del artículo</label>
-                            <input autocomplete="off" type="text" id="MarcActiM" name="MarcActiM" required>
+                            <input autocomplete="off" type="text" id="MarcActiM" name="MarcActiM" required
+                                maxlength="100">
                         </div>
                         <div>
                             <label>Descripción</label>
-                            <input autocomplete="off" type="text" id="DescripcionPM" name="DescripcionPM" required>
+                            <input autocomplete="off" type="text" id="DescripcionPM" name="DescripcionPM" required
+                                maxlength="400">
                         </div>
                         <div>
                             <label>Unidad</label>
-                            <input autocomplete="off" type="text" id="UnidadPM" name="UnidadPM" required>
+                            <input autocomplete="off" type="text" id="UnidadPM" name="UnidadPM" required maxlength="45">
                         </div>
 
                     </div>
@@ -173,7 +179,8 @@
 
                         <div>
                             <label>Número de factura</label>
-                            <input autocomplete="off" type="text" id="NumFactMF" name="NumFactM" required>
+                            <input autocomplete="off" type="text" id="NumFactMF" name="NumFactM" required
+                                maxlength="10">
                         </div>
                     </div>
                     <div class="Dos_Columnas">
@@ -184,7 +191,8 @@
 
                         <div>
                             <label>Proveedor</label>
-                            <input autocomplete="off" type="text" id="ProveedorMF" name="ProveedorM" required>
+                            <input autocomplete="off" type="text" id="ProveedorMF" name="ProveedorM" required
+                                maxlength="45">
                         </div>
                     </div>
                     <div class="Dos_Column">
