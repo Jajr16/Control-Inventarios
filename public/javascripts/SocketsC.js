@@ -271,6 +271,7 @@ if (pathname == "/users/altasPro") {
 } else if (pathname == "/users/ABPE") {
 
     var valores0 = "";
+    var valores1 = "";
 
     socket.emit("Consul_ProdExist");
     // Consulta de productos
@@ -299,8 +300,8 @@ if (pathname == "/users/altasPro") {
                 <td id="DescripcionP">${data.Desc}</td>
                 <td id="UnidadP">${data.Unidad}</td>
                 <td id="Existencia">${data.Existencia}</td>
-                <td id="Eliminar" class="BotonMod"> Añadir producto existente </td>
-                <td id="Modificar" class="BotonER"> Elimnar de producto existente </td>
+                <td id="Agregar" class="BotonMod"> Añadir producto existente </td>
+                <td id="Eliminar" class="BotonER"> Elimnar producto existente </td>
             </tr>
             `;
         }
@@ -319,6 +320,7 @@ if (pathname == "/users/altasPro") {
             for (let i = 0; i < elementosTD.length; i++) {
                 // obtenemos cada uno de los valores y los ponemos en la variable "valores"
                 valores0 = elementosTD[0].innerHTML;
+                valores1 = elementosTD[6].innerHTML;
             }
             const formProdExist = document.querySelector("#AltaExist");
             formProdExist.addEventListener("submit", EnviarAlta);
@@ -326,7 +328,7 @@ if (pathname == "/users/altasPro") {
             function EnviarAlta(e) {
                 e.preventDefault();
                 if ($("#FecActu").val() != "" && $("#CantidadPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#FecFact").val() != "") {
-                    socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActu").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFact").val() });
+                    socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActu").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFact").val(), Existencia: valores1 });
 
                     socket.on('Factura_Agregada', function (Respuesta) {
                         alert(Respuesta.mensaje);
@@ -337,11 +339,54 @@ if (pathname == "/users/altasPro") {
                         alert(Respuesta.mensaje);
                         location.reload();
                     });
+                    socket.on('Ya_Registrado', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
                 }
             }
         }
     });
 
+    // Eliminar producto existente
+    socket.on('EliminarProdExist', async () => {
+        let EliminarProdExist = document.getElementsByClassName("BotonER");
+
+        for (let i = 0; i < EliminarProdExist.length; i++) {
+            EliminarProdExist[i].addEventListener("click", existBajas);
+        }
+        function existBajas(e) {
+            var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+
+            for (let i = 0; i < elementosTD.length; i++) {
+                // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                valores0 = elementosTD[0].innerHTML;
+                valores1 = elementosTD[6].innerHTML;
+            }
+
+            const formProdExistBaja = document.querySelector("#BajaExist");
+            formProdExistBaja.addEventListener("submit", EnviarBaja);
+            function EnviarBaja(e) {
+                e.preventDefault();
+                if ($("#Cod_BarrasM").val() != "" && $("#CantidadPM").val() != "" && $("#Existencia").val() != "") {
+                    socket.emit('Bajas_ProdExist', { Cod_Barras: valores0, Cantidad: $("#CantidadPM").val(), Existencia: valores1 });
+
+                    socket.on('Eliminacion_Realizada', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+                    socket.on('Fallo_BajasExist', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+                }
+            }
+        }
+    });
+
+
+    // Barra de busqueda
+    function buscar() {
 
     var filtro = $("#buscar").val().toUpperCase();
 
@@ -363,4 +408,4 @@ if (pathname == "/users/altasPro") {
         })
     }
 
-
+}
