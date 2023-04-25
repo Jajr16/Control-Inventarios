@@ -38,7 +38,7 @@
         <a onclick="openNav()" class="menu" href="#"><button>Menu</button></a>
         <div id="mobile-menu" class="overlay">
             <a onclick="closeNav()" href="" class="close">&times;</a>
-            <div class="overlay-content">
+            <div class="overlay-content" id="MenuCel">
                 <!-- <a href="/users/consulEqp">Equipos</a> -->
                 <a href="/users/consulPro"> Ver Productos</a>
                 <a href="/users/index">Inicio</a>
@@ -81,9 +81,8 @@
                 </div>
                 <!--Numero de jefe-->
                 <div class="field">
-                    <label class="label">Número de jefe</label>
-                    <input autocomplete="off" type="number" name="NumJefe" id="NumJefe" placeholder="Número de jefe"
-                        required>
+                    <label class="label">Nombre de jefe</label>
+                    <input autocomplete="off" type="text" name="NomJefe" id="NomJefe" placeholder="Nombre de jefe" required maxlength="135">
                 </div>
                 <!--Nombre usuario-->
                 <div class="field">

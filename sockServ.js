@@ -289,11 +289,11 @@ io.on('connection', (socket) => {
     socket.on('Registro_Usuario', async (data) => {
         console.log("asdas");
         //Autentificar que no exista un usuario igual
-        db.query('select*from Empleado where Nom = ? and AP = ? and AM = ?', [data.NombreEmp, data.ApePat, data.ApeMat], function (err, result) {
+        db.query('select*from Empleado where Nom = ? and AP = ? and AM = ?', [data.NombreEmp, data.ApePat, data.ApeMat], function (err, resultG) {
 
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
 
-            if (result.length > 0) {//Si sí hizo una búsqueda
+            if (resultG.length > 0) {//Si sí hizo una búsqueda
 
                 db.query('select*from Usuario where Usuario = ?', [data.N_User], function (err, result) {
 
@@ -302,13 +302,13 @@ io.on('connection', (socket) => {
                     if (result.length > 0) {//Si sí hizo una búsqueda
                         socket.emit('Usuario_Existente', { mensaje: "Este usuario ya está registrado." });
                     } else {
-                        db.query('insert into Usuario values (null,?,?,12345)', [data.N_User, data.ContraNueva], function (err, result) {
+                        db.query('insert into Usuario values (?,?,?,12345)', [resultG[0].Num_emp, data.N_User, data.ContraNueva], function (err, result) {
 
                             if (err) console.log("Error de inserción de Usuario: ", err);
 
                             if (result) {
                                 console.log("Resultado de inserción de Usuario: ", result);
-                                socket.emit('Usuario_Agregado', { mensaje: "Usuario agrregado con éxito." });
+                                socket.emit('Usuario_Agregado', { mensaje: "Usuario agregado con éxito." });
                             } else {
                                 socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
                             }
@@ -319,36 +319,43 @@ io.on('connection', (socket) => {
                 db.query('select*from Usuario where Usuario = ?', [data.N_User], function (err, result) {
 
                     if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
-
+                    console.log("1");
                     if (result.length > 0) {//Si sí hizo una búsqueda
                         socket.emit('Usuario_Existente', { mensaje: "Este usuario ya está registrado." });
                     } else {
-                        db.query('select Num_emp from Empleado where concat(Nom, " ", AP, " ", AM) = ?', [data.NumJefe], function (err, result) {
+                        db.query('select Num_emp from Empleado where concat(Nom, " ", AP, " ", AM) = ?', [data.NomJefe], function (err, result) {
                             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
-
+                            
                             if (result.length > 0) {//Si sí hizo una búsqueda
-                                socket.emit('Usuario_Existente', { mensaje: "Este usuario ya está registrado." });
-                            } else {
-                                db.query('insert into Empleado values (null,?,?,?,?,?)', [data.NombreEmp, data.ApePat, data.ApeMat, data.Area, result[0]], function (err, result) {
+                                console.log(result);
+                                db.query('insert into Empleado values (null,?,?,?,?,?)', [data.NombreEmp, data.ApePat, data.ApeMat, data.Area, result[0].Num_emp], function (err, result) {
 
                                     if (err) console.log("Error de inserción de Empleados: ", err);
                                     if (result) {
-                                        console.log("Resultado de inserción de Empleados: ", result);
-                                        socket.emit('Empleado_Agregado', { mensaje: "Empleado agregado con éxito." });
-                                        db.query('insert into Usuario values (null,?,?,12345)', [data.N_User, data.ContraNueva], function (err, result) {
+                                        console.log(data)
+                                        db.query('select Num_emp from Empleado where Nom = ? and AP = ? and AM = ?', [data.NombreEmp, data.ApePat, data.ApeMat], function (err, result) {
+                                            if (err) console.log("Error de búsqueda: " + err);
+                                            if(result.length > 0){
+                                                db.query('insert into Usuario values (?,?,?,12345)', [result[0].Num_emp, data.N_User, data.ContraNueva], function (err, result) {
 
-                                            if (err) console.log("Error de inserción de Usuario: ", err);
-                                            if (result) {
-                                                console.log("Resultado de inserción de Usuario: ", result);
-                                                socket.emit('Usuario_Agregado', { mensaje: "Usuario agrregado con éxito." });
-                                            } else {
-                                                socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
+                                                    if (err) console.log("Error de inserción de Usuario: ", err);
+                                                    if (result) {
+                                                        console.log("Resultado de inserción de Usuario: ", result);
+                                                        socket.emit('Usuario_Agregado', { mensaje: "Usuario agregado con éxito." });
+                                                    } else {
+                                                        socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
+                                                    }
+                                                });
                                             }
+                                            
                                         });
+
                                     } else {
                                         socket.emit('Empleado_Error', { mensaje: "Error al agregar el empleado." });
                                     }
                                 });
+                            } else {
+                                socket.emit('Empleado_Error', {mensaje: "No se encontró el jefe." });
                             }
                         });
                     }

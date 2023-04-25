@@ -1,6 +1,6 @@
 console.log(localStorage.getItem("token"));
 var tok = localStorage.getItem("token");
-var socket = io.connect("http://localhost:3000");
+var socket = io.connect("http://192.168.10.68:3000");
 
 var pathname = window.location.pathname;
 
@@ -328,6 +328,8 @@ if (pathname == "/users/altasPro") {
                 }
             }
         });
+    }else {
+        location.href = "index";
     }
 } else if (pathname == "/users/ABPE") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A") {
@@ -482,6 +484,8 @@ if (pathname == "/users/altasPro") {
                 }
             })
         }
+    }else {
+        location.href = "index";
     }
 } else if (pathname == "/users/RegistrarUsuario") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
@@ -502,14 +506,16 @@ if (pathname == "/users/altasPro") {
             e.preventDefault();
             if ($("#NombreEmp").val() != "" && $("#AP").val() != "" && $("#AM").val() != "" && $("#Area").val() != "" && $("#NumJefe").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
 
-                socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), ApePat: $("#AP").val(), ApeMat: $("#AM").val(), Area: $("#Area").val(), NumJefe: $("#NumJefe").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
+                socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), ApePat: $("#AP").val(), ApeMat: $("#AM").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
 
                 socket.on('Usuario_Existente', function (Respuesta) {
                     alert(Respuesta.mensaje);
+                    location.reload();
                 });
 
                 socket.on('Empleado_Existente', function (Respuesta) {
                     alert(Respuesta.mensaje);
+                    location.reload();
                 });
 
                 socket.on('Usuario_Agregado', function (Respuesta) {
@@ -528,8 +534,11 @@ if (pathname == "/users/altasPro") {
 
                 socket.on('Empleado_Error', function (Respuesta) {
                     alert(Respuesta.mensaje);
+                    location.reload();
                 });
             }
         }
+    }else {
+        location.href = "index";
     }
 }
