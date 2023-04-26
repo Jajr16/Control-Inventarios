@@ -263,19 +263,45 @@ io.on('connection', (socket) => {
         });
     });
 
+    const hoy = new Date();
+
+    let dia = hoy.getDate();
+    let mes = hoy.getMonth() + 1;
+    let anio = hoy.getFullYear();
+
+    let formato1 = "";
+
+    if (mes < 10) {
+        mes = "0" + mes;
+    }
+    if (dia < 10) {
+        dia = "0" + dia;
+    }
+
+    formato1 = `${anio}-${mes}-${dia}`;
+
     // Bajas en productos existentes
     socket.on('Bajas_ProdExist', async (data) => {
+        console.log(data);
         db.query('select Existencia from almacen where Cod_Barras = ?', [data.Cod_Barras], function (err, result) {
 
             if (err) console.log("Error de eliminación de productos: ", err);
             if (result.length > 0) {
                 if (parseInt(result[0].Existencia) > 0 && parseInt(data.Cantidad) <= parseInt(result[0].Existencia)) {
-                    db.query('update almacen set Existencia = ? where Cod_Barras = ?', [(parseInt(result[0].Existencia) - parseInt(data.Cantidad)), data.Cod_Barras], function (err2, result) {
-                        if (err2) console.log("Error de inserción de productos: ", err2);
-                        if (result.affectedRows > 0) {
-                            socket.emit('Eliminacion_Realizada', { mensaje: 'Productos sacados con éxito.' });//Mandar mensaje a cliente
-                        } else {
-                            socket.emit('Fallo_BajasExist', { mensaje: "No se pudo actualizar la existencia de productos." })
+                    db.query('select num_emp from empleado where concat(Nom, " ", AP, " ", AM) = ?', [data.Emp], function (err, res) {
+                        if (err) console.log("Error de busqueda de empleados: ", err);
+                        console.log(res);
+                        if (res.length > 0) {
+                            db.query('insert into salidas_productos values (?,?,?,?)', [data.Cod_Barras, formato1, res[0].num_emp, data.Cantidad], function (err2, result) {
+                                if (err2) console.log("Error de inserción de productos: ", err2);
+                                if (result.affectedRows > 0) {
+                                    socket.emit('Eliminacion_Realizada', { mensaje: 'Productos sacados con éxito.' });//Mandar mensaje a cliente
+                                } else {
+                                    socket.emit('Fallo_BajasExist', { mensaje: "No se pudo actualizar la existencia de productos." })
+                                }
+                            });
+                        }else{
+                            socket.emit('Fallo_BajasExist', { mensaje: "No se encontró ningún empleado con ese nombre, actualice la página." })
                         }
                     });
                 } else {
@@ -325,7 +351,7 @@ io.on('connection', (socket) => {
                     } else {
                         db.query('select Num_emp from Empleado where concat(Nom, " ", AP, " ", AM) = ?', [data.NomJefe], function (err, result) {
                             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
-                            
+
                             if (result.length > 0) {//Si sí hizo una búsqueda
                                 console.log(result);
                                 db.query('insert into Empleado values (null,?,?,?,?,?)', [data.NombreEmp, data.ApePat, data.ApeMat, data.Area, result[0].Num_emp], function (err, result) {
@@ -335,7 +361,7 @@ io.on('connection', (socket) => {
                                         console.log(data)
                                         db.query('select Num_emp from Empleado where Nom = ? and AP = ? and AM = ?', [data.NombreEmp, data.ApePat, data.ApeMat], function (err, result) {
                                             if (err) console.log("Error de búsqueda: " + err);
-                                            if(result.length > 0){
+                                            if (result.length > 0) {
                                                 db.query('insert into Usuario values (?,?,?,12345)', [result[0].Num_emp, data.N_User, data.ContraNueva], function (err, result) {
 
                                                     if (err) console.log("Error de inserción de Usuario: ", err);
@@ -347,7 +373,7 @@ io.on('connection', (socket) => {
                                                     }
                                                 });
                                             }
-                                            
+
                                         });
 
                                     } else {
@@ -355,12 +381,24 @@ io.on('connection', (socket) => {
                                     }
                                 });
                             } else {
-                                socket.emit('Empleado_Error', {mensaje: "No se encontró el jefe." });
+                                socket.emit('Empleado_Error', { mensaje: "No se encontró el jefe." });
                             }
                         });
                     }
                 });
             }
+        });
+    });
+
+    socket.on('List_empleados', () => {
+        db.query('select concat(Nom, " ", AP, " ", AM) NombreCompleto from empleado', function (err, res) {
+            if (err) console.log("El error fue: ", err)
+            if (res.length > 0) {
+                for (var i = 0; i < res.length; i++) {
+                    socket.emit('ListaNombres', { Nombres: res[i].NombreCompleto });
+                }
+            }
+
         });
     });
 

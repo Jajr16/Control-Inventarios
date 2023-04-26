@@ -4,6 +4,21 @@ var socket = io.connect("http://localhost:3000");
 
 var pathname = window.location.pathname;
 
+function ListaNombres(Nombr) {
+    var selectNombres = document.getElementById("NomJefe");
+
+    var opcion = document.createElement("option");
+    opcion.text = Nombr;
+    selectNombres.add(opcion);
+}
+function cargarNombres() {
+    socket.emit('List_empleados');
+    socket.on('ListaNombres', (data) => {
+        ListaNombres(data.Nombres);
+    });
+}
+
+
 if (pathname == "/users/altasPro") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A") {
         if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
@@ -378,6 +393,10 @@ if (pathname == "/users/altasPro") {
             `;
         }
 
+        window.addEventListener("load", function (event) {
+            cargarNombres();
+        });
+
         var valores0 = "";
         var valores1 = "";
         var valores0E = "";
@@ -476,13 +495,22 @@ if (pathname == "/users/altasPro") {
 
                 document.querySelector("#TituloEliminar").innerHTML = `¿Cuántos productos de "${valores2E}" desea sacar?`;
 
+                var NombEmp = document.getElementById('NomJefe');
+                var NombEmpOption;
+
+                NombEmp.addEventListener('change',
+                    function () {
+                        NombEmpOption = NombEmp.options[NombEmp.selectedIndex].text;
+                    });
+
+
                 const formProdExistBaja = document.querySelector("#BajaExist");
                 formProdExistBaja.addEventListener("submit", EnviarBaja);
                 function EnviarBaja(e) {
                     e.preventDefault();
-                    if ($("#CantidadP").val() != "") {
-                        socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val() });
-
+                    if ($("#CantidadP").val() != "" && $("#NomJefe") != "") {
+                        socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: NombEmpOption});
+                        
                         socket.on('Eliminacion_Realizada', function (Respuesta) {
                             alert(Respuesta.mensaje);
                             location.reload();
@@ -524,6 +552,11 @@ if (pathname == "/users/altasPro") {
     }
 } else if (pathname == "/users/RegistrarUsuario") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
+
+        window.addEventListener("load", function (event) {
+            cargarNombres();
+        });
+
         document.getElementById("Linksnav").innerHTML += `
             <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
         `;

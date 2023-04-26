@@ -126,8 +126,15 @@
             </div>
             <div style="width: 80%;">
                 <form id="BajaExist" name="BajaExist">
-                    <div class="Dos_Column">
+                    <div>
+                        <label>Cantidad de productos a sacar</label>
                         <input autocomplete="off" type="number" id="CantidadP" name="CantidadP" required min="1" onkeyup="mayus(this)">
+                    </div>
+                    <div>
+                        <label>¿Quién requiere este producto?</label>
+                        <select id="NomJefe" required>
+                            <option></option>
+                        </select>
                     </div>
                     <div class="Dos_Columnas">
                         <input type="submit" class="BotonAE">
