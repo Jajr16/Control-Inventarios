@@ -429,8 +429,8 @@ if (pathname == "/users/altasPro") {
                 <td id="DescripcionP">${data.Desc}</td>
                 <td id="UnidadP">${data.Unidad}</td>
                 <td id="Existencia">${data.Existencia}</td>
-                <td id="Agregar" class="BotonMod"> Añadir producto existente </td>
-                <td id="Eliminar" class="BotonER" onclick="Abrir1()"> Elimnar producto existente </td>
+                <td id="Agregar" class="BotonMod"> Añadir productos</td>
+                <td id="Eliminar" class="BotonER" onclick="Abrir1()"> Sacar productos</td>
             </tr>
             `;
             }
