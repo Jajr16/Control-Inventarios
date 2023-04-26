@@ -44,6 +44,7 @@ th:nth-child(n + 3) {
 
 thead{
     background: hsl(236, 100%, 50%); 
+    text-transform: uppercase;
 }
 
 th, td { 

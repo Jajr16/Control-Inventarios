@@ -58,7 +58,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <input type="text" id="buscar" onkeyup="buscar()" placeholder="Buscar en tabla"
+                <input type="text" id="buscar" onkeyup="buscar(); mayus(this);" placeholder="BUSCAR EN TABLA"
                     title="Empieza a escribir para buscar">
                 <table id="DatosProd">
                     <thead>
@@ -91,32 +91,42 @@
                         <div>
                             <label>Código de barras</label>
                             <input autocomplete="off" type="text" id="Cod_BarrasM" min="1" name="Cod_BarrasM" required
-                                maxlength="45">
+                                maxlength="45" onkeyup="mayus(this);">
                         </div>
                         <div>
                             <label>Categoría</label>
-                            <input autocomplete="off" type="text" id="CategoriaM" name="CategoriaM" required
-                                maxlength="45">
+                            <select id="CategoriaM" name="CategoriaM" required>
+                                <option value=""></option>
+                                <option>PAPELERÍA</option>
+                                <option>LIMPIEZA</option>
+                                <option>FERRETERÍA</option>
+                            </select>
                         </div>
                         <div>
                             <label>Nombre del artículo</label>
-                            <input autocomplete="off" type="text" id="NomPM" name="NomPM" required maxlength="45">
+                            <input autocomplete="off" type="text" id="NomPM" name="NomPM" required maxlength="45" onkeyup="mayus(this);">
                         </div>
                     </div>
                     <div class="Tres_Column">
                         <div>
                             <label>Marca del artículo</label>
                             <input autocomplete="off" type="text" id="MarcActiM" name="MarcActiM" required
-                                maxlength="100">
+                                maxlength="100" onkeyup="mayus(this);">
                         </div>
                         <div>
                             <label>Descripción</label>
                             <input autocomplete="off" type="text" id="DescripcionPM" name="DescripcionPM" required
-                                maxlength="400">
+                                maxlength="400" onkeyup="mayus(this);">
                         </div>
                         <div>
                             <label>Unidad</label>
-                            <input autocomplete="off" type="text" id="UnidadPM" name="UnidadPM" required maxlength="45">
+                            <select id="UnidadPM" name="UnidadPM" required>
+                                <option value=""></option>
+                                <option>UNIDAD</option>
+                                <option>LITROS</option>
+                                <option>KILOS</option>
+                                <option>METROS</option>
+                            </select>
                         </div>
 
                     </div>
@@ -140,7 +150,7 @@
             <div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <input type="text" id="buscar1" onkeyup="buscar1()" placeholder="Buscar en tabla"
+                        <input type="text" id="buscar1" onkeyup="buscar1(); mayus(this);" placeholder="BUSCAR EN TABLA"
                             title="Empieza a escribir para buscar">
                         <table id="DatosFacturas">
                             <caption id="title_table"></caption>
@@ -179,8 +189,8 @@
 
                         <div>
                             <label>Número de factura</label>
-                            <input autocomplete="off" type="text" id="NumFactMF" name="NumFactM" required
-                                maxlength="10">
+                            <input autocomplete="off" type="text" id="NumFactMF" name="NumFactM" required maxlength="10"
+                                onkeyup="mayus(this);">
                         </div>
                     </div>
                     <div class="Dos_Columnas">
@@ -192,7 +202,7 @@
                         <div>
                             <label>Proveedor</label>
                             <input autocomplete="off" type="text" id="ProveedorMF" name="ProveedorM" required
-                                maxlength="45">
+                                maxlength="45" onkeyup="mayus(this);">
                         </div>
                     </div>
                     <div class="Dos_Column">
@@ -208,5 +218,6 @@
 <script src='https://s3.amazonaws.com/popmotion.io/static/dist/popmotion.min.js'></script>
 <script src="/javascripts/modal.js" type="text/javascript"></script>
 <script src="/javascripts/Modal2.js" type="text/javascript"></script>
+<script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
 
 </html>

@@ -1,6 +1,6 @@
 console.log(localStorage.getItem("token"));
 var tok = localStorage.getItem("token");
-var socket = io.connect("http://192.168.10.68:3000");
+var socket = io.connect("http://localhost:3000");
 
 var pathname = window.location.pathname;
 
@@ -21,10 +21,27 @@ if (pathname == "/users/altasPro") {
         // Altas de productos
         FormProduct.addEventListener("submit", Enviar);
 
+        var CategoriaSelect = document.getElementById('Categoria');
+        var CategoriaOption;
+
+        var UnidadSelect = document.getElementById('UnidadP');
+        var UnidadOption;
+
+        CategoriaSelect.addEventListener('change',
+            function () {
+                CategoriaOption = CategoriaSelect.options[CategoriaSelect.selectedIndex].text;
+            });
+
+        UnidadSelect.addEventListener('change',
+            function () {
+                UnidadOption = UnidadSelect.options[UnidadSelect.selectedIndex].text;
+            });
+
         function Enviar(e) {
             e.preventDefault();
             if ($("#Cod_Barras").val() != "" && $("#FecActu").val() != "" && $("#Categoria").val() != "" && $("#NomP").val() != "" && $("#MarcActi").val() != "" && $("#DescripcionP").val() != "" && $("#Proveedor").val() != "" && $("#NumFact").val() != "" && $("#CantidadP").val() != "" && $("#UnidadP").val() != "" && $("#FecFact").val()) {
-                socket.emit('Alta_Prod', { CodBarras: $("#Cod_Barras").val(), FecAct: $("#FecActu").val(), Cate: $("#Categoria").val(), Producto: $("#NomP").val(), Marca: $("#MarcActi").val(), Descripcion: $("#DescripcionP").val(), Proveedor: $("#Proveedor").val(), NumFactura: $("#NumFact").val(), FechaFac: $("#FecFact").val(), Cantidad: $("#CantidadP").val(), Unidad: $("#UnidadP").val() });
+
+                socket.emit('Alta_Prod', { CodBarras: $("#Cod_Barras").val(), FecAct: $("#FecActu").val(), Cate: CategoriaOption, Producto: $("#NomP").val(), Marca: $("#MarcActi").val(), Descripcion: $("#DescripcionP").val(), Proveedor: $("#Proveedor").val(), NumFactura: $("#NumFact").val(), FechaFac: $("#FecFact").val(), Cantidad: $("#CantidadP").val(), Unidad: UnidadOption });
 
                 socket.on('Fact_Exists', function (Respuesta) {
                     alert(Respuesta.mensaje);
@@ -82,7 +99,7 @@ if (pathname == "/users/altasPro") {
                 <td id="DescripcionP">${data.Desc}</td>
                 <td id="UnidadP">${data.Unidad}</td>
                 <td id="Existencia">${data.Existencia}</td>
-                <td id="Eliminar" class="BotonER"> Eliminar </td>
+                <td id="Eliminar" class="BotonER" onclick="confirm('¿Deseas eliminar este producto?')"> Eliminar </td>
                 <td id="Modificar" class="BotonMod"> Modificar </td>
             </tr>
             `;
@@ -276,6 +293,7 @@ if (pathname == "/users/altasPro") {
                         document.getElementById("FecFactMF").value = valoresF2;
                         document.getElementById("ProveedorMF").value = valoresF3;
                     }
+
                     //Formulario de facturas
                     let FormularioFac = document.querySelector("#FacturasMody");
                     FormularioFac.addEventListener("submit", function (e) {
@@ -310,12 +328,29 @@ if (pathname == "/users/altasPro") {
             FormMod.addEventListener("submit", Enviar);
 
             // Comprueba que no haya otro igual
+
+            var CategoriaSelect = document.getElementById('CategoriaM');
+            var CategoriaOption;
+
+            var UnidadSelect = document.getElementById('UnidadPM');
+            var UnidadOption;
+
+            CategoriaSelect.addEventListener('change',
+                function () {
+                    CategoriaOption = CategoriaSelect.options[CategoriaSelect.selectedIndex].text;
+                });
+
+            UnidadSelect.addEventListener('change',
+                function () {
+                    UnidadOption = UnidadSelect.options[UnidadSelect.selectedIndex].text;
+                });
+
             function Enviar(e) {
 
                 e.preventDefault();
 
                 if ($("#Cod_BarrasM").val() != "" && $("#CategoriaM").val() != "" && $("#NomPM").val() != "" && $("#MarcActiM").val() != "" && $("#DescripcionPM").val() != "" && $("#UnidadPM").val() != "") {
-                    socket.emit('Cambios_Prod', { CodBarras: $("#Cod_BarrasM").val(), Cate: $("#CategoriaM").val(), Producto: $("#NomPM").val(), Marca: $("#MarcActiM").val(), Descripcion: $("#DescripcionPM").val(), Unidad: $("#UnidadPM").val() }, { CBO: valores0, CO: valores1, NAO: valores2, MAO: valores3, DO: valores4, UO: valores5 });
+                    socket.emit('Cambios_Prod', { CodBarras: $("#Cod_BarrasM").val(), Cate: CategoriaOption, Producto: $("#NomPM").val(), Marca: $("#MarcActiM").val(), Descripcion: $("#DescripcionPM").val(), Unidad: UnidadOption }, { CBO: valores0, CO: valores1, NAO: valores2, MAO: valores3, DO: valores4, UO: valores5 });
 
                     socket.on('Producto_Inexistente', function (Respuesta) {
                         alert(Respuesta.mensaje);
@@ -328,7 +363,7 @@ if (pathname == "/users/altasPro") {
                 }
             }
         });
-    }else {
+    } else {
         location.href = "index";
     }
 } else if (pathname == "/users/ABPE") {
@@ -484,7 +519,7 @@ if (pathname == "/users/altasPro") {
                 }
             })
         }
-    }else {
+    } else {
         location.href = "index";
     }
 } else if (pathname == "/users/RegistrarUsuario") {
@@ -538,7 +573,7 @@ if (pathname == "/users/altasPro") {
                 });
             }
         }
-    }else {
+    } else {
         location.href = "index";
     }
 }

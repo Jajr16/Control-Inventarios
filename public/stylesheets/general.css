@@ -202,11 +202,14 @@ input:not([type="submit"]), textarea, select{
     border-radius: .5rem;
     color: white;
     transition: all 0.3s ease 0s;
+    height: 3.5rem; 
 }
 
 label{
     display: block;
     font-weight: 700;
+    color: white;
+    text-transform: uppercase;
 }
 
 legend {

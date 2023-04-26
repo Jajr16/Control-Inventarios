@@ -59,19 +59,19 @@
                 <div class="field">
                     <label class="label">Nombre de empleado</label>
                     <input autocomplete="off" type="text" name="NombreEmp" id="NombreEmp"
-                        placeholder="Nombre de empleado" required maxlength="45">
+                        placeholder="Nombre de empleado" required maxlength="45" onkeyup="mayus(this);">
                 </div>
                 <!--Apellido paterno-->
                 <div class="field">
                     <label class="label">Apellido paterno</label>
                     <input autocomplete="off" type="text" name="AP" id="AP" placeholder="Apellido paterno" required
-                        maxlength="45">
+                        maxlength="45" onkeyup="mayus(this);">
                 </div>
                 <!--Apellido materno-->
                 <div class="field">
                     <label class="label">Apellido materno</label>
                     <input autocomplete="off" type="text" name="AM" id="AM" placeholder="Apellido materno" required
-                        maxlength="45">
+                        maxlength="45" onkeyup="mayus(this);">
                 </div>
                 <!--Area-->
                 <div class="field">
@@ -82,7 +82,8 @@
                 <!--Numero de jefe-->
                 <div class="field">
                     <label class="label">Nombre de jefe</label>
-                    <input autocomplete="off" type="text" name="NomJefe" id="NomJefe" placeholder="Nombre de jefe" required maxlength="135">
+                    <input autocomplete="off" type="text" name="NomJefe" id="NomJefe" placeholder="Nombre de jefe"
+                        required maxlength="135" onkeyup="mayus(this);">
                 </div>
                 <!--Nombre usuario-->
                 <div class="field">
@@ -101,6 +102,7 @@
         </center>
     </main>
     <script src="/javascripts/SocketsC.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
 </body>
 
 </html>
