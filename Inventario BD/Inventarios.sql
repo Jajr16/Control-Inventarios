@@ -437,6 +437,7 @@ select*from empleado;
 select distinct(Área) from empleado;
 select*from usuario;
 
+delete from empleado where Num_emp > 840;
 select Área, Nom from empleado where Área = "PASTORAL";
 
 insert into usuario values(
