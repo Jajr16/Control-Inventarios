@@ -20,7 +20,7 @@ io.on('connection', (socket) => {
 
         console.log('Datos recibidos:', data);
         // Autenticar al usuario utilizando la lógica definida anteriormente
-        db.query('select*from usuario where Usuario = ? and Pass = ?', [data.User, data.Pass], function (err, result) {
+        db.query('select*from usuario where Usuario = BINARY  ? and Pass = BINARY  ?', [data.User, data.Pass], function (err, result) {
             console.log(result);
             if (err) console.log(err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
@@ -288,7 +288,7 @@ io.on('connection', (socket) => {
             if (err) console.log("Error de eliminación de productos: ", err);
             if (result.length > 0) {
                 if (parseInt(result[0].Existencia) > 0 && parseInt(data.Cantidad) <= parseInt(result[0].Existencia)) {
-                    db.query('select num_emp from empleado where concat(Nom, " ", AP, " ", AM) = ?', [data.Emp], function (err, res) {
+                    db.query('select num_emp from empleado where Nom = ?', [data.Emp], function (err, res) {
                         if (err) console.log("Error de busqueda de empleados: ", err);
                         console.log(res);
                         if (res.length > 0) {
@@ -300,7 +300,7 @@ io.on('connection', (socket) => {
                                     socket.emit('Fallo_BajasExist', { mensaje: "No se pudo actualizar la existencia de productos." })
                                 }
                             });
-                        }else{
+                        } else {
                             socket.emit('Fallo_BajasExist', { mensaje: "No se encontró ningún empleado con ese nombre, actualice la página." })
                         }
                     });
@@ -315,7 +315,7 @@ io.on('connection', (socket) => {
     socket.on('Registro_Usuario', async (data) => {
         console.log("asdas");
         //Autentificar que no exista un usuario igual
-        db.query('select*from Empleado where Nom = ? and AP = ? and AM = ?', [data.NombreEmp, data.ApePat, data.ApeMat], function (err, resultG) {
+        db.query('select*from Empleado where Nom = ?', [data.NombreEmp], function (err, resultG) {
 
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
 
@@ -328,17 +328,23 @@ io.on('connection', (socket) => {
                     if (result.length > 0) {//Si sí hizo una búsqueda
                         socket.emit('Usuario_Existente', { mensaje: "Este usuario ya está registrado." });
                     } else {
-                        db.query('insert into Usuario values (?,?,?,12345)', [resultG[0].Num_emp, data.N_User, data.ContraNueva], function (err, result) {
+                        db.query('select tokens.token from tokens inner join empleado on tokens.area = empleado.Área where empleado.Num_Emp = ?', resultG[0].Num_emp, function (err, result) {
+                            if (err) console.log("El error en la búsqueda fue: ", err);
+                            if (result.length > 0) {
+                                db.query('insert into Usuario values (?,?,?,?)', [resultG[0].Num_emp, data.N_User, data.ContraNueva, result[0].token], function (err, result) {
 
-                            if (err) console.log("Error de inserción de Usuario: ", err);
+                                    if (err) console.log("Error de inserción de Usuario: ", err);
 
-                            if (result) {
-                                console.log("Resultado de inserción de Usuario: ", result);
-                                socket.emit('Usuario_Agregado', { mensaje: "Usuario agregado con éxito." });
-                            } else {
-                                socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
+                                    if (result) {
+                                        console.log("Resultado de inserción de Usuario: ", result);
+                                        socket.emit('Usuario_Agregado', { mensaje: "Usuario agregado con éxito." });
+                                    } else {
+                                        socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
+                                    }
+                                });
                             }
                         });
+
                     }
                 });
             } else {
@@ -349,27 +355,32 @@ io.on('connection', (socket) => {
                     if (result.length > 0) {//Si sí hizo una búsqueda
                         socket.emit('Usuario_Existente', { mensaje: "Este usuario ya está registrado." });
                     } else {
-                        db.query('select Num_emp from Empleado where concat(Nom, " ", AP, " ", AM) = ?', [data.NomJefe], function (err, result) {
+                        db.query('select Num_emp from Empleado where nom = ?', [data.NomJefe], function (err, result) {
                             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
 
                             if (result.length > 0) {//Si sí hizo una búsqueda
                                 console.log(result);
-                                db.query('insert into Empleado values (null,?,?,?,?,?)', [data.NombreEmp, data.ApePat, data.ApeMat, data.Area, result[0].Num_emp], function (err, result) {
+                                db.query('insert into Empleado values (null,?,?,?)', [data.NombreEmp, data.Area, result[0].Num_emp], function (err, result) {
 
                                     if (err) console.log("Error de inserción de Empleados: ", err);
                                     if (result) {
-                                        console.log(data)
-                                        db.query('select Num_emp from Empleado where Nom = ? and AP = ? and AM = ?', [data.NombreEmp, data.ApePat, data.ApeMat], function (err, result) {
+                                        db.query('select Num_emp from Empleado where Nom = ?', [data.NombreEmp], function (err, resultNE) {
                                             if (err) console.log("Error de búsqueda: " + err);
-                                            if (result.length > 0) {
-                                                db.query('insert into Usuario values (?,?,?,12345)', [result[0].Num_emp, data.N_User, data.ContraNueva], function (err, result) {
+                                            if (resultNE.length > 0) {
+                                                db.query('select tokens.token from tokens inner join empleado on tokens.area = empleado.Área where empleado.Num_Emp = ?', resultNE[0].Num_emp, function (err, result) {
+                                                    if (err) console.log("El error en la búsqueda fue: ", err);
+                                                    if (result.length > 0) {
+                                                        db.query('insert into Usuario values (?,?,?,?)', [resultNE[0].Num_emp, data.N_User, data.ContraNueva, result[0].token], function (err, result) {
 
-                                                    if (err) console.log("Error de inserción de Usuario: ", err);
-                                                    if (result) {
-                                                        console.log("Resultado de inserción de Usuario: ", result);
-                                                        socket.emit('Usuario_Agregado', { mensaje: "Usuario agregado con éxito." });
-                                                    } else {
-                                                        socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
+                                                            if (err) console.log("Error de inserción de Usuario: ", err);
+
+                                                            if (result) {
+                                                                console.log("Resultado de inserción de Usuario: ", result);
+                                                                socket.emit('Usuario_Agregado', { mensaje: "Usuario agregado con éxito." });
+                                                            } else {
+                                                                socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
+                                                            }
+                                                        });
                                                     }
                                                 });
                                             }
@@ -391,11 +402,11 @@ io.on('connection', (socket) => {
     });
 
     socket.on('List_empleados', () => {
-        db.query('select concat(Nom, " ", AP, " ", AM) NombreCompleto from empleado', function (err, res) {
+        db.query('select Nom from empleado', function (err, res) {
             if (err) console.log("El error fue: ", err)
             if (res.length > 0) {
                 for (var i = 0; i < res.length; i++) {
-                    socket.emit('ListaNombres', { Nombres: res[i].NombreCompleto });
+                    socket.emit('ListaNombres', { Nombres: res[i].Nom });
                 }
             }
 

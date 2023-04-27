@@ -58,12 +58,12 @@
       <form name="AltaProductos" id="AltaProductos">
         <div class="Cuatro_Column">
           <div>
-            <label style="color:white;">FECHA DE INGRESO</label>
+            <label>FECHA DE INGRESO</label>
             <input autocomplete="off" type="date" id="FecActu" name="FecActu" disabled>
           </div>
           <div>
             <label>Código de barras</label>
-            <input autocomplete="off" type="text" id="Cod_Barras" min="1" name="Cod_Barras" required maxlength="45" onkeyup="mayus(this)">
+            <input autocomplete="off" type="text" id="Cod_Barras" min="1" name="Cod_Barras" required maxlength="45" onkeyup="mayus(this)" onkeypress="return check(event)">
           </div>
           <div>
             <label>Categoría</label>
@@ -76,21 +76,21 @@
           </div>
           <div>
             <label>Nombre del artículo</label>
-            <input autocomplete="off" type="text" id="NomP" name="NomP" required maxlength="45" onkeyup="mayus(this);">
+            <input autocomplete="off" type="text" id="NomP" name="NomP" required maxlength="45" onkeyup="mayus(this);" onkeypress="return check(event)">
           </div>
         </div>
         <div class="Cuatro_Column">
           <div>
             <label>Marca del artículo</label>
-            <input autocomplete="off" type="text" id="MarcActi" name="MarcActi" required maxlength="100" onkeyup="mayus(this);">
+            <input autocomplete="off" type="text" id="MarcActi" name="MarcActi" required maxlength="100" onkeyup="mayus(this);" onkeypress="return check(event)">
           </div>
           <div>
             <label>Descripción</label>
-            <input autocomplete="off" type="text" id="DescripcionP" name="DescripcionP" required maxlength="400" onkeyup="mayus(this);">
+            <input autocomplete="off" type="text" id="DescripcionP" name="DescripcionP" required maxlength="400" onkeyup="mayus(this);" onkeypress="return check(event)">
           </div>
           <div>
             <label>Proveedor</label>
-            <input autocomplete="off" type="text" id="Proveedor" name="Proveedor" required maxlength="45" onkeyup="mayus(this);">
+            <input autocomplete="off" type="text" id="Proveedor" name="Proveedor" required maxlength="45" onkeyup="mayus(this);" onkeypress="return check(event)" >
           </div>
           <div>
             <label>Unidad</label>
@@ -108,11 +108,11 @@
 
           <div>
             <label>Cantidad</label>
-            <input autocomplete="off" type="number" id="CantidadP" name="CantidadP" required min="1">
+            <input autocomplete="off" type="number" id="CantidadP" name="CantidadP" required min="1" onkeypress="return checkN(event)">
           </div>
           <div>
             <label>Número de Factura</label>
-            <input autocomplete="off" type="text" id="NumFact" name="NumFact" required maxlength="10" onkeyup="mayus(this);">
+            <input autocomplete="off" type="text" id="NumFact" name="NumFact" required maxlength="10" onkeyup="mayus(this);" onkeypress="return check(event)">
           </div>
           <div>
             <label>Fecha de Factura</label>

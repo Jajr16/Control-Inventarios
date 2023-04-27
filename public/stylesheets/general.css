@@ -191,6 +191,22 @@ form{
     font-size: 1.3rem;
 }
 
+.select2-container--default .select2-selection--single .select2-selection__rendered{
+    padding: .8rem;    
+    display: block;
+    margin-bottom: 2rem;
+    width: 100%;
+    background-color: rgb(0, 0, 0);
+    border: rgb(10,3,47) solid 1px;
+    border-radius: .5rem;
+    color: white;
+    transition: all 0.3s ease 0s;
+    height: 3.5rem; 
+}
+
+.Dos_Columnas{
+    margin-top: 2rem;
+}
 
 input:not([type="submit"]), textarea, select{
     padding: .8rem;    
@@ -210,6 +226,7 @@ label{
     font-weight: 700;
     color: white;
     text-transform: uppercase;
+    margin-top: 2rem;
 }
 
 legend {

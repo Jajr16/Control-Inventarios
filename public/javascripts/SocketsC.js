@@ -3,7 +3,7 @@ var tok = localStorage.getItem("token");
 var socket = io.connect("http://localhost:3000");
 
 var pathname = window.location.pathname;
-
+//SELECTS
 function ListaNombres(Nombr) {
     var selectNombres = document.getElementById("NomJefe");
 
@@ -17,11 +17,52 @@ function cargarNombres() {
         ListaNombres(data.Nombres);
     });
 }
+//CAMPOS SOLO LETRAS Y NÚMEROS
+function check(e) {
+    tecla = (document.all) ? e.keyCode : e.which;
 
+    //Tecla de retroceso para borrar, siempre la permite
+    if (tecla == 8 || tecla == 32) {
+        return true;
+    }
+
+    // Patrón de entrada, en este caso solo acepta numeros y letras
+    patron = /[A-Za-z]/;
+    tecla_final = String.fromCharCode(tecla);
+    return patron.test(tecla_final);
+}
+
+function checkN(e) {
+    tecla = (document.all) ? e.keyCode : e.which;
+
+    //Tecla de retroceso para borrar, siempre la permite
+    if (tecla == 8 || tecla == 32) {
+        return true;
+    }
+
+    // Patrón de entrada, en este caso solo acepta numeros y letras
+    patron = /[0-9]/;
+    tecla_final = String.fromCharCode(tecla);
+    return patron.test(tecla_final);
+}
+
+function checkA(e) {
+    tecla = (document.all) ? e.keyCode : e.which;
+
+    //Tecla de retroceso para borrar, siempre la permite
+    if (tecla == 8 || tecla == 32) {
+        return true;
+    }
+
+    // Patrón de entrada, en este caso solo acepta numeros y letras
+    patron = /[A-Za-z0-9]/;
+    tecla_final = String.fromCharCode(tecla);
+    return patron.test(tecla_final);
+}
 
 if (pathname == "/users/altasPro") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A") {
-        if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
+    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
+        if (tok == "4dnM3k0nl9s") {
             document.getElementById("Linksnav").innerHTML += `
                 <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
             `;
@@ -77,8 +118,8 @@ if (pathname == "/users/altasPro") {
         location.href = "index";
     }
 } else if (pathname == "/users/consulPro") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A") {
-        if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
+    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
+        if (tok == "4dnM3k0nl9s") {
             document.getElementById("Linksnav").innerHTML += `
                 <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
             `;
@@ -382,8 +423,8 @@ if (pathname == "/users/altasPro") {
         location.href = "index";
     }
 } else if (pathname == "/users/ABPE") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A") {
-        if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
+    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
+        if (tok == "4dnM3k0nl9s") {
             document.getElementById("Linksnav").innerHTML += `
                 <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
             `;
@@ -392,6 +433,13 @@ if (pathname == "/users/altasPro") {
                 <a href="/users/RegistrarUsuario">Registrar Usuario</a>
             `;
         }
+
+        window.onpageshow = function () {
+            $('#NomJefe').select2({
+                allowClear: true,
+                placeholder: 'Buscar empleado'
+            });
+        };
 
         window.addEventListener("load", function (event) {
             cargarNombres();
@@ -509,8 +557,8 @@ if (pathname == "/users/altasPro") {
                 function EnviarBaja(e) {
                     e.preventDefault();
                     if ($("#CantidadP").val() != "" && $("#NomJefe") != "") {
-                        socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: NombEmpOption});
-                        
+                        socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: NombEmpOption });
+
                         socket.on('Eliminacion_Realizada', function (Respuesta) {
                             alert(Respuesta.mensaje);
                             location.reload();
@@ -551,11 +599,18 @@ if (pathname == "/users/altasPro") {
         location.href = "index";
     }
 } else if (pathname == "/users/RegistrarUsuario") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
+    if (tok == "4dnM3k0nl9s") {
 
         window.addEventListener("load", function (event) {
             cargarNombres();
         });
+
+        window.onpageshow = function () {
+            $('#NomJefe').select2({
+                allowClear: true,
+                placeholder: 'Buscar empleado'
+            });
+        };
 
         document.getElementById("Linksnav").innerHTML += `
             <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
@@ -574,7 +629,7 @@ if (pathname == "/users/altasPro") {
             e.preventDefault();
             if ($("#NombreEmp").val() != "" && $("#AP").val() != "" && $("#AM").val() != "" && $("#Area").val() != "" && $("#NumJefe").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
 
-                socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), ApePat: $("#AP").val(), ApeMat: $("#AM").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
+                socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
 
                 socket.on('Usuario_Existente', function (Respuesta) {
                     alert(Respuesta.mensaje);
