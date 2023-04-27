@@ -1,46 +1,64 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;800&display=swap');
 
-html{
+/* --- SEGURIDAD ---
+* {
+    user-select: none;
+}
+
+*::selection {
+    background: none;
+}
+
+*::-moz-selection {
+    background: none;
+} */
+
+
+html {
     font-size: 62.5%;
     box-sizing: border-box;
 }
 
-*{
+* {
     margin: 0;
     font-family: 'Nunito', sans-serif;
 }
 
-*, *:before, *:after{
+*,
+*:before,
+*:after {
     box-sizing: inherit;
 }
-body{
+
+body {
     line-height: 2;
-    background: linear-gradient(rgba(22, 37, 78, 0.4), rgba(22, 37, 78, 0.4)), url('/images/Fondo.jpg') no-repeat fixed; 
+    background: linear-gradient(rgba(22, 37, 78, 0.4), rgba(22, 37, 78, 0.4)), url('/images/Fondo.jpg') no-repeat fixed;
     background-size: cover;
 }
 
-:root{
+:root {
     scroll-behavior: smooth;
 }
 
-body::-webkit-scrollbar{
+body::-webkit-scrollbar {
     width: 1rem;
 }
 
-body::-webkit-scrollbar-track{
+body::-webkit-scrollbar-track {
     background-color: #2b2b2b;
 }
 
-body::-webkit-scrollbar-thumb{
+body::-webkit-scrollbar-thumb {
     background: linear-gradient(to top, #7060ff 0%, #000e8d 100%);
     border-radius: 7px;
 }
-body::-webkit-scrollbar-thumb:hover{
+
+body::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(to top, #7060ff 0%, #ebedff 100%);
     border-radius: 7px;
 }
 
-.header{
+.header {
     background-color: #eceff1;
     display: flex;
     justify-content: flex-end;
@@ -51,53 +69,56 @@ body::-webkit-scrollbar-thumb:hover{
     width: 100%;
 }
 
-.header .logo{
+.header .logo {
     cursor: pointer;
     margin-right: auto;
 }
 
-.header .logo img{
+.header .logo img {
     height: 70px;
     width: auto;
     transition: all 0.3s;
 }
 
-.header .logo img:hover{
+.header .logo img:hover {
     transform: scale(1.2);
 }
 
-.header .nav-links{
+.header .nav-links {
     list-style: none;
 }
 
-.header .nav-links li{
+.header .nav-links li {
     display: inline-block;
-    padding: 0 20px;    
+    padding: 0 20px;
 }
 
 .header .nav-links li:hover,
-/**/.overlay a:hover{
+/**/
+.overlay a:hover {
     transform: scale(1.1);
 }
 
-.header .nav-links a{
+.header .nav-links a {
     font-size: 700;
-    color: #000157; 
+    color: #000157;
     transition: all 0.3s ease 0s;
 }
 
-.header .nav-links a:hover{
+.header .nav-links a:hover {
     color: #0004ff;
     transform: scale(1.1);
-    
+
 }
 
-/**/.menu {
-    display:none;
+/**/
+.menu {
+    display: none;
 }
 
 .header .btn button,
-/**/.header .menu button{
+/**/
+.header .menu button {
     margin-left: 20px;
     font-weight: 700;
     color: #00025f;
@@ -110,17 +131,22 @@ body::-webkit-scrollbar-thumb:hover{
 }
 
 .header .btn button:hover,
-/**/.header .menu button:hover{
+/**/
+.header .menu button:hover {
     background-color: #afafaf;
     color: #00025f;
     transform: scale(1.1);
 }
 
 
-/**/@media screen and (max-width: 800px){
-    .nav-links, .btn {
+/**/
+@media screen and (max-width: 800px) {
+
+    .nav-links,
+    .btn {
         display: none;
     }
+
     .menu {
         display: inherit;
     }
@@ -128,9 +154,9 @@ body::-webkit-scrollbar-thumb:hover{
 
 /*Nav Mobile*/
 
-.header a{
-    text-decoration: none;  
-    /*borramos el que teniamos en .header .nav-links a*/ 
+.header a {
+    text-decoration: none;
+    /*borramos el que teniamos en .header .nav-links a*/
 }
 
 .header .overlay {
@@ -145,15 +171,15 @@ body::-webkit-scrollbar-thumb:hover{
     transition: all 0.3s ease 0s;
 }
 
-.header .overlay .overlay-content{
+.header .overlay .overlay-content {
     display: flex;
     height: 100%;
     flex-direction: column;
     align-items: center;
-    justify-content: center;    
+    justify-content: center;
 }
 
-.header .overlay a{
+.header .overlay a {
     padding: 15px;
     font-size: 36px;
     display: block;
@@ -162,12 +188,12 @@ body::-webkit-scrollbar-thumb:hover{
     color: #eceff1;
 }
 
-.header .overlay a:hover, 
-.header .overlay a:focus{
+.header .overlay a:hover,
+.header .overlay a:focus {
     color: #0004fd;
 }
 
-.header .overlay .close{
+.header .overlay .close {
     position: absolute;
     top: 20px;
     right: 45px;
@@ -175,10 +201,11 @@ body::-webkit-scrollbar-thumb:hover{
 }
 
 @media screen and (max-height:450px) {
-    .header .overlay a{
+    .header .overlay a {
         font-size: 20px;
     }
-    .header .overlay .close{
+
+    .header .overlay .close {
         font-size: 40px;
         top: 15px;
         right: 35px;
@@ -187,41 +214,43 @@ body::-webkit-scrollbar-thumb:hover{
 
 /***** Fin de ajustes basicos *****/
 
-form{
+form {
     font-size: 1.3rem;
 }
 
-.select2-container--default .select2-selection--single .select2-selection__rendered{
-    padding: .8rem;    
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    padding: .8rem;
     display: block;
     margin-bottom: 2rem;
     width: 100%;
     background-color: rgb(0, 0, 0);
-    border: rgb(10,3,47) solid 1px;
+    border: rgb(10, 3, 47) solid 1px;
     border-radius: .5rem;
     color: white;
     transition: all 0.3s ease 0s;
-    height: 3.5rem; 
+    height: 3.5rem;
 }
 
-.Dos_Columnas{
+.Dos_Columnas {
     margin-top: 2rem;
 }
 
-input:not([type="submit"]), textarea, select{
-    padding: .8rem;    
+input:not([type="submit"]),
+textarea,
+select {
+    padding: .8rem;
     display: block;
     margin-bottom: 2rem;
     width: 100%;
     background-color: rgb(0, 0, 0);
-    border: rgb(10,3,47) solid 1px;
+    border: rgb(10, 3, 47) solid 1px;
     border-radius: .5rem;
     color: white;
     transition: all 0.3s ease 0s;
-    height: 3.5rem; 
+    height: 3.5rem;
 }
 
-label{
+label {
     display: block;
     font-weight: 700;
     color: white;
@@ -233,20 +262,21 @@ legend {
     font-size: 2rem;
     color: #c4c4c4;
 
-}   
+}
 
 /* Encabezado */
-.Encabezado{
+.Encabezado {
     color: darkred;
 }
 
-.Contenido-Header h1{
+.Contenido-Header h1 {
     color: white;
     padding-bottom: 3rem;
     max-width: 70rem;
     line-height: 2;
 }
-.Barra{
+
+.Barra {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -255,50 +285,58 @@ legend {
 }
 
 /*Globales*/
-img{
+img {
     max-width: 100%;
 }
-.Contenedor{
+
+.Contenedor {
     max-width: 120rem;
     margin: 0 auto;
 }
-h1{
+
+h1 {
     font-size: 3.8rem;
 }
-h2{
+
+h2 {
     font-size: 3.4rem;
 }
-h3{
+
+h3 {
     font-size: 3rem;
 }
-h4{
+
+h4 {
     font-size: 2.6rem;
 }
-h5{
+
+h5 {
     font-size: 2rem;
 }
 
 /*Utilidades*/
 
-.Inter_100{
+.Inter_100 {
     line-height: 100%;
 }
 
-.botonA, .botonB{
+.botonA,
+.botonB {
     color: black;
     cursor: context-menu;
 }
-.botonA:hover{
+
+.botonA:hover {
     color: white;
     background-color: limegreen;
 }
 
-.botonB:hover{
+.botonB:hover {
     color: white;
     background-color: #BE0101;
 }
 
-.BotonModF{
+.BotonModF {
     text-decoration: none;
     width: 100%;
     border: none;
@@ -312,12 +350,12 @@ h5{
     transition: all 0.3s ease 0s;
 }
 
-.BotonModF:hover{
+.BotonModF:hover {
     background: linear-gradient(to right, #3056ff, #c8d2fd);
     transform: scale(1.1);
 }
 
-.BotonAE{
+.BotonAE {
     text-decoration: none;
     width: 100%;
     border: none;
@@ -328,15 +366,15 @@ h5{
     cursor: pointer;
     font-size: 20px;
     transition: all 0.3s ease 0s;
-    
+
 }
 
-.BotonAE:hover{
+.BotonAE:hover {
     background: linear-gradient(to right, #3056ff, #c8d2fd);
     transform: scale(1.1);
 }
 
-.BotonAEB{
+.BotonAEB {
     text-decoration: none;
     width: 100%;
     border: none;
@@ -347,15 +385,15 @@ h5{
     cursor: pointer;
     font-size: 20px;
     transition: all 0.3s ease 0s;
-    
+
 }
 
-.BotonAEB:hover{
+.BotonAEB:hover {
     background: linear-gradient(to right, #3056ff, #c8d2fd);
     transform: scale(1.1);
 }
 
-.BotonAA{
+.BotonAA {
     width: 32rem;
     border: none;
     margin-bottom: 2rem;
@@ -366,12 +404,12 @@ h5{
     transition: all 0.3s ease 0s;
 }
 
-.BotonAA:hover{
+.BotonAA:hover {
     background: linear-gradient(to right, #2bff00, #a6ff94);
     transform: scale(1.1);
 }
 
-.BotonCancelar{
+.BotonCancelar {
     text-decoration: none;
     width: 32rem;
     border: none;
@@ -385,13 +423,13 @@ h5{
     transition: all 0.3s ease 0s;
 }
 
-.BotonCancelar:hover{
+.BotonCancelar:hover {
     background: linear-gradient(to top, #f3647c, #ffd6dd);
     color: rgb(104, 0, 22);
     transform: scale(1.1);
 }
 
-.BotonReg{
+.BotonReg {
     text-decoration: none;
     width: 32rem;
     border: none;
@@ -405,12 +443,12 @@ h5{
     transition: all 0.3s ease 0s;
 }
 
-.BotonReg:hover{
+.BotonReg:hover {
     background: linear-gradient(to right, #ff9101, #f8c37e);
     transform: scale(1.1);
 }
 
-.BotonAG{
+.BotonAG {
     text-decoration: none;
     padding: 0.5rem;
     text-align: center;
@@ -420,13 +458,13 @@ h5{
     transition: all 0.3s ease 0s;
 }
 
-.BotonAG:hover{
+.BotonAG:hover {
     background: linear-gradient(to top, #09ff00, #aefdb4);
     color: rgb(35, 39, 35);
     transform: scale(1.1);
 }
 
-.BotonER{
+.BotonER {
     text-decoration: none;
     padding: 0.5rem;
     text-align: center;
@@ -436,13 +474,13 @@ h5{
     transition: all 0.3s ease 0s;
 }
 
-.BotonER:hover{
+.BotonER:hover {
     background: linear-gradient(to top, #f3647c, #ffd6dd);
     color: rgb(104, 0, 22);
     transform: scale(1.1);
 }
 
-.BotonABE{
+.BotonABE {
     text-decoration: none;
     padding: 0.5rem;
     text-align: center;
@@ -452,13 +490,13 @@ h5{
     transition: all 0.3s ease 0s;
 }
 
-.BotonABE:hover{
+.BotonABE:hover {
     background: linear-gradient(to top, #00f7ff, #c8fbfd);
     color: rgb(0, 53, 54);
     transform: scale(1.1);
 }
 
-.BotonMod{
+.BotonMod {
     text-decoration: none;
     padding: 0.5rem;
     text-align: center;
@@ -468,13 +506,13 @@ h5{
     transition: all 0.3s ease 0s;
 }
 
-.BotonMod:hover{
+.BotonMod:hover {
     background: linear-gradient(to top, #00f7ff, #c8fbfd);
     color: rgb(0, 53, 54);
     transform: scale(1.1);
 }
 
-.BotonIZ{
+.BotonIZ {
     text-decoration: none;
     padding: 0.5rem;
     text-align: center;
@@ -483,7 +521,7 @@ h5{
     transition: all 0.3s ease 0s;
 }
 
-.BotonDE{
+.BotonDE {
     text-decoration: none;
     padding: 0.5rem;
     text-align: center;
@@ -492,63 +530,64 @@ h5{
     transition: all 0.3s ease 0s;
 }
 
-.Separacion > a{
+.Separacion>a {
     margin: 2rem 0 3rem 4rem;
 }
 
-.CampoForm{
+.CampoForm {
     background: linear-gradient(rgba(0, 67, 252, 0.4), rgba(255, 255, 255, 0.4));
-    display:block !important;
-    width: 45% !important; 
+    display: block !important;
+    width: 45% !important;
     transition: all 0.3s ease 0s;
 }
 
-.CampoForm:hover{
+.CampoForm:hover {
     transform: scale(1.1);
 }
 
-.Seccion{
+.Seccion {
     margin-top: 2rem;
     margin-bottom: 2rem;
 }
 
-.FW-300{
+.FW-300 {
     font-weight: 300;
     color: #eceff1;
 }
 
-.FW-200{
+.FW-200 {
     font-weight: 200;
 }
 
-.FW-700{
+.FW-700 {
     font-weight: 700;
 }
 
-.FS-M{
+.FS-M {
     font-size: medium;
 }
 
-.FW-Bold{
+.FW-Bold {
     font-weight: bolder;
 }
 
-.TA-C{
+.TA-C {
     text-align: center;
 }
-.D-B{
-    display:block!important;
+
+.D-B {
+    display: block !important;
 }
 
 /* Generales */
-.Dos_Columnas{
+.Dos_Columnas {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     width: 100%;
 }
 
-.Dos_Columnas div{
+.Dos_Columnas div {
     display: inline-flex;
     align-items: center;
     flex-direction: column;
@@ -556,28 +595,28 @@ h5{
     width: 50%;
 }
 
-.Tres_Column{
+.Tres_Column {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     width: 100%;
 }
 
-.Tres_Column div{
+.Tres_Column div {
     display: inline-flex;
     align-items: center;
     flex-direction: column;
     padding: 0 2rem;
 }
 
-.Cuatro_Column{
+.Cuatro_Column {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     width: 100%;
 }
 
-.Cuatro_Column div{
+.Cuatro_Column div {
     display: inline-flex;
     width: 22%;
     align-items: center;
@@ -586,26 +625,26 @@ h5{
 }
 
 /* Inscripciones */
-.Dos_Column{
+.Dos_Column {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     font-size: 1.6rem;
 }
 
-.Dos_Column div{
+.Dos_Column div {
     display: flex;
     width: 90%;
     align-items: baseline;
 }
 
-.Dos_Column div label{
+.Dos_Column div label {
     width: 40%;
     margin-left: 3rem;
 }
 
 /* LogIn */
-.LogIn{
+.LogIn {
     font-weight: 800;
     text-align: left;
     background: linear-gradient(rgba(0, 67, 252, 0.4), rgba(255, 255, 255, 0.4));
@@ -616,11 +655,12 @@ h5{
     padding: 4rem 4rem;
     transition: all 0.3s ease 0s;
 }
-.LogIn:hover{
+
+.LogIn:hover {
     transform: scale(1.1);
 }
 
-.Registro{
+.Registro {
     font-weight: 800;
     text-align: left;
     background: linear-gradient(rgba(0, 67, 252, 0.4), rgba(255, 255, 255, 0.4));
@@ -630,11 +670,12 @@ h5{
     padding: 4rem 4rem;
     transition: all 0.3s ease 0s;
 }
-.Registro:hover{
+
+.Registro:hover {
     transform: scale(1.1);
 }
 
-.Contenido-Centrado{
+.Contenido-Centrado {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -644,7 +685,7 @@ h5{
 
 /* RESPONSIVE PÁGINA INICIO */
 @media screen and (max-width:880px) {
-    .Dos_Column a{
+    .Dos_Column a {
         display: block;
         margin: 1rem;
     }
@@ -654,51 +695,52 @@ h5{
         width: 100%;
     }
 
-    .Cuatro_Column a{
+    .Cuatro_Column a {
         display: flex;
         width: 100%;
         justify-content: center
     }
 
-    .Cuatro_Column div{
+    .Cuatro_Column div {
         display: block;
         width: 100%;
     }
 }
 
 
-@media screen and (max-width:665px){
-    .Cuatro_Column{
+@media screen and (max-width:665px) {
+    .Cuatro_Column {
         display: block;
         width: 100%;
     }
 }
 
-@media screen and (max-width:475px){
-    .Dos_Column{
+@media screen and (max-width:475px) {
+    .Dos_Column {
         display: block;
     }
 
-    .Cuatro_Column{
+    .Cuatro_Column {
         display: block;
     }
 
-    .Campo_Ovalado{
-        width: 100%!important;
+    .Campo_Ovalado {
+        width: 100% !important;
         margin-bottom: 5rem;
     }
 }
 
 /* AÑADIR PRODUCTOS */
-.Alta{
+.Alta {
     background: linear-gradient(rgba(0, 67, 252, 0.4), rgba(255, 255, 255, 0.4));
     transition: all 0.3s ease 0s;
 }
-.Alta:hover{
+
+.Alta:hover {
     transform: scale(1.05);
 }
 
-.Mini-Header{
+.Mini-Header {
     background: linear-gradient(to top, #2f44ff, #0013be);
     text-align: center;
     color: white;

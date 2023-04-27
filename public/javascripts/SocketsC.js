@@ -60,6 +60,25 @@ function checkA(e) {
     return patron.test(tecla_final);
 }
 
+// SEGURIDAD
+// document.addEventListener("contextmenu", function(event){//Deshabilitar click derecho
+//     event.preventDefault();
+// }, false);
+// //No permite tecla Ctrl
+// document.addEventListener('keydown', (e) => {
+//     if(e.keyCode == 123){
+//         e.preventDefault();
+//         return false;
+//     }
+// });
+
+// document.addEventListener("copy", function(event){//Deshabilitar copiar y pegar
+//     // Change the copied text if you want
+//     event.clipboardData.setData("text/plain", "No se permite copiar en esta página web");
+//     // Prevent the default copy action
+//     event.preventDefault();
+// }, false);
+
 if (pathname == "/users/altasPro") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
         if (tok == "4dnM3k0nl9s") {
@@ -96,7 +115,7 @@ if (pathname == "/users/altasPro") {
         function Enviar(e) {
             e.preventDefault();
             if ($("#Cod_Barras").val() != "" && $("#FecActu").val() != "" && $("#Categoria").val() != "" && $("#NomP").val() != "" && $("#MarcActi").val() != "" && $("#DescripcionP").val() != "" && $("#Proveedor").val() != "" && $("#NumFact").val() != "" && $("#CantidadP").val() != "" && $("#UnidadP").val() != "" && $("#FecFact").val()) {
-
+                
                 socket.emit('Alta_Prod', { CodBarras: $("#Cod_Barras").val(), FecAct: $("#FecActu").val(), Cate: CategoriaOption, Producto: $("#NomP").val(), Marca: $("#MarcActi").val(), Descripcion: $("#DescripcionP").val(), Proveedor: $("#Proveedor").val(), NumFactura: $("#NumFact").val(), FechaFac: $("#FecFact").val(), Cantidad: $("#CantidadP").val(), Unidad: UnidadOption });
 
                 socket.on('Fact_Exists', function (Respuesta) {
