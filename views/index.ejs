@@ -56,21 +56,13 @@
     <div class="Dos_Column">
       <div class="CampoForm">
         <h5 class="BotonIZ">Registrar productos</h5>
-        <div class="Dos_Column Separacion" id="RegistrosProd">
-          <a href="/users/altasEqp" class="BotonAG">Agregar Equipos</a>
-          <a href="/users/altasPro" class="BotonAG">Agregar Productos</a>
-          <a href="/users/altasMob" class="BotonAG">Agregar Mobiliario</a>
-        </div>
+        <div class="Dos_Column Separacion" id="RegistrosProd"></div>
       </div>
     </div>
-    <div class="Dos_Column">
+    <div class="Dos_Column" id="Mas_Opciones">
       <div class="CampoForm">
-        <h5 class="BotonDE" id="TituloOpciones">Otras acciones</h5>
-        <div class="Dos_Column Separacion" id="ProdExistentes">
-          <a href="/users/ABEE" class="BotonABE">Equipos existentes</a>
-          <a href="/users/ABPE" class="BotonABE">Productos existentes</a>
-          <a href="/users/ABME" class="BotonABE">Mobiliario existente</a>
-        </div>
+        <h5 class="BotonDE" id="TituloOpciones"></h5>
+        <div class="Dos_Column Separacion" id="ProdExistentes"></div>
       </div>
     </div>
   </main>
@@ -78,26 +70,36 @@
     var tok = localStorage.getItem("token");
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A") {
 
-      if(tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
-            document.getElementById("Linksnav").innerHTML += `
+      if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
+        document.getElementById("Linksnav").innerHTML += `
                 <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
             `;
 
-            document.getElementById("MenuCel").innerHTML += `
+        document.getElementById("MenuCel").innerHTML += `
                 <a href="/users/RegistrarUsuario">Registrar Usuario</a>
             `;
 
-            document.querySelector("#TituloOpciones").innerHTML = "Más opciones";
-        }      
-      document.querySelector("#RegistrosProd").innerHTML = `
+        document.querySelector("#TituloOpciones").innerHTML = "Más opciones";
+
+        document.getElementById("ProdExistentes").innerHTML = `
+        <a href="/users/RegistrarUsuario" class="BotonABE">Registrar Usuario</a
+      `;
+
+        document.querySelector("#RegistrosProd").innerHTML = `
         <a href="/users/consulPro" class="BotonAG">Ver productos</a>
         <a href="/users/altasPro" class="BotonAG">Registrar Productos</a>
         <a href="/users/ABPE" class="BotonAG">Agregar productos existentes</a>
       `;
+      } else if (tok == "4dnM3k0nl9A") {
 
-      document.getElementById("ProdExistentes").innerHTML = `
-        <a href="/users/RegistrarUsuario" class="BotonABE">Registrar Usuario</a
+        document.querySelector("#Mas_Opciones").style.display = "none";
+
+        document.querySelector("#RegistrosProd").innerHTML = `
+        <a href="/users/consulPro" class="BotonAG">Ver productos</a>
+        <a href="/users/altasPro" class="BotonAG">Registrar Productos</a>
+        <a href="/users/ABPE" class="BotonAG">Agregar productos existentes</a>
       `;
+      }
     }
   </script>
 </body>
