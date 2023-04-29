@@ -30,7 +30,7 @@ function cargarNombres() {
         ListaNombres(data.Nombres);
     });
 }
-function cargarNombres2(){
+function cargarNombres2() {
     socket.emit('List_empleados', "Jefes");
     socket.on('ListaNombres2', (data) => {
         ListaNombres2(data.Nombres);
@@ -193,7 +193,7 @@ if (pathname == "/users/altasPro") {
                 <td id="DescripcionP">${data.Desc}</td>
                 <td id="UnidadP">${data.Unidad}</td>
                 <td id="Existencia">${data.Existencia}</td>
-                <td id="Eliminar" class="BotonER" onclick="confirm('¿Deseas eliminar este producto?')"> Eliminar </td>
+                <td id="Eliminar" class="BotonER" onclick="eliminar()"> Eliminar </td>
                 <td id="Modificar" class="BotonMod"> Modificar </td>
             </tr>
             `;
@@ -248,38 +248,40 @@ if (pathname == "/users/altasPro") {
         }
 
         // bajas de productos
-        socket.on('ButtonDelete', () => {
+        function eliminar() {
+            var letrero = confirm('¿Deseas eliminar este producto?');
 
-            let BotonBajas = document.getElementsByClassName("BotonER");
+            if (letrero) {
+                let BotonBajas = document.getElementsByClassName("BotonER");
 
-            for (var i = 0; i < BotonBajas.length; i++) {
-                BotonBajas[i].addEventListener("click", obtenerValoresDeBaja);
-            }
-
-            function obtenerValoresDeBaja(e) {
-                var valoresBaja = "";
-
-                // vamos al elemento padre (<tr>) y buscamos todos los elementos <td>
-                // que contenga el elemento padre
-                var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
-
-                // recorremos cada uno de los elementos del array de elementos <td>
-                for (let i = 0; i < elementosTD.length; i++) {
-
-                    // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                    valoresBaja = elementosTD[0].innerHTML;
+                for (var i = 0; i < BotonBajas.length; i++) {
+                    BotonBajas[i].addEventListener("click", obtenerValoresDeBaja);
                 }
-                socket.emit('Bajas_Prod', valoresBaja);
-                socket.on('Producto_Eliminado', (data) => {
-                    alert(data.mensaje);
-                    location.reload();
-                });
-                socket.on('Error', (data) => {
-                    alert(data.mensaje);
-                })
-            }
 
-        });
+                function obtenerValoresDeBaja(e) {
+                    var valoresBaja = "";
+
+                    // vamos al elemento padre (<tr>) y buscamos todos los elementos <td>
+                    // que contenga el elemento padre
+                    var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+
+                    // recorremos cada uno de los elementos del array de elementos <td>
+                    for (let i = 0; i < elementosTD.length; i++) {
+
+                        // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                        valoresBaja = elementosTD[0].innerHTML;
+                    }
+                    socket.emit('Bajas_Prod', valoresBaja);
+                    socket.on('Producto_Eliminado', (data) => {
+                        alert(data.mensaje);
+                        location.reload();
+                    });
+                    socket.on('Error', (data) => {
+                        alert(data.mensaje);
+                    })
+                }
+            }else location.reload();
+        }
 
         //Llenar datos en automático
         var valores0 = "";
@@ -318,6 +320,7 @@ if (pathname == "/users/altasPro") {
                 document.getElementById("MarcActiM").value = valores3;
                 document.getElementById("DescripcionPM").value = valores4;
                 document.getElementById("UnidadPM").value = valores5;
+                console.log(document.getElementById("UnidadPM").value);
                 //Aqui iniciamos otra cosa para modificar las facturas una por una
                 let BotonFacturasMod = document.getElementById("ModFact");
                 let Titulotable = document.getElementById("title_table");
@@ -473,7 +476,7 @@ if (pathname == "/users/altasPro") {
         }
 
         window.onpageshow = function () {
-            $('#NomJefe').select2({
+            $('#NombreEmp').select2({
                 allowClear: true,
                 placeholder: 'Buscar empleado'
             });
@@ -537,28 +540,28 @@ if (pathname == "/users/altasPro") {
                     valores0 = elementosTD[0].innerHTML;
                     valores1 = elementosTD[6].innerHTML;
                 }
-                const formProdExist = document.querySelector("#AltaExist");
-                formProdExist.addEventListener("submit", EnviarAlta);
+            }
+            const formProdExist = document.querySelector("#AltaExist");
+            formProdExist.addEventListener("submit", EnviarAlta);
 
-                function EnviarAlta(e) {
-                    e.preventDefault();
-                    if ($("#FecActu").val() != "" && $("#CantidadPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#FecFact").val() != "") {
-                        socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActu").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFact").val(), Existencia: valores1 });
+            function EnviarAlta(e) {
+                e.preventDefault();
+                if ($("#FecActu").val() != "" && $("#CantidadPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#FecFact").val() != "") {
+                    socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActu").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFact").val(), Existencia: valores1 });
 
-                        socket.on('Factura_Agregada', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                            location.reload();
-                        });
+                    socket.on('Factura_Agregada', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
 
-                        socket.on('Fallo_Factura', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                            location.reload();
-                        });
-                        socket.on('Ya_Registrado', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                            location.reload();
-                        });
-                    }
+                    socket.on('Fallo_Factura', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+                    socket.on('Ya_Registrado', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
                 }
             }
         });
@@ -581,7 +584,7 @@ if (pathname == "/users/altasPro") {
 
                 document.querySelector("#TituloEliminar").innerHTML = `¿Cuántos productos de "${valores2E}" desea sacar?`;
 
-                var NombEmp = document.getElementById('NomJefe');
+                var NombEmp = document.getElementById('NombreEmp');
                 var NombEmpOption;
 
                 NombEmp.addEventListener('change',
@@ -714,21 +717,21 @@ if (pathname == "/users/altasPro") {
         // Registro de usuario
         FormRegistro.addEventListener('submit', EnviarReg);
 
-        function EnviarReg(e){
+        function EnviarReg(e) {
             e.preventDefault();
 
             if ($("#Area").val() != "" && $("#NombreEmp").val() != "" && $("#NomJefe").val() != "") {
-                
-                socket.emit('Reg_Emp', {NombreEmp: $("#NombreEmp").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val()});
-                
+
+                socket.emit('Reg_Emp', { NombreEmp: $("#NombreEmp").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val() });
+
                 socket.on('Res_Emp', (Respuesta) => {
                     alert(Respuesta.mensaje);
                     location.reload();
                 });
-                
+
             }
         }
-        
+
 
     }
 }

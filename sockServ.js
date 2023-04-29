@@ -46,11 +46,8 @@ io.on('connection', (socket) => {
 
                     socket.emit('Desp_Productos', { Cod_Barras: result[i].Cod_Barras, Categoria: result[i].Categoria, NArt: result[i].Articulo, NMarca: result[i].Marca, Desc: result[i].Descripcion, Unidad: result[i].Unidad, Existencia: result[i].Existencia, eliminado: result[i].eliminado });//Mandar usuario y token al cliente
                 }
-                socket.emit('ButtonDelete');
                 socket.emit('ButtonUp');
-            } else {
-                socket.emit('Productos_Inexistentes', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
-            }
+            } 
             result.length = 0;
         });
 

@@ -323,8 +323,8 @@ update empleado set Num_Jefe = 1 where Num_emp = 1;
 update empleado set Num_emp = 2 where Num_emp = 758;
 update empleado set Num_Jefe = 663;
 -- DELETES
-delete from factus_productos where FIngreso = "2023-04-26";
-delete from facturas_almacen where Ffact = "2023-04-23";
+delete from factus_productos where FIngreso = "2023-04-28";
+delete from facturas_almacen where Ffact = "2023-04-28";
 delete from almacen where eliminado = 0;
 delete from almacen where eliminado = 1;
 delete from salidas_productos where Cod_BarrasS = 'JDFK35J2';
