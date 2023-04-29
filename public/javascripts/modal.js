@@ -136,10 +136,7 @@ function cancelModal(e) {
 }
 
 function submitModal(e) {
-  if (isClosing) return;
   e.stopPropagation();
-
-  isClosing = true;
 
   var toScaleXIn = interpolate(vRange, [1, 1.2]);
   var toScaleYIn = interpolate(vRange, [1, 0.8]);
@@ -181,4 +178,3 @@ function submitModal(e) {
 
 document.addEventListener('click', openModal);
 document.addEventListener('click', cancelModal);
-document.querySelector('.BotonAE').addEventListener('click', submitModal);
