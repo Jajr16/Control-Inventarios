@@ -322,7 +322,6 @@ update almacen set Existencia = 10 where Cod_Barras = 'b';
 update empleado set Num_Jefe = 1 where Num_emp = 1;
 update empleado set Num_emp = 2 where Num_emp = 758;
 update empleado set Num_Jefe = 663;
-
 -- DELETES
 delete from factus_productos where FIngreso = "2023-04-26";
 delete from facturas_almacen where Ffact = "2023-04-23";
