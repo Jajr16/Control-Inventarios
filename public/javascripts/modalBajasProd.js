@@ -181,4 +181,3 @@ function submitModal(e) {
 
 document.addEventListener('click', openModal);
 document.addEventListener('click', cancelModal);
-document.querySelector('.BotonAE').addEventListener('click', submitModal);

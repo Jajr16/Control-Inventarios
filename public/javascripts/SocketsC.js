@@ -99,7 +99,7 @@ function checkA(e) {
 // }, false);
 
 if (pathname == "/users/altasPro") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
+    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
         if (tok == "4dnM3k0nl9s") {
             document.getElementById("Linksnav").innerHTML += `
                 <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
@@ -156,7 +156,7 @@ if (pathname == "/users/altasPro") {
         location.href = "index";
     }
 } else if (pathname == "/users/consulPro") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
+    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
         if (tok == "4dnM3k0nl9s") {
             document.getElementById("Linksnav").innerHTML += `
                 <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
