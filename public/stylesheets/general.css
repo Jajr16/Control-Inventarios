@@ -241,7 +241,7 @@ select {
     padding: .8rem;
     display: block;
     margin-bottom: 2rem;
-    width: 100%;
+    width: 100%!important;
     background-color: rgb(0, 0, 0);
     border: rgb(10, 3, 47) solid 1px;
     border-radius: .5rem;
@@ -366,7 +366,7 @@ h5 {
     cursor: pointer;
     font-size: 20px;
     transition: all 0.3s ease 0s;
-
+    margin-top: 3rem;
 }
 
 .BotonAE:hover {
@@ -664,7 +664,7 @@ h5 {
     font-weight: 800;
     text-align: left;
     background: linear-gradient(rgba(0, 67, 252, 0.4), rgba(255, 255, 255, 0.4));
-    width: 40rem;
+    width: 45rem;
     max-width: 50rem;
     max-height: 85rem;
     padding: 4rem 4rem;

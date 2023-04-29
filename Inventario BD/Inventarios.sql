@@ -321,6 +321,8 @@ update usuario set token = "4dnM3k0nl9z" where User = "armando";
 update almacen set Existencia = 10 where Cod_Barras = 'b';
 update empleado set Num_Jefe = 1 where Num_emp = 1;
 update empleado set Num_emp = 2 where Num_emp = 758;
+update empleado set Num_Jefe = 663;
+
 -- DELETES
 delete from factus_productos where FIngreso = "2023-04-26";
 delete from facturas_almacen where Ffact = "2023-04-23";
@@ -328,6 +330,7 @@ delete from almacen where eliminado = 0;
 delete from almacen where eliminado = 1;
 delete from salidas_productos where Cod_BarrasS = 'JDFK35J2';
 delete from almacen where Cod_Barras = "756981H83";
+delete from empleado where Num_emp > 840;
 -- Quitar columnas
 alter table facturas_almacen drop column Cod_Barras;
 alter table almacen drop column Cantidad;
@@ -343,8 +346,8 @@ alter table facturas_almacen add column Ffact date;
 alter table facturas_almacen add column Proveedor nvarchar(45);
 alter table almacen add column eliminado TINYINT(1) not null default 0;
 alter table factus_productos add column FIngreso date;
-ALTER TABLE usuario AUTO_INCREMENT = 3;
-ALTER TABLE empleado AUTO_INCREMENT = 3;
+
+ALTER TABLE empleado AUTO_INCREMENT = 841;
 
 -- almacen.Cod_Barras, almacen.FIngreso, almacen.Categoria, almacen.Articulo, almacen.Marca, almacen.Descripcion, almacen.Proveedor, almacen.NFact
 #select*from usuario where User = "armando" and Pass = "clarac";
@@ -437,8 +440,8 @@ select*from empleado;
 select distinct(Área) from empleado;
 select*from usuario;
 
-delete from empleado where Num_emp > 840;
-select Área, Nom from empleado where Área = "PASTORAL";
+insert into empleado values(
+663, "NAVARRO JIMENEZ MARTHA LIDIA", "DIRECCION GENERAL", 663);
 
 insert into usuario values(
 758, "ajimenez", "Clarac2017", '4dnM3k0nl9s'

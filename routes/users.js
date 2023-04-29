@@ -100,4 +100,8 @@ router.get('/ABME', function (req, res, next) {
 router.get('/RegistrarUsuario', function (req, res, next) {
   res.render('RegistrarUsuario', { title: 'Crear nuevo usuario' });
 });
+//Empleado nuevo
+router.get('/RegistroEmpleado', function (req, res, next) {
+  res.render('RegistroEmpleado', { title: 'Crear nuevo usuario' });
+});
 module.exports = router;

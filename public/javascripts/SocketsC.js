@@ -5,16 +5,35 @@ var socket = io.connect("http://localhost:3000");
 var pathname = window.location.pathname;
 //SELECTS
 function ListaNombres(Nombr) {
-    var selectNombres = document.getElementById("NomJefe");
+    var selectNombres2 = document.getElementById("NombreEmp");
 
     var opcion = document.createElement("option");
+
     opcion.text = Nombr;
-    selectNombres.add(opcion);
+
+    selectNombres2.add(opcion);
 }
+
+function ListaNombres2(Nombr) {
+    var selectNombres2 = document.getElementById("NomJefe");
+
+    var opcion = document.createElement("option");
+
+    opcion.text = Nombr;
+
+    selectNombres2.add(opcion);
+}
+
 function cargarNombres() {
-    socket.emit('List_empleados');
+    socket.emit('List_empleados', "Empleados");
     socket.on('ListaNombres', (data) => {
         ListaNombres(data.Nombres);
+    });
+}
+function cargarNombres2(){
+    socket.emit('List_empleados', "Jefes");
+    socket.on('ListaNombres2', (data) => {
+        ListaNombres2(data.Nombres);
     });
 }
 //CAMPOS SOLO LETRAS Y NÚMEROS
@@ -115,7 +134,7 @@ if (pathname == "/users/altasPro") {
         function Enviar(e) {
             e.preventDefault();
             if ($("#Cod_Barras").val() != "" && $("#FecActu").val() != "" && $("#Categoria").val() != "" && $("#NomP").val() != "" && $("#MarcActi").val() != "" && $("#DescripcionP").val() != "" && $("#Proveedor").val() != "" && $("#NumFact").val() != "" && $("#CantidadP").val() != "" && $("#UnidadP").val() != "" && $("#FecFact").val()) {
-                
+
                 socket.emit('Alta_Prod', { CodBarras: $("#Cod_Barras").val(), FecAct: $("#FecActu").val(), Cate: CategoriaOption, Producto: $("#NomP").val(), Marca: $("#MarcActi").val(), Descripcion: $("#DescripcionP").val(), Proveedor: $("#Proveedor").val(), NumFactura: $("#NumFact").val(), FechaFac: $("#FecFact").val(), Cantidad: $("#CantidadP").val(), Unidad: UnidadOption });
 
                 socket.on('Fact_Exists', function (Respuesta) {
@@ -625,18 +644,18 @@ if (pathname == "/users/altasPro") {
         });
 
         window.onpageshow = function () {
-            $('#NomJefe').select2({
+            $('#NombreEmp').select2({
                 allowClear: true,
                 placeholder: 'Buscar empleado'
             });
         };
 
         document.getElementById("Linksnav").innerHTML += `
-            <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
+            <li><a href="/users/RegistroEmpleado">Registrar Empleado</a></li>
         `;
 
         document.getElementById("MenuCel").innerHTML += `
-            <a href="/users/RegistrarUsuario">Registrar Usuario</a>
+            <a href="/users/RegistroEmpleado">Registrar Empleado</a>
         `;
 
         const FormRegistro = document.querySelector("#Registro");
@@ -646,16 +665,11 @@ if (pathname == "/users/altasPro") {
 
         function EnviarReg(e) {
             e.preventDefault();
-            if ($("#NombreEmp").val() != "" && $("#AP").val() != "" && $("#AM").val() != "" && $("#Area").val() != "" && $("#NumJefe").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
+            if ($("#NombreEmp").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
 
-                socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
+                socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
 
                 socket.on('Usuario_Existente', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
-
-                socket.on('Empleado_Existente', function (Respuesta) {
                     alert(Respuesta.mensaje);
                     location.reload();
                 });
@@ -669,18 +683,52 @@ if (pathname == "/users/altasPro") {
                     alert(Respuesta.mensaje);
                     location.reload();
                 });
-
-                socket.on('Empleado_Agregado', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                });
-
-                socket.on('Empleado_Error', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
             }
         }
     } else {
         location.href = "index";
+    }
+} else if (pathname == "/users/RegistroEmpleado") {
+    if (tok == "4dnM3k0nl9s") {
+
+        window.addEventListener("load", function (event) {
+            cargarNombres2();
+        });
+
+        window.onpageshow = function () {
+            $('#NomJefe').select2({
+                allowClear: true,
+                placeholder: 'Buscar empleado'
+            });
+        };
+
+        document.getElementById("Linksnav").innerHTML += `
+        <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
+    `;
+
+        document.getElementById("MenuCel").innerHTML += `
+        <a href="/users/RegistrarUsuario">Registrar Usuario</a>
+    `;
+
+        const FormRegistro = document.querySelector("#Registro");
+        // Registro de usuario
+        FormRegistro.addEventListener('submit', EnviarReg);
+
+        function EnviarReg(e){
+            e.preventDefault();
+
+            if ($("#Area").val() != "" && $("#NombreEmp").val() != "" && $("#NomJefe").val() != "") {
+                
+                socket.emit('Reg_Emp', {NombreEmp: $("#NombreEmp").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val()});
+                
+                socket.on('Res_Emp', (Respuesta) => {
+                    alert(Respuesta.mensaje);
+                    location.reload();
+                });
+                
+            }
+        }
+        
+
     }
 }

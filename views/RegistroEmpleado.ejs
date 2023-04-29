@@ -56,25 +56,34 @@
     <main class="Seccion">
         <center style="padding: 6rem;">
             <form name="Registro" id="Registro" class="Registro FS-M">
-                <h1 class="title">Crear nuevo usuario</h1>
+                <h1 class="title">Crear nuevo empleado</h1>
                 <!--Nombre empleado-->
                 <div class="field">
                     <label class="label">Nombre completo de empleado</label>
-                    <select id="NombreEmp" required>
+                    <input autocomplete="off" type="text" name="NombreEmp" id="NombreEmp"
+                        placeholder="Nombre de empleado" required maxlength="135" onkeyup="mayus(this);"
+                        onkeypress="return check(event)">
+                </div>
+                <!--Area-->
+                <div class="field">
+                    <label class="label">Área</label>
+                    <select id="Area" required>
                         <option value=""></option>
+                        <option>ADMINISTRACIÓN</option>
+                        <option>PREESCOLAR</option>
+                        <option>PRIMARIA</option>
+                        <option>SECUNDARIA</option>
+                        <option>PREPARATORIA</option>
+                        <option>SERVICIOS GENERALES</option>
+                        <option>SISTEMAS</option>
                     </select>
                 </div>
-                <!--Nombre usuario-->
+                <!--Numero de jefe-->
                 <div class="field">
-                    <label class="label">Nombre de usuario</label>
-                    <input autocomplete="off" type="text" name="NombreUser" id="NombreUser"
-                        placeholder="Nombre de usuario" required maxlength="45" onkeypress="return checkA(event)">
-                </div>
-                <!--Contraseña-->
-                <div class="field">
-                    <label class="label">Contraseña nueva</label>
-                    <input autocomplete="off" type="password" name="ContraNueva" id="ContraNueva"
-                        placeholder="Contraseña nueva" required maxlength="45" onkeypress="return checkA(event)">
+                    <label class="label">Nombre de jefe</label>
+                    <select id="NomJefe" required>
+                        <option value=""></option>
+                    </select>
                 </div>
                 <input type="submit" value="Aceptar" class="BotonAE">
             </form>
