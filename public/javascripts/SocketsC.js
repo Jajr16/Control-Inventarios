@@ -100,16 +100,7 @@ function checkA(e) {
 
 if (pathname == "/users/altasPro") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
-        if (tok == "4dnM3k0nl9s") {
-            document.getElementById("Linksnav").innerHTML += `
-                <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
-            `;
-
-            document.getElementById("MenuCel").innerHTML += `
-                <a href="/users/RegistrarUsuario">Registrar Usuario</a>
-            `;
-        }
-
+        
         const FormProduct = document.querySelector("#AltaProductos");
 
         // Altas de productos
@@ -157,15 +148,7 @@ if (pathname == "/users/altasPro") {
     }
 } else if (pathname == "/users/consulPro") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
-        if (tok == "4dnM3k0nl9s") {
-            document.getElementById("Linksnav").innerHTML += `
-                <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
-            `;
-
-            document.getElementById("MenuCel").innerHTML += `
-                <a href="/users/RegistrarUsuario">Registrar Usuario</a>
-            `;
-        }
+        
         socket.emit("Consul_Prod");
         // Consulta de productos
         socket.on('Desp_Productos', async (data) => {
@@ -465,16 +448,7 @@ if (pathname == "/users/altasPro") {
     }
 } else if (pathname == "/users/ABPE") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
-        if (tok == "4dnM3k0nl9s") {
-            document.getElementById("Linksnav").innerHTML += `
-                <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
-            `;
-
-            document.getElementById("MenuCel").innerHTML += `
-                <a href="/users/RegistrarUsuario">Registrar Usuario</a>
-            `;
-        }
-
+        
         window.onpageshow = function () {
             $('#NombreEmp').select2({
                 allowClear: true,
@@ -653,14 +627,6 @@ if (pathname == "/users/altasPro") {
             });
         };
 
-        document.getElementById("Linksnav").innerHTML += `
-            <li><a href="/users/RegistroEmpleado">Registrar Empleado</a></li>
-        `;
-
-        document.getElementById("MenuCel").innerHTML += `
-            <a href="/users/RegistroEmpleado">Registrar Empleado</a>
-        `;
-
         const FormRegistro = document.querySelector("#Registro");
 
         // Registro de usuario
@@ -704,14 +670,6 @@ if (pathname == "/users/altasPro") {
                 placeholder: 'Buscar empleado'
             });
         };
-
-        document.getElementById("Linksnav").innerHTML += `
-        <li><a href="/users/RegistrarUsuario">Registrar Usuario</a></li>
-    `;
-
-        document.getElementById("MenuCel").innerHTML += `
-        <a href="/users/RegistrarUsuario">Registrar Usuario</a>
-    `;
 
         const FormRegistro = document.querySelector("#Registro");
         // Registro de usuario
