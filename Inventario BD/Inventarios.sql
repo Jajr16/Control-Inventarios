@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Peticion` (
   INDEX `Cod_Barras_idx` (`Cod_Barras` ASC),
   CONSTRAINT `User`
     FOREIGN KEY (`User`)
-    REFERENCES `Inventarios`.`Usuario` (`User`)
+    REFERENCES `Inventarios`.`Usuario` (`Usuario`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `Cod_BarrasPedido`
@@ -328,7 +328,7 @@ delete from facturas_almacen where Ffact = "2023-04-28";
 delete from almacen where eliminado = 0;
 delete from almacen where eliminado = 1;
 delete from salidas_productos where Cod_BarrasS = 'JDFK35J2';
-delete from almacen where Cod_Barras = "756981H83";
+delete from almacen where Cod_Barras = "684F4GFR8";
 delete from empleado where Num_emp > 840;
 -- Quitar columnas
 alter table facturas_almacen drop column Cod_Barras;

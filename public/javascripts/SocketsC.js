@@ -480,6 +480,8 @@ if (pathname == "/users/altasPro") {
             <td id="DescripcionP">${data.Desc}</td>
             <td id="UnidadP">${data.Unidad}</td>
             <td id="Existencia">${data.Existencia}</td>
+            <td> - </td>
+            <td> - </td>
             </tr>
             `;
             } else {
@@ -586,6 +588,8 @@ if (pathname == "/users/altasPro") {
                 }
             }
         });
+
+        
 
 
         // Barra de busqueda
