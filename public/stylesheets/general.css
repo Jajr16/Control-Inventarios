@@ -366,7 +366,6 @@ h5 {
     cursor: pointer;
     font-size: 20px;
     transition: all 0.3s ease 0s;
-    margin-top: 3rem;
 }
 
 .BotonAE:hover {
@@ -385,7 +384,7 @@ h5 {
     cursor: pointer;
     font-size: 20px;
     transition: all 0.3s ease 0s;
-
+    margin-top: 3rem;
 }
 
 .BotonAEB:hover {
