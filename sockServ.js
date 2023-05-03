@@ -5,6 +5,8 @@ const io = require('socket.io')(server);
 //Importar Base de datos
 var db = require("./Conexion/BaseDatos");
 const Excel = require('exceljs');
+const path = require('path');
+const fs = require('fs');
 var contador = 1;
 
 //Escuchar servidor
@@ -390,6 +392,24 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Fecha para generar excel
+    const date = new Date();
+    let fechaDia = date.getDate();
+    let fechaMes = date.getMonth() + 1;
+    let fechaAño = date.getFullYear();
+    let fechaHora = date.getHours();
+    let fechaMinutos = date.getMinutes();
+
+    if (fechaMes < 10) {
+        fechaMes = "0" + fechaMes;
+    }
+    if (fechaDia < 10) {
+        fechaDia = "0" + fechaDia;
+    }
+
+    let nombreArchivo = "Almacen" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
+
+    // Crear excel
     socket.on('Excel', async () => {
         const workbook = new Excel.Workbook();
         const worksheet = workbook.addWorksheet("My Sheet");
@@ -412,7 +432,10 @@ io.on('connection', (socket) => {
                     worksheet.addRow({ CB: res[i].Cod_Barras, Cat: res[i].Categoria, NomAr: res[i].Articulo, MarcArt: res[i].Marca, Desc: res[i].Descripcion, Uni: res[i].Unidad, Exist: res[i].Existencia });
                 }
                 // save under export.xlsx
-                await workbook.xlsx.writeFile('Productos' + contador + '.xlsx');
+                //Ruta del archivo
+                var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
+                const pathExcel = path.join(DOWNLOAD_DIR, nombreArchivo + '_' + contador + '.xlsx');
+                await workbook.xlsx.writeFile(pathExcel);
                 socket.emit("RespExcel", { mensaje: "Excel descargado" });
                 contador++;
             } else {

@@ -185,22 +185,6 @@ if (pathname == "/users/altasPro") {
             }
         });
 
-
-        // Fecha para generar excel
-        const date = new Date();
-        let fechaDia = date.getDate();
-        let fechaMes = date.getMonth() + 1;
-        let fechaAño = date.getFullYear();
-        let fechaHora = date.getHours();
-        let fechaMinutos = date.getMinutes();
-
-        if (fechaMes < 10) {
-            fechaMes = "0" + fechaMes;
-        }
-        if (fechaDia < 10) {
-            fechaDia = "0" + fechaDia;
-        }
-
         // Barra de busqueda
         function buscar() {
 
@@ -247,6 +231,7 @@ if (pathname == "/users/altasPro") {
             })
         }
 
+        // Crear excel
         function Excel(){
             socket.emit("Excel");
             
