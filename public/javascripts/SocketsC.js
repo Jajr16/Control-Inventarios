@@ -100,7 +100,7 @@ function checkA(e) {
 
 if (pathname == "/users/altasPro") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
-        
+
         const FormProduct = document.querySelector("#AltaProductos");
 
         // Altas de productos
@@ -148,7 +148,7 @@ if (pathname == "/users/altasPro") {
     }
 } else if (pathname == "/users/consulPro") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
-        
+
         socket.emit("Consul_Prod");
         // Consulta de productos
         socket.on('Desp_Productos', async (data) => {
@@ -164,6 +164,8 @@ if (pathname == "/users/altasPro") {
             <td id="DescripcionP">${data.Desc}</td>
             <td id="UnidadP">${data.Unidad}</td>
             <td id="Existencia">${data.Existencia}</td>
+            <td> - </td>
+            <td> - </td>
             </tr>
             `;
             } else {
@@ -181,7 +183,29 @@ if (pathname == "/users/altasPro") {
             </tr>
             `;
             }
+            $(document).ready(function () {
+                let datos = [];
 
+                $('table tr').each(function () {
+                    var CodBarrasExcel = $(this).find('td:nth-child(1)').text();
+                    var CategoriaExcel = $(this).find('td:nth-child(2)').text();
+                    var NomPExcel = $(this).find('td:nth-child(3)').text();
+                    var MarcActiExcel = $(this).find('td:nth-child(4)').text();
+                    var DescripcionExcel = $(this).find('td:nth-child(5)').text();
+                    var UnidadExcel = $(this).find('td:nth-child(6)').text();
+                    var ExistenciaExcel = $(this).find('td:nth-child(7)').text();
+                    datos.push({ CodBarrasEx: CodBarrasExcel, CategoriaEx: CategoriaExcel, NomPEx: NomPExcel, MarcArtiEx: MarcActiExcel, DescripcionEx: DescripcionExcel, UnidadEx: UnidadExcel, ExistenciaEx: ExistenciaExcel });
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/descargar-excel',
+                    data: { datos: datos },
+                    success: function (response) {
+                        console.log(response);
+                    }
+                });
+            });
         });
 
         // Barra de busqueda
@@ -263,7 +287,7 @@ if (pathname == "/users/altasPro") {
                         alert(data.mensaje);
                     })
                 }
-            }else location.reload();
+            } else location.reload();
         }
 
         //Llenar datos en automático
@@ -342,7 +366,6 @@ if (pathname == "/users/altasPro") {
                 `;
                     }
                 });
-
 
                 socket.on("BotonModalFacturas", () => {
 
@@ -448,7 +471,7 @@ if (pathname == "/users/altasPro") {
     }
 } else if (pathname == "/users/ABPE") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
-        
+
         window.onpageshow = function () {
             $('#NombreEmp').select2({
                 allowClear: true,
@@ -588,9 +611,6 @@ if (pathname == "/users/altasPro") {
                 }
             }
         });
-
-        
-
 
         // Barra de busqueda
         function buscar() {
