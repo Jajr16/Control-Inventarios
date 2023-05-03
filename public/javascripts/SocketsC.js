@@ -183,30 +183,23 @@ if (pathname == "/users/altasPro") {
             </tr>
             `;
             }
-            $(document).ready(function () {
-                let datos = [];
-
-                $('table tr').each(function () {
-                    var CodBarrasExcel = $(this).find('td:nth-child(1)').text();
-                    var CategoriaExcel = $(this).find('td:nth-child(2)').text();
-                    var NomPExcel = $(this).find('td:nth-child(3)').text();
-                    var MarcActiExcel = $(this).find('td:nth-child(4)').text();
-                    var DescripcionExcel = $(this).find('td:nth-child(5)').text();
-                    var UnidadExcel = $(this).find('td:nth-child(6)').text();
-                    var ExistenciaExcel = $(this).find('td:nth-child(7)').text();
-                    datos.push({ CodBarrasEx: CodBarrasExcel, CategoriaEx: CategoriaExcel, NomPEx: NomPExcel, MarcArtiEx: MarcActiExcel, DescripcionEx: DescripcionExcel, UnidadEx: UnidadExcel, ExistenciaEx: ExistenciaExcel });
-                });
-
-                $.ajax({
-                    type: 'POST',
-                    url: '/descargar-excel',
-                    data: { datos: datos },
-                    success: function (response) {
-                        console.log(response);
-                    }
-                });
-            });
         });
+
+
+        // Fecha para generar excel
+        const date = new Date();
+        let fechaDia = date.getDate();
+        let fechaMes = date.getMonth() + 1;
+        let fechaAño = date.getFullYear();
+        let fechaHora = date.getHours();
+        let fechaMinutos = date.getMinutes();
+
+        if (fechaMes < 10) {
+            fechaMes = "0" + fechaMes;
+        }
+        if (fechaDia < 10) {
+            fechaDia = "0" + fechaDia;
+        }
 
         // Barra de busqueda
         function buscar() {
@@ -252,6 +245,14 @@ if (pathname == "/users/altasPro") {
                     $(this).hide();
                 }
             })
+        }
+
+        function Excel(){
+            socket.emit("Excel");
+            
+            socket.on("RespExcel", (data) => {
+                alert(data.mensaje);
+            });
         }
 
         // bajas de productos

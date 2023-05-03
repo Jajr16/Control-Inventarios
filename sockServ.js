@@ -4,6 +4,8 @@ var server = http.createServer(app);
 const io = require('socket.io')(server);
 //Importar Base de datos
 var db = require("./Conexion/BaseDatos");
+const Excel = require('exceljs');
+var contador = 1;
 
 //Escuchar servidor
 server.listen(3000, () => {
@@ -47,7 +49,7 @@ io.on('connection', (socket) => {
                     socket.emit('Desp_Productos', { Cod_Barras: result[i].Cod_Barras, Categoria: result[i].Categoria, NArt: result[i].Articulo, NMarca: result[i].Marca, Desc: result[i].Descripcion, Unidad: result[i].Unidad, Existencia: result[i].Existencia, eliminado: result[i].eliminado });//Mandar usuario y token al cliente
                 }
                 socket.emit('ButtonUp');
-            } 
+            }
             result.length = 0;
         });
 
@@ -361,8 +363,8 @@ io.on('connection', (socket) => {
                     if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
                     console.log(result);
                     if (result.length > 0) {//Si sí hizo una búsqueda
-                        db.query('insert into Empleado values(null, ?, ?, ?)',[data.NombreEmp, data.Area, result[0].Num_emp],function(err, res){
-                            if(res){
+                        db.query('insert into Empleado values(null, ?, ?, ?)', [data.NombreEmp, data.Area, result[0].Num_emp], function (err, res) {
+                            if (res) {
                                 socket.emit('Res_Emp', { mensaje: "Empleado dado de alta." });
                             }
                         });
@@ -379,14 +381,63 @@ io.on('connection', (socket) => {
             if (err) console.log("El error fue: ", err)
             if (res.length > 0) {
                 for (var i = 0; i < res.length; i++) {
-                    if(data == "Jefes") socket.emit('ListaNombres2', { Nombres: res[i].Nom });
-                    else if(data == "Empleados") socket.emit('ListaNombres', { Nombres: res[i].Nom });
-                    
+                    if (data == "Jefes") socket.emit('ListaNombres2', { Nombres: res[i].Nom });
+                    else if (data == "Empleados") socket.emit('ListaNombres', { Nombres: res[i].Nom });
+
                 }
             }
 
         });
     });
+
+    socket.on('Excel', async () => {
+        const workbook = new Excel.Workbook();
+        const worksheet = workbook.addWorksheet("My Sheet");
+
+        worksheet.columns = [
+            { header: 'Código de Barras', key: 'CB', width: 10 },
+            { header: 'Categoría', key: 'Cat', width: 32 },
+            { header: 'Nombre del Artículo', key: 'NomAr', width: 15, },
+            { header: 'Marca del Artículo', key: 'MarcArt', width: 15, },
+            { header: 'Descripción', key: 'Desc', width: 15, },
+            { header: 'Unidad', key: 'Uni', width: 15, },
+            { header: 'En existencia', key: 'Exist', width: 15, }
+        ];
+
+        db.query('select *from almacen order by eliminado', async function (err, res) {
+            if (err) console.log(err);
+
+            if (res.length > 0) {
+                for (var i = 0; i < res.length; i++) {
+                    worksheet.addRow({ CB: res[i].Cod_Barras, Cat: res[i].Categoria, NomAr: res[i].Articulo, MarcArt: res[i].Marca, Desc: res[i].Descripcion, Uni: res[i].Unidad, Exist: res[i].Existencia });
+                }
+                // save under export.xlsx
+                await workbook.xlsx.writeFile('Productos' + contador + '.xlsx');
+                socket.emit("RespExcel", { mensaje: "Excel descargado" });
+                contador++;
+            } else {
+                socket.emit("RespExcel", { mensaje: "Hubo un error, favor de contactar a encargados de sistemas" });
+            }
+        });
+
+
+
+        // //load a copy of export.xlsx
+        // const newWorkbook = new Excel.Workbook();
+        // await newWorkbook.xlsx.readFile('export.xlsx');
+
+        // const newworksheet = newWorkbook.getWorksheet('My Sheet');
+        // newworksheet.columns = [
+        //     { header: 'Id', key: 'id', width: 10 },
+        //     { header: 'Name', key: 'name', width: 32 },
+        //     { header: 'D.O.B.', key: 'dob', width: 15, }
+        // ];
+        // await newworksheet.addRow({ id: 3, name: 'New Guy', dob: new Date(2000, 1, 1) });
+
+        // await newWorkbook.xlsx.writeFile('export2.xlsx');
+
+        console.log("File is written");
+    })
 
     socket.on('disconnect', () => {
         console.log('Cliente desconectado.');
