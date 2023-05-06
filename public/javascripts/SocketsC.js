@@ -232,9 +232,9 @@ if (pathname == "/users/altasPro") {
         }
 
         // Crear excel
-        function Excel(){
+        function Excel() {
             socket.emit("Excel");
-            
+
             socket.on("RespExcel", (data) => {
                 alert(data.mensaje);
             });
@@ -551,7 +551,7 @@ if (pathname == "/users/altasPro") {
             }
         });
 
-        // Eliminar producto existente
+        // Sacar producto existente
         socket.on('EliminarProdExist', async () => {
             let EliminarProdExist = document.getElementsByClassName("BotonER");
 
@@ -592,6 +592,13 @@ if (pathname == "/users/altasPro") {
                         socket.on('Fallo_BajasExist', function (Respuesta) {
                             alert(Respuesta.mensaje);
                             location.reload();
+                        });
+
+                        // Crea un excel para productos sacados
+                        socket.emit("SacarExcel", { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: NombEmpOption });
+
+                        socket.on("SacarRespExcel", (Respuesta) => {
+                            alert(Respuesta.mensaje);
                         });
                     }
                 }
