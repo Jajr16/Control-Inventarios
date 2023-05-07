@@ -330,6 +330,7 @@ delete from almacen where eliminado = 1;
 delete from salidas_productos where Cod_BarrasS = 'JDFK35J2';
 delete from almacen where Cod_Barras = "684F4GFR8";
 delete from empleado where Num_emp > 840;
+delete from usuario where Num_emp = 107;
 -- Quitar columnas
 alter table facturas_almacen drop column Cod_Barras;
 alter table almacen drop column Cantidad;

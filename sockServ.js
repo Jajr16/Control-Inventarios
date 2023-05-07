@@ -288,8 +288,21 @@ io.on('connection', (socket) => {
     let mes = hoy.getMonth() + 1;
     let anio = hoy.getFullYear();
 
+    let segundos = hoy.getSeconds();
+    let minutos = hoy.getMinutes();
+    let horas = hoy.getHours();
+
     let formato1 = "";
 
+    if (segundos < 10) {
+        segundos = "0" + segundos;
+    }
+    if (minutos < 10) {
+        minutos = "0" + minutos;
+    }
+    if (horas < 10) {
+        horas = "0" + horas;
+    }
     if (mes < 10) {
         mes = "0" + mes;
     }
@@ -297,7 +310,7 @@ io.on('connection', (socket) => {
         dia = "0" + dia;
     }
 
-    formato1 = `${anio}-${mes}-${dia}`;
+    formato1 = `${anio}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
 
     // Bajas en productos existentes
     socket.on('Bajas_ProdExist', async (data) => {
@@ -316,7 +329,7 @@ io.on('connection', (socket) => {
             { header: 'Encargado', key: 'Encargado', width: 20, },
             { header: 'Cantidad a sacar', key: 'CantSac', width: 30, }
         ];
-console.log(data);
+
         db.query('select Existencia from almacen where Cod_Barras = ?', [data.Cod_Barras], function (err, result) {
 
             if (err) console.log("Error de eliminación de productos: ", err);
