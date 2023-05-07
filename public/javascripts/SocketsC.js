@@ -458,16 +458,16 @@ if (pathname == "/users/altasPro") {
 } else if (pathname == "/users/ABPE") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
 
+        window.addEventListener("load", function (event) {
+            cargarNombres();
+        });
+
         window.onpageshow = function () {
             $('#NombreEmp').select2({
                 allowClear: true,
                 placeholder: 'Buscar empleado'
             });
         };
-
-        window.addEventListener("load", function (event) {
-            cargarNombres();
-        });
 
         var valores0 = "";
         var valores1 = "";
@@ -568,22 +568,13 @@ if (pathname == "/users/altasPro") {
                 }
 
                 document.querySelector("#TituloEliminar").innerHTML = `¿Cuántos productos de "${valores2E}" desea sacar?`;
-
-                var NombEmp = document.getElementById('NombreEmp');
-                var NombEmpOption;
-
-                NombEmp.addEventListener('change',
-                    function () {
-                        NombEmpOption = NombEmp.options[NombEmp.selectedIndex].text;
-                    });
-
-
+                    
                 const formProdExistBaja = document.querySelector("#BajaExist");
                 formProdExistBaja.addEventListener("submit", EnviarBaja);
                 function EnviarBaja(e) {
                     e.preventDefault();
                     if ($("#CantidadP").val() != "" && $("#NomJefe") != "") {
-                        socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: NombEmpOption });
+                        socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val() });
 
                         socket.on('Eliminacion_Realizada', function (Respuesta) {
                             alert(Respuesta.mensaje);
@@ -595,7 +586,7 @@ if (pathname == "/users/altasPro") {
                         });
 
                         // Crea un excel para productos sacados
-                        socket.emit("SacarExcel", { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: NombEmpOption });
+                        socket.emit("SacarExcel", { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val() });
 
                         socket.on("SacarRespExcel", (Respuesta) => {
                             alert(Respuesta.mensaje);

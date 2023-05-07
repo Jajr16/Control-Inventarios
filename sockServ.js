@@ -301,7 +301,6 @@ io.on('connection', (socket) => {
 
     // Bajas en productos existentes
     socket.on('Bajas_ProdExist', async (data) => {
-        console.log(data);
 
         const workbook = new Excel.Workbook();
         const worksheet = workbook.addWorksheet("My Sheet");
@@ -317,7 +316,7 @@ io.on('connection', (socket) => {
             { header: 'Encargado', key: 'Encargado', width: 20, },
             { header: 'Cantidad a sacar', key: 'CantSac', width: 30, }
         ];
-
+console.log(data);
         db.query('select Existencia from almacen where Cod_Barras = ?', [data.Cod_Barras], function (err, result) {
 
             if (err) console.log("Error de eliminación de productos: ", err);
@@ -337,7 +336,7 @@ io.on('connection', (socket) => {
                                         console.log(res);
                                         if (res.length > 0) {
 
-                                            worksheet.addRow({ CB: data.Cod_Barras, Cat: data.Categoria, NomAr: data.Articulo, MarcArt: data.Marca, Desc: data.Descripcion, Uni: data.Unidad, Exist: result[0].Existencia, Encargado: res[0].num_emp, CantSac: data.Cantidad });
+                                            worksheet.addRow({ CB: data.Cod_Barras, Cat: data.Categoria, NomAr: data.Articulo, MarcArt: data.Marca, Desc: data.Descripcion, Uni: data.Unidad, Exist: res[0].Existencia, Encargado: res[0].num_emp, CantSac: data.Cantidad });
 
                                             //ESTILO DE EXCEL
                                             worksheet.getCell('A1').fill = {
