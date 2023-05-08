@@ -320,14 +320,10 @@ io.on('connection', (socket) => {
 
         worksheet.columns = [
             { header: 'Código de Barras', key: 'CB', width: 25 },
-            { header: 'Categoría', key: 'Cat', width: 18 },
-            { header: 'Nombre del Artículo', key: 'NomAr', width: 30, },
-            { header: 'Marca del Artículo', key: 'MarcArt', width: 25, },
-            { header: 'Descripción', key: 'Desc', width: 30, },
-            { header: 'Unidad', key: 'Uni', width: 15, },
             { header: 'En existencia', key: 'Exist', width: 20, },
             { header: 'Encargado', key: 'Encargado', width: 20, },
-            { header: 'Cantidad a sacar', key: 'CantSac', width: 30, }
+            { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
+            { header: 'Fecha de salida', key: 'FecSac', width: 30, }
         ];
 
         db.query('select Existencia from almacen where Cod_Barras = ?', [data.Cod_Barras], function (err, result) {
@@ -349,7 +345,7 @@ io.on('connection', (socket) => {
                                         console.log(res);
                                         if (res.length > 0) {
 
-                                            worksheet.addRow({ CB: data.Cod_Barras, Cat: data.Categoria, NomAr: data.Articulo, MarcArt: data.Marca, Desc: data.Descripcion, Uni: data.Unidad, Exist: res[0].Existencia, Encargado: res[0].num_emp, CantSac: data.Cantidad });
+                                            worksheet.addRow({ CB: data.Cod_Barras, Exist: res[0].Existencia, Encargado: data.Emp, CantSac: data.Cantidad, FecSac: formato1 });
 
                                             //ESTILO DE EXCEL
                                             worksheet.getCell('A1').fill = {
@@ -407,52 +403,8 @@ io.on('connection', (socket) => {
                                                 bold: true
                                             };
 
-                                            worksheet.getCell('F1').fill = {
-                                                type: 'pattern',
-                                                pattern: 'solid',
-                                                fgColor: { argb: 'F003A9E' }
-                                            };
-                                            worksheet.getCell('F1').font = {
-                                                name: 'Arial',
-                                                color: { argb: 'FFFFFF' },
-                                                bold: true
-                                            };
-
-                                            worksheet.getCell('G1').fill = {
-                                                type: 'pattern',
-                                                pattern: 'solid',
-                                                fgColor: { argb: 'F003A9E' }
-                                            };
-                                            worksheet.getCell('G1').font = {
-                                                name: 'Arial',
-                                                color: { argb: 'FFFFFF' },
-                                                bold: true
-                                            };
-
-                                            worksheet.getCell('H1').fill = {
-                                                type: 'pattern',
-                                                pattern: 'solid',
-                                                fgColor: { argb: 'F003A9E' }
-                                            };
-                                            worksheet.getCell('H1').font = {
-                                                name: 'Arial',
-                                                color: { argb: 'FFFFFF' },
-                                                bold: true
-                                            };
-
-                                            worksheet.getCell('I1').fill = {
-                                                type: 'pattern',
-                                                pattern: 'solid',
-                                                fgColor: { argb: 'F003A9E' }
-                                            };
-                                            worksheet.getCell('I1').font = {
-                                                name: 'Arial',
-                                                color: { argb: 'FFFFFF' },
-                                                bold: true
-                                            };
-
                                             worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
-                                            worksheet.autoFilter = 'A:I';
+                                            worksheet.autoFilter = 'A:E';
 
                                             //Ruta del archivo
                                             var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
