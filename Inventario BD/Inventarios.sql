@@ -328,7 +328,7 @@ delete from facturas_almacen where Ffact = "2023-05-07";
 delete from almacen where eliminado = 0;
 delete from almacen where eliminado = 1;
 delete from salidas_productos where Cod_BarrasS = 'JDFK35J2';
-delete from salidas_productos where FSalida = '2023-05-07';
+delete from salidas_productos where FSalida = '2023-05-09';
 delete from almacen where Cod_Barras = "684F4GFR8";
 delete from empleado where Num_emp > 840;
 delete from usuario where Num_emp = 107;

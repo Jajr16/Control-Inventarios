@@ -320,13 +320,14 @@ io.on('connection', (socket) => {
 
         worksheet.columns = [
             { header: 'Código de Barras', key: 'CB', width: 25 },
+            { header: 'Artículo', key: 'Articulo', width: 25, },
             { header: 'En existencia', key: 'Exist', width: 20, },
             { header: 'Encargado', key: 'Encargado', width: 20, },
             { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
             { header: 'Fecha de salida', key: 'FecSac', width: 30, }
         ];
 
-        db.query('select Existencia from almacen where Cod_Barras = ?', [data.Cod_Barras], function (err, result) {
+        db.query('select Existencia from almacen where Cod_Barras = ? and Articulo = ?', [data.Cod_Barras, data.Articulo], function (err, result) {
 
             if (err) console.log("Error de eliminación de productos: ", err);
             if (result.length > 0) {
@@ -345,7 +346,7 @@ io.on('connection', (socket) => {
                                         console.log(res);
                                         if (res.length > 0) {
 
-                                            worksheet.addRow({ CB: data.Cod_Barras, Exist: res[0].Existencia, Encargado: data.Emp, CantSac: data.Cantidad, FecSac: formato1 });
+                                            worksheet.addRow({ CB: data.Cod_Barras, Articulo: data.Articulo, Exist: res[0].Existencia, Encargado: data.Emp, CantSac: data.Cantidad, FecSac: formato1 });
 
                                             //ESTILO DE EXCEL
                                             worksheet.getCell('A1').fill = {
@@ -403,8 +404,19 @@ io.on('connection', (socket) => {
                                                 bold: true
                                             };
 
+                                            worksheet.getCell('F1').fill = {
+                                                type: 'pattern',
+                                                pattern: 'solid',
+                                                fgColor: { argb: 'F003A9E' }
+                                            };
+                                            worksheet.getCell('F1').font = {
+                                                name: 'Arial',
+                                                color: { argb: 'FFFFFF' },
+                                                bold: true
+                                            };
+
                                             worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
-                                            worksheet.autoFilter = 'A:E';
+                                            worksheet.autoFilter = 'A:F';
 
                                             //Ruta del archivo
                                             var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');

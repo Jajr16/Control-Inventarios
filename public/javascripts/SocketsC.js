@@ -574,11 +574,10 @@ if (pathname == "/users/altasPro") {
                 function EnviarBaja(e) {
                     e.preventDefault();
                     if ($("#CantidadP").val() != "" && $("#NomJefe") != "") {
-                        socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val() });
+                        socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val(), Articulo: valores2E });
 
                         socket.on('Eliminacion_Realizada', function (Respuesta) {
                             alert(Respuesta.mensaje);
-                            location.reload();
                         });
                         socket.on('Fallo_BajasExist', function (Respuesta) {
                             alert(Respuesta.mensaje);
@@ -586,10 +585,11 @@ if (pathname == "/users/altasPro") {
                         });
 
                         // Crea un excel para productos sacados
-                        socket.emit("SacarExcel", { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val() });
+                        socket.emit("SacarExcel", { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val(), Articulo: valores2E });
 
                         socket.on("SacarRespExcel", (Respuesta) => {
                             alert(Respuesta.mensaje);
+                            location.reload();
                         });
                     }
                 }
