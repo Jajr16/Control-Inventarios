@@ -322,8 +322,8 @@ io.on('connection', (socket) => {
             { header: 'Código de Barras', key: 'CB', width: 25 },
             { header: 'Artículo', key: 'Articulo', width: 25, },
             { header: 'En existencia', key: 'Exist', width: 20, },
-            { header: 'Encargado', key: 'Encargado', width: 20, },
-            { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
+            { header: 'Encargado', key: 'Encargado', width: 45, },
+            { header: 'Cantidad a sacar', key: 'CantSac', width: 25, },
             { header: 'Fecha de salida', key: 'FecSac', width: 30, }
         ];
 
@@ -350,66 +350,78 @@ io.on('connection', (socket) => {
 
                                             //ESTILO DE EXCEL
                                             worksheet.getCell('A1').fill = {
+                                                horizontal: 'center',
                                                 type: 'pattern',
                                                 pattern: 'solid',
                                                 fgColor: { argb: 'F003A9E' }
                                             };
                                             worksheet.getCell('A1').font = {
+                                                horizontal: 'center',
                                                 name: 'Arial',
                                                 color: { argb: 'FFFFFF' },
                                                 bold: true
                                             };
 
                                             worksheet.getCell('B1').fill = {
+                                                horizontal: 'center',
                                                 type: 'pattern',
                                                 pattern: 'solid',
                                                 fgColor: { argb: 'F003A9E' }
                                             };
                                             worksheet.getCell('B1').font = {
+                                                horizontal: 'center',
                                                 name: 'Arial',
                                                 color: { argb: 'FFFFFF' },
                                                 bold: true
                                             };
 
                                             worksheet.getCell('C1').fill = {
+                                                horizontal: 'center',
                                                 type: 'pattern',
                                                 pattern: 'solid',
                                                 fgColor: { argb: 'F003A9E' }
                                             };
                                             worksheet.getCell('C1').font = {
+                                                horizontal: 'center',
                                                 name: 'Arial',
                                                 color: { argb: 'FFFFFF' },
                                                 bold: true
                                             };
 
                                             worksheet.getCell('D1').fill = {
+                                                horizontal: 'center',
                                                 type: 'pattern',
                                                 pattern: 'solid',
                                                 fgColor: { argb: 'F003A9E' }
                                             };
                                             worksheet.getCell('D1').font = {
+                                                horizontal: 'center',
                                                 name: 'Arial',
                                                 color: { argb: 'FFFFFF' },
                                                 bold: true
                                             };
 
                                             worksheet.getCell('E1').fill = {
+                                                horizontal: 'center',
                                                 type: 'pattern',
                                                 pattern: 'solid',
                                                 fgColor: { argb: 'F003A9E' }
                                             };
                                             worksheet.getCell('E1').font = {
+                                                horizontal: 'center',
                                                 name: 'Arial',
                                                 color: { argb: 'FFFFFF' },
                                                 bold: true
                                             };
 
                                             worksheet.getCell('F1').fill = {
+                                                horizontal: 'center',
                                                 type: 'pattern',
                                                 pattern: 'solid',
                                                 fgColor: { argb: 'F003A9E' }
                                             };
                                             worksheet.getCell('F1').font = {
+                                                horizontal: 'center',
                                                 name: 'Arial',
                                                 color: { argb: 'FFFFFF' },
                                                 bold: true
@@ -421,6 +433,7 @@ io.on('connection', (socket) => {
                                             //Ruta del archivo
                                             var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
                                             const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contador + '.xlsx');
+                                            //await workbook.xlsx.readFile(pathExcel);
                                             await workbook.xlsx.writeFile(pathExcel);
                                             socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
                                             contador++;
