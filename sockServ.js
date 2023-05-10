@@ -8,6 +8,7 @@ const Excel = require('exceljs');
 const path = require('path');
 const fs = require('fs');
 var contador = 1;
+var contadorS = 1;
 
 //Escuchar servidor
 server.listen(3000, () => {
@@ -35,8 +36,7 @@ io.on('connection', (socket) => {
     }
 
     let nombreArchivo = "Almacen" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
-    let nombreSacarProd = "Retiro_Almacen" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
-    let nomFinal = nombreSacarProd + '_' + contador +'.xlsx';
+    let nombreSacarProd = "Retiro_Almacen";
 
     // Login
     socket.on('LG', async (data) => {
@@ -316,28 +316,8 @@ io.on('connection', (socket) => {
     // Bajas en productos existentes
     socket.on('Bajas_ProdExist', async (data) => {
 
+        var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
         const workbook = new Excel.Workbook();
-        const worksheet = workbook.addWorksheet("My Sheet");
-
-        if (fs.existsSync(nomFinal)){
-            const wkPromise = new Excel.Workbook().xlsx.readFile(nomFinal);
-
-            wkPromise.then(function(workbook){
-                const hoja = workbook.getWorksheet('My Sheet');
-
-
-                return workbook.xlsx.writeFile(nombreSacarProd);
-            });
-        }
-
-            worksheet.columns = [
-                { header: 'Código de Barras', key: 'CB', width: 25 },
-                { header: 'Artículo', key: 'Articulo', width: 25, },
-                { header: 'En existencia', key: 'Exist', width: 20, },
-                { header: 'Encargado', key: 'Encargado', width: 45, },
-                { header: 'Cantidad a sacar', key: 'CantSac', width: 25, },
-                { header: 'Fecha de salida', key: 'FecSac', width: 30, }
-            ];
 
         db.query('select Existencia from almacen where Cod_Barras = ? and Articulo = ?', [data.Cod_Barras, data.Articulo], function (err, result) {
 
@@ -348,103 +328,138 @@ io.on('connection', (socket) => {
                         if (err) console.log("Error de busqueda de empleados: ", err);
                         console.log(res);
                         if (res.length > 0) {
-                            db.query('insert into salidas_productos values (?,?,?,?)', [data.Cod_Barras, formato1, res[0].num_emp, data.Cantidad], async function (err2, result) {
+                            db.query('insert into salidas_productos values (?,?,?,?)', [data.Cod_Barras, formato1, res[0].num_emp, data.Cantidad], function (err2, result) {
                                 if (err2) console.log("Error de inserción de productos: ", err2);
                                 if (result.affectedRows > 0) {
                                     socket.emit('Eliminacion_Realizada', { mensaje: 'Productos sacados con éxito.' });//Mandar mensaje a cliente
 
-                                    worksheet.addRow({ CB: data.Cod_Barras, Articulo: data.Articulo, Exist: res[0].Existencia, Encargado: data.Emp, CantSac: data.Cantidad, FecSac: formato1 });
+                                    db.query('select*from almacen', async function (err, res) {
+                                        if (err) console.log("Error de busqueda de productos: ", err);
+                                        console.log(res);
+                                        if (res.length > 0) {
+                                            console.log(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contadorS + '.xlsx'));
+                                            console.log(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx'));
+                                            workbook.xlsx.readFile(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx')).then(async () => {
 
-                                    //ESTILO DE EXCEL
-                                    worksheet.getCell('A1').fill = {
-                                        horizontal: 'center',
-                                        type: 'pattern',
-                                        pattern: 'solid',
-                                        fgColor: { argb: 'F003A9E' }
-                                    };
-                                    worksheet.getCell('A1').font = {
-                                        horizontal: 'center',
-                                        name: 'Arial',
-                                        color: { argb: 'FFFFFF' },
-                                        bold: true
-                                    };
+                                                const newWorkbook = new Excel.Workbook();//Cargamos una copia de archivo anterior
+                                                await newWorkbook.xlsx.readFile(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx'));
 
-                                    worksheet.getCell('B1').fill = {
-                                        horizontal: 'center',
-                                        type: 'pattern',
-                                        pattern: 'solid',
-                                        fgColor: { argb: 'F003A9E' }
-                                    };
-                                    worksheet.getCell('B1').font = {
-                                        horizontal: 'center',
-                                        name: 'Arial',
-                                        color: { argb: 'FFFFFF' },
-                                        bold: true
-                                    };
+                                                const Newworksheet = newWorkbook.getWorksheet('My Sheet');
 
-                                    worksheet.getCell('C1').fill = {
-                                        horizontal: 'center',
-                                        type: 'pattern',
-                                        pattern: 'solid',
-                                        fgColor: { argb: 'F003A9E' }
-                                    };
-                                    worksheet.getCell('C1').font = {
-                                        horizontal: 'center',
-                                        name: 'Arial',
-                                        color: { argb: 'FFFFFF' },
-                                        bold: true
-                                    };
+                                                Newworksheet.columns = [
+                                                    { header: 'Código de Barras', key: 'CB', width: 25 },
+                                                    { header: 'Artículo', key: 'Articulo', width: 40, },
+                                                    { header: 'En existencia', key: 'Exist', width: 20, },
+                                                    { header: 'Encargado', key: 'Encargado', width: 45, },
+                                                    { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
+                                                    { header: 'Fecha de salida', key: 'FecSac', width: 30, }
+                                                ];
 
-                                    worksheet.getCell('D1').fill = {
-                                        horizontal: 'center',
-                                        type: 'pattern',
-                                        pattern: 'solid',
-                                        fgColor: { argb: 'F003A9E' }
-                                    };
-                                    worksheet.getCell('D1').font = {
-                                        horizontal: 'center',
-                                        name: 'Arial',
-                                        color: { argb: 'FFFFFF' },
-                                        bold: true
-                                    };
+                                                await Newworksheet.addRow({ CB: data.Cod_Barras, Articulo: data.Articulo, Exist: res[0].Existencia, Encargado: data.Emp, CantSac: data.Cantidad, FecSac: formato1 });
 
-                                    worksheet.getCell('E1').fill = {
-                                        horizontal: 'center',
-                                        type: 'pattern',
-                                        pattern: 'solid',
-                                        fgColor: { argb: 'F003A9E' }
-                                    };
-                                    worksheet.getCell('E1').font = {
-                                        horizontal: 'center',
-                                        name: 'Arial',
-                                        color: { argb: 'FFFFFF' },
-                                        bold: true
-                                    };
 
-                                    worksheet.getCell('F1').fill = {
-                                        horizontal: 'center',
-                                        type: 'pattern',
-                                        pattern: 'solid',
-                                        fgColor: { argb: 'F003A9E' }
-                                    };
-                                    worksheet.getCell('F1').font = {
-                                        horizontal: 'center',
-                                        name: 'Arial',
-                                        color: { argb: 'FFFFFF' },
-                                        bold: true
-                                    };
+                                                //Ruta del archivo
+                                                const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS) + '.xlsx');
+                                                console.log("a", pathExcel);
+                                                await newWorkbook.xlsx.writeFile(pathExcel);
+                                                contadorS = contadorS + 1;
+                                            }).catch(() => {
+                                                const worksheet = workbook.addWorksheet('My Sheet');
 
-                                    worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
-                                    worksheet.autoFilter = 'A:F';
+                                                worksheet.columns = [
+                                                    { header: 'Código de Barras', key: 'CB', width: 25 },
+                                                    { header: 'Artículo', key: 'Articulo', width: 40, },
+                                                    { header: 'En existencia', key: 'Exist', width: 20, },
+                                                    { header: 'Encargado', key: 'Encargado', width: 45, },
+                                                    { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
+                                                    { header: 'Fecha de salida', key: 'FecSac', width: 30, }
+                                                ];
 
-                                    //Ruta del archivo
-                                    var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
-                                    const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contador + '.xlsx');
-                                    //await workbook.xlsx.readFile(pathExcel);
-                                    await workbook.xlsx.writeFile(pathExcel);
-                                    socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
-                                    contador++;
 
+                                                worksheet.addRow({ CB: data.Cod_Barras, Articulo: data.Articulo, Exist: res[0].Existencia, Encargado: data.Emp, CantSac: data.Cantidad, FecSac: formato1 });
+
+                                                //ESTILO DE EXCEL
+                                                worksheet.getCell('A1').fill = {
+                                                    type: 'pattern',
+                                                    pattern: 'solid',
+                                                    fgColor: { argb: 'F003A9E' }
+                                                };
+                                                worksheet.getCell('A1').font = {
+                                                    name: 'Arial',
+                                                    color: { argb: 'FFFFFF' },
+                                                    bold: true
+                                                };
+
+                                                worksheet.getCell('B1').fill = {
+                                                    type: 'pattern',
+                                                    pattern: 'solid',
+                                                    fgColor: { argb: 'F003A9E' }
+                                                };
+                                                worksheet.getCell('B1').font = {
+                                                    name: 'Arial',
+                                                    color: { argb: 'FFFFFF' },
+                                                    bold: true
+                                                };
+
+                                                worksheet.getCell('C1').fill = {
+                                                    type: 'pattern',
+                                                    pattern: 'solid',
+                                                    fgColor: { argb: 'F003A9E' }
+                                                };
+                                                worksheet.getCell('C1').font = {
+                                                    name: 'Arial',
+                                                    color: { argb: 'FFFFFF' },
+                                                    bold: true
+                                                };
+
+                                                worksheet.getCell('D1').fill = {
+                                                    type: 'pattern',
+                                                    pattern: 'solid',
+                                                    fgColor: { argb: 'F003A9E' }
+                                                };
+                                                worksheet.getCell('D1').font = {
+                                                    name: 'Arial',
+                                                    color: { argb: 'FFFFFF' },
+                                                    bold: true
+                                                };
+
+                                                worksheet.getCell('E1').fill = {
+                                                    type: 'pattern',
+                                                    pattern: 'solid',
+                                                    fgColor: { argb: 'F003A9E' }
+                                                };
+                                                worksheet.getCell('E1').font = {
+                                                    name: 'Arial',
+                                                    color: { argb: 'FFFFFF' },
+                                                    bold: true
+                                                };
+
+                                                worksheet.getCell('F1').fill = {
+                                                    type: 'pattern',
+                                                    pattern: 'solid',
+                                                    fgColor: { argb: 'F003A9E' }
+                                                };
+                                                worksheet.getCell('F1').font = {
+                                                    name: 'Arial',
+                                                    color: { argb: 'FFFFFF' },
+                                                    bold: true
+                                                };
+
+                                                worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+                                                worksheet.autoFilter = 'A:F';
+
+                                                //Ruta del archivo
+                                                const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contadorS + '.xlsx');
+                                                workbook.xlsx.writeFile(pathExcel);
+                                                console.log("b", pathExcel);
+                                                contadorS = contadorS + 1;
+                                            });
+
+                                            socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
+                                        } else {
+                                            socket.emit("SacarRespExcel", { mensaje: "Hubo un error, favor de contactar a encargados de sistemas" });
+                                        }
+                                    });
                                     console.log("File is written");
                                 } else {
                                     socket.emit('Fallo_BajasExist', { mensaje: "No se pudo actualizar la existencia de productos." })
