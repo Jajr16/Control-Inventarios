@@ -36,6 +36,7 @@ io.on('connection', (socket) => {
 
     let nombreArchivo = "Almacen" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
     let nombreSacarProd = "Retiro_Almacen" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
+    let nomFinal = nombreSacarProd + '_' + contador +'.xlsx';
 
     // Login
     socket.on('LG', async (data) => {
@@ -318,14 +319,25 @@ io.on('connection', (socket) => {
         const workbook = new Excel.Workbook();
         const worksheet = workbook.addWorksheet("My Sheet");
 
-        worksheet.columns = [
-            { header: 'Código de Barras', key: 'CB', width: 25 },
-            { header: 'Artículo', key: 'Articulo', width: 25, },
-            { header: 'En existencia', key: 'Exist', width: 20, },
-            { header: 'Encargado', key: 'Encargado', width: 45, },
-            { header: 'Cantidad a sacar', key: 'CantSac', width: 25, },
-            { header: 'Fecha de salida', key: 'FecSac', width: 30, }
-        ];
+        if (fs.existsSync(nomFinal)){
+            const wkPromise = new Excel.Workbook().xlsx.readFile(nomFinal);
+
+            wkPromise.then(function(workbook){
+                const hoja = workbook.getWorksheet('My Sheet');
+
+
+                return workbook.xlsx.writeFile(nombreSacarProd);
+            });
+        }
+
+            worksheet.columns = [
+                { header: 'Código de Barras', key: 'CB', width: 25 },
+                { header: 'Artículo', key: 'Articulo', width: 25, },
+                { header: 'En existencia', key: 'Exist', width: 20, },
+                { header: 'Encargado', key: 'Encargado', width: 45, },
+                { header: 'Cantidad a sacar', key: 'CantSac', width: 25, },
+                { header: 'Fecha de salida', key: 'FecSac', width: 30, }
+            ];
 
         db.query('select Existencia from almacen where Cod_Barras = ? and Articulo = ?', [data.Cod_Barras, data.Articulo], function (err, result) {
 
@@ -336,111 +348,103 @@ io.on('connection', (socket) => {
                         if (err) console.log("Error de busqueda de empleados: ", err);
                         console.log(res);
                         if (res.length > 0) {
-                            db.query('insert into salidas_productos values (?,?,?,?)', [data.Cod_Barras, formato1, res[0].num_emp, data.Cantidad], function (err2, result) {
+                            db.query('insert into salidas_productos values (?,?,?,?)', [data.Cod_Barras, formato1, res[0].num_emp, data.Cantidad], async function (err2, result) {
                                 if (err2) console.log("Error de inserción de productos: ", err2);
                                 if (result.affectedRows > 0) {
                                     socket.emit('Eliminacion_Realizada', { mensaje: 'Productos sacados con éxito.' });//Mandar mensaje a cliente
 
-                                    db.query('select*from almacen', async function (err, res) {
-                                        if (err) console.log("Error de busqueda de productos: ", err);
-                                        console.log(res);
-                                        if (res.length > 0) {
+                                    worksheet.addRow({ CB: data.Cod_Barras, Articulo: data.Articulo, Exist: res[0].Existencia, Encargado: data.Emp, CantSac: data.Cantidad, FecSac: formato1 });
 
-                                            worksheet.addRow({ CB: data.Cod_Barras, Articulo: data.Articulo, Exist: res[0].Existencia, Encargado: data.Emp, CantSac: data.Cantidad, FecSac: formato1 });
+                                    //ESTILO DE EXCEL
+                                    worksheet.getCell('A1').fill = {
+                                        horizontal: 'center',
+                                        type: 'pattern',
+                                        pattern: 'solid',
+                                        fgColor: { argb: 'F003A9E' }
+                                    };
+                                    worksheet.getCell('A1').font = {
+                                        horizontal: 'center',
+                                        name: 'Arial',
+                                        color: { argb: 'FFFFFF' },
+                                        bold: true
+                                    };
 
-                                            //ESTILO DE EXCEL
-                                            worksheet.getCell('A1').fill = {
-                                                horizontal: 'center',
-                                                type: 'pattern',
-                                                pattern: 'solid',
-                                                fgColor: { argb: 'F003A9E' }
-                                            };
-                                            worksheet.getCell('A1').font = {
-                                                horizontal: 'center',
-                                                name: 'Arial',
-                                                color: { argb: 'FFFFFF' },
-                                                bold: true
-                                            };
+                                    worksheet.getCell('B1').fill = {
+                                        horizontal: 'center',
+                                        type: 'pattern',
+                                        pattern: 'solid',
+                                        fgColor: { argb: 'F003A9E' }
+                                    };
+                                    worksheet.getCell('B1').font = {
+                                        horizontal: 'center',
+                                        name: 'Arial',
+                                        color: { argb: 'FFFFFF' },
+                                        bold: true
+                                    };
 
-                                            worksheet.getCell('B1').fill = {
-                                                horizontal: 'center',
-                                                type: 'pattern',
-                                                pattern: 'solid',
-                                                fgColor: { argb: 'F003A9E' }
-                                            };
-                                            worksheet.getCell('B1').font = {
-                                                horizontal: 'center',
-                                                name: 'Arial',
-                                                color: { argb: 'FFFFFF' },
-                                                bold: true
-                                            };
+                                    worksheet.getCell('C1').fill = {
+                                        horizontal: 'center',
+                                        type: 'pattern',
+                                        pattern: 'solid',
+                                        fgColor: { argb: 'F003A9E' }
+                                    };
+                                    worksheet.getCell('C1').font = {
+                                        horizontal: 'center',
+                                        name: 'Arial',
+                                        color: { argb: 'FFFFFF' },
+                                        bold: true
+                                    };
 
-                                            worksheet.getCell('C1').fill = {
-                                                horizontal: 'center',
-                                                type: 'pattern',
-                                                pattern: 'solid',
-                                                fgColor: { argb: 'F003A9E' }
-                                            };
-                                            worksheet.getCell('C1').font = {
-                                                horizontal: 'center',
-                                                name: 'Arial',
-                                                color: { argb: 'FFFFFF' },
-                                                bold: true
-                                            };
+                                    worksheet.getCell('D1').fill = {
+                                        horizontal: 'center',
+                                        type: 'pattern',
+                                        pattern: 'solid',
+                                        fgColor: { argb: 'F003A9E' }
+                                    };
+                                    worksheet.getCell('D1').font = {
+                                        horizontal: 'center',
+                                        name: 'Arial',
+                                        color: { argb: 'FFFFFF' },
+                                        bold: true
+                                    };
 
-                                            worksheet.getCell('D1').fill = {
-                                                horizontal: 'center',
-                                                type: 'pattern',
-                                                pattern: 'solid',
-                                                fgColor: { argb: 'F003A9E' }
-                                            };
-                                            worksheet.getCell('D1').font = {
-                                                horizontal: 'center',
-                                                name: 'Arial',
-                                                color: { argb: 'FFFFFF' },
-                                                bold: true
-                                            };
+                                    worksheet.getCell('E1').fill = {
+                                        horizontal: 'center',
+                                        type: 'pattern',
+                                        pattern: 'solid',
+                                        fgColor: { argb: 'F003A9E' }
+                                    };
+                                    worksheet.getCell('E1').font = {
+                                        horizontal: 'center',
+                                        name: 'Arial',
+                                        color: { argb: 'FFFFFF' },
+                                        bold: true
+                                    };
 
-                                            worksheet.getCell('E1').fill = {
-                                                horizontal: 'center',
-                                                type: 'pattern',
-                                                pattern: 'solid',
-                                                fgColor: { argb: 'F003A9E' }
-                                            };
-                                            worksheet.getCell('E1').font = {
-                                                horizontal: 'center',
-                                                name: 'Arial',
-                                                color: { argb: 'FFFFFF' },
-                                                bold: true
-                                            };
+                                    worksheet.getCell('F1').fill = {
+                                        horizontal: 'center',
+                                        type: 'pattern',
+                                        pattern: 'solid',
+                                        fgColor: { argb: 'F003A9E' }
+                                    };
+                                    worksheet.getCell('F1').font = {
+                                        horizontal: 'center',
+                                        name: 'Arial',
+                                        color: { argb: 'FFFFFF' },
+                                        bold: true
+                                    };
 
-                                            worksheet.getCell('F1').fill = {
-                                                horizontal: 'center',
-                                                type: 'pattern',
-                                                pattern: 'solid',
-                                                fgColor: { argb: 'F003A9E' }
-                                            };
-                                            worksheet.getCell('F1').font = {
-                                                horizontal: 'center',
-                                                name: 'Arial',
-                                                color: { argb: 'FFFFFF' },
-                                                bold: true
-                                            };
+                                    worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+                                    worksheet.autoFilter = 'A:F';
 
-                                            worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
-                                            worksheet.autoFilter = 'A:F';
+                                    //Ruta del archivo
+                                    var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
+                                    const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contador + '.xlsx');
+                                    //await workbook.xlsx.readFile(pathExcel);
+                                    await workbook.xlsx.writeFile(pathExcel);
+                                    socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
+                                    contador++;
 
-                                            //Ruta del archivo
-                                            var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
-                                            const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contador + '.xlsx');
-                                            //await workbook.xlsx.readFile(pathExcel);
-                                            await workbook.xlsx.writeFile(pathExcel);
-                                            socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
-                                            contador++;
-                                        } else {
-                                            socket.emit("SacarRespExcel", { mensaje: "Hubo un error, favor de contactar a encargados de sistemas" });
-                                        }
-                                    });
                                     console.log("File is written");
                                 } else {
                                     socket.emit('Fallo_BajasExist', { mensaje: "No se pudo actualizar la existencia de productos." })
