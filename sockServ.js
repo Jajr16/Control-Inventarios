@@ -333,7 +333,7 @@ io.on('connection', (socket) => {
                                 if (result.affectedRows > 0) {
                                     socket.emit('Eliminacion_Realizada', { mensaje: 'Productos sacados con éxito.' });//Mandar mensaje a cliente
 
-                                    db.query('select*from almacen', async function (err, res) {
+                                    db.query('select Existencia from almacen where Cod_Barras = ?', [data.Cod_Barras], async function (err, res) {
                                         if (err) console.log("Error de busqueda de productos: ", err);
                                         console.log(res);
                                         if (res.length > 0) {
