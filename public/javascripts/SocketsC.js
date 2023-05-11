@@ -659,7 +659,7 @@ if (pathname == "/users/altasPro") {
 
                 socket.emit('Reg_Emp', { NombreEmp: $("#NombreEmp").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val() });
 
-                socket.on('Res_Emp', (Respuesta) => {
+                socket.once('Res_Emp', (Respuesta) => {
                     alert(Respuesta.mensaje);
                     location.reload();
                 });
