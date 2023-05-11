@@ -353,62 +353,65 @@ if (pathname == "/users/altasPro") {
                     }
                 });
 
-                socket.on("BotonModalFacturas", () => {
-
-                    //Se llenará el formulario dependiendo del producto en donde hace clic
-                    let BotonModFacturas = document.getElementsByClassName("BotonModifyF");
-
-                    for (let i = 0; i < BotonModFacturas.length; i++) {
-                        BotonModFacturas[i].addEventListener("click", LlenarFormFact);
-                    }
-
-                    var valoresF0 = "";
-                    var valoresF1 = "";
-                    var valoresF2 = "";
-                    var valoresF3 = "";
-
-                    function LlenarFormFact(e) {
-                        var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
-
-                        for (let i = 0; i < elementosTD.length; i++) {
-                            // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                            valoresF0 = elementosTD[1].innerHTML;
-                            valoresF1 = elementosTD[2].innerHTML;
-                            valoresF2 = elementosTD[3].innerHTML;
-                            valoresF3 = elementosTD[4].innerHTML;
-                        }
-                        document.getElementById("CantidadPMF").value = valoresF0;
-                        document.getElementById("NumFactMF").value = valoresF1;
-                        document.getElementById("FecFactMF").value = valoresF2;
-                        document.getElementById("ProveedorMF").value = valoresF3;
-                    }
-
-                    //Formulario de facturas
-                    let FormularioFac = document.querySelector("#FacturasMody");
-                    FormularioFac.addEventListener("submit", function (e) {
-                        e.preventDefault();
-
-                        //Validamos que todo esté lleno para enviar el formulario
-                        if ($("#CantidadPMF").val() != "" && $("#NumFactMF").val() != "" && $("#FecFactMF").val() != "" && $("#ProveedorMF").val()) {
-                            socket.emit("Cambios_Facts", { CodBarras: valores0, Cantidad: $("#CantidadPMF").val(), NumFactura: $("#NumFactMF").val(), FechaFac: $("#FecFactMF").val(), Proveedor: $("#ProveedorMF").val() }, { NFO: valoresF1 });
-                            //Esperamos respuesta del servidor en caso de caso exitoso
-                            socket.on('Factu_Exitosa', function (Respuesta) {
-                                alert(Respuesta.mensaje);
-                                location.reload();
-                            });
-                            //Esperamos respuesta del servidor en caso de caso fallido
-                            socket.on('Fallo_Fac', function (Respuesta) {
-                                alert(Respuesta.mensaje);
-                            });
-                            //Esperamos respuesta del servidor en caso de caso fallido
-                            socket.on('Fallo_ModFac', function (Respuesta) {
-                                alert(Respuesta.mensaje);
-                            });
-                        }
-
-                    });
-                })
+                
             }
+            socket.on("BotonModalFacturas", () => {
+
+                //Se llenará el formulario dependiendo del producto en donde hace clic
+                let BotonModFacturas = document.getElementsByClassName("BotonModifyF");
+
+                for (let i = 0; i < BotonModFacturas.length; i++) {
+                    BotonModFacturas[i].addEventListener("click", LlenarFormFact);
+                }
+
+                var valoresF0 = "";
+                var valoresF1 = "";
+                var valoresF2 = "";
+                var valoresF3 = "";
+
+                function LlenarFormFact(e) {
+                    var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+
+                    for (let i = 0; i < elementosTD.length; i++) {
+                        // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                        valoresF0 = elementosTD[1].innerHTML;
+                        valoresF1 = elementosTD[2].innerHTML;
+                        valoresF2 = elementosTD[3].innerHTML;
+                        valoresF3 = elementosTD[4].innerHTML;
+                    }
+                    document.getElementById("CantidadPMF").value = valoresF0;
+                    document.getElementById("NumFactMF").value = valoresF1;
+                    document.getElementById("FecFactMF").value = valoresF2;
+                    document.getElementById("ProveedorMF").value = valoresF3;
+                }
+
+                //Formulario de facturas
+                let FormularioFac = document.querySelector("#FacturasMody");
+                FormularioFac.addEventListener("submit", function (e) {
+                    e.preventDefault();
+
+                    //Validamos que todo esté lleno para enviar el formulario
+                    if ($("#CantidadPMF").val() != "" && $("#NumFactMF").val() != "" && $("#FecFactMF").val() != "" && $("#ProveedorMF").val()) {
+                        socket.emit("Cambios_Facts", { CodBarras: valores0, Cantidad: $("#CantidadPMF").val(), NumFactura: $("#NumFactMF").val(), FechaFac: $("#FecFactMF").val(), Proveedor: $("#ProveedorMF").val() }, { NFO: valoresF1 });
+
+                    }
+
+                    //Esperamos respuesta del servidor en caso de caso exitoso
+                    socket.once('Factu_Exitosa', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+                    //Esperamos respuesta del servidor en caso de caso fallido
+                    socket.once('Fallo_Fac', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                    });
+                    //Esperamos respuesta del servidor en caso de caso fallido
+                    socket.once('Fallo_ModFac', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                    });
+
+                });
+            });
 
             // Cambios de productos
             const FormMod = document.querySelector("#ModProduct");
@@ -568,7 +571,7 @@ if (pathname == "/users/altasPro") {
                 }
 
                 document.querySelector("#TituloEliminar").innerHTML = `¿Cuántos productos de "${valores2E}" desea sacar?`;
-                    
+
                 const formProdExistBaja = document.querySelector("#BajaExist");
                 formProdExistBaja.addEventListener("submit", EnviarBaja);
                 function EnviarBaja(e) {
