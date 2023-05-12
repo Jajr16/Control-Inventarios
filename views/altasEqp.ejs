@@ -14,8 +14,8 @@
         href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap"
         rel="stylesheet">
     <link rel='stylesheet' href='/stylesheets/general.css' />
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css">
 </head>
@@ -23,15 +23,14 @@
 <body>
     <header class="header">
         <div class="logo">
-            <a href="/users/index">
-                <img src="/images/logoC.png" alt="Logo de la empresa">
-            </a>
+            <img src="/images/logoC.png" alt="Logo de la empresa">
         </div>
         <nav class="Dos_Column">
             <ul class="nav-links" id="Linksnav">
-                <li><a href="/users/consulEqp">Equipos</a></li>
-                <li><a href="/users/consulPro">Productos</a></li>
-                <li><a href="/users/consulMob">Mobiliario</a></li>
+                <!-- <li><a href="/users/consulEqp">Equipos</a></li> -->
+                <li><a href="/users/index">Inicio</a></li>
+                <li><a href="/users/consulPro">Ver Productos</a></li>
+                <!-- <li><a href="/users/consulMob">Mobiliario</a></li> -->
             </ul>
         </nav>
         <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
@@ -40,9 +39,10 @@
         <div id="mobile-menu" class="overlay">
             <a onclick="closeNav()" href="" class="close">&times;</a>
             <div class="overlay-content" id="MenuCel">
-                <a href="/users/consulEqp">Equipos</a>
-                <a href="/users/consulPro">Productos</a>
-                <a href="/users/consulMob">Mobiliario</a>
+                <!-- <a href="/users/consulEqp">Equipos</a> -->
+                <a href="/users/consulPro"> Ver Productos</a>
+                <a href="/users/index">Inicio</a>
+                <!-- <a href="/users/consulMob">Mobiliario</a> -->
                 <a onclick="CerrarSesion()">Cerrar Sesión</a>
                 <a href="#">Tema</a>
             </div>
@@ -50,8 +50,113 @@
     </header>
     <script type="text/javascript" src="/javascripts/navbar.js"></script>
     <script type="text/javascript" src="/javascripts/ValidarSesion.js"></script>
-    <script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
-    <script type="text/javascript" src="/javascripts/NavEspecializado.js"></script>
+    <main class="Contenedor Contenido-centrado Seccion">
+        <div class="Contenedor Contenido-centrado Alta">
+            <div class="Mini-Header">
+                <h4>Añadiendo productos</h4>
+            </div>
+            <form name="AltaEquip" id="AltaEquip">
+                <div class="Cuatro_Column">
+                    <div>
+                        <label>Número de serie</label>
+                        <input autocomplete="off" type="text" id="Num_Serie" min="1" name="Num_Serie" required
+                            maxlength="45" oninput="mayus(this)" onkeypress="return checkA(event)">
+                    </div>
+                    <div>
+                        <label>Equipo</label>
+                        <select id="Equip" name="Equip" required>
+                            <option value=""></option>
+                            <option>CPU</option>
+                            <option>IMPRESORA</option>
+                            <option>NOBREAK</option>
+                            <option>REGULADOR</option>
+                            <option>IMPRESORA</option>
+                            <option>MULTIFUNCIONAL</option>
+                            <option>TELÉFONO</option>
+                            <option>PIZARRÓN DIGITAL</option>
+                            <option>SERVIDOR</option>
+                            <option>SWITCH</option>
+                            <option>GATEWAY</option>
+                            <option>BOCINA</option>
+                            <option>PROYECTOR</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Marca</label>
+                        <input autocomplete="off" type="text" id="MarcE" name="MarcE" required maxlength="45"
+                            oninput="mayus(this);" onkeypress="return checkA(event)">
+                    </div>
+                    <div>
+                        <label>Modelo</label>
+                        <input autocomplete="off" type="text" id="ModelE" name="ModelE" required maxlength="45"
+                            oninput="mayus(this);" onkeypress="return checkA(event)">
+                    </div>
+                </div>
+                <div class="Dos_Columnas">
+                    <div>
+                        <label>Ubicación</label>
+                        <input autocomplete="off" type="text" id="UbiE" name="UbiE" required maxlength="50"
+                            oninput="mayus(this);" onkeypress="return checkA(event)">
+                    </div>
+                    <div>
+                        <label>Encargado</label>
+                        <select id="NombreEmp" required>
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </div>
+                <div id="Desplegable">
+                    <div class="Cuatro_Column">
+                        <div>
+                            <label>Hardware</label>
+                            <input autocomplete="off" type="text" id="HardE" name="HardE" maxlength="100"
+                                onkeypress="return checkA(event)" oninput="mayus(this);">
+                        </div>
+                        <div>
+                            <label>Software</label>
+                            <input autocomplete="off" type="text" id="SoftE" name="SoftE" maxlength="100"
+                                onkeypress="return checkA(event)" oninput="mayus(this);">
+                        </div>
+                        <div>
+                            <label>Monitor</label>
+                            <input autocomplete="off" type="text" id="MonE" name="MonE" maxlength="100"
+                                onkeypress="return checkA(event)" oninput="mayus(this);">
+                        </div>
+                        <div>
+                            <label>N. Serie de Monitor</label>
+                            <input autocomplete="off" type="text" id="N_Ser_M" name="N_Ser_M" maxlength="100"
+                                onkeypress="return checkA(event)" oninput="mayus(this);">
+                        </div>
+                    </div>
+                    <div class="Tres_Column">
+                        <div>
+                            <label>Mouse</label>
+                            <input autocomplete="off" type="text" id="MouseE" name="MouseE" maxlength="100"
+                                onkeypress="return checkA(event)" oninput="mayus(this);">
+                        </div>
+                        <div>
+                            <label>Teclado</label>
+                            <input autocomplete="off" type="text" id="TecladE" name="TecladE" maxlength="100"
+                                onkeypress="return checkA(event)" oninput="mayus(this);">
+                        </div>
+                        <div>
+                            <label>Accesorio</label>
+                            <input autocomplete="off" type="text" id="AccesE" name="AccesE" maxlength="100"
+                                onkeypress="return checkA(event)" oninput="mayus(this);">
+                        </div>
+                    </div>
+                </div>
+                <div class="Cuatro_Column">
+                    <input type="submit" style="height: 6rem; width: 15rem;" value="Aceptar" class="BotonAA">
+                    <a class="BotonReg" href="/users/index" style="height: 6rem; width: 15rem;">Regresar</a>
+                </div>
+            </form>
+        </div>
+    </main>
 </body>
+
+<script src="/javascripts/SocketsC.js" type="text/javascript"></script>
+<script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
+<script type="text/javascript" src="/javascripts/NavEspecializado.js"></script>
 
 </html>

@@ -58,7 +58,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <input type="text" id="buscar" onkeyup="buscar(); mayus(this);" placeholder="BUSCAR EN TABLA"
+                <input type="text" id="buscar" oninput="buscar(); mayus(this);" placeholder="BUSCAR EN TABLA"
                     title="Empieza a escribir para buscar">
                 <table id="DatosProd">
                     <thead>
@@ -92,7 +92,7 @@
                         <div>
                             <label>Código de barras</label>
                             <input autocomplete="off" type="text" id="Cod_BarrasM" min="1" name="Cod_BarrasM" required
-                                maxlength="45" onkeyup="mayus(this);">
+                                maxlength="45" oninput="mayus(this);">
                         </div>
                         <div>
                             <label>Categoría</label>
@@ -106,19 +106,19 @@
                         <div>
                             <label>Nombre del artículo</label>
                             <input autocomplete="off" type="text" id="NomPM" name="NomPM" required maxlength="45"
-                                onkeyup="mayus(this);">
+                                oninput="mayus(this);">
                         </div>
                     </div>
                     <div class="Tres_Column">
                         <div>
                             <label>Marca del artículo</label>
                             <input autocomplete="off" type="text" id="MarcActiM" name="MarcActiM" required
-                                maxlength="100" onkeyup="mayus(this);">
+                                maxlength="100" oninput="mayus(this);">
                         </div>
                         <div>
                             <label>Descripción</label>
                             <input autocomplete="off" type="text" id="DescripcionPM" name="DescripcionPM" required
-                                maxlength="400" onkeyup="mayus(this);">
+                                maxlength="400" oninput="mayus(this);">
                         </div>
                         <div>
                             <label>Unidad</label>
@@ -152,7 +152,7 @@
             <div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <input type="text" id="buscar1" onkeyup="buscar1(); mayus(this);" placeholder="BUSCAR EN TABLA"
+                        <input type="text" id="buscar1" oninput="buscar1(); mayus(this);" placeholder="BUSCAR EN TABLA"
                             title="Empieza a escribir para buscar">
                         <table id="DatosFacturas">
                             <caption id="title_table"></caption>
@@ -192,7 +192,7 @@
                         <div>
                             <label>Número de factura</label>
                             <input autocomplete="off" type="text" id="NumFactMF" name="NumFactM" required maxlength="10"
-                                onkeyup="mayus(this);">
+                                oninput="mayus(this);">
                         </div>
                     </div>
                     <div class="Dos_Columnas">
@@ -204,7 +204,7 @@
                         <div>
                             <label>Proveedor</label>
                             <input autocomplete="off" type="text" id="ProveedorMF" name="ProveedorM" required
-                                maxlength="45" onkeyup="mayus(this);">
+                                maxlength="45" oninput="mayus(this);">
                         </div>
                     </div>
                     <div class="Dos_Column">

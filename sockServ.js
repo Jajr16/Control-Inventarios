@@ -189,12 +189,18 @@ io.on('connection', (socket) => {
         db.query('update factus_productos set Cantidad = ? where Nfactura = ? and Cod_Barras = ?', [data.Cantidad, dataOld.NFO, data.CodBarras], function (err, result) {
             if (err) console.log("Error en inserción de facturas: ", err);
             if (result.affectedRows > 0) {
-                db.query('update Facturas_Almacen set Num_Fact = ?, Ffact = ?, Proveedor = ? where Num_Fact = ?', [data.NumFactura, data.FechaFac, data.Proveedor, dataOld.NFO], function (err1, result) {//Insertar factura
-                    if (err1) console.log("Error en inserción de facturas: ", err1);
-                    if (result.affectedRows > 0) {
-                        socket.emit("Factu_Exitosa", { mensaje: "La factura fue modificada con éxito." });
+                db.query('select*from factus_productos where Num_Fact = ? ', [data.NumFactu], function () {
+                    if (result.length > 0) {
+                        socket.emit('Fallo_Fac', { mensaje: 'Ese número de factura ya está registrado, favor de ingresar otro.' })
                     } else {
-                        socket.emit('Fallo_Fac', { mensaje: "No se pudo modificar la factura." })
+                        db.query('update Facturas_Almacen set Num_Fact = ?, Ffact = ?, Proveedor = ? where Num_Fact = ?', [data.NumFactura, data.FechaFac, data.Proveedor, dataOld.NFO], function (err1, result) {//Insertar factura
+                            if (err1) console.log("Error en inserción de facturas: ", err1);
+                            if (result.affectedRows > 0) {
+                                socket.emit("Factu_Exitosa", { mensaje: "La factura fue modificada con éxito." });
+                            } else {
+                                socket.emit('Fallo_Fac', { mensaje: "No se pudo modificar la factura." })
+                            }
+                        });
                     }
                 });
             } else {

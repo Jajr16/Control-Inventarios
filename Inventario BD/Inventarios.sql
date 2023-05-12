@@ -55,14 +55,20 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Equipo`
 -- -----------------------------------------------------
+drop table PCs;
+drop table Monitor;
+drop table Mouse;
+drop table Teclado;
+drop table Accesorio;
 drop table Equipo;
 CREATE TABLE `Inventarios`.`Equipo` (
   `N_Inventario` int not null auto_increment,
   `Num_Serie` VARCHAR(45) NOT NULL,
-  `Equipo` VARCHAR(45) NULL,
-  `Marca` VARCHAR(45) NULL,
-  `Modelo` VARCHAR(45) NULL,
-  `Num_emp` INT NULL,
+  `Equipo` VARCHAR(45) NOT NULL,
+  `Marca` VARCHAR(45) NOT NULL,
+  `Modelo` VARCHAR(45) NOT NULL,
+  `Num_emp` INT NOT NULL,
+  `Ubi` nvarchar(50) not null,
   PRIMARY KEY (`N_Inventario`),
   INDEX `Num_emp_idx` (`Num_emp` ASC),
   CONSTRAINT `Num_RespE`
@@ -72,47 +78,47 @@ CREATE TABLE `Inventarios`.`Equipo` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
-create table if not exists PCs(
+create table PCs(
 	N_Inventario int not null,
-    Hardware nvarchar(100),
-    Software nvarchar(100),
+    Hardware varchar(100),
+    Software varchar(100),
     primary key(N_Inventario),
     foreign key (N_Inventario) references equipo(N_Inventario)
     ON DELETE CASCADE
 	ON UPDATE CASCADE
 );
 
-create table if not exists Monitor(
+create table Monitor(
 	N_Inventario int not null,
-    Monitor nvarchar(100),
-    Num_Serie_Monitor nvarchar(45),
+    Monitor varchar(100),
+    Num_Serie_Monitor varchar(45),
     primary key(N_Inventario),
     foreign key (N_Inventario) references equipo(N_Inventario)
     ON DELETE CASCADE
 	ON UPDATE CASCADE
 );
 
-create table if not exists Mouse(
+create table Mouse(
 	N_Inventario int not null,
-    Mouse nvarchar(45),
+    Mouse varchar(45),
     primary key(N_Inventario),
     foreign key (N_Inventario) references equipo(N_Inventario)
     ON DELETE CASCADE
 	ON UPDATE CASCADE
 );
 
-create table if not exists Teclado(
+create table Teclado(
 	N_Inventario int not null,
-    Teclado nvarchar(45),
+    Teclado varchar(45),
     primary key(N_Inventario),
     foreign key (N_Inventario) references equipo(N_Inventario)
     ON DELETE CASCADE
 	ON UPDATE CASCADE
 );
 
-create table if not exists Accesorio(
+create table Accesorio(
 	N_Inventario int not null,
-    Accesorio nvarchar(45),
+    Accesorio varchar(45),
     primary key(N_Inventario),
     foreign key (N_Inventario) references equipo(N_Inventario)
 	ON DELETE CASCADE
@@ -246,11 +252,9 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Responsivas_M` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Responsivas_E`
 -- -----------------------------------------------------
-drop table Responsivas_E;
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Responsivas_E` (
   `Num_emp` INT NOT NULL,
   `Num_I` int NOT NULL,
