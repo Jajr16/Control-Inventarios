@@ -373,6 +373,41 @@ h5 {
     transform: scale(1.1);
 }
 
+.BotonExcel {
+    text-decoration: none;
+    width: 50%;
+    border: none;
+    margin-bottom: 2rem;
+    text-align: center;
+    background: linear-gradient(to right, #05a500, #0aff02);
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonExcel:hover {
+    background: linear-gradient(to right, #0aff02, #abffa9);
+}
+
+.BotonFiltro {
+    text-decoration: none;
+    width: 70%;
+    border: none;
+    margin-bottom: 2rem;
+    text-align: center;
+    background: linear-gradient(to right, #a5007c, #ff02c0);
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonFiltro:hover {
+    background: linear-gradient(to right, #ff02c0, #fd87e0);
+    transform: scale(1.1);
+}
+
 .BotonAEB {
     text-decoration: none;
     width: 100%;

@@ -221,6 +221,7 @@ if (pathname == "/users/altasPro") {
 
             socket.on("RespExcel", (data) => {
                 alert(data.mensaje);
+                location.reload();
             });
         }
 
@@ -337,7 +338,7 @@ if (pathname == "/users/altasPro") {
                     }
                 });
 
-                
+
             }
             socket.on("BotonModalFacturas", () => {
 
@@ -547,6 +548,7 @@ if (pathname == "/users/altasPro") {
 
                         socket.on('Eliminacion_Realizada', function (Respuesta) {
                             alert(Respuesta.mensaje);
+                            location.reload();
                         });
                         socket.on('Fallo_BajasExist', function (Respuesta) {
                             alert(Respuesta.mensaje);
@@ -554,16 +556,53 @@ if (pathname == "/users/altasPro") {
                         });
 
                         // Crea un excel para productos sacados
-                        socket.emit("SacarExcel", { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val(), Articulo: valores2E });
+                        /*socket.emit("SacarExcel", { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val(), Articulo: valores2E });
 
                         socket.on("SacarRespExcel", (Respuesta) => {
                             alert(Respuesta.mensaje);
                             location.reload();
-                        });
+                        });*/
                     }
                 }
             }
         });
+
+        //Llenar datos en automático
+        var valoresExSal0 = "";
+        var valoresExSal1 = "";
+        var valoresExSal2 = "";
+        var valoresExSal3 = "";
+        var valoresExSal4 = "";
+        var valoresExSal5 = "";
+
+        //Desplegar facturas existentes
+        socket.emit("Consul_RegProSac");
+        // Consulta de productos
+        socket.on('Desp_Productos', async (data) => {
+            console.log('Datos recibidos:', data.Cod_BarrasS);
+
+            document.querySelector("#DatosProSac tbody").innerHTML += `
+            <tr>
+                <td id="Cod_BarrasS">${data.Cod_BarrasS}</td>
+                <td id="ArticuloS">${data.ArticuloS}</td>
+                <td id="ExistenciaS">${data.ExistenciaS}</td>
+                <td id="EncargadoS">${data.Nom_EmpS}</td>
+                <td id="Cantidad_Salida">${data.Cantidad_Salida}</td>
+                <td id="FSalida">${data.FSalida}</td>
+            </tr>
+            `;
+        });
+
+        // Crear excel de facturas
+        function ExcelFacSac() {
+            
+            socket.emit("SacarExcel", { Cod_BarrasS: $("#Cod_BarrasS").val(), ArticuloS: $("#ArticuloS").val(), ExistenciaS: $("#ExistenciaS").val(), EncargadoS: $("#EncargadoS").val(), Cantidad_Salida: $("#Cantidad_Salida").val() });
+
+            socket.on("SacarRespExcel", (data) => {
+                alert(data.mensaje);
+                location.reload();
+            });
+        }
 
         // Barra de busqueda
         function buscar() {
@@ -587,6 +626,37 @@ if (pathname == "/users/altasPro") {
                 }
             })
         }
+
+        // Buscar por fecha
+        function FiltrarFechas() {
+            var filtro = $("#buscarFac").val().toUpperCase();
+            var fechaInicio = $("#fechaInicio").val();
+            var fechaFin = $("#fechaFin").val();
+
+            $("#DatosProSac td").each(function() {
+                var textoEnTd = $(this).text().toUpperCase();
+                var fechaTd = $(this).data("fecha");
+
+                if (
+                    (fechaInicio === "" || fechaTd >= fechaInicio) &&
+                    (fechaFin === "" || fechaTd <= fechaFin) &&
+                    textoEnTd.indexOf(filtro) >= 0
+                ) {
+                    $(this).addClass("existe");
+                } else {
+                    $(this).removeClass("existe");
+                }
+            });
+
+            $("#DatosProSac tbody tr").each(function() {
+                if ($(this).children(".existe").length > 0) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+        
     } else {
         location.href = "index";
     }
@@ -666,7 +736,5 @@ if (pathname == "/users/altasPro") {
 
             }
         }
-
-
     }
 }

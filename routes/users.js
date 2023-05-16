@@ -105,4 +105,9 @@ router.get('/RegistroEmpleado', function (req, res, next) {
   res.render('RegistroEmpleado', { title: 'Crear nuevo usuario' });
 });
 
+/*** Consultar registro de productos sacados ***/
+router.get('/RegProSac', function (req, res, next) {
+  res.render('RegProSac', { title: 'Registro de productos sacados' });
+});
+
 module.exports = router;

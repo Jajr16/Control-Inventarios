@@ -293,10 +293,12 @@ Nfactura nvarchar(10) not null,
 
 create table Salidas_Productos(
 Cod_BarrasS nvarchar(45) not null,
-FSalida date,
-Num_EmpS int,
+ArticuloS nvarchar(45) not null,
+ExistenciaS int,
+Nom_EmpS nvarchar(45) not null,
 Cantidad_Salida int,
-constraint CPSP primary key(Cod_BarrasS,FSalida,Num_EmpS)
+FSalida date,
+constraint CPSP primary key(Cod_BarrasS,FSalida)
 );
 
 alter table Salidas_Productos add constraint FKCBS foreign key(Cod_BarrasS) references almacen(Cod_Barras);
@@ -328,7 +330,7 @@ delete from facturas_almacen where Ffact = "2023-05-07";
 delete from almacen where eliminado = 0;
 delete from almacen where eliminado = 1;
 delete from salidas_productos where Cod_BarrasS = 'JDFK35J2';
-delete from salidas_productos where FSalida = '2023-05-09';
+delete from salidas_productos where FSalida = '2023-05-15';
 delete from almacen where Cod_Barras = "684F4GFR8";
 delete from empleado where Num_emp > 840;
 delete from usuario where Num_emp = 107;

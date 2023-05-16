@@ -75,6 +75,7 @@ io.on('connection', (socket) => {
         });
 
     });
+
     //Buscar facturas
     socket.on('Traer_Facturas', async (data) => {
         db.query('select almacen.Articulo, factus_productos.Nfactura, factus_productos.Cantidad, factus_productos.FIngreso, facturas_almacen.Ffact, facturas_almacen.Proveedor from factus_productos inner join facturas_almacen on facturas_almacen.Num_Fact = factus_productos.Nfactura inner join almacen on factus_productos.Cod_Barras = almacen.Cod_Barras where factus_productos.Cod_Barras = ?', data, function (err, result) {
@@ -294,6 +295,7 @@ io.on('connection', (socket) => {
     let horas = hoy.getHours();
 
     let formato1 = "";
+    let formato2 = "";
 
     if (segundos < 10) {
         segundos = "0" + segundos;
@@ -311,7 +313,8 @@ io.on('connection', (socket) => {
         dia = "0" + dia;
     }
 
-    formato1 = `${anio}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
+    formato1 = `${anio}-${mes}-${dia}`;
+    formato2 = `${anio}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
 
     // Bajas en productos existentes
     socket.on('Bajas_ProdExist', async (data) => {
@@ -328,139 +331,10 @@ io.on('connection', (socket) => {
                         if (err) console.log("Error de busqueda de empleados: ", err);
                         console.log(res);
                         if (res.length > 0) {
-                            db.query('insert into salidas_productos values (?,?,?,?)', [data.Cod_Barras, formato1, res[0].num_emp, data.Cantidad], function (err2, result) {
+                            db.query('insert into salidas_productos values (?,?,?,?,?,?)', [data.Cod_Barras, data.Articulo, result[0].Existencia, data.Emp, data.Cantidad, formato1], function (err2, result) {
                                 if (err2) console.log("Error de inserción de productos: ", err2);
                                 if (result.affectedRows > 0) {
                                     socket.emit('Eliminacion_Realizada', { mensaje: 'Productos sacados con éxito.' });//Mandar mensaje a cliente
-
-                                    db.query('select Existencia from almacen where Cod_Barras = ?', [data.Cod_Barras], async function (err, res) {
-                                        if (err) console.log("Error de busqueda de productos: ", err);
-                                        console.log(res);
-                                        if (res.length > 0) {
-                                            console.log(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contadorS + '.xlsx'));
-                                            console.log(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx'));
-                                            workbook.xlsx.readFile(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx')).then(async () => {
-
-                                                const newWorkbook = new Excel.Workbook();//Cargamos una copia de archivo anterior
-                                                await newWorkbook.xlsx.readFile(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx'));
-
-                                                const Newworksheet = newWorkbook.getWorksheet('My Sheet');
-
-                                                Newworksheet.columns = [
-                                                    { header: 'Código de Barras', key: 'CB', width: 25 },
-                                                    { header: 'Artículo', key: 'Articulo', width: 40, },
-                                                    { header: 'En existencia', key: 'Exist', width: 20, },
-                                                    { header: 'Encargado', key: 'Encargado', width: 45, },
-                                                    { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
-                                                    { header: 'Fecha de salida', key: 'FecSac', width: 30, }
-                                                ];
-
-                                                await Newworksheet.addRow({ CB: data.Cod_Barras, Articulo: data.Articulo, Exist: res[0].Existencia, Encargado: data.Emp, CantSac: data.Cantidad, FecSac: formato1 });
-
-
-                                                //Ruta del archivo
-                                                const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS) + '.xlsx');
-                                                console.log("a", pathExcel);
-                                                await newWorkbook.xlsx.writeFile(pathExcel);
-                                                contadorS = contadorS + 1;
-                                            }).catch(() => {
-                                                const worksheet = workbook.addWorksheet('My Sheet');
-
-                                                worksheet.columns = [
-                                                    { header: 'Código de Barras', key: 'CB', width: 25 },
-                                                    { header: 'Artículo', key: 'Articulo', width: 40, },
-                                                    { header: 'En existencia', key: 'Exist', width: 20, },
-                                                    { header: 'Encargado', key: 'Encargado', width: 45, },
-                                                    { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
-                                                    { header: 'Fecha de salida', key: 'FecSac', width: 30, }
-                                                ];
-
-
-                                                worksheet.addRow({ CB: data.Cod_Barras, Articulo: data.Articulo, Exist: res[0].Existencia, Encargado: data.Emp, CantSac: data.Cantidad, FecSac: formato1 });
-
-                                                //ESTILO DE EXCEL
-                                                worksheet.getCell('A1').fill = {
-                                                    type: 'pattern',
-                                                    pattern: 'solid',
-                                                    fgColor: { argb: 'F003A9E' }
-                                                };
-                                                worksheet.getCell('A1').font = {
-                                                    name: 'Arial',
-                                                    color: { argb: 'FFFFFF' },
-                                                    bold: true
-                                                };
-
-                                                worksheet.getCell('B1').fill = {
-                                                    type: 'pattern',
-                                                    pattern: 'solid',
-                                                    fgColor: { argb: 'F003A9E' }
-                                                };
-                                                worksheet.getCell('B1').font = {
-                                                    name: 'Arial',
-                                                    color: { argb: 'FFFFFF' },
-                                                    bold: true
-                                                };
-
-                                                worksheet.getCell('C1').fill = {
-                                                    type: 'pattern',
-                                                    pattern: 'solid',
-                                                    fgColor: { argb: 'F003A9E' }
-                                                };
-                                                worksheet.getCell('C1').font = {
-                                                    name: 'Arial',
-                                                    color: { argb: 'FFFFFF' },
-                                                    bold: true
-                                                };
-
-                                                worksheet.getCell('D1').fill = {
-                                                    type: 'pattern',
-                                                    pattern: 'solid',
-                                                    fgColor: { argb: 'F003A9E' }
-                                                };
-                                                worksheet.getCell('D1').font = {
-                                                    name: 'Arial',
-                                                    color: { argb: 'FFFFFF' },
-                                                    bold: true
-                                                };
-
-                                                worksheet.getCell('E1').fill = {
-                                                    type: 'pattern',
-                                                    pattern: 'solid',
-                                                    fgColor: { argb: 'F003A9E' }
-                                                };
-                                                worksheet.getCell('E1').font = {
-                                                    name: 'Arial',
-                                                    color: { argb: 'FFFFFF' },
-                                                    bold: true
-                                                };
-
-                                                worksheet.getCell('F1').fill = {
-                                                    type: 'pattern',
-                                                    pattern: 'solid',
-                                                    fgColor: { argb: 'F003A9E' }
-                                                };
-                                                worksheet.getCell('F1').font = {
-                                                    name: 'Arial',
-                                                    color: { argb: 'FFFFFF' },
-                                                    bold: true
-                                                };
-
-                                                worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
-                                                worksheet.autoFilter = 'A:F';
-
-                                                //Ruta del archivo
-                                                const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contadorS + '.xlsx');
-                                                workbook.xlsx.writeFile(pathExcel);
-                                                console.log("b", pathExcel);
-                                                contadorS = contadorS + 1;
-                                            });
-
-                                            socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
-                                        } else {
-                                            socket.emit("SacarRespExcel", { mensaje: "Hubo un error, favor de contactar a encargados de sistemas" });
-                                        }
-                                    });
-                                    console.log("File is written");
                                 } else {
                                     socket.emit('Fallo_BajasExist', { mensaje: "No se pudo actualizar la existencia de productos." })
                                 }
@@ -517,6 +391,7 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Altas de empleado
     socket.on('Reg_Emp', async (data) => {
         console.log(data);
         db.query('select*from Empleado where Nom = ?', [data.NombreEmp], function (err, result) {
@@ -542,6 +417,7 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Lista de empleados
     socket.on('List_empleados', (data) => {
         db.query('select Nom from empleado', function (err, res) {
             if (err) console.log("El error fue: ", err)
@@ -672,6 +548,157 @@ io.on('connection', (socket) => {
             }
         });
         console.log("File is written");
+    });
+
+    // Consulta de registro de productos
+    socket.on('Consul_RegProSac', async () => {
+
+        // Autenticar que haga las consultas
+        db.query('select * from salidas_productos', function (err, result) {
+            if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
+            if (result.length > 0) {//Si sí hizo una búsqueda
+                for (var i = 0; i < result.length; i++) {
+                    socket.emit('Desp_Productos', { Cod_BarrasS: result[i].Cod_BarrasS, ArticuloS: result[i].ArticuloS, ExistenciaS: result[i].ExistenciaS, Nom_EmpS: result[i].Nom_EmpS, Cantidad_Salida: result[i].Cantidad_Salida, FSalida: result[i].FSalida });//Mandar usuario y token al cliente
+                }
+            }
+            result.length = 0;
+        });
+    });
+
+    // Crear excel de consultas de almacen
+    socket.on('SacarExcel', async () => {
+
+        const workbook = new Excel.Workbook();
+        var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
+
+        workbook.xlsx.readFile(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx')).then(async () => {
+
+            const newWorkbook = new Excel.Workbook();//Cargamos una copia de archivo anterior
+            await newWorkbook.xlsx.readFile(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx'));
+
+            const Newworksheet = newWorkbook.getWorksheet('My Sheet');
+
+            Newworksheet.columns = [
+                { header: 'Código de Barras', key: 'CB', width: 25 },
+                { header: 'Artículo', key: 'Articulo', width: 40, },
+                { header: 'En existencia', key: 'Exist', width: 20, },
+                { header: 'Encargado', key: 'Encargado', width: 45, },
+                { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
+                { header: 'Fecha de salida', key: 'FecSac', width: 30, }
+            ];
+            db.query('select * from salidas_productos', async function (err, result) {
+                // If si marca error
+                if (err) console.log(err);
+                if (res.length > 0) {
+                    for (var i = 0; i < res.length; i++) {
+                        Newworksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].ArticuloS, Exist: result[i].ExistenciaS, Encargado: result[i].Nom_EmpS, CantSac: result[i].Cantidad_Salida, FecSac: formato2 });
+                    }
+                    //Ruta del archivo
+                    const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS) + '.xlsx');
+                    console.log("a", pathExcel);
+                    await newWorkbook.xlsx.writeFile(pathExcel);
+                    contadorS = contadorS + 1;
+                }
+            });
+            // Si el documuento no existe
+        }).catch(() => {
+            const worksheet = workbook.addWorksheet('My Sheet');
+
+            worksheet.columns = [
+                { header: 'Código de Barras', key: 'CB', width: 25 },
+                { header: 'Artículo', key: 'Articulo', width: 40, },
+                { header: 'En existencia', key: 'Exist', width: 20, },
+                { header: 'Encargado', key: 'Encargado', width: 45, },
+                { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
+                { header: 'Fecha de salida', key: 'FecSac', width: 30, }
+            ];
+
+            db.query('select * from salidas_productos', async function (err, result) {
+                // If si marca error
+                if (err) console.log(err);
+                if (res.length > 0) {
+                    for (var i = 0; i < res.length; i++) {
+                        Newworksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].ArticuloS, Exist: result[i].ExistenciaS, Encargado: result[i].Nom_EmpS, CantSac: result[i].Cantidad_Salida, FecSac: formato2 });
+                    }
+
+                    //ESTILO DE EXCEL
+                    worksheet.getCell('A1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('A1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('B1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('B1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('C1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('C1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('D1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('D1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('E1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('E1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('F1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('F1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.autoFilter = 'A:F';
+
+                    //Ruta del archivo
+                    const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contadorS + '.xlsx');
+                    workbook.xlsx.writeFile(pathExcel);
+                    console.log("b", pathExcel);
+                    contadorS = contadorS + 1;
+                }
+            });
+        });
     });
 
     socket.on('disconnect', () => {
