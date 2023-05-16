@@ -487,6 +487,8 @@ select*from facturas_almacen;
 select*from factus_productos;
 select*from almacen;
 select*from salidas_productos;
+select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp where Cod_BarrasS = 'PRUEBA1' and Num_EmpS = (select Num_Emp from empleado where Nom = 'MADRID MARTINEZ GABRIELA');
+
 select*from salida_almacen;
 select*from empleado;
 select distinct(Área) from empleado;
