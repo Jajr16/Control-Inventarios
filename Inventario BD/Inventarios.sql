@@ -293,12 +293,10 @@ Nfactura nvarchar(10) not null,
 
 create table Salidas_Productos(
 Cod_BarrasS nvarchar(45) not null,
-ArticuloS nvarchar(45) not null,
-ExistenciaS int,
-Nom_EmpS nvarchar(45) not null,
+FSalida datetime,
+Num_EmpS int,
 Cantidad_Salida int,
-FSalida date,
-constraint CPSP primary key(Cod_BarrasS,FSalida)
+constraint CPSP primary key(Cod_BarrasS, FSalida, Num_EmpS)
 );
 
 alter table Salidas_Productos add constraint FKCBS foreign key(Cod_BarrasS) references almacen(Cod_Barras);
@@ -450,6 +448,8 @@ insert into empleado values(
 insert into usuario values(
 758, "ajimenez", "Clarac2017", '4dnM3k0nl9s'
 );
+
+select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp;
 
 select tokens.token from tokens inner join empleado on tokens.area = empleado.Área where empleado.Num_Emp = 760;
 

@@ -567,14 +567,6 @@ if (pathname == "/users/altasPro") {
             }
         });
 
-        //Llenar datos en automático
-        var valoresExSal0 = "";
-        var valoresExSal1 = "";
-        var valoresExSal2 = "";
-        var valoresExSal3 = "";
-        var valoresExSal4 = "";
-        var valoresExSal5 = "";
-
         //Desplegar facturas existentes
         socket.emit("Consul_RegProSac");
         // Consulta de productos
@@ -584,9 +576,9 @@ if (pathname == "/users/altasPro") {
             document.querySelector("#DatosProSac tbody").innerHTML += `
             <tr>
                 <td id="Cod_BarrasS">${data.Cod_BarrasS}</td>
-                <td id="ArticuloS">${data.ArticuloS}</td>
-                <td id="ExistenciaS">${data.ExistenciaS}</td>
-                <td id="EncargadoS">${data.Nom_EmpS}</td>
+                <td id="ArticuloS">${data.Articulo}</td>
+                <td id="ExistenciaS">${data.Existencia}</td>
+                <td id="EncargadoS">${data.Nom}</td>
                 <td id="Cantidad_Salida">${data.Cantidad_Salida}</td>
                 <td id="FSalida">${data.FSalida}</td>
             </tr>
@@ -595,7 +587,7 @@ if (pathname == "/users/altasPro") {
 
         // Crear excel de facturas
         function ExcelFacSac() {
-            
+
             socket.emit("SacarExcel", { Cod_BarrasS: $("#Cod_BarrasS").val(), ArticuloS: $("#ArticuloS").val(), ExistenciaS: $("#ExistenciaS").val(), EncargadoS: $("#EncargadoS").val(), Cantidad_Salida: $("#Cantidad_Salida").val() });
 
             socket.on("SacarRespExcel", (data) => {
@@ -633,13 +625,17 @@ if (pathname == "/users/altasPro") {
             var fechaInicio = $("#fechaInicio").val();
             var fechaFin = $("#fechaFin").val();
 
-            $("#DatosProSac td").each(function() {
+            $("#DatosProSac td").each(function () {
                 var textoEnTd = $(this).text().toUpperCase();
                 var fechaTd = $(this).data("fecha");
 
+                var fechaInicioObj = fechaInicio !== "" ? new Date(fechaInicio) : null;
+                var fechaFinObj = fechaFin !== "" ? new Date(fechaFin) : null;
+                var fechaTdObj = new Date(fechaTd);
+
                 if (
-                    (fechaInicio === "" || fechaTd >= fechaInicio) &&
-                    (fechaFin === "" || fechaTd <= fechaFin) &&
+                    (fechaInicioObj === null || fechaTdObj >= fechaInicioObj) &&
+                    (fechaFinObj === null || fechaTdObj <= fechaFinObj) &&
                     textoEnTd.indexOf(filtro) >= 0
                 ) {
                     $(this).addClass("existe");
@@ -648,7 +644,7 @@ if (pathname == "/users/altasPro") {
                 }
             });
 
-            $("#DatosProSac tbody tr").each(function() {
+            $("#DatosProSac tbody tr").each(function () {
                 if ($(this).children(".existe").length > 0) {
                     $(this).show();
                 } else {
@@ -656,7 +652,7 @@ if (pathname == "/users/altasPro") {
                 }
             });
         }
-        
+
     } else {
         location.href = "index";
     }

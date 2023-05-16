@@ -295,7 +295,6 @@ io.on('connection', (socket) => {
     let horas = hoy.getHours();
 
     let formato1 = "";
-    let formato2 = "";
 
     if (segundos < 10) {
         segundos = "0" + segundos;
@@ -313,8 +312,7 @@ io.on('connection', (socket) => {
         dia = "0" + dia;
     }
 
-    formato1 = `${anio}-${mes}-${dia}`;
-    formato2 = `${anio}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
+    formato1 = `${anio}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
 
     // Bajas en productos existentes
     socket.on('Bajas_ProdExist', async (data) => {
@@ -331,7 +329,7 @@ io.on('connection', (socket) => {
                         if (err) console.log("Error de busqueda de empleados: ", err);
                         console.log(res);
                         if (res.length > 0) {
-                            db.query('insert into salidas_productos values (?,?,?,?,?,?)', [data.Cod_Barras, data.Articulo, result[0].Existencia, data.Emp, data.Cantidad, formato1], function (err2, result) {
+                            db.query('insert into salidas_productos values (?,?,?,?)', [data.Cod_Barras, formato1, res[0].num_emp, data.Cantidad ], function (err2, result) {
                                 if (err2) console.log("Error de inserción de productos: ", err2);
                                 if (result.affectedRows > 0) {
                                     socket.emit('Eliminacion_Realizada', { mensaje: 'Productos sacados con éxito.' });//Mandar mensaje a cliente
@@ -551,14 +549,14 @@ io.on('connection', (socket) => {
     });
 
     // Consulta de registro de productos
-    socket.on('Consul_RegProSac', async () => {
+    socket.on('Consul_RegProSac', async (data) => {
 
         // Autenticar que haga las consultas
-        db.query('select * from salidas_productos', function (err, result) {
+        db.query('select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp', function (err, result) {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
                 for (var i = 0; i < result.length; i++) {
-                    socket.emit('Desp_Productos', { Cod_BarrasS: result[i].Cod_BarrasS, ArticuloS: result[i].ArticuloS, ExistenciaS: result[i].ExistenciaS, Nom_EmpS: result[i].Nom_EmpS, Cantidad_Salida: result[i].Cantidad_Salida, FSalida: result[i].FSalida });//Mandar usuario y token al cliente
+                    socket.emit('Desp_Productos', { Cod_BarrasS: result[i].Cod_BarrasS, Articulo: result[i].Articulo, Existencia: result[i].Existencia, Nom: result[i].Nom, Cantidad_Salida: result[i].Cantidad_Salida, FSalida: result[i].FSalida });//Mandar usuario y token al cliente
                 }
             }
             result.length = 0;
@@ -586,12 +584,12 @@ io.on('connection', (socket) => {
                 { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
                 { header: 'Fecha de salida', key: 'FecSac', width: 30, }
             ];
-            db.query('select * from salidas_productos', async function (err, result) {
+            db.query('select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp', async function (err, result) {
                 // If si marca error
                 if (err) console.log(err);
-                if (res.length > 0) {
-                    for (var i = 0; i < res.length; i++) {
-                        Newworksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].ArticuloS, Exist: result[i].ExistenciaS, Encargado: result[i].Nom_EmpS, CantSac: result[i].Cantidad_Salida, FecSac: formato2 });
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        Newworksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].Articulo, Exist: result[i].Existencia, Encargado: result[i].Nom, CantSac: result[i].Cantidad_Salida, FecSac: formato1 });
                     }
                     //Ruta del archivo
                     const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS) + '.xlsx');
@@ -613,12 +611,12 @@ io.on('connection', (socket) => {
                 { header: 'Fecha de salida', key: 'FecSac', width: 30, }
             ];
 
-            db.query('select * from salidas_productos', async function (err, result) {
+            db.query('select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp', async function (err, result) {
                 // If si marca error
                 if (err) console.log(err);
-                if (res.length > 0) {
-                    for (var i = 0; i < res.length; i++) {
-                        Newworksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].ArticuloS, Exist: result[i].ExistenciaS, Encargado: result[i].Nom_EmpS, CantSac: result[i].Cantidad_Salida, FecSac: formato2 });
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        worksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].Articulo, Exist: result[i].Existencia, Encargado: result[i].Nom, CantSac: result[i].Cantidad_Salida, FecSac: formato1 });
                     }
 
                     //ESTILO DE EXCEL
@@ -699,6 +697,7 @@ io.on('connection', (socket) => {
                 }
             });
         });
+        socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
     });
 
     socket.on('disconnect', () => {
