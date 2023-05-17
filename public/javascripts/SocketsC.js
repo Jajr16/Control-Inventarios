@@ -693,17 +693,6 @@ if (pathname == "/users/altasPro") {
             `;
         });
 
-        // Crear excel de facturas
-        function ExcelFacSac() {
-
-            socket.emit("SacarExcel", { Cod_BarrasS: $("#Cod_BarrasS").val(), ArticuloS: $("#ArticuloS").val(), ExistenciaS: $("#ExistenciaS").val(), EncargadoS: $("#EncargadoS").val(), Cantidad_Salida: $("#Cantidad_Salida").val() });
-
-            socket.on("SacarRespExcel", (data) => {
-                alert(data.mensaje);
-                location.reload();
-            });
-        }
-
         // Buscar por nombre
         function BuscarFechas() {
             var filtro = $("#buscarFac").val().toUpperCase();
@@ -750,6 +739,17 @@ if (pathname == "/users/altasPro") {
                 } else {
                     $(this).hide();
                 }
+            });
+        }
+
+        // Crear excel de facturas
+        function ExcelFacSac() {
+
+            socket.emit("SacarExcel", { Cod_BarrasS: $("#Cod_BarrasS").val(), ArticuloS: $("#ArticuloS").val(), ExistenciaS: $("#ExistenciaS").val(), EncargadoS: $("#EncargadoS").val(), Cantidad_Salida: $("#Cantidad_Salida").val(), FSalida: $("#FSalida").val() });
+
+            socket.on("SacarRespExcel", (data) => {
+                alert(data.mensaje);
+                location.reload();
             });
         }
 

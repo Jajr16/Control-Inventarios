@@ -589,12 +589,12 @@ io.on('connection', (socket) => {
                 if (err) console.log(err);
                 if (result.length > 0) {
                     for (var i = 0; i < result.length; i++) {
-                        Newworksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].Articulo, Exist: result[i].Existencia, Encargado: result[i].Nom, CantSac: result[i].Cantidad_Salida, FecSac: formato1 });
+                        Newworksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].Articulo, Exist: result[i].Existencia, Encargado: result[i].Nom, CantSac: result[i].Cantidad_Salida, FecSac: result[i].FSalida });
                     }
                     //Ruta del archivo
                     const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS) + '.xlsx');
                     console.log("a", pathExcel);
-                    await newWorkbook.xlsx.writeFile(pathExcel);
+                    newWorkbook.xlsx.writeFile(pathExcel);
                     contadorS = contadorS + 1;
                 }
             });
@@ -616,7 +616,7 @@ io.on('connection', (socket) => {
                 if (err) console.log(err);
                 if (result.length > 0) {
                     for (var i = 0; i < result.length; i++) {
-                        worksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].Articulo, Exist: result[i].Existencia, Encargado: result[i].Nom, CantSac: result[i].Cantidad_Salida, FecSac: formato1 });
+                        worksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].Articulo, Exist: result[i].Existencia, Encargado: result[i].Nom, CantSac: result[i].Cantidad_Salida, FecSac: result[i].FSalida });
                     }
 
                     //ESTILO DE EXCEL

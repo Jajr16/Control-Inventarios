@@ -90,5 +90,7 @@ tr:hover:not(#firstrow) {
 .table-responsive {
     display: block;
     width: 100%;
+    height: 30vh;
     overflow-x: auto;
+    overflow-y: auto;
 }
