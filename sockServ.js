@@ -329,7 +329,7 @@ io.on('connection', (socket) => {
                         if (err) console.log("Error de busqueda de empleados: ", err);
                         console.log(res);
                         if (res.length > 0) {
-                            db.query('insert into salidas_productos values (?,?,?,?)', [data.Cod_Barras, formato1, res[0].num_emp, data.Cantidad ], function (err2, result) {
+                            db.query('insert into salidas_productos values (?,?,?,?)', [data.Cod_Barras, formato1, res[0].num_emp, data.Cantidad], function (err2, result) {
                                 if (err2) console.log("Error de inserción de productos: ", err2);
                                 if (result.affectedRows > 0) {
                                     socket.emit('Eliminacion_Realizada', { mensaje: 'Productos sacados con éxito.' });//Mandar mensaje a cliente

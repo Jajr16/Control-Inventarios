@@ -442,6 +442,8 @@ select*from empleado;
 select distinct(Área) from empleado;
 select*from usuario;
 
+select * from Salidas_Productos where FSalida BETWEEN "2023-05-16" and "2023-05-18";
+
 insert into empleado values(
 663, "NAVARRO JIMENEZ MARTHA LIDIA", "DIRECCION GENERAL", 663);
 
