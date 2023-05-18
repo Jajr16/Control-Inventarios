@@ -663,6 +663,7 @@ if (pathname == "/users/altasPro") {
     }
 } else if (pathname == "/users/FacSacProd") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
+
         //Desplegar facturas existentes
         socket.emit("Consul_RegProSac");
         // Consulta de productos
@@ -735,12 +736,17 @@ if (pathname == "/users/altasPro") {
         // Crear excel de facturas
         function ExcelFacSac() {
 
-            socket.emit("SacarExcel", { Cod_BarrasS: $("#Cod_BarrasS").val(), ArticuloS: $("#ArticuloS").val(), ExistenciaS: $("#ExistenciaS").val(), EncargadoS: $("#EncargadoS").val(), Cantidad_Salida: $("#Cantidad_Salida").val(), FSalida: $("#FSalida").val() });
+            var filtroInicio = $("#fechaInicio").val(); // Obtener la fecha de inicio como objeto Date
+            var filtroFin = $("#fechaFin").val(); // Obtener la fecha de fin como objeto Date
 
-            socket.on("SacarRespExcel", (data) => {
-                alert(data.mensaje);
-                location.reload();
-            });
+            if (filtroInicio != "" && filtroFin != "") {
+                socket.emit("SacarExcel", { fechaInicio: filtroInicio, fechaFin: filtroFin });
+
+                socket.on("SacarRespExcel", (data) => {
+                    alert(data.mensaje);
+                    location.reload();
+                });
+            }
         }
 
     } else {
