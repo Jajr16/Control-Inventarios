@@ -90,7 +90,13 @@ tr:hover:not(#firstrow) {
 .table-responsive {
     display: block;
     width: 100%;
-    height: 30vh;
+    height: 40vh;
     overflow-x: auto;
     overflow-y: auto;
+}
+
+.anuncio{
+    background-color: white;
+    opacity: 0.8;
+    width: 50rem;
 }

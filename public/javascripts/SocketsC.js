@@ -163,7 +163,7 @@ if (pathname == "/users/altasPro") {
                 <td id="UnidadP">${data.Unidad}</td>
                 <td id="Existencia">${data.Existencia}</td>
                 <td id="Eliminar" class="BotonER" onclick="eliminar()"> Eliminar </td>
-                <td id="Modificar" class="BotonMod"> Modificar </td>
+                <td id="Modificar" class="BotonMod" onclick='Abrir()'> Modificar </td>
             </tr>
             `;
             }
@@ -681,53 +681,39 @@ if (pathname == "/users/altasPro") {
             `;
         });
 
-        // Buscar por nombre
-        function BuscarFechas() {
-            var filtro = $("#buscarFac").val().toUpperCase();
-
-            $("#DatosProSac td").each(function () {
-                var textoEnTd = $(this).text().toUpperCase();
-
-                if (textoEnTd.indexOf(filtro) >= 0) {
-                    $(this).addClass("existe");
-                } else {
-                    $(this).removeClass("existe");
-                }
-            });
-
-            $("#DatosProSac tbody tr").each(function () {
-                if ($(this).children(".existe").length > 0) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        }
-
         // Buscar por fecha
         function FiltrarFechas() {
+            if ($("#fechaInicio").val() != "" && $("#fechaFin").val() != "") {
+                $("#Adverticement").removeClass("anuncio");
+                $("#Adverticement").text('');
 
-            var filtroInicio = new Date($("#fechaInicio").val()); // Obtener la fecha de inicio como objeto Date
-            var filtroFin = new Date($("#fechaFin").val()); // Obtener la fecha de fin como objeto Date
+                var filtroInicio = new Date($("#fechaInicio").val()); // Obtener la fecha de inicio como objeto Date
+                var filtroFin = new Date($("#fechaFin").val()); // Obtener la fecha de fin como objeto Date
+                filtroFin.setDate(filtroFin.getDate() + 1);
+                console.log(filtroFin);
 
-            $("#DatosProSac td").each(function () {
-                var fechaEnTd = new Date($(this).text());
+                $("#DatosProSac td").each(function () {
+                    var fechaEnTd = new Date($(this).text());
 
-                // Comprobar si la fecha en el td está dentro del rango filtrado
-                if (!isNaN(fechaEnTd) && fechaEnTd >= filtroInicio && fechaEnTd <= filtroFin) {
-                    $(this).addClass("existe");
-                } else {
-                    $(this).removeClass("existe");
-                }
-            });
+                    // Comprobar si la fecha en el td está dentro del rango filtrado
+                    if (!isNaN(fechaEnTd) && fechaEnTd >= filtroInicio && fechaEnTd <= filtroFin) {
+                        $(this).addClass("existe");
+                    } else {
+                        $(this).removeClass("existe");
+                    }
+                });
 
-            $("#DatosProSac tbody tr").each(function () {
-                if ($(this).children(".existe").length > 0) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
+                $("#DatosProSac tbody tr").each(function () {
+                    if ($(this).children(".existe").length > 0) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }else{
+                $("#Adverticement").text('Llene todos los campos.');
+                $("#Adverticement").addClass("anuncio");
+            }
         }
 
         // Crear excel de facturas
