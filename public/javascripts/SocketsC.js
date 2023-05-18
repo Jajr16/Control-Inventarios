@@ -721,7 +721,6 @@ if (pathname == "/users/altasPro") {
                     $(this).removeClass("existe");
                 }
             });
-            
 
             $("#DatosProSac tbody tr").each(function () {
                 if ($(this).children(".existe").length > 0) {
@@ -730,7 +729,6 @@ if (pathname == "/users/altasPro") {
                     $(this).hide();
                 }
             });
-            console.log($("#fechaInicio").val());
         }
 
         // Crear excel de facturas
