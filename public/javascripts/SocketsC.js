@@ -663,18 +663,6 @@ if (pathname == "/users/altasPro") {
     }
 } else if (pathname == "/users/FacSacProd") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
-
-        window.addEventListener("load", function (event) {
-            cargarNombres();
-        });
-
-        window.onpageshow = function () {
-            $('#NombreEmp').select2({
-                allowClear: true,
-                placeholder: 'Buscar empleado'
-            });
-        };
-
         //Desplegar facturas existentes
         socket.emit("Consul_RegProSac");
         // Consulta de productos
@@ -732,6 +720,7 @@ if (pathname == "/users/altasPro") {
                     $(this).removeClass("existe");
                 }
             });
+            
 
             $("#DatosProSac tbody tr").each(function () {
                 if ($(this).children(".existe").length > 0) {
@@ -740,6 +729,7 @@ if (pathname == "/users/altasPro") {
                     $(this).hide();
                 }
             });
+            console.log($("#fechaInicio").val());
         }
 
         // Crear excel de facturas

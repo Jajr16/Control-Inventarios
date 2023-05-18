@@ -56,16 +56,29 @@
         <div class="card-header">
             <h4>Registro de productos sacados</h4>
         </div>
-        <input type="text" id="buscarFac" onkeyup="BuscarFechas()" placeholder="BUSCAR EN TABLA"
-            title="Empieza a escribir para buscar">
+        <div class="Dos_Columnas">
+            <div>
+                <label>Buscar Productos</label>
+                <input type="text" id="buscarFac" onkeyup="BuscarFechas()" placeholder="BUSCAR EN TABLA"
+                    title="Empieza a escribir para buscar">
+            </div>
+        </div>
 
-        <label for="start-date">Fecha de inicio:</label>
-        <input type="date" id="fechaInicio">
-
-        <label for="end-date">Fecha de fin:</label>
-        <input type="date" id="fechaFin">
-
-        <center><button class="BotonFiltro" onclick="FiltrarFechas()">Filtrar</button></center>
+        <div class="Tres_Column">
+            <div>
+                <label for="start-date">Fecha de inicio:</label>
+                <input type="date" id="fechaInicio">
+            </div>
+            <div>
+                <label for="end-date">Fecha de fin:</label>
+                <input type="date" id="fechaFin">
+            </div>
+            <div>
+                <button class="BotonFiltro" onclick="FiltrarFechas()">Filtrar</button>
+            </div>
+            
+        </div>
+        
         <input type="button" class="BotonExcel" id="ExcelDownload" onclick="ExcelFacSac()" value="Descargar Excel">
         <div class="card-body">
             <div class="table-responsive">
