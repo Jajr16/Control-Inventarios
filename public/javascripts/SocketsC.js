@@ -763,37 +763,4 @@ if (pathname == "/users/altasPro") {
         e.preventDefault();
 
     });
-} else if (pathname == "/users/RegistroEmpleado") {
-    if (tok == "4dnM3k0nl9s") {
-
-        window.addEventListener("load", function (event) {
-            cargarNombres2();
-        });
-
-        window.onpageshow = function () {
-            $('#NomJefe').select2({
-                allowClear: true,
-                placeholder: 'Buscar empleado'
-            });
-        };
-
-        const FormRegistro = document.querySelector("#Registro");
-        // Registro de usuario
-        FormRegistro.addEventListener('submit', EnviarReg);
-
-        function EnviarReg(e) {
-            e.preventDefault();
-
-            if ($("#Area").val() != "" && $("#NombreEmp").val() != "" && $("#NomJefe").val() != "") {
-
-                socket.emit('Reg_Emp', { NombreEmp: $("#NombreEmp").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val() });
-
-                socket.once('Res_Emp', (Respuesta) => {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
-
-            }
-        }
-    }
-}
+} 
