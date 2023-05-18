@@ -221,6 +221,7 @@ if (pathname == "/users/altasPro") {
 
             socket.on("RespExcel", (data) => {
                 alert(data.mensaje);
+                location.reload();
             });
         }
 
@@ -339,7 +340,7 @@ if (pathname == "/users/altasPro") {
 
 
             }
-            socket.once("BotonModalFacturas", () => {
+            socket.on("BotonModalFacturas", () => {
 
                 //Se llenará el formulario dependiendo del producto en donde hace clic
                 let BotonModFacturas = document.getElementsByClassName("BotonModifyF");
@@ -380,19 +381,20 @@ if (pathname == "/users/altasPro") {
 
                     }
 
-                });
-                //Esperamos respuesta del servidor en caso de caso exitoso
-                socket.once('Factu_Exitosa', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
-                //Esperamos respuesta del servidor en caso de caso fallido
-                socket.once('Fallo_Fac', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                });
-                //Esperamos respuesta del servidor en caso de caso fallido
-                socket.once('Fallo_ModFac', function (Respuesta) {
-                    alert(Respuesta.mensaje);
+                    //Esperamos respuesta del servidor en caso de caso exitoso
+                    socket.once('Factu_Exitosa', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+                    //Esperamos respuesta del servidor en caso de caso fallido
+                    socket.once('Fallo_Fac', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                    });
+                    //Esperamos respuesta del servidor en caso de caso fallido
+                    socket.once('Fallo_ModFac', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                    });
+
                 });
             });
 
@@ -546,16 +548,9 @@ if (pathname == "/users/altasPro") {
 
                         socket.on('Eliminacion_Realizada', function (Respuesta) {
                             alert(Respuesta.mensaje);
-                        });
-                        socket.on('Fallo_BajasExist', function (Respuesta) {
-                            alert(Respuesta.mensaje);
                             location.reload();
                         });
-
-                        // Crea un excel para productos sacados
-                        socket.emit("SacarExcel", { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val(), Articulo: valores2E });
-
-                        socket.on("SacarRespExcel", (Respuesta) => {
+                        socket.on('Fallo_BajasExist', function (Respuesta) {
                             alert(Respuesta.mensaje);
                             location.reload();
                         });
@@ -668,7 +663,6 @@ if (pathname == "/users/altasPro") {
     }
 } else if (pathname == "/users/FacSacProd") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
-
         //Desplegar facturas existentes
         socket.emit("Consul_RegProSac");
         // Consulta de productos
@@ -741,119 +735,15 @@ if (pathname == "/users/altasPro") {
         // Crear excel de facturas
         function ExcelFacSac() {
 
-            var filtroInicio = $("#fechaInicio").val(); // Obtener la fecha de inicio como objeto Date
-            var filtroFin = $("#fechaFin").val(); // Obtener la fecha de fin como objeto Date
+            socket.emit("SacarExcel", { Cod_BarrasS: $("#Cod_BarrasS").val(), ArticuloS: $("#ArticuloS").val(), ExistenciaS: $("#ExistenciaS").val(), EncargadoS: $("#EncargadoS").val(), Cantidad_Salida: $("#Cantidad_Salida").val(), FSalida: $("#FSalida").val() });
 
-            if (filtroInicio != "" && filtroFin != "") {
-                socket.emit("SacarExcel", { fechaInicio: filtroInicio, fechaFin: filtroFin });
-
-                socket.on("SacarRespExcel", (data) => {
-                    alert(data.mensaje);
-                    location.reload();
-                });
-            }
+            socket.on("SacarRespExcel", (data) => {
+                alert(data.mensaje);
+                location.reload();
+            });
         }
 
     } else {
         location.href = "index";
     }
-}else if (pathname == "/users/altasEqp") {
-    window.addEventListener("load", function (event) {
-        cargarNombres();
-    });
-    //Formulario desplegable
-    const Equipos = $('#Equip');
-    const Menu = $("#Desplegable");
-
-    const Hardware = $('#HardE');
-    const Software = $('#SoftE');
-
-    const Monitor = $('#MonE');
-    const NSMon = $('#N_Ser_M');
-
-    const Mouse = $('#MouseE');
-    const Teclado = $('#TecladE');
-    const Accesorio = $('#AccesE');
-
-    Menu.hide();
-//Formulario.reset();
-    Equipos.on('change', function () {
-        if (Equipos.val() == 'CPU') {
-            Menu.slideDown();//Lo abre
-        } else {
-            Menu.slideUp();//Lo cierra
-            //Quita los required
-            Hardware.prop('required', false);
-            Software.prop('required', false);
-            NSMon.prop('required', false);
-            Monitor.prop('required', false);
-            //Pone valores vacío
-            Hardware.val('');
-            Software.val('');
-            NSMon.val('');
-            Monitor.val('');
-            Mouse.val('');
-            Teclado.val('');
-            Accesorio.val('');
-        }
-    });
-    //VALIDAR FORMULARIO DEPENDIENDO SI LLENAN CAMPOS
-    //Funcion general
-    function Listeners(elemento, evento, funcion) {
-        elemento.on(evento, funcion);
-    }
-
-    Listeners(Hardware, 'input', function (e) {
-
-        if (Hardware.val() != "") {
-            Hardware.prop('required', true);
-            Software.prop('required', true);
-        } else {
-            Hardware.prop('required', false);
-            Software.prop('required', false);
-        }
-    });
-
-    Listeners(Software, 'input', function (e) {
-
-        if (Software.val() != "") {
-            Hardware.prop('required', true);
-            Software.prop('required', true);
-        } else {
-            Hardware.prop('required', false);
-            Software.prop('required', false);
-        }
-    });
-
-    Listeners(Monitor, 'input', function (e) {
-
-        if (Monitor.val() != "") {
-            NSMon.prop('required', true);
-            Monitor.prop('required', true);
-        } else {
-            NSMon.prop('required', false);
-            Monitor.prop('required', false);
-        }
-    });
-
-    Listeners(NSMon, 'input', function (e) {
-
-        if (NSMon.val() != "") {
-            NSMon.prop('required', true);
-            Monitor.prop('required', true);
-        } else {
-            NSMon
-                .prop('required', false);
-            Monitor
-                .prop('required', false);
-        }
-    });
-
-    const FormEquip = $('#AltaEquip');
-    FormEquip.on('submit', function (e) {
-        e.preventDefault();
-
-    });
-
-
 }
