@@ -706,6 +706,11 @@ io.on('connection', (socket) => {
         socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
     });
 
+    socket.on('Alta_Equipos', async(data) => {
+        console.log("Hi");
+    
+    });
+
     socket.on('disconnect', () => {
         console.log('Cliente desconectado.');
     });
