@@ -209,7 +209,7 @@ if (pathname == "/users/altasPro") {
                 var fila = elementoBoton.parentNode;
                 var codigoBarras = fila.querySelector("td:first-child").innerHTML;
 
-                socket.emit('Bajas_Prod', codigoBarras);
+                enviarSocket('Bajas_Prod', codigoBarras);
 
                 // Eliminar la fila de la tabla
                 fila.parentNode.removeChild(fila);
