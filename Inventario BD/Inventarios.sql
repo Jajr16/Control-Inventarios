@@ -69,7 +69,8 @@ CREATE TABLE `Inventarios`.`Equipo` (
   `Modelo` VARCHAR(45) NOT NULL,
   `Num_emp` INT NOT NULL,
   `Ubi` nvarchar(50) not null,
-  PRIMARY KEY (`N_Inventario`),
+  PRIMARY KEY (`Num_Serie`),
+  key auto (N_Inventario),
   INDEX `Num_emp_idx` (`Num_emp` ASC),
   CONSTRAINT `Num_RespE`
     FOREIGN KEY (`Num_emp`)
@@ -79,48 +80,48 @@ CREATE TABLE `Inventarios`.`Equipo` (
 ENGINE = InnoDB;
 
 create table PCs(
-	N_Inventario int not null,
+	Num_Serie VARCHAR(45) not null,
     Hardware varchar(100),
     Software varchar(100),
-    primary key(N_Inventario),
-    foreign key (N_Inventario) references equipo(N_Inventario)
+    primary key(Num_Serie),
+    foreign key (Num_Serie) references equipo(Num_Serie)
     ON DELETE CASCADE
 	ON UPDATE CASCADE
 );
 
 create table Monitor(
-	N_Inventario int not null,
+	Num_Serie VARCHAR(45) not null not null,
     Monitor varchar(100),
     Num_Serie_Monitor varchar(45),
-    primary key(N_Inventario),
-    foreign key (N_Inventario) references equipo(N_Inventario)
+    primary key(Num_Serie),
+    foreign key (Num_Serie) references equipo(Num_Serie)
     ON DELETE CASCADE
 	ON UPDATE CASCADE
 );
 
 create table Mouse(
-	N_Inventario int not null,
+	Num_Serie VARCHAR(45) not null not null,
     Mouse varchar(45),
-    primary key(N_Inventario),
-    foreign key (N_Inventario) references equipo(N_Inventario)
+    primary key(Num_Serie),
+    foreign key (Num_Serie) references equipo(Num_Serie)
     ON DELETE CASCADE
 	ON UPDATE CASCADE
 );
 
 create table Teclado(
-	N_Inventario int not null,
+	Num_Serie VARCHAR(45) not null not null,
     Teclado varchar(45),
-    primary key(N_Inventario),
-    foreign key (N_Inventario) references equipo(N_Inventario)
+    primary key(Num_Serie),
+    foreign key (Num_Serie) references equipo(Num_Serie)
     ON DELETE CASCADE
 	ON UPDATE CASCADE
 );
 
 create table Accesorio(
-	N_Inventario int not null,
+	Num_Serie VARCHAR(45) not null not null,
     Accesorio varchar(45),
-    primary key(N_Inventario),
-    foreign key (N_Inventario) references equipo(N_Inventario)
+    primary key(Num_Serie),
+    foreign key (Num_Serie) references equipo(Num_Serie)
 	ON DELETE CASCADE
 	ON UPDATE CASCADE
 );
@@ -255,19 +256,20 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Responsivas_E`
 -- -----------------------------------------------------
+drop table Responsivas_E;
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Responsivas_E` (
   `Num_emp` INT NOT NULL,
-  `Num_I` int NOT NULL,
-  PRIMARY KEY (`Num_emp`, `Num_I`),
-  INDEX `Num_I_idx` (`Num_I` ASC),
+  Num_Serie VARCHAR(45) not null NOT NULL,
+  PRIMARY KEY (`Num_emp`, `Num_Serie`),
+  INDEX `Num_S_idx` (`Num_Serie` ASC),
   CONSTRAINT `Num_empRespE`
     FOREIGN KEY (`Num_emp`)
     REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `Num_I`
-    FOREIGN KEY (`Num_I`)
-    REFERENCES `Inventarios`.`Equipo` (`N_Inventario`)
+  CONSTRAINT `Num_S`
+    FOREIGN KEY (`Num_Serie`)
+    REFERENCES `Inventarios`.`Equipo` (`Num_Serie`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -383,6 +385,7 @@ delete from salidas_productos where FSalida = '2023-05-15';
 delete from almacen where Cod_Barras = "684F4GFR8";
 delete from empleado where Num_emp > 840;
 delete from usuario where Num_emp = 107;
+delete from equipo;
 -- Quitar columnas
 alter table facturas_almacen drop column Cod_Barras;
 alter table almacen drop column Cantidad;
@@ -496,6 +499,10 @@ select*from usuario;
 -- Equipos Consultas
 select*from equipo;
 select*from pcs;
+select*from mouse;
+select*from monitor;
+select*from teclado;
+select*from accesorio;
 select * from Salidas_Productos where FSalida BETWEEN "2023-05-16" and "2023-05-17";
 
 insert into equipo values(1, "213sa", "Monitor", "PC", "Pc", (select Num_emp from empleado where Nom = "BOLAÑOS MENDEZ GABRIELA"), "A");

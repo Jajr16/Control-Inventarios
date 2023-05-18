@@ -102,10 +102,14 @@ function enviarSocket(identificador, mensaje) {
     socket.emit(identificador, mensaje);
 }
 
-function recibirSocket(identificador, pag) {
-    socket.once(identificador, function (mensaje) {
-        alert(mensaje);
+function recibirSocket(identificador) {
+    socket.once(identificador, function (Respuesta) {
+        alert(Respuesta.mensaje);
+        if(Respuesta.Res == "Si"){
+            location.reload();
+        }
     });
+    
 }
 
 
@@ -853,23 +857,23 @@ if (pathname == "/users/altasPro") {
 
             //Enviar HardWare
             if ($("#HardE").val() != "" && $("#SoftE").val() != "") {
-                enviarSocket("AltaPc", { HardE: $("#HardE").val(), SoftE: $("#SoftE").val() });
+                enviarSocket("AltaPc", { Num_S: $("#Num_Serie").val(), HardE: $("#HardE").val(), SoftE: $("#SoftE").val() });
             }
             //Monitores
             if ($("#MonE").val() != "" && $("#N_Ser_M").val() != "") {
-                enviarSocket("AltMon", { MonE: $("#MonE").val(), NSMon: $("#N_Ser_M").val() });
+                enviarSocket("AltMon", { Num_S: $("#Num_Serie").val(), MonE: $("#MonE").val(), NSMon: $("#N_Ser_M").val() });
             }
             //Mouse
             if ($("#MouseE").val() != "") {
-                enviarSocket("AltMouse", { MousE: $("#MouseE").val() });
+                enviarSocket("AltMouse", { Num_S: $("#Num_Serie").val(), MousE: $("#MouseE").val() });
             }
             //Teclado
             if ($("#TecladE").val() != "") {
-                enviarSocket("AltTecla", { TeclaE: $("#TecladE").val() });
+                enviarSocket("AltTecla", { Num_S: $("#Num_Serie").val(), TeclaE: $("#TecladE").val() });
             }
             //Accesorios
             if ($("#AccesE").val() != "") {
-                enviarSocket("AltAcces", { AccesE: $("#AccesE").val() });
+                enviarSocket("AltAcces", { Num_S: $("#Num_Serie").val(), AccesE: $("#AccesE").val() });
             }
             //Respuesta
             recibirSocket("RespEquipos");

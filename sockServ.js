@@ -707,13 +707,100 @@ io.on('connection', (socket) => {
         socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
     });
 
-    socket.on('Alta_Equipos', async(data) => {
-        db.query('insert into equipo values(null,?,?,?,?,(select Num_emp from empleado where Nom = ?),?)',[data.Num_S, data.Equipo, data.MarcaE, data.ModelE, data.NomEn, data.UbiE], async function (err, result){
-            if(err) socket.emit(MensajeError);
-            if(result){
-                socket.emit("RespEquipos", "Equipo dado de alta exitosamente.");
-            }else{
-                socket.emit("RespEquipos", "No se pudo dar de alta el equipo, inténtelo de nuevo.");
+    socket.on('Alta_Equipos', async (data) => {
+        db.query('select * from equipo where Num_Serie = ?', [data.Num_S], async function (err, result) {
+            if (err) socket.emit(MensajeError);
+            if (result.length > 0) {
+                socket.emit("RespEquipos", { mensaje: "Este producto ya está registrado, ingrese otro."});
+            } else {
+                db.query('insert into equipo values(null,?,?,?,?,(select Num_emp from empleado where Nom = ?),?)', [data.Num_S, data.Equipo, data.MarcaE, data.ModelE, data.NomEn, data.UbiE], async function (err, result) {
+                    if (err) socket.emit(MensajeError);
+                    if (result) {
+                        socket.emit("RespEquipos", { mensaje: "Equipo dado de alta exitosamente.", Res: "Si"});
+                    } else {
+                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta el equipo, inténtelo de nuevo."});
+                    }
+                });
+            }
+        });
+    });
+
+    socket.on('AltaPc', async (data) => {
+        db.query('select * from pcs where Num_Serie = ?', [data.Num_S], async function (err, result) {
+            if (err) socket.emit(MensajeError);
+            if (result.length > 0) {
+                socket.emit("RespEquipos", { mensaje: "Esta computadora ya está registrada, ingrese otra."});
+            } else {
+                db.query('insert into pcs values(?,?,?)', [data.Num_S, data.HardE, data.SoftE], async function (err, result) {
+                    if (err) socket.emit(MensajeError);
+                    if (!result) {
+                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos de la PC, agréguelo por separado."});
+                    }
+                });
+            }
+        });
+    });
+
+    socket.on('AltMon', async (data) => {
+        db.query('select * from monitor where Num_Serie = ?', [data.Num_S], async function (err, result) {
+            if (err) socket.emit(MensajeError);
+            if (result.length > 0) {
+                socket.emit("RespEquipos", { mensaje: "Este monitor ya está registrado, ingrese otro."});
+            } else {
+                db.query('insert into monitor values(?,?,?)', [data.Num_S, data.MonE, data.NSMon], async function (err, result) {
+                    if (err) socket.emit(MensajeError);
+                    if (!result) {
+                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del monitor, agréguelo por separado."});
+                    }
+                });
+            }
+        });
+    });
+
+    socket.on('AltMouse', async (data) => {
+        db.query('select * from Mouse where Num_Serie = ?', [data.Num_S], async function (err, result) {
+            if (err) socket.emit(MensajeError);
+            if (result.length > 0) {
+                socket.emit("RespEquipos", { mensaje: "Este mouse ya está registrado, ingrese otro."});
+            } else {
+                db.query('insert into Mouse values(?,?)', [data.Num_S, data.MousE], async function (err, result) {
+                    if (err) socket.emit(MensajeError);
+                    if (!result) {
+                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del mouse, agréguelo por separado."});
+                    }
+                });
+            }
+        });
+    });
+
+    socket.on('AltTecla', async (data) => {
+        db.query('select * from Teclado where Num_Serie = ?', [data.Num_S], async function (err, result) {
+            if (err) socket.emit(MensajeError);
+            if (result.length > 0) {
+                socket.emit("RespEquipos", { mensaje: "Este teclado ya está registrado, ingrese otro."});
+            } else {
+                db.query('insert into Teclado values(?,?)', [data.Num_S, data.TeclaE], async function (err, result) {
+                    if (err) socket.emit(MensajeError);
+                    if (!result) {
+                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del teclado, agréguelo por separado."});
+                    }
+                });
+            }
+        });
+    });
+
+    socket.on('AltAcces', async (data) => {
+        db.query('select * from Accesorio where Num_Serie = ?', [data.Num_S], async function (err, result) {
+            if (err) socket.emit(MensajeError);
+            if (result.length > 0) {
+                socket.emit("RespEquipos", { mensaje: "Estos accesorios ya están registrados, ingrese otros."});
+            } else {
+                db.query('insert into Accesorio values(?,?)', [data.Num_S, data.AccesE], async function (err, result) {
+                    if (err) socket.emit(MensajeError);
+                    if (!result) {
+                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los accesorios, agréguelos por separado."});
+                    }
+                });
             }
         });
     });
