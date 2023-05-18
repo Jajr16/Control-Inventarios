@@ -221,7 +221,6 @@ if (pathname == "/users/altasPro") {
 
             socket.on("RespExcel", (data) => {
                 alert(data.mensaje);
-                location.reload();
             });
         }
 
@@ -340,7 +339,7 @@ if (pathname == "/users/altasPro") {
 
 
             }
-            socket.on("BotonModalFacturas", () => {
+            socket.once("BotonModalFacturas", () => {
 
                 //Se llenará el formulario dependiendo del producto en donde hace clic
                 let BotonModFacturas = document.getElementsByClassName("BotonModifyF");
@@ -381,20 +380,19 @@ if (pathname == "/users/altasPro") {
 
                     }
 
-                    //Esperamos respuesta del servidor en caso de caso exitoso
-                    socket.once('Factu_Exitosa', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-                    //Esperamos respuesta del servidor en caso de caso fallido
-                    socket.once('Fallo_Fac', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                    });
-                    //Esperamos respuesta del servidor en caso de caso fallido
-                    socket.once('Fallo_ModFac', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                    });
-
+                });
+                //Esperamos respuesta del servidor en caso de caso exitoso
+                socket.once('Factu_Exitosa', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                    location.reload();
+                });
+                //Esperamos respuesta del servidor en caso de caso fallido
+                socket.once('Fallo_Fac', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                });
+                //Esperamos respuesta del servidor en caso de caso fallido
+                socket.once('Fallo_ModFac', function (Respuesta) {
+                    alert(Respuesta.mensaje);
                 });
             });
 
@@ -548,9 +546,16 @@ if (pathname == "/users/altasPro") {
 
                         socket.on('Eliminacion_Realizada', function (Respuesta) {
                             alert(Respuesta.mensaje);
-                            location.reload();
                         });
                         socket.on('Fallo_BajasExist', function (Respuesta) {
+                            alert(Respuesta.mensaje);
+                            location.reload();
+                        });
+
+                        // Crea un excel para productos sacados
+                        socket.emit("SacarExcel", { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val(), Articulo: valores2E });
+
+                        socket.on("SacarRespExcel", (Respuesta) => {
                             alert(Respuesta.mensaje);
                             location.reload();
                         });
@@ -661,93 +666,6 @@ if (pathname == "/users/altasPro") {
             }
         }
     }
-<<<<<<< HEAD
-} else if (pathname == "/users/FacSacProd") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
-        //Desplegar facturas existentes
-        socket.emit("Consul_RegProSac");
-        // Consulta de productos
-        socket.on('Desp_Productos', async (data) => {
-            console.log('Datos recibidos:', data.Cod_BarrasS);
-
-            document.querySelector("#DatosProSac tbody").innerHTML += `
-            <tr>
-                <td id="Cod_BarrasS">${data.Cod_BarrasS}</td>
-                <td id="ArticuloS">${data.Articulo}</td>
-                <td id="ExistenciaS">${data.Existencia}</td>
-                <td id="EncargadoS">${data.Nom}</td>
-                <td id="Cantidad_Salida">${data.Cantidad_Salida}</td>
-                <td id="FSalida">${data.FSalida}</td>
-            </tr>
-            `;
-        });
-
-        // Buscar por nombre
-        function BuscarFechas() {
-            var filtro = $("#buscarFac").val().toUpperCase();
-
-            $("#DatosProSac td").each(function () {
-                var textoEnTd = $(this).text().toUpperCase();
-
-                if (textoEnTd.indexOf(filtro) >= 0) {
-                    $(this).addClass("existe");
-                } else {
-                    $(this).removeClass("existe");
-                }
-            });
-
-            $("#DatosProSac tbody tr").each(function () {
-                if ($(this).children(".existe").length > 0) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        }
-
-        // Buscar por fecha
-        function FiltrarFechas() {
-
-            var filtroInicio = new Date($("#fechaInicio").val()); // Obtener la fecha de inicio como objeto Date
-            var filtroFin = new Date($("#fechaFin").val()); // Obtener la fecha de fin como objeto Date
-
-            $("#DatosProSac td").each(function () {
-                var fechaEnTd = new Date($(this).text());
-
-                // Comprobar si la fecha en el td está dentro del rango filtrado
-                if (!isNaN(fechaEnTd) && fechaEnTd >= filtroInicio && fechaEnTd <= filtroFin) {
-                    $(this).addClass("existe");
-                } else {
-                    $(this).removeClass("existe");
-                }
-            });
-            
-
-            $("#DatosProSac tbody tr").each(function () {
-                if ($(this).children(".existe").length > 0) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-            console.log($("#fechaInicio").val());
-        }
-
-        // Crear excel de facturas
-        function ExcelFacSac() {
-
-            socket.emit("SacarExcel", { Cod_BarrasS: $("#Cod_BarrasS").val(), ArticuloS: $("#ArticuloS").val(), ExistenciaS: $("#ExistenciaS").val(), EncargadoS: $("#EncargadoS").val(), Cantidad_Salida: $("#Cantidad_Salida").val(), FSalida: $("#FSalida").val() });
-
-            socket.on("SacarRespExcel", (data) => {
-                alert(data.mensaje);
-                location.reload();
-            });
-        }
-
-    } else {
-        location.href = "index";
-    }
-=======
 } else if (pathname == "/users/altasEqp") {
     window.addEventListener("load", function (event) {
         cargarNombres();
@@ -767,7 +685,7 @@ if (pathname == "/users/altasPro") {
     const Accesorio = $('#AccesE');
 
     Menu.hide();
-//Formulario.reset();
+    //Formulario.reset();
     Equipos.on('change', function () {
         if (Equipos.val() == 'CPU') {
             Menu.slideDown();//Lo abre
@@ -845,7 +763,37 @@ if (pathname == "/users/altasPro") {
         e.preventDefault();
 
     });
+} else if (pathname == "/users/RegistroEmpleado") {
+    if (tok == "4dnM3k0nl9s") {
 
+        window.addEventListener("load", function (event) {
+            cargarNombres2();
+        });
 
->>>>>>> parent of 3fc6d67 (Cambios de equipos con main)
+        window.onpageshow = function () {
+            $('#NomJefe').select2({
+                allowClear: true,
+                placeholder: 'Buscar empleado'
+            });
+        };
+
+        const FormRegistro = document.querySelector("#Registro");
+        // Registro de usuario
+        FormRegistro.addEventListener('submit', EnviarReg);
+
+        function EnviarReg(e) {
+            e.preventDefault();
+
+            if ($("#Area").val() != "" && $("#NombreEmp").val() != "" && $("#NomJefe").val() != "") {
+
+                socket.emit('Reg_Emp', { NombreEmp: $("#NombreEmp").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val() });
+
+                socket.once('Res_Emp', (Respuesta) => {
+                    alert(Respuesta.mensaje);
+                    location.reload();
+                });
+
+            }
+        }
+    }
 }
