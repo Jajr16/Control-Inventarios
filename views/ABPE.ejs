@@ -62,6 +62,8 @@
             <input type="text" id="buscar" onkeyup="buscar()" placeholder="BUSCAR EN TABLA"
                 title="Empieza a escribir para buscar">
             <div class="table-responsive">
+                <input type="text" id="buscar" oninput="buscar()" placeholder="BUSCAR EN TABLA"
+                    title="Empieza a escribir para buscar">
                 <table id="DatosProd">
                     <thead>
                         <tr id="firstrow">
@@ -102,12 +104,12 @@
                         <div>
                             <label>Proveedor</label>
                             <input autocomplete="off" type="text" id="ProveedorM" name="ProveedorM" required
-                                maxlength="45" onkeyup="mayus(this)">
+                                maxlength="45" oninput="mayus(this)">
                         </div>
                         <div>
                             <label>Número de Factura</label>
                             <input autocomplete="off" type="text" id="NumFactM" name="NumFactM" required maxlength="10"
-                                onkeyup="mayus(this)">
+                                oninput="mayus(this)">
                         </div>
                         <div>
                             <label>Fecha de Factura</label>
@@ -134,7 +136,7 @@
                     <div>
                         <label>Cantidad de productos a sacar</label>
                         <input autocomplete="off" type="number" id="CantidadP" name="CantidadP" required min="1"
-                            onkeyup="mayus(this)">
+                            oninput="mayus(this)">
                     </div>
                     <div>
                         <label>¿Quién requiere este producto?</label>

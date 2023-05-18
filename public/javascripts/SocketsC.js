@@ -340,7 +340,7 @@ if (pathname == "/users/altasPro") {
 
 
             }
-            socket.on("BotonModalFacturas", () => {
+            socket.once("BotonModalFacturas", () => {
 
                 //Se llenará el formulario dependiendo del producto en donde hace clic
                 let BotonModFacturas = document.getElementsByClassName("BotonModifyF");
@@ -381,20 +381,19 @@ if (pathname == "/users/altasPro") {
 
                     }
 
-                    //Esperamos respuesta del servidor en caso de caso exitoso
-                    socket.once('Factu_Exitosa', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-                    //Esperamos respuesta del servidor en caso de caso fallido
-                    socket.once('Fallo_Fac', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                    });
-                    //Esperamos respuesta del servidor en caso de caso fallido
-                    socket.once('Fallo_ModFac', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                    });
-
+                });
+                //Esperamos respuesta del servidor en caso de caso exitoso
+                socket.once('Factu_Exitosa', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                    location.reload();
+                });
+                //Esperamos respuesta del servidor en caso de caso fallido
+                socket.once('Fallo_Fac', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                });
+                //Esperamos respuesta del servidor en caso de caso fallido
+                socket.once('Fallo_ModFac', function (Respuesta) {
+                    alert(Respuesta.mensaje);
                 });
             });
 

@@ -55,16 +55,21 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Equipo`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Inventarios`.`Equipo` (
+drop table PCs;
+drop table Monitor;
+drop table Mouse;
+drop table Teclado;
+drop table Accesorio;
+drop table Equipo;
+CREATE TABLE `Inventarios`.`Equipo` (
+  `N_Inventario` int not null auto_increment,
   `Num_Serie` VARCHAR(45) NOT NULL,
-  `Equipo` VARCHAR(45) NULL,
-  `Marca` VARCHAR(45) NULL,
-  `Modelo` VARCHAR(45) NULL,
-  `Marca_Mouse` VARCHAR(45) NULL,
-  `Marca_Teclado` VARCHAR(45) NULL,
-  `Marca_Monitor` VARCHAR(45) NULL,
-  `Num_emp` INT NULL,
-  PRIMARY KEY (`Num_Serie`),
+  `Equipo` VARCHAR(45) NOT NULL,
+  `Marca` VARCHAR(45) NOT NULL,
+  `Modelo` VARCHAR(45) NOT NULL,
+  `Num_emp` INT NOT NULL,
+  `Ubi` nvarchar(50) not null,
+  PRIMARY KEY (`N_Inventario`),
   INDEX `Num_emp_idx` (`Num_emp` ASC),
   CONSTRAINT `Num_RespE`
     FOREIGN KEY (`Num_emp`)
@@ -73,6 +78,52 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Equipo` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
+create table PCs(
+	N_Inventario int not null,
+    Hardware varchar(100),
+    Software varchar(100),
+    primary key(N_Inventario),
+    foreign key (N_Inventario) references equipo(N_Inventario)
+    ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
+
+create table Monitor(
+	N_Inventario int not null,
+    Monitor varchar(100),
+    Num_Serie_Monitor varchar(45),
+    primary key(N_Inventario),
+    foreign key (N_Inventario) references equipo(N_Inventario)
+    ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
+
+create table Mouse(
+	N_Inventario int not null,
+    Mouse varchar(45),
+    primary key(N_Inventario),
+    foreign key (N_Inventario) references equipo(N_Inventario)
+    ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
+
+create table Teclado(
+	N_Inventario int not null,
+    Teclado varchar(45),
+    primary key(N_Inventario),
+    foreign key (N_Inventario) references equipo(N_Inventario)
+    ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
+
+create table Accesorio(
+	N_Inventario int not null,
+    Accesorio varchar(45),
+    primary key(N_Inventario),
+    foreign key (N_Inventario) references equipo(N_Inventario)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
 
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Mobiliario`
@@ -201,25 +252,24 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Responsivas_M` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Responsivas_E`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Responsivas_E` (
   `Num_emp` INT NOT NULL,
-  `Num_Serie` NVARCHAR(45) NOT NULL,
-  PRIMARY KEY (`Num_emp`, `Num_Serie`),
-  INDEX `Num_Serie_idx` (`Num_Serie` ASC),
+  `Num_I` int NOT NULL,
+  PRIMARY KEY (`Num_emp`, `Num_I`),
+  INDEX `Num_I_idx` (`Num_I` ASC),
   CONSTRAINT `Num_empRespE`
     FOREIGN KEY (`Num_emp`)
     REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `Num_Serie`
-    FOREIGN KEY (`Num_Serie`)
-    REFERENCES `Inventarios`.`Equipo` (`Num_Serie`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `Num_I`
+    FOREIGN KEY (`Num_I`)
+    REFERENCES `Inventarios`.`Equipo` (`N_Inventario`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -437,6 +487,8 @@ select*from facturas_almacen;
 select*from factus_productos;
 select*from almacen;
 select*from salidas_productos;
+select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp where Cod_BarrasS = 'PRUEBA1' and Num_EmpS = (select Num_Emp from empleado where Nom = 'MADRID MARTINEZ GABRIELA');
+
 select*from salida_almacen;
 select*from empleado;
 select distinct(Área) from empleado;
