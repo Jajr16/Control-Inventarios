@@ -482,17 +482,19 @@ create trigger Actualizar_ExistenciasInsercion2 after insert on salidas_producto
 
 -- BUSQUEDAS
 select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = 'c') P;
-
+-- Busquedas almacen
 select*from facturas_almacen;
 select*from factus_productos;
 select*from almacen;
 select*from salidas_productos;
 select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp where Cod_BarrasS = 'PRUEBA1' and Num_EmpS = (select Num_Emp from empleado where Nom = 'MADRID MARTINEZ GABRIELA');
-
 select*from salida_almacen;
 select*from empleado;
 select distinct(Área) from empleado;
 select*from usuario;
+-- Equipos Consultas
+select*from equipo;
+select*from pcs;
 
 select * from Salidas_Productos where FSalida BETWEEN "2023-05-16" and "2023-05-17";
 

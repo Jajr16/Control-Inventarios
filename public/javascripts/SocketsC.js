@@ -97,6 +97,10 @@ function checkA(e) {
 //     // Prevent the default copy action
 //     event.preventDefault();
 // }, false);
+//ENVIAR SOCKETS
+function enviarSocket(identificador, mensaje) {
+    socket.emit(identificador, mensaje);
+}
 
 if (pathname == "/users/altasPro") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
@@ -710,7 +714,7 @@ if (pathname == "/users/altasPro") {
                         $(this).hide();
                     }
                 });
-            }else{
+            } else {
                 $("#Adverticement").text('Llene todos los campos.');
                 $("#Adverticement").addClass("anuncio");
             }
@@ -829,5 +833,23 @@ if (pathname == "/users/altasPro") {
     FormEquip.on('submit', function (e) {
         e.preventDefault();
 
+        if ($("#Num_Serie").val() != "" && $("#Equip").val() != "" && $("#MarcE").val() != "" && $("#ModelE").val() != "" && $("#UbiE").val() != "" && $("#NombreEmp").val() != "") {
+            enviarSocket("Alta_Equipos", { Num_S: $("#Num_Serie").val(), Equipo: $("#Equip").val(), MarcaE: $("#MarcE").val(), ModelE: $("#ModelE").val(), UbiE: $("#UbiE").val(), NomEn: $("#NombreEmp").val() });
+            if ($("#HardE").val() != "" && $("#SoftE").val() != "") {
+                enviarSocket("AltaPc", { Num_S: $("#Num_Serie").val(), HardE: $("#HardE").val(), SoftE: $("#SoftE").val() });
+            }
+            if ($("#MonE").val() != "" && $("#N_Ser_M").val() != "") {
+                enviarSocket("AltMon", { Num_S: $("#Num_Serie").val(), HardE: $("#MonE").val(), SoftE: $("#N_Ser_M").val() });
+            }
+            if ($("#MouseE").val() != "") {
+                enviarSocket("AltMouse", { Num_S: $("#Num_Serie").val(), MousE: $("#MouseE").val() });
+            }
+            if ($("#TecladE").val() != "") {
+                enviarSocket("AltTecla", { Num_S: $("#Num_Serie").val(), MousE: $("#TecladE").val() });
+            }
+            if ($("#AccesE").val() != "") {
+                enviarSocket("AltAcces", { Num_S: $("#Num_Serie").val(), MousE: $("#AccesE").val() });
+            }
+        }
     });
 }
