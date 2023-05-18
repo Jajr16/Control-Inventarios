@@ -749,7 +749,7 @@ if (pathname == "/users/altasPro") {
     } else {
         location.href = "index";
     }
-}else if (pathname == "/users/altasEqp") {
+} else if (pathname == "/users/altasEqp") {
     window.addEventListener("load", function (event) {
         cargarNombres();
     });
@@ -834,10 +834,8 @@ if (pathname == "/users/altasPro") {
             NSMon.prop('required', true);
             Monitor.prop('required', true);
         } else {
-            NSMon
-                .prop('required', false);
-            Monitor
-                .prop('required', false);
+            NSMon.prop('required', false);
+            Monitor.prop('required', false);
         }
     });
 
