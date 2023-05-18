@@ -372,6 +372,7 @@ update almacen set Existencia = 10 where Cod_Barras = 'b';
 update empleado set Num_Jefe = 1 where Num_emp = 1;
 update empleado set Num_emp = 2 where Num_emp = 758;
 update empleado set Num_Jefe = 663;
+update almacen set eliminado = 0 where eliminado = 1;
 -- DELETES
 delete from factus_productos where FIngreso = "2023-04-28";
 delete from facturas_almacen where Ffact = "2023-05-07";
@@ -495,8 +496,9 @@ select*from usuario;
 -- Equipos Consultas
 select*from equipo;
 select*from pcs;
-
 select * from Salidas_Productos where FSalida BETWEEN "2023-05-16" and "2023-05-17";
+
+insert into equipo values(1, "213sa", "Monitor", "PC", "Pc", (select Num_emp from empleado where Nom = "BOLAÑOS MENDEZ GABRIELA"), "A");
 
 insert into empleado values(
 663, "NAVARRO JIMENEZ MARTHA LIDIA", "DIRECCION GENERAL", 663);

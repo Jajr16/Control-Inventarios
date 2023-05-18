@@ -102,6 +102,13 @@ function enviarSocket(identificador, mensaje) {
     socket.emit(identificador, mensaje);
 }
 
+function recibirSocket(identificador, pag) {
+    socket.once(identificador, function (mensaje) {
+        alert(mensaje);
+    });
+}
+
+
 if (pathname == "/users/altasPro") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
 
@@ -116,16 +123,16 @@ if (pathname == "/users/altasPro") {
 
                 socket.emit('Alta_Prod', { CodBarras: $("#Cod_Barras").val(), FecAct: $("#FecActu").val(), Cate: $("#Categoria").val(), Producto: $("#NomP").val(), Marca: $("#MarcActi").val(), Descripcion: $("#DescripcionP").val(), Proveedor: $("#Proveedor").val(), NumFactura: $("#NumFact").val(), FechaFac: $("#FecFact").val(), Cantidad: $("#CantidadP").val(), Unidad: $("#UnidadP").val() });
 
-                socket.on('Fact_Exists', function (Respuesta) {
+                socket.once('Fact_Exists', function (Respuesta) {
                     alert(Respuesta.mensaje);
                 });
 
-                socket.on('Producto_Existente', function (Respuesta) {
+                socket.once('Producto_Existente', function (Respuesta) {
                     alert(Respuesta.mensaje);
                     location.reload();
                 });
 
-                socket.on('Producto_Inexistente', function (Respuesta) {
+                socket.once('Producto_Inexistente', function (Respuesta) {
                     alert(Respuesta.mensaje);
                     location.reload();
                 });
@@ -137,41 +144,77 @@ if (pathname == "/users/altasPro") {
 } else if (pathname == "/users/consulPro") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
 
+        // Asignación del evento de clic en los botones de eliminar
+        window.addEventListener('DOMContentLoaded', () => {
+            const botonesEliminar = document.getElementsByClassName("BotonER");
+
+            for (let i = 0; i < botonesEliminar.length; i++) {
+                botonesEliminar[i].addEventListener("click", function () {
+                    eliminarProducto(this);
+                });
+            }
+        });
+
         socket.emit("Consul_Prod");
         // Consulta de productos
         socket.on('Desp_Productos', async (data) => {
             console.log('Datos recibidos:', data.Cod_Barras);
 
+            const tbody = document.querySelector("#DatosProd tbody");
+
             if (data.eliminado == 1) {
-                document.querySelector("#DatosProd tbody").innerHTML += `
-            <tr style="background-color: #590C09">
-            <td id="Cod_Barras">${data.Cod_Barras}</td>
-            <td id="Categoria">${data.Categoria}</td>
-            <td id="NomP">${data.NArt}</td>
-            <td id="MarcActi">${data.NMarca}</td>
-            <td id="DescripcionP">${data.Desc}</td>
-            <td id="UnidadP">${data.Unidad}</td>
-            <td id="Existencia">${data.Existencia}</td>
+                tbody.innerHTML += `
+        <tr style="background-color: #590C09">
+            <td>${data.Cod_Barras}</td>
+            <td>${data.Categoria}</td>
+            <td>${data.NArt}</td>
+            <td>${data.NMarca}</td>
+            <td>${data.Desc}</td>
+            <td>${data.Unidad}</td>
+            <td>${data.Existencia}</td>
             <td> - </td>
             <td> - </td>
-            </tr>
-            `;
+        </tr>
+        `;
             } else {
-                document.querySelector("#DatosProd tbody").innerHTML += `
-            <tr>
-                <td id="Cod_Barras">${data.Cod_Barras}</td>
-                <td id="Categoria">${data.Categoria}</td>
-                <td id="NomP">${data.NArt}</td>
-                <td id="MarcActi">${data.NMarca}</td>
-                <td id="DescripcionP">${data.Desc}</td>
-                <td id="UnidadP">${data.Unidad}</td>
-                <td id="Existencia">${data.Existencia}</td>
-                <td id="Eliminar" class="BotonER" onclick="eliminar()"> Eliminar </td>
-                <td id="Modificar" class="BotonMod" onclick='Abrir()'> Modificar </td>
-            </tr>
-            `;
+                tbody.innerHTML += `
+        <tr>
+            <td>${data.Cod_Barras}</td>
+            <td>${data.Categoria}</td>
+            <td>${data.NArt}</td>
+            <td>${data.NMarca}</td>
+            <td>${data.Desc}</td>
+            <td>${data.Unidad}</td>
+            <td>${data.Existencia}</td>
+            <td class="BotonER"> Eliminar </td>
+            <td class="BotonMod" onclick='Abrir()'> Modificar </td>
+        </tr>
+        `;
+            }
+
+            // Volver a asignar el evento de clic a los botones de eliminar
+            const botonesEliminar = document.getElementsByClassName("BotonER");
+
+            for (let i = 0; i < botonesEliminar.length; i++) {
+                botonesEliminar[i].addEventListener("click", function () {
+                    eliminarProducto(this);
+                });
             }
         });
+
+        function eliminarProducto(elementoBoton) {
+            var confirmacion = confirm('¿Deseas eliminar este producto?');
+
+            if (confirmacion) {
+                var fila = elementoBoton.parentNode;
+                var codigoBarras = fila.querySelector("td:first-child").innerHTML;
+
+                socket.emit('Bajas_Prod', codigoBarras);
+
+                // Eliminar la fila de la tabla
+                fila.parentNode.removeChild(fila);
+            }
+        }
 
         // Barra de busqueda
         function buscar() {
@@ -194,8 +237,15 @@ if (pathname == "/users/altasPro") {
                     $(this).hide();
                 }
             })
-
         }
+
+        socket.once('Producto_Eliminado', (data) => {
+            alert(data.mensaje);
+            location.reload();
+        });
+        socket.once('Error', (data) => {
+            alert(data.mensaje);
+        })
 
         function buscar1() {
 
@@ -223,46 +273,10 @@ if (pathname == "/users/altasPro") {
         function Excel() {
             socket.emit("Excel");
 
-            socket.on("RespExcel", (data) => {
+            socket.once("RespExcel", (data) => {
                 alert(data.mensaje);
                 location.reload();
             });
-        }
-
-        // bajas de productos
-        function eliminar() {
-            var letrero = confirm('¿Deseas eliminar este producto?');
-
-            if (letrero) {
-                let BotonBajas = document.getElementsByClassName("BotonER");
-
-                for (var i = 0; i < BotonBajas.length; i++) {
-                    BotonBajas[i].addEventListener("click", obtenerValoresDeBaja);
-                }
-
-                function obtenerValoresDeBaja(e) {
-                    var valoresBaja = "";
-
-                    // vamos al elemento padre (<tr>) y buscamos todos los elementos <td>
-                    // que contenga el elemento padre
-                    var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
-
-                    // recorremos cada uno de los elementos del array de elementos <td>
-                    for (let i = 0; i < elementosTD.length; i++) {
-
-                        // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                        valoresBaja = elementosTD[0].innerHTML;
-                    }
-                    socket.emit('Bajas_Prod', valoresBaja);
-                    socket.on('Producto_Eliminado', (data) => {
-                        alert(data.mensaje);
-                        location.reload();
-                    });
-                    socket.on('Error', (data) => {
-                        alert(data.mensaje);
-                    })
-                }
-            } else location.reload();
         }
 
         //Llenar datos en automático
@@ -344,7 +358,7 @@ if (pathname == "/users/altasPro") {
 
 
             }
-            socket.once("BotonModalFacturas", () => {
+            socket.on("BotonModalFacturas", () => {
 
                 //Se llenará el formulario dependiendo del producto en donde hace clic
                 let BotonModFacturas = document.getElementsByClassName("BotonModifyF");
@@ -414,12 +428,12 @@ if (pathname == "/users/altasPro") {
                 if ($("#Cod_BarrasM").val() != "" && $("#CategoriaM").val() != "" && $("#NomPM").val() != "" && $("#MarcActiM").val() != "" && $("#DescripcionPM").val() != "" && $("#UnidadPM").val() != "") {
                     socket.emit('Cambios_Prod', { CodBarras: $("#Cod_BarrasM").val(), Cate: $("#CategoriaM").val(), Producto: $("#NomPM").val(), Marca: $("#MarcActiM").val(), Descripcion: $("#DescripcionPM").val(), Unidad: $("#UnidadPM").val() }, { CBO: valores0, CO: valores1, NAO: valores2, MAO: valores3, DO: valores4, UO: valores5 });
 
-                    socket.on('Producto_Inexistente', function (Respuesta) {
+                    socket.once('Producto_Inexistente', function (Respuesta) {
                         alert(Respuesta.mensaje);
                         location.reload();
                     });
 
-                    socket.on('Fallo_Mod', function (Respuesta) {
+                    socket.once('Fallo_Mod', function (Respuesta) {
                         alert(Respuesta.mensaje);
                     });
                 }
@@ -507,16 +521,16 @@ if (pathname == "/users/altasPro") {
                 if ($("#FecActu").val() != "" && $("#CantidadPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#FecFact").val() != "") {
                     socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActu").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFact").val(), Existencia: valores1 });
 
-                    socket.on('Factura_Agregada', function (Respuesta) {
+                    socket.once('Factura_Agregada', function (Respuesta) {
                         alert(Respuesta.mensaje);
                         location.reload();
                     });
 
-                    socket.on('Fallo_Factura', function (Respuesta) {
+                    socket.once('Fallo_Factura', function (Respuesta) {
                         alert(Respuesta.mensaje);
                         location.reload();
                     });
-                    socket.on('Ya_Registrado', function (Respuesta) {
+                    socket.once('Ya_Registrado', function (Respuesta) {
                         alert(Respuesta.mensaje);
                         location.reload();
                     });
@@ -549,11 +563,11 @@ if (pathname == "/users/altasPro") {
                     if ($("#CantidadP").val() != "" && $("#NomJefe") != "") {
                         socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val(), Articulo: valores2E });
 
-                        socket.on('Eliminacion_Realizada', function (Respuesta) {
+                        socket.once('Eliminacion_Realizada', function (Respuesta) {
                             alert(Respuesta.mensaje);
                             location.reload();
                         });
-                        socket.on('Fallo_BajasExist', function (Respuesta) {
+                        socket.once('Fallo_BajasExist', function (Respuesta) {
                             alert(Respuesta.mensaje);
                             location.reload();
                         });
@@ -612,17 +626,17 @@ if (pathname == "/users/altasPro") {
 
                 socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
 
-                socket.on('Usuario_Existente', function (Respuesta) {
+                socket.once('Usuario_Existente', function (Respuesta) {
                     alert(Respuesta.mensaje);
                     location.reload();
                 });
 
-                socket.on('Usuario_Agregado', function (Respuesta) {
+                socket.once('Usuario_Agregado', function (Respuesta) {
                     alert(Respuesta.mensaje);
                     location.reload();
                 });
 
-                socket.on('Usuario_Error', function (Respuesta) {
+                socket.once('Usuario_Error', function (Respuesta) {
                     alert(Respuesta.mensaje);
                     location.reload();
                 });
@@ -729,7 +743,7 @@ if (pathname == "/users/altasPro") {
             if (filtroInicio != "" && filtroFin != "") {
                 socket.emit("SacarExcel", { fechaInicio: filtroInicio, fechaFin: filtroFin });
 
-                socket.on("SacarRespExcel", (data) => {
+                socket.once("SacarRespExcel", (data) => {
                     alert(data.mensaje);
                     location.reload();
                 });
@@ -834,22 +848,31 @@ if (pathname == "/users/altasPro") {
         e.preventDefault();
 
         if ($("#Num_Serie").val() != "" && $("#Equip").val() != "" && $("#MarcE").val() != "" && $("#ModelE").val() != "" && $("#UbiE").val() != "" && $("#NombreEmp").val() != "") {
+            //Enviar Equipo
             enviarSocket("Alta_Equipos", { Num_S: $("#Num_Serie").val(), Equipo: $("#Equip").val(), MarcaE: $("#MarcE").val(), ModelE: $("#ModelE").val(), UbiE: $("#UbiE").val(), NomEn: $("#NombreEmp").val() });
+
+            //Enviar HardWare
             if ($("#HardE").val() != "" && $("#SoftE").val() != "") {
-                enviarSocket("AltaPc", { Num_S: $("#Num_Serie").val(), HardE: $("#HardE").val(), SoftE: $("#SoftE").val() });
+                enviarSocket("AltaPc", { HardE: $("#HardE").val(), SoftE: $("#SoftE").val() });
             }
+            //Monitores
             if ($("#MonE").val() != "" && $("#N_Ser_M").val() != "") {
-                enviarSocket("AltMon", { Num_S: $("#Num_Serie").val(), HardE: $("#MonE").val(), SoftE: $("#N_Ser_M").val() });
+                enviarSocket("AltMon", { MonE: $("#MonE").val(), NSMon: $("#N_Ser_M").val() });
             }
+            //Mouse
             if ($("#MouseE").val() != "") {
-                enviarSocket("AltMouse", { Num_S: $("#Num_Serie").val(), MousE: $("#MouseE").val() });
+                enviarSocket("AltMouse", { MousE: $("#MouseE").val() });
             }
+            //Teclado
             if ($("#TecladE").val() != "") {
-                enviarSocket("AltTecla", { Num_S: $("#Num_Serie").val(), MousE: $("#TecladE").val() });
+                enviarSocket("AltTecla", { TeclaE: $("#TecladE").val() });
             }
+            //Accesorios
             if ($("#AccesE").val() != "") {
-                enviarSocket("AltAcces", { Num_S: $("#Num_Serie").val(), MousE: $("#AccesE").val() });
+                enviarSocket("AltAcces", { AccesE: $("#AccesE").val() });
             }
+            //Respuesta
+            recibirSocket("RespEquipos");
         }
     });
 }

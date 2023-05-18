@@ -9,7 +9,8 @@ const path = require('path');
 const fs = require('fs');
 var contador = 1;
 var contadorS = 1;
-
+//MENSAJE DE ERROR A ENVIAR
+var MensajeError = "Hubo un error, favor de contactar al personal de sistemas.";
 //Escuchar servidor
 server.listen(3000, () => {
     console.log('Servidor iniciado en el puerto 3000.');
@@ -707,8 +708,14 @@ io.on('connection', (socket) => {
     });
 
     socket.on('Alta_Equipos', async(data) => {
-        console.log("Hi");
-    
+        db.query('insert into equipo values(null,?,?,?,?,(select Num_emp from empleado where Nom = ?),?)',[data.Num_S, data.Equipo, data.MarcaE, data.ModelE, data.NomEn, data.UbiE], async function (err, result){
+            if(err) socket.emit(MensajeError);
+            if(result){
+                socket.emit("RespEquipos", "Equipo dado de alta exitosamente.");
+            }else{
+                socket.emit("RespEquipos", "No se pudo dar de alta el equipo, inténtelo de nuevo.");
+            }
+        });
     });
 
     socket.on('disconnect', () => {
