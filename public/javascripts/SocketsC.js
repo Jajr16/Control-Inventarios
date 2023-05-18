@@ -666,7 +666,98 @@ if (pathname == "/users/altasPro") {
             }
         }
     }
-} else if (pathname == "/users/altasEqp") {
+} else if (pathname == "/users/FacSacProd") {
+    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
+
+        //Desplegar facturas existentes
+        socket.emit("Consul_RegProSac");
+        // Consulta de productos
+        socket.on('Desp_Productos', async (data) => {
+            console.log('Datos recibidos:', data.Cod_BarrasS);
+
+            document.querySelector("#DatosProSac tbody").innerHTML += `
+            <tr>
+                <td id="Cod_BarrasS">${data.Cod_BarrasS}</td>
+                <td id="ArticuloS">${data.Articulo}</td>
+                <td id="ExistenciaS">${data.Existencia}</td>
+                <td id="EncargadoS">${data.Nom}</td>
+                <td id="Cantidad_Salida">${data.Cantidad_Salida}</td>
+                <td id="FSalida">${data.FSalida}</td>
+            </tr>
+            `;
+        });
+
+        // Buscar por nombre
+        function BuscarFechas() {
+            var filtro = $("#buscarFac").val().toUpperCase();
+
+            $("#DatosProSac td").each(function () {
+                var textoEnTd = $(this).text().toUpperCase();
+
+                if (textoEnTd.indexOf(filtro) >= 0) {
+                    $(this).addClass("existe");
+                } else {
+                    $(this).removeClass("existe");
+                }
+            });
+
+            $("#DatosProSac tbody tr").each(function () {
+                if ($(this).children(".existe").length > 0) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        // Buscar por fecha
+        function FiltrarFechas() {
+
+            var filtroInicio = new Date($("#fechaInicio").val()); // Obtener la fecha de inicio como objeto Date
+            var filtroFin = new Date($("#fechaFin").val()); // Obtener la fecha de fin como objeto Date
+
+            $("#DatosProSac td").each(function () {
+                var fechaEnTd = new Date($(this).text());
+
+                // Comprobar si la fecha en el td está dentro del rango filtrado
+                if (!isNaN(fechaEnTd) && fechaEnTd >= filtroInicio && fechaEnTd <= filtroFin) {
+                    $(this).addClass("existe");
+                } else {
+                    $(this).removeClass("existe");
+                }
+            });
+            
+
+            $("#DatosProSac tbody tr").each(function () {
+                if ($(this).children(".existe").length > 0) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+            console.log($("#fechaInicio").val());
+        }
+
+        // Crear excel de facturas
+        function ExcelFacSac() {
+
+            var filtroInicio = $("#fechaInicio").val(); // Obtener la fecha de inicio como objeto Date
+            var filtroFin = $("#fechaFin").val(); // Obtener la fecha de fin como objeto Date
+
+            if (filtroInicio != "" && filtroFin != "") {
+                socket.emit("SacarExcel", { fechaInicio: filtroInicio, fechaFin: filtroFin });
+
+                socket.on("SacarRespExcel", (data) => {
+                    alert(data.mensaje);
+                    location.reload();
+                });
+            }
+        }
+
+    } else {
+        location.href = "index";
+    }
+}else if (pathname == "/users/altasEqp") {
     window.addEventListener("load", function (event) {
         cargarNombres();
     });
