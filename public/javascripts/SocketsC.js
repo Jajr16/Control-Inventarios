@@ -750,4 +750,101 @@ if (pathname == "/users/altasPro") {
     } else {
         location.href = "index";
     }
+}else if (pathname == "/users/altasEqp") {
+    window.addEventListener("load", function (event) {
+        cargarNombres();
+    });
+    //Formulario desplegable
+    const Equipos = $('#Equip');
+    const Menu = $("#Desplegable");
+
+    const Hardware = $('#HardE');
+    const Software = $('#SoftE');
+
+    const Monitor = $('#MonE');
+    const NSMon = $('#N_Ser_M');
+
+    const Mouse = $('#MouseE');
+    const Teclado = $('#TecladE');
+    const Accesorio = $('#AccesE');
+
+    Menu.hide();
+    //Formulario.reset();
+    Equipos.on('change', function () {
+        if (Equipos.val() == 'CPU') {
+            Menu.slideDown();//Lo abre
+        } else {
+            Menu.slideUp();//Lo cierra
+            //Quita los required
+            Hardware.prop('required', false);
+            Software.prop('required', false);
+            NSMon.prop('required', false);
+            Monitor.prop('required', false);
+            //Pone valores vacío
+            Hardware.val('');
+            Software.val('');
+            NSMon.val('');
+            Monitor.val('');
+            Mouse.val('');
+            Teclado.val('');
+            Accesorio.val('');
+        }
+    });
+    //VALIDAR FORMULARIO DEPENDIENDO SI LLENAN CAMPOS
+    //Funcion general
+    function Listeners(elemento, evento, funcion) {
+        elemento.on(evento, funcion);
+    }
+
+    Listeners(Hardware, 'input', function (e) {
+
+        if (Hardware.val() != "") {
+            Hardware.prop('required', true);
+            Software.prop('required', true);
+        } else {
+            Hardware.prop('required', false);
+            Software.prop('required', false);
+        }
+    });
+
+    Listeners(Software, 'input', function (e) {
+
+        if (Software.val() != "") {
+            Hardware.prop('required', true);
+            Software.prop('required', true);
+        } else {
+            Hardware.prop('required', false);
+            Software.prop('required', false);
+        }
+    });
+
+    Listeners(Monitor, 'input', function (e) {
+
+        if (Monitor.val() != "") {
+            NSMon.prop('required', true);
+            Monitor.prop('required', true);
+        } else {
+            NSMon.prop('required', false);
+            Monitor.prop('required', false);
+        }
+    });
+
+    Listeners(NSMon, 'input', function (e) {
+
+        if (NSMon.val() != "") {
+            NSMon.prop('required', true);
+            Monitor.prop('required', true);
+        } else {
+            NSMon
+                .prop('required', false);
+            Monitor
+                .prop('required', false);
+        }
+    });
+
+    const FormEquip = $('#AltaEquip');
+    FormEquip.on('submit', function (e) {
+        e.preventDefault();
+
+    });
 }
