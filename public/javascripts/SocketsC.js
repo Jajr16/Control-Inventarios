@@ -105,11 +105,11 @@ function enviarSocket(identificador, mensaje) {
 function recibirSocket(identificador) {
     socket.once(identificador, function (Respuesta) {
         alert(Respuesta.mensaje);
-        if(Respuesta.Res == "Si"){
+        if (Respuesta.Res == "Si") {
             location.reload();
         }
     });
-    
+
 }
 
 
@@ -646,6 +646,143 @@ if (pathname == "/users/altasPro") {
                 });
             }
         }
+    } else {
+        location.href = "index";
+    }
+} else if (pathname == "/users/consulUsuarios") {
+    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
+
+        // Asignación del evento de clic en los botones de eliminar
+        window.addEventListener('DOMContentLoaded', () => {
+            const botonesEliminar = document.getElementsByClassName("BotonER");
+
+            for (let i = 0; i < botonesEliminar.length; i++) {
+                botonesEliminar[i].addEventListener("click", function () {
+                    eliminarProducto(this);
+                });
+            }
+        });
+
+        socket.emit("Consul_Usuarios");
+
+        // Consulta de productos
+        socket.on('Desp_Usuarios', async (data) => {
+            console.log('Datos recibidos:', data.User);
+
+            const tbody = document.querySelector("#DatosProd tbody");
+
+            tbody.innerHTML += `
+            <tr>
+                <td>${data.Num_Emp}</td>
+                <td>${data.User}</td>
+                <td class="BotonER"> Eliminar </td>
+                <td class="BotonMod" onclick='Abrir()'> Modificar </td>
+            </tr>
+            `;
+
+            // Volver a asignar el evento de clic a los botones de eliminar
+            const botonesEliminar = document.getElementsByClassName("BotonER");
+
+            for (let i = 0; i < botonesEliminar.length; i++) {
+                botonesEliminar[i].addEventListener("click", function () {
+                    eliminarUsuario(this);
+                });
+            }
+        });
+
+        function eliminarUsuario(elementoBoton) {
+            var confirmacion = confirm('¿Deseas eliminar este usuario?');
+
+            if (confirmacion) {
+                var fila = elementoBoton.parentNode;
+                var codigoBarras = fila.querySelector("td:first-child").innerHTML;
+
+                enviarSocket('Bajas_Prod', codigoBarras);
+
+                // Eliminar la fila de la tabla
+                fila.parentNode.removeChild(fila);
+            }
+        }
+
+        // Barra de busqueda
+        function buscar() {
+
+            var filtro = $("#buscar").val().toUpperCase();
+
+            $("#DatosProd td").each(function () {
+                var textoEnTd = $(this).text().toUpperCase();
+                if (textoEnTd.indexOf(filtro) >= 0) {
+                    $(this).addClass("existe");
+                } else {
+                    $(this).removeClass("existe");
+                }
+            })
+
+            $("#DatosProd tbody tr").each(function () {
+                if ($(this).children(".existe").length > 0) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            })
+        }
+
+        socket.once('Producto_Eliminado', (data) => {
+            alert(data.mensaje);
+            location.reload();
+        });
+        socket.once('Error', (data) => {
+            alert(data.mensaje);
+        })
+
+        //Llenar datos en automático
+        var valores0 = "";
+        var valores1 = "";
+        //Modificar productos
+        socket.on('ButtonUp', () => {
+            let BotonMod = document.getElementsByClassName("BotonMod");
+
+            for (let i = 0; i < BotonMod.length; i++) {
+                BotonMod[i].addEventListener("click", obtenerValoresMod);
+            }
+
+            function obtenerValoresMod(e) {
+
+                var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+                // recorremos cada uno de los elementos del array de elementos <td>
+                for (let i = 0; i < elementosTD.length; i++) {
+                    // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                    valores0 = elementosTD[0].innerHTML;
+                    valores1 = elementosTD[1].innerHTML;
+                }
+                document.getElementById("Cod_BarrasM").value = valores0;
+                document.getElementById("CategoriaM").value = valores1;
+            }
+
+            // Cambios de productos
+            const FormMod = document.querySelector("#ModProduct");
+
+            // Cambios de productos
+            FormMod.addEventListener("submit", Enviar);
+
+            function Enviar(e) {
+
+                e.preventDefault();
+
+                if ($("#Cod_BarrasM").val() != "" && $("#CategoriaM").val() != "" && $("#NomPM").val() != "" && $("#MarcActiM").val() != "" && $("#DescripcionPM").val() != "" && $("#UnidadPM").val() != "") {
+                    socket.emit('Cambios_Prod', { CodBarras: $("#Cod_BarrasM").val(), Cate: $("#CategoriaM").val(), Producto: $("#NomPM").val(), Marca: $("#MarcActiM").val(), Descripcion: $("#DescripcionPM").val(), Unidad: $("#UnidadPM").val() }, { CBO: valores0, CO: valores1, NAO: valores2, MAO: valores3, DO: valores4, UO: valores5 });
+
+                    socket.once('Producto_Inexistente', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+
+                    socket.once('Fallo_Mod', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                    });
+                }
+            }
+        });
     } else {
         location.href = "index";
     }

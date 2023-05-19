@@ -100,9 +100,13 @@ router.get('/ABME', function (req, res, next) {
 router.get('/RegistrarUsuario', function (req, res, next) {
   res.render('RegistrarUsuario', { title: 'Crear nuevo usuario' });
 });
+// Consultar usuarios - bajas de usuarios - cambios de usuario
+router.get('/consulUsuarios', function (req, res, next) {
+  res.render('consulUsuarios', { title: 'Usuarios registrados' });
+});
 //Empleado nuevo
 router.get('/RegistroEmpleado', function (req, res, next) {
-  res.render('RegistroEmpleado', { title: 'Crear nuevo usuario' });
+  res.render('RegistroEmpleado', { title: 'Crear nuevo empleado' });
 });
 
 /*** Consultar registro de productos sacados ***/

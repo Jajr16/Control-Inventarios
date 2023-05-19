@@ -355,6 +355,25 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Consultas de productos
+    socket.on('Consul_Usuarios', async () => {
+
+        // Autenticar que haga las consultas
+        db.query('select *from Usuario', function (err, result) {
+            if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
+            if (result.length > 0) {//Si sí hizo una búsqueda
+                for (var i = 0; i < result.length; i++) {
+                    //FIngreso: FechasIngresos.toISOString().slice(0, 10),
+
+                    socket.emit('Desp_Usuarios', { Num_Emp: result[i].Num_Emp, User: result[i].User });//Mandar usuario y token al cliente
+                }
+                socket.emit('ButtonUp');
+            }
+            result.length = 0;
+        });
+
+    });
+
     // Altas de Usuarios
     socket.on('Registro_Usuario', async (data) => {
         //Autentificar que no exista un usuario igual
