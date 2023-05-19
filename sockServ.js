@@ -356,16 +356,14 @@ io.on('connection', (socket) => {
     });
 
     // Consultas de productos
-    socket.on('Consul_Usuarios', async () => {
+    socket.on('Consul_Usuario', async () => {
 
         // Autenticar que haga las consultas
-        db.query('select *from Usuario', function (err, result) {
+        db.query('select*from Usuario', function (err, result) {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
                 for (var i = 0; i < result.length; i++) {
-                    //FIngreso: FechasIngresos.toISOString().slice(0, 10),
-
-                    socket.emit('Desp_Usuarios', { Num_Emp: result[i].Num_Emp, User: result[i].User });//Mandar usuario y token al cliente
+                    socket.emit('Desp_Usuario', { Num_Emp: result[i].Num_Emp, Usuario: result[i].Usuario, Pass: result[i].Pass });//Mandar usuario y token al cliente
                 }
                 socket.emit('ButtonUp');
             }
@@ -411,6 +409,44 @@ io.on('connection', (socket) => {
                 });
             } else {
                 socket.emit('Usuario_Error', { mensaje: "No se encontró el usuario, inténtelo de nuevo, si el problema persiste, llame a los encargados de sistemas." });
+            }
+        });
+    });
+
+    // Bajas en usuarios
+    socket.on('Bajas_Usuario', async (data) => {
+
+        // Autenticar que haga las consultas
+        db.query('select*from Usuario', function (err, result) {
+            if (err) console.log("Error de búsqueda: " + err); //Se imprime algún error que haya ocurrido
+            if (result.length > 0) { //Si sí hizo una búsqueda
+                db.query('delete from Usuario where Usuario = ?', [data.Usuario], function (err, result) {
+                    if (err) console.log("Error de eliminación de usuario: ", err);
+                    if (result.affectedRows > 0) {
+                        console.log("Resultado de eliminacion de usuario: ", result);
+                        socket.emit('Usuario_Eliminado', { mensaje: 'Usuario dado de baja.' });//Mandar mensaje de éxito a cliente
+                    } else {
+                        socket.emit('Error', { mensaje: "Usuario no eliminado, inténtelo de nuevo." });
+                    }
+                });
+
+            } else {
+                socket.emit('Usuarios_Inexistentes', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
+            }
+        });
+
+    });
+
+    // Cambios en usuarios
+    socket.on('Cambios_Usuario', async (data, dataOld) => {
+
+        //Se agrega productos a la BD
+        db.query('update Usuario set Usuario = ?, Num_Emp = ?, Pass = ? where Usuario = ?', [data.Usuario, data.Nom_Emp, data.Pass, dataOld.OLDUser], function (err2, result) {
+            if (err2) console.log("Error de inserción de usuario: ", err2); //Se imprime algún error que haya ocurrido
+            if (result.affectedRows > 0) { //Si sí hizo una búsqueda
+                socket.emit('Usuario_Inexistente', { mensaje: 'Usuario modificado con éxito.' });//Mandar mensaje a cliente
+            } else {
+                socket.emit('Fallo_ModUser', { mensaje: "No se pudo modificar el usuario." })
             }
         });
     });

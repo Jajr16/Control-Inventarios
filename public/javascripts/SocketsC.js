@@ -663,18 +663,19 @@ if (pathname == "/users/altasPro") {
             }
         });
 
-        socket.emit("Consul_Usuarios");
+        socket.emit("Consul_Usuario");
 
         // Consulta de productos
-        socket.on('Desp_Usuarios', async (data) => {
-            console.log('Datos recibidos:', data.User);
+        socket.on('Desp_Usuario', async (data) => {
+            console.log('Datos recibidos:', data.Usuario);
 
             const tbody = document.querySelector("#DatosProd tbody");
 
             tbody.innerHTML += `
             <tr>
+                <td>${data.Usuario}</td>
                 <td>${data.Num_Emp}</td>
-                <td>${data.User}</td>
+                <td>${data.Pass}</td>
                 <td class="BotonER"> Eliminar </td>
                 <td class="BotonMod" onclick='Abrir()'> Modificar </td>
             </tr>
@@ -695,9 +696,9 @@ if (pathname == "/users/altasPro") {
 
             if (confirmacion) {
                 var fila = elementoBoton.parentNode;
-                var codigoBarras = fila.querySelector("td:first-child").innerHTML;
+                var Usuario = fila.querySelector("td:first-child").innerHTML;
 
-                enviarSocket('Bajas_Prod', codigoBarras);
+                enviarSocket('Bajas_Usuario', Usuario);
 
                 // Eliminar la fila de la tabla
                 fila.parentNode.removeChild(fila);
@@ -727,17 +728,20 @@ if (pathname == "/users/altasPro") {
             })
         }
 
-        socket.once('Producto_Eliminado', (data) => {
+        socket.once('Usuario_Eliminado', (data) => {
             alert(data.mensaje);
             location.reload();
         });
         socket.once('Error', (data) => {
             alert(data.mensaje);
+            location.reload();
         })
 
         //Llenar datos en automático
         var valores0 = "";
         var valores1 = "";
+        var valores2 = "";
+
         //Modificar productos
         socket.on('ButtonUp', () => {
             let BotonMod = document.getElementsByClassName("BotonMod");
@@ -754,9 +758,11 @@ if (pathname == "/users/altasPro") {
                     // obtenemos cada uno de los valores y los ponemos en la variable "valores"
                     valores0 = elementosTD[0].innerHTML;
                     valores1 = elementosTD[1].innerHTML;
+                    valores2 = elementosTD[2].innerHTML;
                 }
-                document.getElementById("Cod_BarrasM").value = valores0;
-                document.getElementById("CategoriaM").value = valores1;
+                document.getElementById("UsuarioM").value = valores0;
+                document.getElementById("Num_EmpPM").value = valores1;
+                document.getElementById("PassM").value = valores2;
             }
 
             // Cambios de productos
@@ -769,15 +775,15 @@ if (pathname == "/users/altasPro") {
 
                 e.preventDefault();
 
-                if ($("#Cod_BarrasM").val() != "" && $("#CategoriaM").val() != "" && $("#NomPM").val() != "" && $("#MarcActiM").val() != "" && $("#DescripcionPM").val() != "" && $("#UnidadPM").val() != "") {
-                    socket.emit('Cambios_Prod', { CodBarras: $("#Cod_BarrasM").val(), Cate: $("#CategoriaM").val(), Producto: $("#NomPM").val(), Marca: $("#MarcActiM").val(), Descripcion: $("#DescripcionPM").val(), Unidad: $("#UnidadPM").val() }, { CBO: valores0, CO: valores1, NAO: valores2, MAO: valores3, DO: valores4, UO: valores5 });
+                if ($("#UsuarioM").val() != "" && $("#Num_EmpPM").val() != "" && $("#PassM").val() != "" ) {
+                    socket.emit('Cambios_Usuario', { Usuario: $("#UsuarioM").val(), Nom_Emp: $("#Num_EmpPM").val(), Pass: $("#PassM").val() }, {OLDUser: valores0});
 
-                    socket.once('Producto_Inexistente', function (Respuesta) {
+                    socket.once('Usuario_Inexistente', function (Respuesta) {
                         alert(Respuesta.mensaje);
                         location.reload();
                     });
 
-                    socket.once('Fallo_Mod', function (Respuesta) {
+                    socket.once('Fallo_ModUserd', function (Respuesta) {
                         alert(Respuesta.mensaje);
                     });
                 }
