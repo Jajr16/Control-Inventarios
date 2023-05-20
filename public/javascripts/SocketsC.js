@@ -3,6 +3,29 @@ var tok = localStorage.getItem("token");
 var socket = io.connect("http://localhost:3000");
 
 var pathname = window.location.pathname;
+//BUSCAR
+// Barra de busqueda
+function buscar() {
+
+    var filtro = $("#buscar").val().toUpperCase();
+
+    $("#DatosProd td").each(function () {
+        var textoEnTd = $(this).text().toUpperCase();
+        if (textoEnTd.indexOf(filtro) >= 0) {
+            $(this).addClass("existe");
+        } else {
+            $(this).removeClass("existe");
+        }
+    })
+
+    $("#DatosProd tbody tr").each(function () {
+        if ($(this).children(".existe").length > 0) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    })
+}
 //SELECTS
 function ListaNombres(Nombr) {
     var selectNombres2 = document.getElementById("NombreEmp");
@@ -217,29 +240,6 @@ if (pathname == "/users/altasPro") {
                 });
             }
         });
-
-        // Barra de busqueda
-        function buscar() {
-
-            var filtro = $("#buscar").val().toUpperCase();
-
-            $("#DatosProd td").each(function () {
-                var textoEnTd = $(this).text().toUpperCase();
-                if (textoEnTd.indexOf(filtro) >= 0) {
-                    $(this).addClass("existe");
-                } else {
-                    $(this).removeClass("existe");
-                }
-            })
-
-            $("#DatosProd tbody tr").each(function () {
-                if ($(this).children(".existe").length > 0) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            })
-        }
 
         socket.once('Producto_Eliminado', (data) => {
             alert(data.mensaje);
@@ -577,28 +577,6 @@ if (pathname == "/users/altasPro") {
             }
         });
 
-        // Barra de busqueda
-        function buscar() {
-
-            var filtro = $("#buscar").val().toUpperCase();
-
-            $("#DatosProd td").each(function () {
-                var textoEnTd = $(this).text().toUpperCase();
-                if (textoEnTd.indexOf(filtro) >= 0) {
-                    $(this).addClass("existe");
-                } else {
-                    $(this).removeClass("existe");
-                }
-            })
-
-            $("#DatosProd tbody tr").each(function () {
-                if ($(this).children(".existe").length > 0) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            })
-        }
     } else {
         location.href = "index";
     }
@@ -699,29 +677,6 @@ if (pathname == "/users/altasPro") {
             }
         }
 
-        // Barra de busqueda
-        function buscar() {
-
-            var filtro = $("#buscar").val().toUpperCase();
-
-            $("#DatosProd td").each(function () {
-                var textoEnTd = $(this).text().toUpperCase();
-                if (textoEnTd.indexOf(filtro) >= 0) {
-                    $(this).addClass("existe");
-                } else {
-                    $(this).removeClass("existe");
-                }
-            })
-
-            $("#DatosProd tbody tr").each(function () {
-                if ($(this).children(".existe").length > 0) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            })
-        }
-        
         //Llenar datos en automático
         var valores0 = "";
         var valores1 = "";
@@ -758,8 +713,8 @@ if (pathname == "/users/altasPro") {
 
                 e.preventDefault();
 
-                if ($("#UsuarioM").val() != "" && $("#Num_EmpPM").val() != "" && $("#PassM").val() != "" ) {
-                    socket.emit('Cambios_Usuario', { Usuario: $("#UsuarioM").val(), Nom_Emp: $("#Num_EmpPM").val(), Pass: $("#PassM").val() }, {OLDUser: valores0});
+                if ($("#UsuarioM").val() != "" && $("#Num_EmpPM").val() != "" && $("#PassM").val() != "") {
+                    socket.emit('Cambios_Usuario', { Usuario: $("#UsuarioM").val(), Nom_Emp: $("#Num_EmpPM").val(), Pass: $("#PassM").val() }, { OLDUser: valores0 });
 
                     socket.once('Usuario_Inexistente', function (Respuesta) {
                         alert(Respuesta.mensaje);
@@ -1069,11 +1024,11 @@ if (pathname == "/users/altasPro") {
         });
 
         const FormModEmp = $('#ModProduct');
-        FormModEmp.on('submit', function(e){
+        FormModEmp.on('submit', function (e) {
             e.preventDefault();
 
-            if($('#NEM').val() != "" && $('#AreaME').val() != "" && $('#NomJefe')){
-                socket.emit('ModEmp', { NewName: $('#NEM').val(), NewArea: $('#AreaME').val(), NewBoss: $('#NomJefe').val() }, {OldName: valores0});
+            if ($('#NEM').val() != "" && $('#AreaME').val() != "" && $('#NomJefe')) {
+                socket.emit('ModEmp', { NewName: $('#NEM').val(), NewArea: $('#AreaME').val(), NewBoss: $('#NomJefe').val() }, { OldName: valores0 });
             }
         });
 
