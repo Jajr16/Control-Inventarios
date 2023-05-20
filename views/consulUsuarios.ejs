@@ -85,20 +85,19 @@
                         <div class="Tres_Column">
                             <div>
                                 <label>Nombre de usuario</label>
-                                <input autocomplete="off" type="text" id="UsuarioM" min="1" name="UsuarioM"
-                                    required maxlength="45" oninput="mayus(this);">
+                                <input autocomplete="off" type="text" id="UsuarioM" min="1" name="UsuarioM" required
+                                    maxlength="45">
                             </div>
                             <div>
                                 <label>Número de empleado</label>
-                                <input autocomplete="off" type="text" id="Num_EmpPM" name="Num_EmpPM" required maxlength="45"
-                                    oninput="mayus(this);">
+                                <input autocomplete="off" type="number" id="Num_EmpPM" name="Num_EmpPM" required
+                                    maxlength="45" onkeypress="return checkN(event)">
                             </div>
                         </div>
                         <div class="Tres_Column">
                             <div>
                                 <label>Contraseña</label>
-                                <input autocomplete="off" type="text" id="PassM" name="PassM" required
-                                    maxlength="45" oninput="mayus(this);">
+                                <input autocomplete="off" type="text" id="PassM" name="PassM" required maxlength="45">
                             </div>
                         </div>
 

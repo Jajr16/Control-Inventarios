@@ -647,7 +647,7 @@ if (pathname == "/users/altasPro") {
         location.href = "index";
     }
 } else if (pathname == "/users/consulUsuarios") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
+    if (tok == "4dnM3k0nl9s") {
 
         // Asignación del evento de clic en los botones de eliminar
         window.addEventListener('DOMContentLoaded', () => {
@@ -724,16 +724,7 @@ if (pathname == "/users/altasPro") {
                 }
             })
         }
-
-        socket.once('Usuario_Eliminado', (data) => {
-            alert(data.mensaje);
-            location.reload();
-        });
-        socket.once('Error', (data) => {
-            alert(data.mensaje);
-            location.reload();
-        })
-
+        
         //Llenar datos en automático
         var valores0 = "";
         var valores1 = "";
@@ -785,6 +776,7 @@ if (pathname == "/users/altasPro") {
                     });
                 }
             }
+            recibirSocket('RespDelUs');
         });
     } else {
         location.href = "index";

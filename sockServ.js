@@ -415,13 +415,14 @@ io.on('connection', (socket) => {
         db.query('select*from Usuario', function (err, result) {
             if (err) console.log("Error de búsqueda: " + err); //Se imprime algún error que haya ocurrido
             if (result.length > 0) { //Si sí hizo una búsqueda
-                db.query('delete from Usuario where Usuario = ?', [data.Usuario], function (err, result) {
-                    if (err) console.log("Error de eliminación de usuario: ", err);
+                db.query('delete from Usuario where Usuario = ?', data, function (err, result) {
+                    if (err) socket.emit('RespDelUs',MensajeError);
+                    console.log(data);
                     if (result.affectedRows > 0) {
                         console.log("Resultado de eliminacion de usuario: ", result);
-                        socket.emit('Usuario_Eliminado', { mensaje: 'Usuario dado de baja.' });//Mandar mensaje de éxito a cliente
+                        socket.emit('RespDelUs', { mensaje: 'Usuario dado de baja.' });//Mandar mensaje de éxito a cliente
                     } else {
-                        socket.emit('Error', { mensaje: "Usuario no eliminado, inténtelo de nuevo." });
+                        socket.emit('RespDelUs', { mensaje: "Usuario no eliminado, inténtelo de nuevo." });
                     }
                 });
 
@@ -437,11 +438,11 @@ io.on('connection', (socket) => {
 
         //Se agrega productos a la BD
         db.query('update Usuario set Usuario = ?, Num_Emp = ?, Pass = ? where Usuario = ?', [data.Usuario, data.Nom_Emp, data.Pass, dataOld.OLDUser], function (err2, result) {
-            if (err2) console.log("Error de inserción de usuario: ", err2); //Se imprime algún error que haya ocurrido
+            if (err2) socket.emit('RespDelUs', MensajeError) //Se imprime algún error que haya ocurrido
             if (result.affectedRows > 0) { //Si sí hizo una búsqueda
-                socket.emit('Usuario_Inexistente', { mensaje: 'Usuario modificado con éxito.' });//Mandar mensaje a cliente
+                socket.emit('RespDelUs', { mensaje: 'Usuario modificado con éxito.' });//Mandar mensaje a cliente
             } else {
-                socket.emit('Fallo_ModUser', { mensaje: "No se pudo modificar el usuario." })
+                socket.emit('RespDelUs', { mensaje: "No se pudo modificar el usuario." })
             }
         });
     });
@@ -480,10 +481,8 @@ io.on('connection', (socket) => {
                 for (var i = 0; i < res.length; i++) {
                     if (data == "Jefes") socket.emit('ListaNombres2', { Nombres: res[i].Nom });
                     else if (data == "Empleados") socket.emit('ListaNombres', { Nombres: res[i].Nom });
-
                 }
             }
-
         });
     });
 
