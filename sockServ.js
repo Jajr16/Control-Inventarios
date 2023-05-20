@@ -60,14 +60,11 @@ io.on('connection', (socket) => {
 
     // Consultas de productos
     socket.on('Consul_Prod', async () => {
-
         // Autenticar que haga las consultas
         db.query('select *from almacen order by eliminado', function (err, result) {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
                 for (var i = 0; i < result.length; i++) {
-                    //FIngreso: FechasIngresos.toISOString().slice(0, 10),
-
                     socket.emit('Desp_Productos', { Cod_Barras: result[i].Cod_Barras, Categoria: result[i].Categoria, NArt: result[i].Articulo, NMarca: result[i].Marca, Desc: result[i].Descripcion, Unidad: result[i].Unidad, Existencia: result[i].Existencia, eliminado: result[i].eliminado });//Mandar usuario y token al cliente
                 }
                 socket.emit('ButtonUp');
@@ -172,11 +169,9 @@ io.on('connection', (socket) => {
 
     // Cambios en productos
     socket.on('Cambios_Prod', async (data, dataOld) => {
-
         //Se agrega productos a la BD
         db.query('update almacen set Cod_Barras = ?, Categoria = ?, Articulo = ?, Marca = ?, Descripcion = ?, Unidad = ? where Cod_Barras = ?', [data.CodBarras, data.Cate, data.Producto, data.Marca, data.Descripcion, data.Unidad, dataOld.CBO], function (err2, result) {
-            if (err2) console.log("Error de inserción de productos: ", err2);
-
+            if (err2) socket.emit('Fallo_Mod', MensajeError);
             if (result.affectedRows > 0) {
                 socket.emit('Producto_Inexistente', { mensaje: 'Artículo modificado con éxito.' });//Mandar mensaje a cliente
             } else {
@@ -711,14 +706,14 @@ io.on('connection', (socket) => {
         db.query('select * from equipo where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) socket.emit(MensajeError);
             if (result.length > 0) {
-                socket.emit("RespEquipos", { mensaje: "Este producto ya está registrado, ingrese otro."});
+                socket.emit("RespEquipos", { mensaje: "Este producto ya está registrado, ingrese otro." });
             } else {
                 db.query('insert into equipo values(null,?,?,?,?,(select Num_emp from empleado where Nom = ?),?)', [data.Num_S, data.Equipo, data.MarcaE, data.ModelE, data.NomEn, data.UbiE], async function (err, result) {
                     if (err) socket.emit(MensajeError);
                     if (result) {
-                        socket.emit("RespEquipos", { mensaje: "Equipo dado de alta exitosamente.", Res: "Si"});
+                        socket.emit("RespEquipos", { mensaje: "Equipo dado de alta exitosamente.", Res: "Si" });
                     } else {
-                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta el equipo, inténtelo de nuevo."});
+                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta el equipo, inténtelo de nuevo." });
                     }
                 });
             }
@@ -729,12 +724,12 @@ io.on('connection', (socket) => {
         db.query('select * from pcs where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) socket.emit(MensajeError);
             if (result.length > 0) {
-                socket.emit("RespEquipos", { mensaje: "Esta computadora ya está registrada, ingrese otra."});
+                socket.emit("RespEquipos", { mensaje: "Esta computadora ya está registrada, ingrese otra." });
             } else {
                 db.query('insert into pcs values(?,?,?)', [data.Num_S, data.HardE, data.SoftE], async function (err, result) {
                     if (err) socket.emit(MensajeError);
                     if (!result) {
-                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos de la PC, agréguelo por separado."});
+                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos de la PC, agréguelo por separado." });
                     }
                 });
             }
@@ -745,12 +740,12 @@ io.on('connection', (socket) => {
         db.query('select * from monitor where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) socket.emit(MensajeError);
             if (result.length > 0) {
-                socket.emit("RespEquipos", { mensaje: "Este monitor ya está registrado, ingrese otro."});
+                socket.emit("RespEquipos", { mensaje: "Este monitor ya está registrado, ingrese otro." });
             } else {
                 db.query('insert into monitor values(?,?,?)', [data.Num_S, data.MonE, data.NSMon], async function (err, result) {
                     if (err) socket.emit(MensajeError);
                     if (!result) {
-                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del monitor, agréguelo por separado."});
+                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del monitor, agréguelo por separado." });
                     }
                 });
             }
@@ -761,12 +756,12 @@ io.on('connection', (socket) => {
         db.query('select * from Mouse where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) socket.emit(MensajeError);
             if (result.length > 0) {
-                socket.emit("RespEquipos", { mensaje: "Este mouse ya está registrado, ingrese otro."});
+                socket.emit("RespEquipos", { mensaje: "Este mouse ya está registrado, ingrese otro." });
             } else {
                 db.query('insert into Mouse values(?,?)', [data.Num_S, data.MousE], async function (err, result) {
                     if (err) socket.emit(MensajeError);
                     if (!result) {
-                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del mouse, agréguelo por separado."});
+                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del mouse, agréguelo por separado." });
                     }
                 });
             }
@@ -777,12 +772,12 @@ io.on('connection', (socket) => {
         db.query('select * from Teclado where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) socket.emit(MensajeError);
             if (result.length > 0) {
-                socket.emit("RespEquipos", { mensaje: "Este teclado ya está registrado, ingrese otro."});
+                socket.emit("RespEquipos", { mensaje: "Este teclado ya está registrado, ingrese otro." });
             } else {
                 db.query('insert into Teclado values(?,?)', [data.Num_S, data.TeclaE], async function (err, result) {
                     if (err) socket.emit(MensajeError);
                     if (!result) {
-                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del teclado, agréguelo por separado."});
+                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del teclado, agréguelo por separado." });
                     }
                 });
             }
@@ -793,14 +788,50 @@ io.on('connection', (socket) => {
         db.query('select * from Accesorio where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) socket.emit(MensajeError);
             if (result.length > 0) {
-                socket.emit("RespEquipos", { mensaje: "Estos accesorios ya están registrados, ingrese otros."});
+                socket.emit("RespEquipos", { mensaje: "Estos accesorios ya están registrados, ingrese otros." });
             } else {
                 db.query('insert into Accesorio values(?,?)', [data.Num_S, data.AccesE], async function (err, result) {
                     if (err) socket.emit(MensajeError);
                     if (!result) {
-                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los accesorios, agréguelos por separado."});
+                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los accesorios, agréguelos por separado." });
                     }
                 });
+            }
+        });
+    });
+
+    socket.on("DatEmp", async () => {
+        db.query('select empleado.Nom, empleado.Área, (select Nom from empleado as Jefe where Jefe.Num_emp = empleado.Num_Jefe) Nom_Jefe from empleado;', async function (err, result) {
+            if (err) socket.emit('MensajeEmp', MensajeError);
+            if (result.length > 0) {//Si sí hizo una búsqueda
+                for (var i = 0; i < result.length; i++) {
+                    socket.emit('DespEmp', { NomEmp: result[i].Nom, Area: result[i].Área, NomJefe: result[i].Nom_Jefe });//Mandar usuario y token al cliente
+                }
+                socket.emit('ButtonUpEmp');
+            }
+            result.length = 0;
+        });
+    });
+
+    socket.on('EmpDelete', async (data) => {
+        db.query('delete from empleado where Num_emp in (select Num_Emp from (select Num_Emp from empleado where Nom = ?) Emp)', [data], function (err, result) {
+            if (err) socket.emit('MensajeEmp', MensajeError);
+            if (result.affectedRows > 0) {
+                socket.emit('MensajeEmp', { mensaje: 'Empleado eliminado con éxito.' });
+            } else {
+                socket.emit('MensajeEmp', { mensaje: 'No se pudo eliminar al empleado, inténtelo de nuevo.' });
+            }
+        });
+    });
+
+    socket.on('ModEmp', async (dataNew, dataOld) => {
+        db.query('update empleado set Nom = ?, Área = ?, Num_Jefe = (select Num_emp from (select Num_Emp from empleado where Nom = ?) Jefe) where Num_emp = (select Num_emp from (select Num_Emp from empleado where Nom = ?) Empleado)', [dataNew.NewName, dataNew.NewArea, dataNew.NewBoss, dataOld.OldName], function (err, result) {
+            if (err) socket.emit("MensajeEmp", MensajeError);
+            console.log(result);
+            if (result.affectedRows > 0) {
+                socket.emit('MensajeEmp', { mensaje: 'Empleado modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
+            } else {
+                socket.emit('MensajeEmp', { mensaje: "No se pudo modificar el empleado." });
             }
         });
     });

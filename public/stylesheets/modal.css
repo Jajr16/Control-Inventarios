@@ -1,5 +1,6 @@
 .pen {
     flex: 1 1 100%;
+    width: 100rem;
 }
   
   .created-by {
@@ -51,13 +52,19 @@
   
   .Contenedor {
     background: linear-gradient(rgba(0, 67, 252, 0.900), rgba(255, 255, 255, 0.900));
-    max-width: 120rem;
+    max-width: 160rem;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+    width: 90rem;
   }
+
+  .Contenedor form{
+    width: 100%;
+  }
+
   .Contenedor button {
     width: 32rem;
     border: none;

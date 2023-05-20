@@ -56,13 +56,19 @@
     <div class="Dos_Column">
       <div class="CampoForm">
         <h5 class="BotonIZ">Registrar productos</h5>
-        <div class="Dos_Column Separacion" id="RegistrosProd"></div>
+        <div class="Dos_Columnas Separacion" id="RegistrosProd">
+          <div></div>
+          <div></div>
+        </div>
       </div>
     </div>
     <div class="Dos_Column" id="Mas_Opciones">
       <div class="CampoForm">
         <h5 class="BotonDE" id="TituloOpciones"></h5>
-        <div class="Dos_Column Separacion" id="ProdExistentes"></div>
+        <div class="Dos_Columnas Separacion" id="ProdExistentes">
+          <div></div>
+          <div></div>
+        </div>
       </div>
     </div>
   </main>
@@ -74,28 +80,30 @@
 
         document.querySelector("#TituloOpciones").innerHTML = "Más opciones";
 
-        document.getElementById("ProdExistentes").innerHTML = `
-        <a href="/users/RegistrarUsuario" class="BotonABE">Registrar Usuario</a>
-        <a href="/users/RegistroEmpleado" class="BotonABE">Registrar Empleado</a>
-      `;
+        $("#ProdExistentes").children().eq(0).html(`
+        <a href="/users/RegistrarUsuario" class="BotonABE TamBAG">Registrar Usuario</a>
+        <a href="/users/ModUsuario" class="BotonABE TamBAG">Modificar Usuario</a>
+      `);
+        $("#ProdExistentes").children().eq(1).html(`
+        <a href="/users/RegistroEmpleado" class="BotonABE TamBAG">Registrar Empleado</a>
+        <a href="/users/ModEmp" class="BotonABE TamBAG">Modificar Empleado</a>
+      `);
 
-        document.querySelector("#RegistrosProd").innerHTML = `
-        <a href="/users/consulPro" class="BotonAG">Ver productos</a>
-        <a href="/users/altasPro" class="BotonAG">Registrar Productos</a>
-        <a href="/users/ABPE" class="BotonAG">Agregar productos existentes</a>
-        <a href="/users/FacSacProd" class="BotonAG">Registro de facturas existentes</a>
-      `;
       } else if (tok == "4dnM3k0nl9A") {
 
         document.querySelector("#Mas_Opciones").style.display = "none";
-
-        document.querySelector("#RegistrosProd").innerHTML = `
-        <a href="/users/consulPro" class="BotonAG">Ver productos</a>
-        <a href="/users/altasPro" class="BotonAG">Registrar Productos</a>
-        <a href="/users/ABPE" class="BotonAG">Agregar productos existentes</a>
-        <a href="/users/FacSacProd" class="BotonAG">Registro de facturas existentes</a>
-      `;
       }
+      $(document).ready(function () {
+        $("#RegistrosProd").children().eq(0).html(`
+          <a href="/users/consulPro" class="BotonAG TamBAG">Ver productos</a>
+          <a href="/users/ABPE" class="BotonAG TamBAG">Agregar productos existentes</a>
+        `);
+
+        $("#RegistrosProd").children().eq(1).html(`
+          <a href="/users/altasPro" class="BotonAG TamBAG">Registrar Productos</a>
+          <a href="/users/FacSacProd" class="BotonAG TamBAG">Registro de facturas existentes</a>
+        `);
+      });
     }
   </script>
   <script type="text/javascript" src="/javascripts/NavEspecializado.js"></script>

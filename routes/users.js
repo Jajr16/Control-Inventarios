@@ -100,9 +100,17 @@ router.get('/ABME', function (req, res, next) {
 router.get('/RegistrarUsuario', function (req, res, next) {
   res.render('RegistrarUsuario', { title: 'Crear nuevo usuario' });
 });
+
+router.get('/ModUsuario', function (req, res, next) {
+  res.render('ModUsuario', { title: 'Modificar un usuario' });
+});
 //Empleado nuevo
 router.get('/RegistroEmpleado', function (req, res, next) {
-  res.render('RegistroEmpleado', { title: 'Crear nuevo usuario' });
+  res.render('RegistroEmpleado', { title: 'Registrar Empleado' });
+});
+
+router.get('/ModEmp', function (req, res, next) {
+  res.render('ModEmp', { title: 'Modificar Empleado' });
 });
 
 /*** Consultar registro de productos sacados ***/

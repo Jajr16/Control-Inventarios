@@ -105,11 +105,25 @@ function enviarSocket(identificador, mensaje) {
 function recibirSocket(identificador) {
     socket.once(identificador, function (Respuesta) {
         alert(Respuesta.mensaje);
-        if(Respuesta.Res == "Si"){
+        if (Respuesta.Res == "Si") {
             location.reload();
         }
     });
-    
+
+}
+
+function eliminar(elementoBoton, mensaje, mensajeSocket) {
+    var confirmacion = confirm(mensaje);
+
+    if (confirmacion) {
+        var fila = elementoBoton.parentNode;
+        var codigoBarras = fila.querySelector("td:first-child").innerHTML;
+
+        enviarSocket(mensajeSocket, codigoBarras);
+
+        // Eliminar la fila de la tabla
+        fila.parentNode.removeChild(fila);
+    }
 }
 
 
@@ -162,38 +176,36 @@ if (pathname == "/users/altasPro") {
         socket.emit("Consul_Prod");
         // Consulta de productos
         socket.on('Desp_Productos', async (data) => {
-            console.log('Datos recibidos:', data.Cod_Barras);
-
             const tbody = document.querySelector("#DatosProd tbody");
 
             if (data.eliminado == 1) {
                 tbody.innerHTML += `
-        <tr style="background-color: #590C09">
-            <td>${data.Cod_Barras}</td>
-            <td>${data.Categoria}</td>
-            <td>${data.NArt}</td>
-            <td>${data.NMarca}</td>
-            <td>${data.Desc}</td>
-            <td>${data.Unidad}</td>
-            <td>${data.Existencia}</td>
-            <td> - </td>
-            <td> - </td>
-        </tr>
-        `;
+            <tr style="background-color: #590C09">
+                <td>${data.Cod_Barras}</td>
+                <td>${data.Categoria}</td>
+                <td>${data.NArt}</td>
+                <td>${data.NMarca}</td>
+                <td>${data.Desc}</td>
+                <td>${data.Unidad}</td>
+                <td>${data.Existencia}</td>
+                <td> - </td>
+                <td> - </td>
+            </tr>
+            `;
             } else {
                 tbody.innerHTML += `
-        <tr>
-            <td>${data.Cod_Barras}</td>
-            <td>${data.Categoria}</td>
-            <td>${data.NArt}</td>
-            <td>${data.NMarca}</td>
-            <td>${data.Desc}</td>
-            <td>${data.Unidad}</td>
-            <td>${data.Existencia}</td>
-            <td class="BotonER"> Eliminar </td>
-            <td class="BotonMod" onclick='Abrir()'> Modificar </td>
-        </tr>
-        `;
+            <tr>
+                <td>${data.Cod_Barras}</td>
+                <td>${data.Categoria}</td>
+                <td>${data.NArt}</td>
+                <td>${data.NMarca}</td>
+                <td>${data.Desc}</td>
+                <td>${data.Unidad}</td>
+                <td>${data.Existencia}</td>
+                <td class="BotonER"> Eliminar </td>
+                <td class="BotonMod" onclick='Abrir()'> Modificar </td>
+            </tr>
+            `;
             }
 
             // Volver a asignar el evento de clic a los botones de eliminar
@@ -201,24 +213,10 @@ if (pathname == "/users/altasPro") {
 
             for (let i = 0; i < botonesEliminar.length; i++) {
                 botonesEliminar[i].addEventListener("click", function () {
-                    eliminarProducto(this);
+                    eliminar(this, '¿Deseas eliminar este producto?', 'Bajas_Prod');
                 });
             }
         });
-
-        function eliminarProducto(elementoBoton) {
-            var confirmacion = confirm('¿Deseas eliminar este producto?');
-
-            if (confirmacion) {
-                var fila = elementoBoton.parentNode;
-                var codigoBarras = fila.querySelector("td:first-child").innerHTML;
-
-                enviarSocket('Bajas_Prod', codigoBarras);
-
-                // Eliminar la fila de la tabla
-                fila.parentNode.removeChild(fila);
-            }
-        }
 
         // Barra de busqueda
         function buscar() {
@@ -320,7 +318,6 @@ if (pathname == "/users/altasPro") {
                 document.getElementById("MarcActiM").value = valores3;
                 document.getElementById("DescripcionPM").value = valores4;
                 document.getElementById("UnidadPM").value = valores5;
-                console.log(document.getElementById("UnidadPM").value);
                 //Aqui iniciamos otra cosa para modificar las facturas una por una
                 let BotonFacturasMod = document.getElementById("ModFact");
                 let Titulotable = document.getElementById("title_table");
@@ -879,4 +876,77 @@ if (pathname == "/users/altasPro") {
             recibirSocket("RespEquipos");
         }
     });
+} else if (pathname == "/users/ModEmp") {
+    if (tok == "4dnM3k0nl9s") {
+        enviarSocket("DatEmp", "");
+
+        window.addEventListener("load", function (event) {
+            cargarNombres2();
+        });
+
+        window.onpageshow = function () {
+            $('#NomJefe').select2({
+                allowClear: true,
+                placeholder: 'Buscar empleado'
+            });
+        };
+
+        // Consulta de productos
+        socket.on('DespEmp', async (data) => {
+            const tbody = document.querySelector("#DatosProd tbody");
+
+            tbody.innerHTML += `
+            <tr>
+                <td>${data.NomEmp}</td>
+                <td>${data.Area}</td>
+                <td>${data.NomJefe}</td>
+                <td class="BotonER"> Eliminar </td>
+                <td class="BotonMod"> Modificar </td>
+            </tr>
+            `;
+
+            // Volver a asignar el evento de clic a los botones de eliminar
+            const botonesEliminar = document.getElementsByClassName("BotonER");
+
+            for (let i = 0; i < botonesEliminar.length; i++) {
+                botonesEliminar[i].addEventListener("click", function () {
+                    eliminar(this, '¿Deseas eliminar este empleado?', 'EmpDelete');
+                });
+            }
+        });
+
+        var valores0 = "", valores1 = "", valores2 = "";
+        socket.once('ButtonUpEmp', () => {
+            let BotonMod = document.getElementsByClassName("BotonMod");
+
+            for (let i = 0; i < BotonMod.length; i++) {
+                BotonMod[i].addEventListener("click", LlenarFormEmp);
+            }
+
+            function LlenarFormEmp(e) {
+                var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+
+                for (let i = 0; i < elementosTD.length; i++) {
+                    // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                    valores0 = elementosTD[0].innerHTML;
+                    valores1 = elementosTD[1].innerHTML;
+                    valores2 = elementosTD[2].innerHTML;
+                }
+                document.getElementById("NEM").value = valores0;
+                document.getElementById("AreaME").value = valores1;
+                $('#NomJefe').val(valores2).trigger('change.select2');
+            }
+        });
+
+        const FormModEmp = $('#ModProduct');
+        FormModEmp.on('submit', function(e){
+            e.preventDefault();
+
+            if($('#NEM').val() != "" && $('#AreaME').val() != "" && $('#NomJefe')){
+                socket.emit('ModEmp', { NewName: $('#NEM').val(), NewArea: $('#AreaME').val(), NewBoss: $('#NomJefe').val() }, {OldName: valores0});
+            }
+        });
+
+        recibirSocket('MensajeEmp');
+    }
 }

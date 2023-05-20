@@ -494,6 +494,7 @@ select*from salidas_productos;
 select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp where Cod_BarrasS = 'PRUEBA1' and Num_EmpS = (select Num_Emp from empleado where Nom = 'MADRID MARTINEZ GABRIELA');
 select*from salida_almacen;
 select*from empleado;
+select empleado.Nom, empleado.Área, (select Nom from empleado as Jefe where Jefe.Num_emp = empleado.Num_Jefe) Nom_Jefe from empleado;
 select distinct(Área) from empleado;
 select*from usuario;
 -- Equipos Consultas
@@ -513,10 +514,16 @@ insert into empleado values(
 insert into usuario values(
 758, "ajimenez", "Clarac2017", '4dnM3k0nl9s'
 );
+select*from empleado;
+insert into empleado values(
+1, 'Prueba', 'Prueba', 758
+);
+delete from empleado where Num_emp = 1;
+update empleado set Nom = 'A', Área = 'B', Num_Jefe = (select Num_emp from (select Num_Emp from empleado where Nom = 'NAVARRO JIMENEZ MARTHA LIDIA') Jefe) where Num_emp = (select Num_emp from (select Num_Emp from empleado where Nom = 'Prueba') Empleado);
+#delete from empleado where Num_emp in (select Num_Emp from (select Num_Emp from empleado where Nom = 'Prueba') Emp);
+#select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp;
 
-select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp;
-
-select tokens.token from tokens inner join empleado on tokens.area = empleado.Área where empleado.Num_Emp = 760;
+#select tokens.token from tokens inner join empleado on tokens.area = empleado.Área where empleado.Num_Emp = 760;
 
 #select concat(Nom, " ", AP, " ", AM) NombreCompleto from empleado;
 #update factus_productos set Cantidad = 700 where Nfactura = 'ASKDFJ7';
