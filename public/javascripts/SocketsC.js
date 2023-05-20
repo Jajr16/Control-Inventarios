@@ -26,6 +26,28 @@ function buscar() {
         }
     })
 }
+
+function buscar1() {
+
+    var filtro = $("#buscar1").val().toUpperCase();
+
+    $("#DatosFacturas td").each(function () {
+        var textoEnTd = $(this).text().toUpperCase();
+        if (textoEnTd.indexOf(filtro) >= 0) {
+            $(this).addClass("existe");
+        } else {
+            $(this).removeClass("existe");
+        }
+    })
+
+    $("#DatosFacturas tbody tr").each(function () {
+        if ($(this).children(".existe").length > 0) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    })
+}
 //SELECTS
 function ListaNombres(Nombr) {
     var selectNombres2 = document.getElementById("NombreEmp");
@@ -248,28 +270,6 @@ if (pathname == "/users/altasPro") {
         socket.once('Error', (data) => {
             alert(data.mensaje);
         })
-
-        function buscar1() {
-
-            var filtro = $("#buscar1").val().toUpperCase();
-
-            $("#DatosFacturas td").each(function () {
-                var textoEnTd = $(this).text().toUpperCase();
-                if (textoEnTd.indexOf(filtro) >= 0) {
-                    $(this).addClass("existe");
-                } else {
-                    $(this).removeClass("existe");
-                }
-            })
-
-            $("#DatosFacturas tbody tr").each(function () {
-                if ($(this).children(".existe").length > 0) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            })
-        }
 
         // Crear excel
         function Excel() {
