@@ -437,7 +437,7 @@ io.on('connection', (socket) => {
     socket.on('Cambios_Usuario', async (data, dataOld) => {
 
         //Se agrega productos a la BD
-        db.query('update Usuario set Usuario = ?, Num_Emp = ?, Pass = ? where Usuario = ?', [data.Usuario, data.Nom_Emp, data.Pass, dataOld.OLDUser], function (err2, result) {
+        db.query('update Usuario set Usuario = ?, Pass = ? where Usuario = ?', [data.Usuario, data.Pass, dataOld.OLDUser], function (err2, result) {
             if (err2) socket.emit('RespDelUs', MensajeError) //Se imprime algún error que haya ocurrido
             if (result.affectedRows > 0) { //Si sí hizo una búsqueda
                 socket.emit('RespDelUs', { mensaje: 'Usuario modificado con éxito.', Res: 'Si'});//Mandar mensaje a cliente

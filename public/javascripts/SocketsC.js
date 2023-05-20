@@ -664,14 +664,11 @@ if (pathname == "/users/altasPro") {
 
         // Consulta de productos
         socket.on('Desp_Usuario', async (data) => {
-            console.log('Datos recibidos:', data.Usuario);
-
             const tbody = document.querySelector("#DatosProd tbody");
 
             tbody.innerHTML += `
             <tr>
                 <td>${data.Usuario}</td>
-                <td>${data.Num_Emp}</td>
                 <td>${data.Pass}</td>
                 <td class="BotonER"> Eliminar </td>
                 <td class="BotonMod" onclick='Abrir()'> Modificar </td>
@@ -746,11 +743,9 @@ if (pathname == "/users/altasPro") {
                     // obtenemos cada uno de los valores y los ponemos en la variable "valores"
                     valores0 = elementosTD[0].innerHTML;
                     valores1 = elementosTD[1].innerHTML;
-                    valores2 = elementosTD[2].innerHTML;
                 }
                 document.getElementById("UsuarioM").value = valores0;
-                document.getElementById("Num_EmpPM").value = valores1;
-                document.getElementById("PassM").value = valores2;
+                document.getElementById("PassM").value = valores1;
             }
 
             // Cambios de productos
