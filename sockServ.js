@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
             if (err) console.log(err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
                 console.log(result[0].token);
-                socket.emit('logInOK', { Usuario: result[0].User, token: result[0].token });//Mandar usuario y token al cliente
+                socket.emit('logInOK', { Usuario: result[0].Usuario, token: result[0].token });//Mandar usuario y token al cliente
             } else {
                 console.log(result);
                 socket.emit('logInError', { mensaje: 'Nombre de usuario o contraseña incorrectos.' });//Mandar mensaje de error a cliente
@@ -358,7 +358,7 @@ io.on('connection', (socket) => {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
                 for (var i = 0; i < result.length; i++) {
-                    socket.emit('Desp_Usuario', { Num_Emp: result[i].Num_Emp, Usuario: result[i].Usuario, Pass: result[i].Pass, token: result[i].token });//Mandar usuario y token al cliente
+                    socket.emit('Desp_Usuario', { Usuario: result[i].Usuario, Pass: result[i].Pass });//Mandar usuario y token al cliente
                 }
                 socket.emit('ButtonUp');
             }
@@ -427,7 +427,7 @@ io.on('connection', (socket) => {
                 });
 
             } else {
-                socket.emit('Usuarios_Inexistentes', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
+                socket.emit('RespDelUs', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
             }
         });
 
@@ -868,12 +868,22 @@ io.on('connection', (socket) => {
     });
 
     socket.on('EmpDelete', async (data) => {
-        db.query('delete from empleado where Num_emp in (select Num_Emp from (select Num_Emp from empleado where Nom = ?) Emp)', [data], function (err, result) {
+        console.log(data);
+        db.query('select empleado.Nom from empleado inner join usuario on empleado.Num_emp = usuario.Num_Emp where usuario.Usuario = ?', data.Nus, function(err, result){
             if (err) socket.emit('MensajeEmp', MensajeError);
-            if (result.affectedRows > 0) {
-                socket.emit('MensajeEmp', { mensaje: 'Empleado eliminado con éxito.' });
-            } else {
-                socket.emit('MensajeEmp', { mensaje: 'No se pudo eliminar al empleado, inténtelo de nuevo.' });
+            if(result.length > 0){
+                if(data.Nemp != result[0].Nom){
+                    db.query('delete from empleado where Num_emp in (select Num_Emp from (select Num_Emp from empleado where Nom = ?) Emp)', data.Nemp, function (err, result) {
+                        if (err) socket.emit('MensajeEmp', MensajeError);
+                        if (result.affectedRows > 0) {
+                            socket.emit('MensajeEmp', { mensaje: 'Empleado eliminado con éxito.', Res: 'Si'  });
+                        } else {
+                            socket.emit('MensajeEmp', { mensaje: 'No se pudo eliminar al empleado, inténtelo de nuevo.', Res: 'Si'  });
+                        }
+                    });
+                }else {
+                    socket.emit('MensajeEmp', { mensaje: "No puedes eliminarte a ti mismo.", Res: 'Si' });
+                }
             }
         });
     });

@@ -12,6 +12,7 @@ localStorage.clear();
                 socket.on('logInOK', function (Respuesta) {
                     // Usuario autenticado correctamente, guardar el token en localStorage
                     localStorage.setItem('token', Respuesta.token);//Guardamos el token de sesión localmente
+                    localStorage.setItem('user', Respuesta.Usuario);
                     location.href = "/users/index";
                 });
 

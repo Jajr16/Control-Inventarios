@@ -1,7 +1,5 @@
-console.log(localStorage.getItem("token"));
 var tok = localStorage.getItem("token");
 var socket = io.connect("http://localhost:3000");
-
 var pathname = window.location.pathname;
 //BUSCAR
 // Barra de busqueda
@@ -168,6 +166,17 @@ function eliminar(elementoBoton, mensaje, mensajeSocket) {
 
         // Eliminar la fila de la tabla
         fila.parentNode.removeChild(fila);
+    }
+}
+
+function eliminarEmp(elementoBoton, mensaje, mensajeSocket) {
+    var confirmacion = confirm(mensaje);
+
+    if (confirmacion) {
+        var fila = elementoBoton.parentNode;
+        var codigoBarras = fila.querySelector("td:first-child").innerHTML;
+
+        enviarSocket(mensajeSocket, {Nemp: codigoBarras, Nus: localStorage.getItem('user')});
     }
 }
 
@@ -648,7 +657,6 @@ if (pathname == "/users/altasPro") {
             <tr>
                 <td>${data.Usuario}</td>
                 <td>${data.Pass}</td>
-                <td>${data.token}</td>
                 <td class="BotonER"> Eliminar </td>
                 <td class="BotonMod" onclick='Abrir()'> Modificar </td>
             </tr>
@@ -670,15 +678,15 @@ if (pathname == "/users/altasPro") {
             if (confirmacion) {
                 var fila = elementoBoton.parentNode;
                 var Usuario = fila.querySelector("td:first-child").innerHTML;
-                var tokenUser = fila.querySelector("td:nth-child(3)").innerHTML;
-
-                if (tok == tokenUser) {
-                    alert("No se puede eliminar el usuario actual");
-                } else {
+                
+                if(localStorage.getItem('user') != Usuario){
                     enviarSocket('Bajas_Usuario', Usuario);
-                    // Eliminar la fila de la tabla
-                    fila.parentNode.removeChild(fila);
+                // Eliminar la fila de la tabla
+                fila.parentNode.removeChild(fila);
+                }else{
+                    alert("No puedes eliminar tu propio usuario.");
                 }
+                
             }
         }
 
@@ -1000,7 +1008,7 @@ if (pathname == "/users/altasPro") {
 
             for (let i = 0; i < botonesEliminar.length; i++) {
                 botonesEliminar[i].addEventListener("click", function () {
-                    eliminar(this, '¿Deseas eliminar este empleado?', 'EmpDelete');
+                    eliminarEmp(this, '¿Deseas eliminar este empleado?', 'EmpDelete');
                 });
             }
         });
