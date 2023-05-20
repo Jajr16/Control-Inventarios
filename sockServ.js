@@ -358,7 +358,7 @@ io.on('connection', (socket) => {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
                 for (var i = 0; i < result.length; i++) {
-                    socket.emit('Desp_Usuario', { Num_Emp: result[i].Num_Emp, Usuario: result[i].Usuario, Pass: result[i].Pass });//Mandar usuario y token al cliente
+                    socket.emit('Desp_Usuario', { Num_Emp: result[i].Num_Emp, Usuario: result[i].Usuario, Pass: result[i].Pass, token: result[i].token });//Mandar usuario y token al cliente
                 }
                 socket.emit('ButtonUp');
             }

@@ -505,17 +505,18 @@ select*from monitor;
 select*from teclado;
 select*from accesorio;
 select*from Usuario;
+insert into Usuario (Num_Emp, Usuario, Pass, token) values(759, "ajimenez", "clarac1", "4dnM3k0nl9s");
 delete from Usuario where Usuario = "a";
-update Usuario set Usuario = "Alfred", Num_Emp = 520, Pass = "clarac1" where Usuario = "Alfred";
+update Usuario set Usuario = "ajimenez", Num_Emp = 759, Pass = "clarac1" where Usuario = "ajimenez";
 select * from Salidas_Productos where FSalida BETWEEN "2023-05-16" and "2023-05-17";
 
 insert into equipo values(1, "213sa", "Monitor", "PC", "Pc", (select Num_emp from empleado where Nom = "BOLAÑOS MENDEZ GABRIELA"), "A");
 
-insert into empleado values(
-663, "NAVARRO JIMENEZ MARTHA LIDIA", "DIRECCION GENERAL", 663);
+insert into empleado (Num_emp, Nom, AP, AM, Área, Num_Jefe) values(
+777,"JOSE ALFREDO", "JIMENEZ", "RODRIGUEZ", "SISTEMAS", 777);
 
 insert into usuario values(
-758, "ajimenez", "Clarac2017", '4dnM3k0nl9s'
+777, "ajimenez", "Clarac2017", '4dnM3k0nl9s'
 );
 select*from empleado;
 insert into empleado values(

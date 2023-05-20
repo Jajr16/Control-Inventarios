@@ -648,6 +648,7 @@ if (pathname == "/users/altasPro") {
             <tr>
                 <td>${data.Usuario}</td>
                 <td>${data.Pass}</td>
+                <td>${data.token}</td>
                 <td class="BotonER"> Eliminar </td>
                 <td class="BotonMod" onclick='Abrir()'> Modificar </td>
             </tr>
@@ -669,11 +670,15 @@ if (pathname == "/users/altasPro") {
             if (confirmacion) {
                 var fila = elementoBoton.parentNode;
                 var Usuario = fila.querySelector("td:first-child").innerHTML;
+                var tokenUser = fila.querySelector("td:nth-child(3)").innerHTML;
 
-                enviarSocket('Bajas_Usuario', Usuario);
-
-                // Eliminar la fila de la tabla
-                fila.parentNode.removeChild(fila);
+                if (tok == tokenUser) {
+                    alert("No se puede eliminar el usuario actual");
+                } else {
+                    enviarSocket('Bajas_Usuario', Usuario);
+                    // Eliminar la fila de la tabla
+                    fila.parentNode.removeChild(fila);
+                }
             }
         }
 
