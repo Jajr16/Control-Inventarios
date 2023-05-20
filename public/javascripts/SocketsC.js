@@ -646,6 +646,149 @@ if (pathname == "/users/altasPro") {
     } else {
         location.href = "index";
     }
+} else if (pathname == "/users/consulUsuarios") {
+    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
+
+        // Asignación del evento de clic en los botones de eliminar
+        window.addEventListener('DOMContentLoaded', () => {
+            const botonesEliminar = document.getElementsByClassName("BotonER");
+
+            for (let i = 0; i < botonesEliminar.length; i++) {
+                botonesEliminar[i].addEventListener("click", function () {
+                    eliminarProducto(this);
+                });
+            }
+        });
+
+        socket.emit("Consul_Usuario");
+
+        // Consulta de productos
+        socket.on('Desp_Usuario', async (data) => {
+            console.log('Datos recibidos:', data.Usuario);
+
+            const tbody = document.querySelector("#DatosProd tbody");
+
+            tbody.innerHTML += `
+            <tr>
+                <td>${data.Usuario}</td>
+                <td>${data.Num_Emp}</td>
+                <td>${data.Pass}</td>
+                <td class="BotonER"> Eliminar </td>
+                <td class="BotonMod" onclick='Abrir()'> Modificar </td>
+            </tr>
+            `;
+
+            // Volver a asignar el evento de clic a los botones de eliminar
+            const botonesEliminar = document.getElementsByClassName("BotonER");
+
+            for (let i = 0; i < botonesEliminar.length; i++) {
+                botonesEliminar[i].addEventListener("click", function () {
+                    eliminarUsuario(this);
+                });
+            }
+        });
+
+        function eliminarUsuario(elementoBoton) {
+            var confirmacion = confirm('¿Deseas eliminar este usuario?');
+
+            if (confirmacion) {
+                var fila = elementoBoton.parentNode;
+                var Usuario = fila.querySelector("td:first-child").innerHTML;
+
+                enviarSocket('Bajas_Usuario', Usuario);
+
+                // Eliminar la fila de la tabla
+                fila.parentNode.removeChild(fila);
+            }
+        }
+
+        // Barra de busqueda
+        function buscar() {
+
+            var filtro = $("#buscar").val().toUpperCase();
+
+            $("#DatosProd td").each(function () {
+                var textoEnTd = $(this).text().toUpperCase();
+                if (textoEnTd.indexOf(filtro) >= 0) {
+                    $(this).addClass("existe");
+                } else {
+                    $(this).removeClass("existe");
+                }
+            })
+
+            $("#DatosProd tbody tr").each(function () {
+                if ($(this).children(".existe").length > 0) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            })
+        }
+
+        socket.once('Usuario_Eliminado', (data) => {
+            alert(data.mensaje);
+            location.reload();
+        });
+        socket.once('Error', (data) => {
+            alert(data.mensaje);
+            location.reload();
+        })
+
+        //Llenar datos en automático
+        var valores0 = "";
+        var valores1 = "";
+        var valores2 = "";
+
+        //Modificar productos
+        socket.on('ButtonUp', () => {
+            let BotonMod = document.getElementsByClassName("BotonMod");
+
+            for (let i = 0; i < BotonMod.length; i++) {
+                BotonMod[i].addEventListener("click", obtenerValoresMod);
+            }
+
+            function obtenerValoresMod(e) {
+
+                var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+                // recorremos cada uno de los elementos del array de elementos <td>
+                for (let i = 0; i < elementosTD.length; i++) {
+                    // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                    valores0 = elementosTD[0].innerHTML;
+                    valores1 = elementosTD[1].innerHTML;
+                    valores2 = elementosTD[2].innerHTML;
+                }
+                document.getElementById("UsuarioM").value = valores0;
+                document.getElementById("Num_EmpPM").value = valores1;
+                document.getElementById("PassM").value = valores2;
+            }
+
+            // Cambios de productos
+            const FormMod = document.querySelector("#ModProduct");
+
+            // Cambios de productos
+            FormMod.addEventListener("submit", Enviar);
+
+            function Enviar(e) {
+
+                e.preventDefault();
+
+                if ($("#UsuarioM").val() != "" && $("#Num_EmpPM").val() != "" && $("#PassM").val() != "" ) {
+                    socket.emit('Cambios_Usuario', { Usuario: $("#UsuarioM").val(), Nom_Emp: $("#Num_EmpPM").val(), Pass: $("#PassM").val() }, {OLDUser: valores0});
+
+                    socket.once('Usuario_Inexistente', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+
+                    socket.once('Fallo_ModUserd', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                    });
+                }
+            }
+        });
+    } else {
+        location.href = "index";
+    }
 } else if (pathname == "/users/RegistroEmpleado") {
     if (tok == "4dnM3k0nl9s") {
 

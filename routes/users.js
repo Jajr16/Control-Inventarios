@@ -101,8 +101,8 @@ router.get('/RegistrarUsuario', function (req, res, next) {
   res.render('RegistrarUsuario', { title: 'Crear nuevo usuario' });
 });
 
-router.get('/ModUsuario', function (req, res, next) {
-  res.render('ModUsuario', { title: 'Modificar un usuario' });
+router.get('/consulUsuarios', function (req, res, next) {
+  res.render('consulUsuarios', { title: 'Usuarios registrados' });
 });
 //Empleado nuevo
 router.get('/RegistroEmpleado', function (req, res, next) {
