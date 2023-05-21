@@ -619,7 +619,7 @@ io.on('connection', (socket) => {
         });
     });
 
-    // Crear excel de consultas de almacen
+    // Crear excel de consultas de almacen con filtro de fechas
     socket.on('SacarExcel', async (data) => {
 
         const workbook = new Excel.Workbook();
@@ -756,6 +756,144 @@ io.on('connection', (socket) => {
         socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
     });
 
+    // Crear excel de consultas de almacen sin filtro
+    socket.on('SacarExcelSinFiltro', async (data) => {
+
+        const workbook = new Excel.Workbook();
+        var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
+
+        workbook.xlsx.readFile(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx')).then(async () => {
+
+            const newWorkbook = new Excel.Workbook();//Cargamos una copia de archivo anterior
+            await newWorkbook.xlsx.readFile(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx'));
+
+            const Newworksheet = newWorkbook.getWorksheet('My Sheet');
+
+            Newworksheet.columns = [
+                { header: 'Código de Barras', key: 'CB', width: 25 },
+                { header: 'Artículo', key: 'Articulo', width: 40, },
+                { header: 'En existencia', key: 'Exist', width: 20, },
+                { header: 'Encargado', key: 'Encargado', width: 45, },
+                { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
+                { header: 'Fecha de salida', key: 'FecSac', width: 30, }
+            ];
+            db.query('select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp', async function (err, result) {
+                // If si marca error
+                if (err) console.log(err);
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        Newworksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].Articulo, Exist: result[i].Existencia, Encargado: result[i].Nom, CantSac: result[i].Cantidad_Salida, FecSac: result[i].FSalida });
+                    }
+                    //Ruta del archivo
+                    const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS) + '.xlsx');
+                    console.log("a", pathExcel);
+                    newWorkbook.xlsx.writeFile(pathExcel);
+                    contadorS = contadorS + 1;
+                }
+            });
+            // Si el documuento no existe
+        }).catch(() => {
+            const worksheet = workbook.addWorksheet('My Sheet');
+
+            worksheet.columns = [
+                { header: 'Código de Barras', key: 'CB', width: 25 },
+                { header: 'Artículo', key: 'Articulo', width: 40, },
+                { header: 'En existencia', key: 'Exist', width: 20, },
+                { header: 'Encargado', key: 'Encargado', width: 45, },
+                { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
+                { header: 'Fecha de salida', key: 'FecSac', width: 30, }
+            ];
+
+            db.query('select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp', async function (err, result) {
+                // If si marca error
+                if (err) console.log(err);
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        worksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].Articulo, Exist: result[i].Existencia, Encargado: result[i].Nom, CantSac: result[i].Cantidad_Salida, FecSac: result[i].FSalida });
+                    }
+
+                    //ESTILO DE EXCEL
+                    worksheet.getCell('A1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('A1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('B1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('B1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('C1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('C1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('D1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('D1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('E1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('E1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('F1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('F1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.autoFilter = 'A:F';
+
+                    //Ruta del archivo
+                    const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contadorS + '.xlsx');
+                    workbook.xlsx.writeFile(pathExcel);
+                    console.log("b", pathExcel);
+                    contadorS = contadorS + 1;
+                }
+            });
+        });
+        socket.emit("SacarRespExcelSinFiltro", { mensaje: "Excel descargado en la carpeta Descargas" });
+    });
+
+    // altas de equipos
     socket.on('Alta_Equipos', async (data) => {
         db.query('select * from equipo where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) socket.emit(MensajeError);

@@ -846,6 +846,13 @@ if (pathname == "/users/altasPro") {
                     alert(data.mensaje);
                     location.reload();
                 });
+            } else {
+                socket.emit("SacarExcelSinFiltro");
+
+                socket.once("SacarRespExcelSinFiltro", (data) => {
+                    alert(data.mensaje);
+                    location.reload();
+                });
             }
         }
 
