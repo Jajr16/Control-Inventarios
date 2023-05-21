@@ -666,7 +666,7 @@ io.on('connection', (socket) => {
                 { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
                 { header: 'Fecha de salida', key: 'FecSac', width: 30, }
             ];
-
+            console.log(data);
             db.query('select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp where FSalida BETWEEN ? and ?', [data.fechaInicio, data.fechaFin], function (err, result) {
                 // If si marca error
                 if (err) console.log(err);
@@ -757,7 +757,7 @@ io.on('connection', (socket) => {
     });
 
     // Crear excel de consultas de almacen sin filtro
-    socket.on('SacarExcelSinFiltro', async (data) => {
+    socket.on('SacarExcelSinFiltro', async () => {
 
         const workbook = new Excel.Workbook();
         var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
