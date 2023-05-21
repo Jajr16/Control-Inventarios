@@ -176,7 +176,7 @@ function eliminarEmp(elementoBoton, mensaje, mensajeSocket) {
         var fila = elementoBoton.parentNode;
         var codigoBarras = fila.querySelector("td:first-child").innerHTML;
 
-        enviarSocket(mensajeSocket, {Nemp: codigoBarras, Nus: localStorage.getItem('user')});
+        enviarSocket(mensajeSocket, { Nemp: codigoBarras, Nus: localStorage.getItem('user') });
     }
 }
 
@@ -678,15 +678,15 @@ if (pathname == "/users/altasPro") {
             if (confirmacion) {
                 var fila = elementoBoton.parentNode;
                 var Usuario = fila.querySelector("td:first-child").innerHTML;
-                
-                if(localStorage.getItem('user') != Usuario){
+
+                if (localStorage.getItem('user') != Usuario) {
                     enviarSocket('Bajas_Usuario', Usuario);
-                // Eliminar la fila de la tabla
-                fila.parentNode.removeChild(fila);
-                }else{
+                    // Eliminar la fila de la tabla
+                    fila.parentNode.removeChild(fila);
+                } else {
                     alert("No puedes eliminar tu propio usuario.");
                 }
-                
+
             }
         }
 
@@ -836,24 +836,16 @@ if (pathname == "/users/altasPro") {
         // Crear excel de facturas
         function ExcelFacSac() {
 
-            var filtroInicio = $("#fechaInicio").val(); // Obtener la fecha de inicio como objeto Date
-            var filtroFin = $("#fechaFin").val(); // Obtener la fecha de fin como objeto Date
+            var filtroInicio = new Date($("#fechaInicio").val()); // Obtener la fecha de inicio como objeto Date
+            var filtroFin = new Date($("#fechaFin").val()); // Obtener la fecha de fin como objeto Date
+            filtroFin.setDate(filtroFin.getDate() + 1);
 
-            if (filtroInicio != "" && filtroFin != "") {
-                socket.emit("SacarExcel", { fechaInicio: filtroInicio, fechaFin: filtroFin });
+            socket.emit("SacarExcel", { fechaInicio: filtroInicio, fechaFin: filtroFin });
 
-                socket.once("SacarRespExcel", (data) => {
-                    alert(data.mensaje);
-                    location.reload();
-                });
-            } else {
-                socket.emit("SacarExcelSinFiltro");
-
-                socket.once("SacarRespExcelSinFiltro", (data) => {
-                    alert(data.mensaje);
-                    location.reload();
-                });
-            }
+            socket.once("SacarRespExcel", (data) => {
+                alert(data.mensaje);
+                location.reload();
+            });
         }
 
     } else {

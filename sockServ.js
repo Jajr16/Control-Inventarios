@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
     }
 
     let nombreArchivo = "Almacen" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
-    let nombreSacarProd = "Retiro_Almacen";
+    let nombreSacarProd = "Retiro_Almacen" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
 
     // Login
     socket.on('LG', async (data) => {
@@ -416,7 +416,7 @@ io.on('connection', (socket) => {
             if (err) console.log("Error de búsqueda: " + err); //Se imprime algún error que haya ocurrido
             if (result.length > 0) { //Si sí hizo una búsqueda
                 db.query('delete from Usuario where Usuario = ?', data, function (err, result) {
-                    if (err) socket.emit('RespDelUs',MensajeError);
+                    if (err) socket.emit('RespDelUs', MensajeError);
                     console.log(data);
                     if (result.affectedRows > 0) {
                         console.log("Resultado de eliminacion de usuario: ", result);
@@ -440,7 +440,7 @@ io.on('connection', (socket) => {
         db.query('update Usuario set Usuario = ?, Pass = ? where Usuario = ?', [data.Usuario, data.Pass, dataOld.OLDUser], function (err2, result) {
             if (err2) socket.emit('RespDelUs', MensajeError) //Se imprime algún error que haya ocurrido
             if (result.affectedRows > 0) { //Si sí hizo una búsqueda
-                socket.emit('RespDelUs', { mensaje: 'Usuario modificado con éxito.', Res: 'Si'});//Mandar mensaje a cliente
+                socket.emit('RespDelUs', { mensaje: 'Usuario modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
             } else {
                 socket.emit('RespDelUs', { mensaje: "No se pudo modificar el usuario." })
             }
@@ -625,14 +625,11 @@ io.on('connection', (socket) => {
         const workbook = new Excel.Workbook();
         var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
 
-        workbook.xlsx.readFile(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx')).then(async () => {
+        if ((data.fechaInicio && data.fechaFin) == undefined) {
+  
+            const worksheet = workbook.addWorksheet('My Sheet');
 
-            const newWorkbook = new Excel.Workbook();//Cargamos una copia de archivo anterior
-            await newWorkbook.xlsx.readFile(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx'));
-
-            const Newworksheet = newWorkbook.getWorksheet('My Sheet');
-
-            Newworksheet.columns = [
+            worksheet.columns = [
                 { header: 'Código de Barras', key: 'CB', width: 25 },
                 { header: 'Artículo', key: 'Articulo', width: 40, },
                 { header: 'En existencia', key: 'Exist', width: 20, },
@@ -640,22 +637,93 @@ io.on('connection', (socket) => {
                 { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
                 { header: 'Fecha de salida', key: 'FecSac', width: 30, }
             ];
-            db.query('select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp where FSalida BETWEEN ? and ?', [data.fechaInicio, data.fechaFin], function (err, result) {
+
+            db.query('select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp', async function (err, result) {
                 // If si marca error
                 if (err) console.log(err);
                 if (result.length > 0) {
                     for (var i = 0; i < result.length; i++) {
-                        Newworksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].Articulo, Exist: result[i].Existencia, Encargado: result[i].Nom, CantSac: result[i].Cantidad_Salida, FecSac: result[i].FSalida });
+                        worksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].Articulo, Exist: result[i].Existencia, Encargado: result[i].Nom, CantSac: result[i].Cantidad_Salida, FecSac: result[i].FSalida });
                     }
+
+                    //ESTILO DE EXCEL
+                    worksheet.getCell('A1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('A1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('B1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('B1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('C1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('C1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('D1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('D1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('E1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('E1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('F1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('F1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.autoFilter = 'A:F';
+
                     //Ruta del archivo
-                    const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS) + '.xlsx');
-                    console.log("a", pathExcel);
-                    newWorkbook.xlsx.writeFile(pathExcel);
+                    const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contadorS + '.xlsx');
+                    workbook.xlsx.writeFile(pathExcel);
+                    console.log("b", pathExcel);
                     contadorS = contadorS + 1;
                 }
             });
-            // Si el documuento no existe
-        }).catch(() => {
+        } else {
             const worksheet = workbook.addWorksheet('My Sheet');
 
             worksheet.columns = [
@@ -752,145 +820,8 @@ io.on('connection', (socket) => {
                     contadorS = contadorS + 1;
                 }
             });
-        });
+        }
         socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
-    });
-
-    // Crear excel de consultas de almacen sin filtro
-    socket.on('SacarExcelSinFiltro', async () => {
-
-        const workbook = new Excel.Workbook();
-        var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
-
-        workbook.xlsx.readFile(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx')).then(async () => {
-
-            const newWorkbook = new Excel.Workbook();//Cargamos una copia de archivo anterior
-            await newWorkbook.xlsx.readFile(path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS - 1) + '.xlsx'));
-
-            const Newworksheet = newWorkbook.getWorksheet('My Sheet');
-
-            Newworksheet.columns = [
-                { header: 'Código de Barras', key: 'CB', width: 25 },
-                { header: 'Artículo', key: 'Articulo', width: 40, },
-                { header: 'En existencia', key: 'Exist', width: 20, },
-                { header: 'Encargado', key: 'Encargado', width: 45, },
-                { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
-                { header: 'Fecha de salida', key: 'FecSac', width: 30, }
-            ];
-            db.query('select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp', async function (err, result) {
-                // If si marca error
-                if (err) console.log(err);
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        Newworksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].Articulo, Exist: result[i].Existencia, Encargado: result[i].Nom, CantSac: result[i].Cantidad_Salida, FecSac: result[i].FSalida });
-                    }
-                    //Ruta del archivo
-                    const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + (contadorS) + '.xlsx');
-                    console.log("a", pathExcel);
-                    newWorkbook.xlsx.writeFile(pathExcel);
-                    contadorS = contadorS + 1;
-                }
-            });
-            // Si el documuento no existe
-        }).catch(() => {
-            const worksheet = workbook.addWorksheet('My Sheet');
-
-            worksheet.columns = [
-                { header: 'Código de Barras', key: 'CB', width: 25 },
-                { header: 'Artículo', key: 'Articulo', width: 40, },
-                { header: 'En existencia', key: 'Exist', width: 20, },
-                { header: 'Encargado', key: 'Encargado', width: 45, },
-                { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
-                { header: 'Fecha de salida', key: 'FecSac', width: 30, }
-            ];
-
-            db.query('select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp', async function (err, result) {
-                // If si marca error
-                if (err) console.log(err);
-                if (result.length > 0) {
-                    for (var i = 0; i < result.length; i++) {
-                        worksheet.addRow({ CB: result[i].Cod_BarrasS, Articulo: result[i].Articulo, Exist: result[i].Existencia, Encargado: result[i].Nom, CantSac: result[i].Cantidad_Salida, FecSac: result[i].FSalida });
-                    }
-
-                    //ESTILO DE EXCEL
-                    worksheet.getCell('A1').fill = {
-                        type: 'pattern',
-                        pattern: 'solid',
-                        fgColor: { argb: 'F003A9E' }
-                    };
-                    worksheet.getCell('A1').font = {
-                        name: 'Arial',
-                        color: { argb: 'FFFFFF' },
-                        bold: true
-                    };
-
-                    worksheet.getCell('B1').fill = {
-                        type: 'pattern',
-                        pattern: 'solid',
-                        fgColor: { argb: 'F003A9E' }
-                    };
-                    worksheet.getCell('B1').font = {
-                        name: 'Arial',
-                        color: { argb: 'FFFFFF' },
-                        bold: true
-                    };
-
-                    worksheet.getCell('C1').fill = {
-                        type: 'pattern',
-                        pattern: 'solid',
-                        fgColor: { argb: 'F003A9E' }
-                    };
-                    worksheet.getCell('C1').font = {
-                        name: 'Arial',
-                        color: { argb: 'FFFFFF' },
-                        bold: true
-                    };
-
-                    worksheet.getCell('D1').fill = {
-                        type: 'pattern',
-                        pattern: 'solid',
-                        fgColor: { argb: 'F003A9E' }
-                    };
-                    worksheet.getCell('D1').font = {
-                        name: 'Arial',
-                        color: { argb: 'FFFFFF' },
-                        bold: true
-                    };
-
-                    worksheet.getCell('E1').fill = {
-                        type: 'pattern',
-                        pattern: 'solid',
-                        fgColor: { argb: 'F003A9E' }
-                    };
-                    worksheet.getCell('E1').font = {
-                        name: 'Arial',
-                        color: { argb: 'FFFFFF' },
-                        bold: true
-                    };
-
-                    worksheet.getCell('F1').fill = {
-                        type: 'pattern',
-                        pattern: 'solid',
-                        fgColor: { argb: 'F003A9E' }
-                    };
-                    worksheet.getCell('F1').font = {
-                        name: 'Arial',
-                        color: { argb: 'FFFFFF' },
-                        bold: true
-                    };
-
-                    worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
-                    worksheet.autoFilter = 'A:F';
-
-                    //Ruta del archivo
-                    const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contadorS + '.xlsx');
-                    workbook.xlsx.writeFile(pathExcel);
-                    console.log("b", pathExcel);
-                    contadorS = contadorS + 1;
-                }
-            });
-        });
-        socket.emit("SacarRespExcelSinFiltro", { mensaje: "Excel descargado en la carpeta Descargas" });
     });
 
     // altas de equipos
@@ -1007,19 +938,19 @@ io.on('connection', (socket) => {
 
     socket.on('EmpDelete', async (data) => {
         console.log(data);
-        db.query('select empleado.Nom from empleado inner join usuario on empleado.Num_emp = usuario.Num_Emp where usuario.Usuario = ?', data.Nus, function(err, result){
+        db.query('select empleado.Nom from empleado inner join usuario on empleado.Num_emp = usuario.Num_Emp where usuario.Usuario = ?', data.Nus, function (err, result) {
             if (err) socket.emit('MensajeEmp', MensajeError);
-            if(result.length > 0){
-                if(data.Nemp != result[0].Nom){
+            if (result.length > 0) {
+                if (data.Nemp != result[0].Nom) {
                     db.query('delete from empleado where Num_emp in (select Num_Emp from (select Num_Emp from empleado where Nom = ?) Emp)', data.Nemp, function (err, result) {
                         if (err) socket.emit('MensajeEmp', MensajeError);
                         if (result.affectedRows > 0) {
-                            socket.emit('MensajeEmp', { mensaje: 'Empleado eliminado con éxito.', Res: 'Si'  });
+                            socket.emit('MensajeEmp', { mensaje: 'Empleado eliminado con éxito.', Res: 'Si' });
                         } else {
-                            socket.emit('MensajeEmp', { mensaje: 'No se pudo eliminar al empleado, inténtelo de nuevo.', Res: 'Si'  });
+                            socket.emit('MensajeEmp', { mensaje: 'No se pudo eliminar al empleado, inténtelo de nuevo.', Res: 'Si' });
                         }
                     });
-                }else {
+                } else {
                     socket.emit('MensajeEmp', { mensaje: "No puedes eliminarte a ti mismo.", Res: 'Si' });
                 }
             }
