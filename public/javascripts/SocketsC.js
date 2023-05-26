@@ -180,6 +180,20 @@ function eliminarEmp(elementoBoton, mensaje, mensajeSocket) {
     }
 }
 
+function eliminarMobiliario(elementoBoton, mensaje, mensajeSocket) {
+    var confirmacion = confirm(mensaje);
+
+    if (confirmacion) {
+        var fila = elementoBoton.parentNode;
+        var NumInventario = fila.querySelector("td:first-child").innerHTML;
+
+        enviarSocket(mensajeSocket, NumInventario);
+
+        // Eliminar la fila de la tabla
+        fila.parentNode.removeChild(fila);
+    }
+}
+
 
 if (pathname == "/users/altasPro") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
@@ -695,7 +709,7 @@ if (pathname == "/users/altasPro") {
         var valores1 = "";
         var valores2 = "";
 
-        //Modificar productos
+        //Modificar usuarios
         socket.on('ButtonUp', () => {
             let BotonMod = document.getElementsByClassName("BotonMod");
 
@@ -1045,5 +1059,119 @@ if (pathname == "/users/altasPro") {
         });
 
         recibirSocket('MensajeEmp');
+    }
+} else if (pathname == "/users/consulMob") {
+    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
+        
+        // Asignación del evento de clic en los botones de eliminar
+        window.addEventListener('DOMContentLoaded', () => {
+            const botonesEliminar = document.getElementsByClassName("BotonER");
+
+            for (let i = 0; i < botonesEliminar.length; i++) {
+                botonesEliminar[i].addEventListener("click", function () {
+                    eliminarMobiliario(this, '¿Deseas eliminar este producto de mobiliario?', 'Bajas_Mobiliario');
+                });
+            }
+        });
+
+        socket.emit("Consul_Mobiliario");
+
+        // Consulta de productos
+        socket.on('Desp_Mobiliario', async (data) => {
+            const tbody = document.querySelector("#DatosProd tbody");
+
+            tbody.innerHTML += `
+            <tr>
+                <td>${data.Num_Inventario}</td>
+                <td>${data.Descripcion}</td>
+                <td>${data.Num_emp}</td>
+                <td class="BotonER"> Eliminar </td>
+                <td class="BotonMod" onclick='Abrir()'> Modificar </td>
+            </tr>
+            `;
+
+            // Volver a asignar el evento de clic a los botones de eliminar
+            const botonesEliminar = document.getElementsByClassName("BotonER");
+
+            for (let i = 0; i < botonesEliminar.length; i++) {
+                botonesEliminar[i].addEventListener("click", function () {
+                    eliminarMobiliario(this, '¿Deseas eliminar este producto de mobiliario?', 'Bajas_Mobiliario');
+                });
+            }
+        });
+
+        //Llenar datos en automático
+        var valores0 = "";
+        var valores1 = "";
+        var valores2 = "";
+
+        //Modificar usuarios
+        socket.on('ButtonUp', () => {
+            let BotonMod = document.getElementsByClassName("BotonMod");
+
+            for (let i = 0; i < BotonMod.length; i++) {
+                BotonMod[i].addEventListener("click", obtenerValoresMod);
+            }
+
+            function obtenerValoresMod(e) {
+
+                var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+                // recorremos cada uno de los elementos del array de elementos <td>
+                for (let i = 0; i < elementosTD.length; i++) {
+                    // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                    valores0 = elementosTD[0].innerHTML;
+                    valores1 = elementosTD[1].innerHTML;
+                    valores2 = elementosTD[2].innerHTML;
+                }
+                document.getElementById("NumInvM").value = valores0;
+                document.getElementById("DescM").value = valores1;
+                document.getElementById("Num_EmpM").value = valores2;
+            }
+
+            // Cambios de productos
+            const FormMod = document.querySelector("#ModMobi");
+
+            // Cambios de productos
+            FormMod.addEventListener("submit", Enviar);
+
+            function Enviar(e) {
+
+                e.preventDefault();
+
+                if ($("#NumInvM").val() != "" && $("#DescM").val() != "" && $("#Num_EmpM").val() != "") {
+                    socket.emit('Cambios_Mobiliario', { Num_Inventario: $("#NumInvM").val(), Descripcion: $("#DescM").val(), Num_emp: $("#Num_EmpM").val() }, { OLDNumInv: valores0 });
+                }
+            }
+        });
+        recibirSocket('RespDelMob');
+    } else {
+        location.href = "index";
+    }
+} else if (pathname == "/users/altasMob") {
+    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
+
+        const FormProduct = document.querySelector("#AltaMobiliario");
+
+        // Altas de productos
+        FormProduct.addEventListener("submit", Enviar);
+
+        function Enviar(e) {
+            e.preventDefault();
+            if ($("#NumInvM").val() != "" && $("#DescM").val() != "" && $("#Num_EmpM").val() != "" ) {
+
+                socket.emit('Alta_Mob', { Num_Inventario: $("#NumInvM").val(), Descripcion: $("#DescM").val(), Num_emp: $("#Num_EmpM").val() });
+
+                socket.once('Mobiliario_Existente', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                    location.reload();
+                });
+
+                socket.once('Mobiliario_Inexistente', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+                    location.reload();
+                });
+            }
+        }
+
     }
 }

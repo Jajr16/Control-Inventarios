@@ -508,6 +508,7 @@ select*from monitor;
 select*from teclado;
 select*from accesorio;
 select*from Usuario;
+select*from mobiliario;
 insert into Usuario (Num_Emp, Usuario, Pass, token) values(759, "ajimenez", "clarac1", "4dnM3k0nl9s");
 delete from Usuario where Usuario = "a";
 update Usuario set Usuario = "ajimenez", Num_Emp = 759, Pass = "clarac1" where Usuario = "ajimenez";
@@ -521,6 +522,8 @@ insert into empleado (Num_emp, Nom, AP, AM, Área, Num_Jefe) values(
 insert into usuario values(
 758, "ajimenez", "Clarac2017", '4dnM3k0nl9s'
 );
+
+insert into mobiliario (num_Inventario, Descripcion, Num_emp) values (1,"Mesa",777);
 #insert into usuario values(
 #1, 'Prueba','123', '4dnM3k0nl9s');
 #select*from empleado;

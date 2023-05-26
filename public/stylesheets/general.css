@@ -498,6 +498,22 @@ h5 {
     transform: scale(1.1);
 }
 
+.BotonMOBA {
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background: linear-gradient(to top, #e1fa03, #6e7a00);
+    color: rgb(251, 252, 192);
+    border-radius: 10%;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonMOBA:hover {
+    background: linear-gradient(to top, #e1fa03, #f0fa9a);
+    color: rgb(35, 39, 35);
+    transform: scale(1.1);
+}
+
 .TamBAG{
     width: 100%;
     height: auto;
@@ -562,6 +578,15 @@ h5 {
     text-align: center;
     background: linear-gradient(to top, #c5ffc3, #03fa18);
     color: rgb(53, 88, 53);
+    transition: all 0.3s ease 0s;
+}
+
+.BotonMOB {
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background: linear-gradient(to top, #eff7ae, #e1fa03);
+    color: rgb(110, 109, 0);
     transition: all 0.3s ease 0s;
 }
 

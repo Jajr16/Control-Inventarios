@@ -14,7 +14,8 @@
         href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap"
         rel="stylesheet">
     <link rel='stylesheet' href='/stylesheets/general.css' />
-
+    <link rel='stylesheet' href='/stylesheets/consultas.css' />
+    <link rel='stylesheet' href='/stylesheets/modal.css' />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script src="/socket.io/socket.io.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css">
@@ -31,6 +32,7 @@
             <ul class="nav-links" id="Linksnav">
                 <li><a href="/users/consulEqp">Equipos</a></li>
                 <li><a href="/users/consulPro">Productos</a></li>
+                <li><a href="/users/index">Inicio</a></li>
             </ul>
         </nav>
         <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
@@ -41,6 +43,7 @@
             <div class="overlay-content" id="MenuCel">
                 <a href="/users/consulEqp">Equipos</a>
                 <a href="/users/consulPro">Productos</a>
+                <a href="/users/index">Inicio</a>
                 <a onclick="CerrarSesion()">Cerrar Sesión</a>
                 <a href="#">Tema</a>
             </div>
@@ -48,8 +51,66 @@
     </header>
     <script type="text/javascript" src="/javascripts/navbar.js"></script>
     <script type="text/javascript" src="/javascripts/ValidarSesion.js"></script>
-    <script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
-    <script type="text/javascript" src="/javascripts/NavEspecializado.js"></script>
+    <div class="card" id="productos">
+        <div class="card-header">
+            <h4>Mobiliario en almacén</h4>
+        </div>
+        <input type="text" id="buscar" oninput="buscar(); mayus(this);" placeholder="BUSCAR EN TABLA"
+            title="Empieza a escribir para buscar">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="DatosProd">
+                    <thead>
+                        <tr id="firstrow">
+                            <th>Número de inventario</th>
+                            <th>Descripción</th>
+                            <th>Número de empleado</th>
+                            <th>Eliminar</th>
+                            <th>Modificar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="pen">
+            <div class="controls">
+            </div>
+            <div class="overlay cancel-modal"></div>
+            <div class="modal-container cancel-modal">
+                <div class="Contenedor Contenido-centrado Alta">
+                    <form name="ModMobi" id="ModMobi">
+                        <div class="Tres_Column">
+                            <div>
+                                <label>Número de inventario</label>
+                                <input autocomplete="off" type="number" id="NumInvM" min="1" name="NumInvM" required
+                                    maxlength="45">
+                            </div>
+                            <div>
+                                <label>Descripción</label>
+                                <input autocomplete="off" type="text" id="DescM" name="DescM" required maxlength="45"
+                                    oninput="mayus(this);">
+                            </div>
+                            <div>
+                                <label>Número de empleado</label>
+                                <input autocomplete="off" type="number" id="Num_EmpM" name="Num_EmpM" required
+                                    maxlength="45">
+                            </div>
+                        </div>
+                        <div class="Cuatro_Column">
+                            <input type="submit" id="Modify" class="BotonAE" value="Aceptar">
+                            <input type="button" class="BotonReg" value="Cancelar">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 </body>
+<script src="/javascripts/SocketsC.js" type="text/javascript"></script>
+<script src='https://s3.amazonaws.com/popmotion.io/static/dist/popmotion.min.js'></script>
+<script src="/javascripts/modal.js" type="text/javascript"></script>
+<script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
+<script type="text/javascript" src="/javascripts/NavEspecializado.js"></script>
 
 </html>

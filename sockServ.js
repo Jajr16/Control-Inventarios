@@ -350,7 +350,7 @@ io.on('connection', (socket) => {
         });
     });
 
-    // Consultas de productos
+    // Consultas de usuario
     socket.on('Consul_Usuario', async () => {
 
         // Autenticar que haga las consultas
@@ -626,7 +626,7 @@ io.on('connection', (socket) => {
         var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
 
         if ((data.fechaInicio && data.fechaFin) == undefined) {
-  
+
             const worksheet = workbook.addWorksheet('My Sheet');
 
             worksheet.columns = [
@@ -965,6 +965,88 @@ io.on('connection', (socket) => {
                 socket.emit('MensajeEmp', { mensaje: 'Empleado modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
             } else {
                 socket.emit('MensajeEmp', { mensaje: "No se pudo modificar el empleado." });
+            }
+        });
+    });
+
+    // Consultas de mobiliario
+    socket.on('Consul_Mobiliario', async () => {
+
+        // Autenticar que haga las consultas
+        db.query('select*from mobiliario', function (err, result) {
+            if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
+            if (result.length > 0) {//Si sí hizo una búsqueda
+                for (var i = 0; i < result.length; i++) {
+                    socket.emit('Desp_Mobiliario', { Num_Inventario: result[i].Num_Inventario, Descripcion: result[i].Descripcion, Num_emp: result[i].Num_emp });//Mandar usuario y token al cliente
+                }
+                socket.emit('ButtonUp');
+            }
+            result.length = 0;
+        });
+
+    });
+
+    // Altas de mobiliario
+    socket.on('Alta_Mob', async (data) => {
+
+        //Autentificar que no exista un producto igual
+        db.query('select*from mobiliario where Num_Inventario = ?', [data.Num_Inventario], function (err, result) {
+
+            if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
+
+            if (result.length > 0) {//Si sí hizo una búsqueda
+                socket.emit('Mobiliario_Existente', { mensaje: "Este artículo de mobiliario ya estaba registrado.\nEn caso de que quiera agregar más cantidad de este producto, por favor ingrese a la página de 'Ingresar más mobiliario'." });
+            } else {
+                //Se agrega productos a la BD
+                db.query('insert into mobiliario values (?,?,?)', [data.Num_Inventario, data.Descripcion, data.Num_emp], function (err2, result) {
+                    if (err2) console.log("Error de inserción de productos: ", err2);
+                    if (result) {
+                        console.log("Resultado de inserción de productos: ", result);
+                        socket.emit('Mobiliario_Inexistente', { mensaje: 'Mobiliario dado de alta.' });//Mandar mensaje de error a cliente
+                    }
+                });
+            }
+        });
+
+        data.length = 0;
+
+    });
+
+    // Bajas en mobiliario
+    socket.on('Bajas_Mobiliario', async (data) => {
+
+        // Autenticar que haga las consultas
+        db.query('select*from mobiliario', function (err, result) {
+            if (err) console.log("Error de búsqueda: " + err); //Se imprime algún error que haya ocurrido
+            if (result.length > 0) { //Si sí hizo una búsqueda
+                db.query('delete from mobiliario where Num_Inventario = ?', data, function (err, result) {
+                    if (err) socket.emit('RespDelMob', MensajeError);
+                    console.log(data);
+                    if (result.affectedRows > 0) {
+                        console.log("Resultado de eliminacion de mobiliario: ", result);
+                        socket.emit('RespDelMob', { mensaje: 'Mobiliario dado de baja.' });//Mandar mensaje de éxito a cliente
+                    } else {
+                        socket.emit('RespDelMob', { mensaje: "Mobiliario no eliminado, inténtelo de nuevo." });
+                    }
+                });
+
+            } else {
+                socket.emit('RespDelMob', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
+            }
+        });
+
+    });
+
+    // Cambios en mobiliario
+    socket.on('Cambios_Mobiliario', async (data, dataOld) => {
+
+        //Se agrega productos a la BD
+        db.query('update mobiliario set Num_Inventario = ?, Descripcion = ?, Num_emp = ? where Num_Inventario = ?', [data.Num_Inventario, data.Descripcion, data.Num_emp, dataOld.OLDNumInv], function (err2, result) {
+            if (err2) socket.emit('RespDelMob', MensajeError) //Se imprime algún error que haya ocurrido
+            if (result.affectedRows > 0) { //Si sí hizo una búsqueda
+                socket.emit('RespDelMob', { mensaje: 'Mobiliario modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
+            } else {
+                socket.emit('RespDelMob', { mensaje: "No se pudo modificar el mobiliario." })
             }
         });
     });
