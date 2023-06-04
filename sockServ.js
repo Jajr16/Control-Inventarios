@@ -12,8 +12,8 @@ var contadorS = 1;
 //MENSAJE DE ERROR A ENVIAR
 var MensajeError = "Hubo un error, favor de contactar al personal de sistemas.";
 //Escuchar servidor
-server.listen(3000, () => {
-    console.log('Servidor iniciado en el puerto 3000.');
+server.listen(3001, () => {
+    console.log('Servidor iniciado en el puerto 3001.');
 });
 
 // Configuración de socket.io

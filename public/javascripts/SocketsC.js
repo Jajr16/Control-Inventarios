@@ -1,5 +1,5 @@
 var tok = localStorage.getItem("token");
-var socket = io.connect("http://localhost:3000");
+var socket = io.connect("http://localhost:3001");
 var pathname = window.location.pathname;
 //BUSCAR
 // Barra de busqueda
