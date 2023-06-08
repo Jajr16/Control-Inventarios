@@ -824,6 +824,66 @@ io.on('connection', (socket) => {
         socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
     });
 
+    // Consultas de equipos
+    socket.on('Consul_Equipos', async () => {
+
+        // Autenticar que haga las consultas
+        db.query('SELECT eqp.*, e.Nom FROM equipo eqp JOIN empleado e ON eqp.Num_emp = e.Num_emp', function (err, result) {
+            if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
+            if (result.length > 0) {//Si sí hizo una búsqueda
+                for (var i = 0; i < result.length; i++) {
+                    socket.emit('Desp_Equipos', { Num_Serie: result[i].Num_Serie, Equipo: result[i].Equipo, Marca: result[i].Marca, Modelo: result[i].Modelo, NombreEmp: result[i].Nom, Ubi: result[i].Ubi});//Mandar usuario y token al cliente
+                }
+                socket.emit('ButtonUp');
+            }
+            result.length = 0;
+        });
+    });
+
+    // Bajas en equipos
+    socket.on('Bajas_Equipos', async (data) => {
+
+        // Autenticar que haga las consultas
+        db.query('select*from equipo', function (err, result) {
+            if (err) console.log("Error de búsqueda: " + err); //Se imprime algún error que haya ocurrido
+            if (result.length > 0) { //Si sí hizo una búsqueda
+                db.query('delete from equipo where Num_Serie = ?', data, function (err, result) {
+                    if (err) socket.emit('RespDelEqp', MensajeError);
+                    console.log(data);
+                    if (result.affectedRows > 0) {
+                        console.log("Resultado de eliminacion de equipos: ", result);
+                        socket.emit('RespDelEqp', { mensaje: 'Equipo dado de baja.' });//Mandar mensaje de éxito a cliente
+                    } else {
+                        socket.emit('RespDelEqp', { mensaje: "Equipo no eliminado, inténtelo de nuevo." });
+                    }
+                });
+
+            } else {
+                socket.emit('RespDelEqp', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
+            }
+        });
+
+    });
+
+    // Cambios en equipos
+    socket.on('Cambios_Equipos', async (data, dataOld) => {
+        db.query('SELECT Num_Emp FROM empleado WHERE Nom = ?', [data.NombreEmp], function (err, result) {
+            if (err) socket.emit('RespDelEqp', MensajeError) //Se imprime algún error que haya ocurrido
+            if (result.length > 0) { //Si sí hizo una búsqueda
+                var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
+                //Se agrega productos a la BD
+                db.query('update equipo set Num_Serie = ?, Equipo = ?, Marca = ?, Modelo = ?, Num_emp = ?, Ubi = ? where Num_Serie = ?', [data.Num_Serie, data.Equipo, data.Marca, data.Modelo, num_emp, data.Ubi, dataOld.OLDNum_S], function (err2, result) {
+                    if (err2) socket.emit('RespDelEqp', MensajeError) //Se imprime algún error que haya ocurrido
+                    if (result.affectedRows > 0) { //Si sí hizo una búsqueda
+                        socket.emit('RespDelEqp', { mensaje: 'Mobiliario modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
+                    } else {
+                        socket.emit('RespDelEqp', { mensaje: "No se pudo modificar el mobiliario." })
+                    }
+                });
+            }
+        });
+    });
+
     // altas de equipos
     socket.on('Alta_Equipos', async (data) => {
         db.query('select * from equipo where Num_Serie = ?', [data.Num_S], async function (err, result) {

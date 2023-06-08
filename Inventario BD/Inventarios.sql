@@ -519,9 +519,11 @@ SELECT m.*, e.Nom
 FROM mobiliario m
 JOIN empleado e ON m.Num_emp = e.Num_emp;
 
+SELECT eqp.*, e.Nom FROM equipo eqp JOIN empleado e ON eqp.Num_emp = e.Num_emp;
+
 SELECT Num_Emp FROM empleado WHERE Nom = "armando";
 
-insert into equipo values(1, "213sa", "Monitor", "PC", "Pc", (select Num_emp from empleado where Nom = "BOLAÑOS MENDEZ GABRIELA"), "A");
+insert into equipo (N_Inventario, Num_Serie, Equipo, Marca, Modelo, Num_emp, Ubi) values(1, "213sa", "Monitor", "PC", "Pc", (select Num_emp from empleado where Nom = "armando"), "A");
 
 insert into empleado (Num_emp, Nom, AP, AM, Área, Num_Jefe) values(
 777,"JOSE ALFREDO", "JIMENEZ", "RODRIGUEZ", "SISTEMAS", 777);

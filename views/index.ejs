@@ -70,6 +70,14 @@
         </div>
       </div>
     </div>
+    <div class="Dos_Column">
+      <div class="CampoForm">
+        <h5 class="BotonEQP">Registrar Equipos</h5>
+        <div class="Dos_Columnas Separacion" id="RegistrosEqp">
+          <div></div>
+        </div>
+      </div>
+    </div>
     <div class="Dos_Column" id="Mas_Opciones">
       <div class="CampoForm">
         <h5 class="BotonDE" id="TituloOpciones"></h5>
@@ -115,6 +123,11 @@
         $("#RegistrosMob").children().eq(0).html(`
           <a href="/users/consulMob" class="BotonMOBA TamBAG">Ver Mobiliario</a>
           <a href="/users/altasMob" class="BotonMOBA TamBAG">Registrar Mobiliario</a>
+        `);
+
+        $("#RegistrosEqp").children().eq(0).html(`
+          <a href="/users/consulEqp" class="BotonEQPA TamBAG">Ver Equipos</a>
+          <a href="/users/altasEqp" class="BotonEQPA TamBAG">Registrar Equipos</a>
         `);
       });
     }

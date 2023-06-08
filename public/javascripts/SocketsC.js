@@ -194,6 +194,20 @@ function eliminarMobiliario(elementoBoton, mensaje, mensajeSocket) {
     }
 }
 
+function eliminarEquipo(elementoBoton, mensaje, mensajeSocket) {
+    var confirmacion = confirm(mensaje);
+
+    if (confirmacion) {
+        var fila = elementoBoton.parentNode;
+        var NumInventario = fila.querySelector("td:first-child").innerHTML;
+
+        enviarSocket(mensajeSocket, NumInventario);
+
+        // Eliminar la fila de la tabla
+        fila.parentNode.removeChild(fila);
+    }
+}
+
 
 if (pathname == "/users/altasPro") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
@@ -987,6 +1001,113 @@ if (pathname == "/users/altasPro") {
             recibirSocket("RespEquipos");
         }
     });
+
+} else if (pathname == "/users/consulEqp") {
+    // Asignación del evento de clic en los botones de eliminar
+    window.addEventListener('DOMContentLoaded', () => {
+        const botonesEliminar = document.getElementsByClassName("BotonER");
+
+        for (let i = 0; i < botonesEliminar.length; i++) {
+            botonesEliminar[i].addEventListener("click", function () {
+                eliminarEquipo(this, '¿Deseas eliminar este producto de equipos?', 'Bajas_Equipos');
+            });
+        }
+    });
+    // desplegar lista de nombre de empleados
+    window.addEventListener("load", function (event) {
+        cargarNombres();
+    });
+
+    window.onpageshow = function () {
+        $('#NombreEmp').select2({
+            allowClear: true,
+            placeholder: 'Buscar empleado'
+        });
+    };
+
+    socket.emit("Consul_Equipos");
+
+    // Consulta de productos
+    socket.on('Desp_Equipos', async (data) => {
+        const tbody = document.querySelector("#DatosProd tbody");
+
+        tbody.innerHTML += `
+        <tr>
+            <td>${data.Num_Serie}</td>
+            <td>${data.Equipo}</td>
+            <td>${data.Marca}</td>
+            <td>${data.Modelo}</td>
+            <td>${data.NombreEmp}</td>
+            <td>${data.Ubi}</td>
+            <td class="BotonER"> Eliminar </td>
+            <td class="BotonMod" onclick='Abrir()'> Modificar </td>
+        </tr>
+        `;
+
+        // Volver a asignar el evento de clic a los botones de eliminar
+        const botonesEliminar = document.getElementsByClassName("BotonER");
+
+        for (let i = 0; i < botonesEliminar.length; i++) {
+            botonesEliminar[i].addEventListener("click", function () {
+                eliminarEquipo(this, '¿Deseas eliminar este producto de equipos?', 'Bajas_Equipos');
+            });
+        }
+    });
+
+    //Llenar datos en automático
+    var valores0 = "";
+    var valores1 = "";
+    var valores2 = "";
+    var valores3 = "";
+    var valores4 = "";
+    var valores5 = "";
+
+    //Modificar usuarios
+    socket.on('ButtonUp', () => {
+        let BotonMod = document.getElementsByClassName("BotonMod");
+
+        for (let i = 0; i < BotonMod.length; i++) {
+            BotonMod[i].addEventListener("click", obtenerValoresMod);
+        }
+
+        function obtenerValoresMod(e) {
+
+            var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+            // recorremos cada uno de los elementos del array de elementos <td>
+            for (let i = 0; i < elementosTD.length; i++) {
+                // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                valores0 = elementosTD[0].innerHTML;
+                valores1 = elementosTD[1].innerHTML;
+                valores2 = elementosTD[2].innerHTML;
+                valores3 = elementosTD[3].innerHTML;
+                valores4 = elementosTD[4].innerHTML;
+                valores5 = elementosTD[5].innerHTML;
+            }
+            document.getElementById("Num_SerieM").value = valores0;
+            document.getElementById("EquipM").value = valores1;
+            document.getElementById("MarcEM").value = valores2;
+            document.getElementById("ModelEM").value = valores3;
+            document.getElementById("NombreEmp").value = valores4;
+            document.getElementById("UbiEM").value = valores5;
+        }
+
+        // Cambios de equipos
+        const FormMod = document.querySelector("#ModEquipos");
+
+        // Cambios de equipos
+        FormMod.addEventListener("submit", Enviar);
+
+        function Enviar(e) {
+
+            e.preventDefault();
+
+            if ($("#Num_SerieM").val() != "" && $("#EquipM").val() != "" && $("#MarcEM").val() != "" && $("#ModelEM").val() != "" && $("#NombreEmp").val() != "" && $("#UbiEM").val() != "") {
+                socket.emit('Cambios_Equipos', {Num_Serie: $("#Num_SerieM").val(), Equipo: $("#EquipM").val(), Marca: $("#MarcEM").val(), Modelo: $("#ModelEM").val(), NombreEmp: $("#NombreEmp").val(), Ubi: $("#UbiEM").val() }, { OLDNum_S: valores0 });
+            }
+        }
+    });
+    recibirSocket('RespDelEqp');
+
 } else if (pathname == "/users/ModEmp") {
     if (tok == "4dnM3k0nl9s") {
         enviarSocket("DatEmp", "");
@@ -1087,7 +1208,7 @@ if (pathname == "/users/altasPro") {
 
         socket.emit("Consul_Mobiliario");
 
-        // Consulta de productos
+        // Consulta de mobiliario
         socket.on('Desp_Mobiliario', async (data) => {
             const tbody = document.querySelector("#DatosProd tbody");
 
@@ -1114,7 +1235,7 @@ if (pathname == "/users/altasPro") {
         var valores0 = "";
         var valores1 = "";
 
-        //Modificar usuarios
+        //Modificar mobiliario
         socket.on('ButtonUp', () => {
             let BotonMod = document.getElementsByClassName("BotonMod");
 
@@ -1132,13 +1253,13 @@ if (pathname == "/users/altasPro") {
                     valores1 = elementosTD[1].innerHTML;
                 }
                 document.getElementById("DescM").value = valores0;
-                document.getElementById("#NombreEmp").value = valores1;
+                document.getElementById("NombreEmp").value = valores1;
             }
 
-            // Cambios de productos
+            // Cambios de mobiliario
             const FormMod = document.querySelector("#ModMobi");
 
-            // Cambios de productos
+            // Cambios de mobiliario
             FormMod.addEventListener("submit", Enviar);
 
             function Enviar(e) {
@@ -1168,10 +1289,10 @@ if (pathname == "/users/altasPro") {
                 placeholder: 'Buscar empleado'
             });
         };
-        
+
         const FormProduct = document.querySelector("#AltaMobiliario");
 
-        // Altas de productos
+        // Altas de mobiliario
         FormProduct.addEventListener("submit", Enviar);
 
         function Enviar(e) {

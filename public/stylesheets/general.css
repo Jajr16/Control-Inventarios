@@ -514,6 +514,22 @@ h5 {
     transform: scale(1.1);
 }
 
+.BotonEQPA {
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background: linear-gradient(to top, #b100f7, #6a0094);
+    color: rgb(229, 193, 250);
+    border-radius: 10%;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonEQPA:hover {
+    background: linear-gradient(to top, #b100f7, #efc9fd);
+    color: rgb(38, 35, 39);
+    transform: scale(1.1);
+}
+
 .TamBAG{
     width: 100%;
     height: auto;
@@ -587,6 +603,15 @@ h5 {
     text-align: center;
     background: linear-gradient(to top, #eff7ae, #e1fa03);
     color: rgb(110, 109, 0);
+    transition: all 0.3s ease 0s;
+}
+
+.BotonEQP {
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background: linear-gradient(to top, #e2aef7, #b100f7);
+    color: rgb(101, 0, 110);
     transition: all 0.3s ease 0s;
 }
 

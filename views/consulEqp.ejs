@@ -14,7 +14,8 @@
         href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap"
         rel="stylesheet">
     <link rel='stylesheet' href='/stylesheets/general.css' />
-
+    <link rel='stylesheet' href='/stylesheets/consultas.css' />
+    <link rel='stylesheet' href='/stylesheets/modal.css' />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script src="/socket.io/socket.io.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css">
@@ -23,14 +24,13 @@
 <body>
     <header class="header">
         <div class="logo">
-            <a href="/users/index">
-                <img src="/images/logoC.png" alt="Logo de la empresa">
-            </a>
+            <img src="/images/logoC.png" alt="Logo de la empresa">
         </div>
         <nav class="Dos_Column">
             <ul class="nav-links" id="Linksnav">
-                <li><a href="/users/consulPro">Productos</a></li>
                 <li><a href="/users/consulMob">Mobiliario</a></li>
+                <li><a href="/users/consulPro">Productos</a></li>
+                <li><a href="/users/index">Inicio</a></li>
             </ul>
         </nav>
         <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
@@ -39,8 +39,9 @@
         <div id="mobile-menu" class="overlay">
             <a onclick="closeNav()" href="" class="close">&times;</a>
             <div class="overlay-content" id="MenuCel">
-                <a href="/users/consulPro">Productos</a>
                 <a href="/users/consulMob">Mobiliario</a>
+                <a href="/users/consulPro">Productos</a>
+                <a href="/users/index">Inicio</a>
                 <a onclick="CerrarSesion()">Cerrar Sesión</a>
                 <a href="#">Tema</a>
             </div>
@@ -48,8 +49,101 @@
     </header>
     <script type="text/javascript" src="/javascripts/navbar.js"></script>
     <script type="text/javascript" src="/javascripts/ValidarSesion.js"></script>
-    <script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
-    <script type="text/javascript" src="/javascripts/NavEspecializado.js"></script>
+    <div class="card" id="productos">
+        <div class="card-header">
+            <h4>Equipos en almacén</h4>
+        </div>
+        <input type="text" id="buscar" oninput="buscar(); mayus(this);" placeholder="BUSCAR EN TABLA"
+            title="Empieza a escribir para buscar">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="DatosProd">
+                    <thead>
+                        <tr id="firstrow">
+                            <th>Número de serie</th>
+                            <th>Equipo</th>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>Nombre de empleado</th>
+                            <th>Ubicación</th>
+                            <th>Eliminar</th>
+                            <th>Modificar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="pen">
+            <div class="controls">
+            </div>
+            <div class="overlay cancel-modal"></div>
+            <div class="modal-container cancel-modal">
+                <div class="Contenedor Contenido-centrado Alta">
+                    <form name="ModEquipos" id="ModEquipos">
+                        <div class="Cuatro_Column">
+                            <div>
+                                <label>Número de serie</label>
+                                <input autocomplete="off" type="text" id="Num_SerieM" min="1" name="Num_SerieM" required
+                                    maxlength="45" oninput="mayus(this)" onkeypress="return checkA(event)">
+                            </div>
+                            <div>
+                                <label>Equipo</label>
+                                <select id="EquipM" name="EquipM" required>
+                                    <option value=""></option>
+                                    <option>CPU</option>
+                                    <option>IMPRESORA</option>
+                                    <option>NOBREAK</option>
+                                    <option>REGULADOR</option>
+                                    <option>IMPRESORA</option>
+                                    <option>MULTIFUNCIONAL</option>
+                                    <option>TELÉFONO</option>
+                                    <option>PIZARRÓN DIGITAL</option>
+                                    <option>SERVIDOR</option>
+                                    <option>SWITCH</option>
+                                    <option>GATEWAY</option>
+                                    <option>BOCINA</option>
+                                    <option>PROYECTOR</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Marca</label>
+                                <input autocomplete="off" type="text" id="MarcEM" name="MarcEM" required maxlength="45"
+                                    oninput="mayus(this);" onkeypress="return checkA(event)">
+                            </div>
+                            <div>
+                                <label>Modelo</label>
+                                <input autocomplete="off" type="text" id="ModelEM" name="ModelEM" required maxlength="45"
+                                    oninput="mayus(this);" onkeypress="return checkA(event)">
+                            </div>
+                        </div>
+                        <div class="Dos_Columnas">
+                            <div>
+                                <label>Encargado</label>
+                                <select id="NombreEmp" required>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Ubicación</label>
+                                <input autocomplete="off" type="text" id="UbiEM" name="UbiEM" required maxlength="50"
+                                    oninput="mayus(this);" onkeypress="return checkA(event)">
+                            </div>
+                        </div>
+                        <div class="Cuatro_Column">
+                            <input type="submit" id="Modify" class="BotonAE" value="Aceptar">
+                            <input type="button" class="BotonReg" value="Cancelar">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 </body>
+<script src="/javascripts/SocketsC.js" type="text/javascript"></script>
+<script src='https://s3.amazonaws.com/popmotion.io/static/dist/popmotion.min.js'></script>
+<script src="/javascripts/modal.js" type="text/javascript"></script>
+<script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
+<script type="text/javascript" src="/javascripts/NavEspecializado.js"></script>
 
 </html>
