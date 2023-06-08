@@ -62,9 +62,8 @@
                 <table id="DatosProd">
                     <thead>
                         <tr id="firstrow">
-                            <th>Número de inventario</th>
                             <th>Descripción</th>
-                            <th>Número de empleado</th>
+                            <th>Nombre de empleado</th>
                             <th>Eliminar</th>
                             <th>Modificar</th>
                         </tr>
@@ -83,19 +82,15 @@
                     <form name="ModMobi" id="ModMobi">
                         <div class="Tres_Column">
                             <div>
-                                <label>Número de inventario</label>
-                                <input autocomplete="off" type="number" id="NumInvM" min="1" name="NumInvM" required
-                                    maxlength="45">
-                            </div>
-                            <div>
                                 <label>Descripción</label>
                                 <input autocomplete="off" type="text" id="DescM" name="DescM" required maxlength="45"
                                     oninput="mayus(this);">
                             </div>
                             <div>
-                                <label>Número de empleado</label>
-                                <input autocomplete="off" type="number" id="Num_EmpM" name="Num_EmpM" required
-                                    maxlength="45">
+                                <label>Nombre de empleado</label>
+                                <select id="NombreEmp" required>
+                                    <option value=""></option>
+                                </select>
                             </div>
                         </div>
                         <div class="Cuatro_Column">

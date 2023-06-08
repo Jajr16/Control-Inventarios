@@ -509,10 +509,17 @@ select*from teclado;
 select*from accesorio;
 select*from Usuario;
 select*from mobiliario;
+delete from mobiliario where Num_Inventario = 4;
 insert into Usuario (Num_Emp, Usuario, Pass, token) values(759, "ajimenez", "clarac1", "4dnM3k0nl9s");
 delete from Usuario where Usuario = "a";
 update Usuario set Usuario = "ajimenez", Num_Emp = 759, Pass = "clarac1" where Usuario = "ajimenez";
 select * from Salidas_Productos where FSalida BETWEEN "2023-05-16" and "2023-05-17";
+
+SELECT m.*, e.Nom
+FROM mobiliario m
+JOIN empleado e ON m.Num_emp = e.Num_emp;
+
+SELECT Num_Emp FROM empleado WHERE Nom = "armando";
 
 insert into equipo values(1, "213sa", "Monitor", "PC", "Pc", (select Num_emp from empleado where Nom = "BOLAÑOS MENDEZ GABRIELA"), "A");
 

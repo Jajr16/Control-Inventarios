@@ -973,11 +973,11 @@ io.on('connection', (socket) => {
     socket.on('Consul_Mobiliario', async () => {
 
         // Autenticar que haga las consultas
-        db.query('select*from mobiliario', function (err, result) {
+        db.query('SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp', function (err, result) {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
                 for (var i = 0; i < result.length; i++) {
-                    socket.emit('Desp_Mobiliario', { Num_Inventario: result[i].Num_Inventario, Descripcion: result[i].Descripcion, Num_emp: result[i].Num_emp });//Mandar usuario y token al cliente
+                    socket.emit('Desp_Mobiliario', { Descripcion: result[i].Descripcion, NombreEmp: result[i].Nom });//Mandar usuario y token al cliente
                 }
                 socket.emit('ButtonUp');
             }
@@ -990,26 +990,30 @@ io.on('connection', (socket) => {
     socket.on('Alta_Mob', async (data) => {
 
         //Autentificar que no exista un producto igual
-        db.query('select*from mobiliario where Num_Inventario = ?', [data.Num_Inventario], function (err, result) {
+        db.query('select*from mobiliario where Descripcion = ?', [data.Descripcion], function (err, result) {
 
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
 
             if (result.length > 0) {//Si sí hizo una búsqueda
                 socket.emit('Mobiliario_Existente', { mensaje: "Este artículo de mobiliario ya estaba registrado.\nEn caso de que quiera agregar más cantidad de este producto, por favor ingrese a la página de 'Ingresar más mobiliario'." });
             } else {
-                //Se agrega productos a la BD
-                db.query('insert into mobiliario values (?,?,?)', [data.Num_Inventario, data.Descripcion, data.Num_emp], function (err2, result) {
-                    if (err2) console.log("Error de inserción de productos: ", err2);
-                    if (result) {
-                        console.log("Resultado de inserción de productos: ", result);
-                        socket.emit('Mobiliario_Inexistente', { mensaje: 'Mobiliario dado de alta.' });//Mandar mensaje de error a cliente
+                db.query('SELECT Num_Emp FROM empleado WHERE Nom = ?', [data.NombreEmp], function (err, result) {
+                    if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
+                    if (result.length > 0) {//Si sí hizo una búsqueda
+                        //Se agrega productos a la BD
+                        var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
+                        db.query('insert into mobiliario values (NULL,?,?)', [data.Descripcion, num_emp], function (err2, result) {
+                            if (err2) console.log("Error de inserción de productos: ", err2);
+                            if (result) {
+                                console.log("Resultado de inserción de productos: ", result);
+                                socket.emit('Mobiliario_Inexistente', { mensaje: 'Mobiliario dado de alta.' });//Mandar mensaje de error a cliente
+                            }
+                        });
                     }
                 });
             }
         });
-
         data.length = 0;
-
     });
 
     // Bajas en mobiliario
@@ -1019,7 +1023,7 @@ io.on('connection', (socket) => {
         db.query('select*from mobiliario', function (err, result) {
             if (err) console.log("Error de búsqueda: " + err); //Se imprime algún error que haya ocurrido
             if (result.length > 0) { //Si sí hizo una búsqueda
-                db.query('delete from mobiliario where Num_Inventario = ?', data, function (err, result) {
+                db.query('delete from mobiliario where Descripcion = ?', data, function (err, result) {
                     if (err) socket.emit('RespDelMob', MensajeError);
                     console.log(data);
                     if (result.affectedRows > 0) {
@@ -1039,14 +1043,19 @@ io.on('connection', (socket) => {
 
     // Cambios en mobiliario
     socket.on('Cambios_Mobiliario', async (data, dataOld) => {
-
-        //Se agrega productos a la BD
-        db.query('update mobiliario set Num_Inventario = ?, Descripcion = ?, Num_emp = ? where Num_Inventario = ?', [data.Num_Inventario, data.Descripcion, data.Num_emp, dataOld.OLDNumInv], function (err2, result) {
-            if (err2) socket.emit('RespDelMob', MensajeError) //Se imprime algún error que haya ocurrido
-            if (result.affectedRows > 0) { //Si sí hizo una búsqueda
-                socket.emit('RespDelMob', { mensaje: 'Mobiliario modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
-            } else {
-                socket.emit('RespDelMob', { mensaje: "No se pudo modificar el mobiliario." })
+        db.query('SELECT Num_Emp FROM empleado WHERE Nom = ?', [data.NombreEmp], function (err, result) {
+            if (err) socket.emit('RespDelMob', MensajeError) //Se imprime algún error que haya ocurrido
+            if (result.length > 0) { //Si sí hizo una búsqueda
+                var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
+                //Se agrega productos a la BD
+                db.query('update mobiliario set Descripcion = ?, Num_emp = ? where Descripcion = ?', [data.Descripcion, num_emp, dataOld.OLDDesc], function (err2, result) {
+                    if (err2) socket.emit('RespDelMob', MensajeError) //Se imprime algún error que haya ocurrido
+                    if (result.affectedRows > 0) { //Si sí hizo una búsqueda
+                        socket.emit('RespDelMob', { mensaje: 'Mobiliario modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
+                    } else {
+                        socket.emit('RespDelMob', { mensaje: "No se pudo modificar el mobiliario." })
+                    }
+                });
             }
         });
     });

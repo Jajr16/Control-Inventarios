@@ -1073,6 +1073,17 @@ if (pathname == "/users/altasPro") {
                 });
             }
         });
+        // desplegar lista de nombre de empleados
+        window.addEventListener("load", function (event) {
+            cargarNombres();
+        });
+
+        window.onpageshow = function () {
+            $('#NombreEmp').select2({
+                allowClear: true,
+                placeholder: 'Buscar empleado'
+            });
+        };
 
         socket.emit("Consul_Mobiliario");
 
@@ -1082,9 +1093,8 @@ if (pathname == "/users/altasPro") {
 
             tbody.innerHTML += `
             <tr>
-                <td>${data.Num_Inventario}</td>
                 <td>${data.Descripcion}</td>
-                <td>${data.Num_emp}</td>
+                <td>${data.NombreEmp}</td>
                 <td class="BotonER"> Eliminar </td>
                 <td class="BotonMod" onclick='Abrir()'> Modificar </td>
             </tr>
@@ -1103,7 +1113,6 @@ if (pathname == "/users/altasPro") {
         //Llenar datos en automático
         var valores0 = "";
         var valores1 = "";
-        var valores2 = "";
 
         //Modificar usuarios
         socket.on('ButtonUp', () => {
@@ -1121,11 +1130,9 @@ if (pathname == "/users/altasPro") {
                     // obtenemos cada uno de los valores y los ponemos en la variable "valores"
                     valores0 = elementosTD[0].innerHTML;
                     valores1 = elementosTD[1].innerHTML;
-                    valores2 = elementosTD[2].innerHTML;
                 }
-                document.getElementById("NumInvM").value = valores0;
-                document.getElementById("DescM").value = valores1;
-                document.getElementById("Num_EmpM").value = valores2;
+                document.getElementById("DescM").value = valores0;
+                document.getElementById("#NombreEmp").value = valores1;
             }
 
             // Cambios de productos
@@ -1138,8 +1145,8 @@ if (pathname == "/users/altasPro") {
 
                 e.preventDefault();
 
-                if ($("#NumInvM").val() != "" && $("#DescM").val() != "" && $("#Num_EmpM").val() != "") {
-                    socket.emit('Cambios_Mobiliario', { Num_Inventario: $("#NumInvM").val(), Descripcion: $("#DescM").val(), Num_emp: $("#Num_EmpM").val() }, { OLDNumInv: valores0 });
+                if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
+                    socket.emit('Cambios_Mobiliario', {Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() }, { OLDDesc: valores0 });
                 }
             }
         });
@@ -1150,6 +1157,18 @@ if (pathname == "/users/altasPro") {
 } else if (pathname == "/users/altasMob") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
 
+        // desplegar lista de nombre de empleados
+        window.addEventListener("load", function (event) {
+            cargarNombres();
+        });
+
+        window.onpageshow = function () {
+            $('#NombreEmp').select2({
+                allowClear: true,
+                placeholder: 'Buscar empleado'
+            });
+        };
+        
         const FormProduct = document.querySelector("#AltaMobiliario");
 
         // Altas de productos
@@ -1157,9 +1176,9 @@ if (pathname == "/users/altasPro") {
 
         function Enviar(e) {
             e.preventDefault();
-            if ($("#NumInvM").val() != "" && $("#DescM").val() != "" && $("#Num_EmpM").val() != "" ) {
+            if ($("#DescM").val() != "" && $("#NombreEmp").val() != "" ) {
 
-                socket.emit('Alta_Mob', { Num_Inventario: $("#NumInvM").val(), Descripcion: $("#DescM").val(), Num_emp: $("#Num_EmpM").val() });
+                socket.emit('Alta_Mob', {Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() });
 
                 socket.once('Mobiliario_Existente', function (Respuesta) {
                     alert(Respuesta.mensaje);

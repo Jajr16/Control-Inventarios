@@ -60,19 +60,15 @@
             <form name="AltaMobiliario" id="AltaMobiliario">
                 <div class="Cuatro_Column">
                     <div>
-                        <label>Número de inventario</label>
-                        <input autocomplete="off" type="number" id="NumInvM" min="1" name="NumInvM" required
-                            maxlength="45" onkeypress="return checkA(event)">
-                    </div>
-                    <div>
                         <label>Descripción</label>
                         <input autocomplete="off" type="text" id="DescM" name="DescM" required maxlength="400"
                             oninput="mayus(this);" onkeypress="return checkA(event)">
                     </div>
                     <div>
-                        <label>Número de empleado</label>
-                        <input autocomplete="off" type="number" id="Num_EmpM" name="Num_EmpM" required maxlength="45"
-                            onkeypress="return checkA(event)">
+                        <label>Nombre de empleado</label>
+                        <select id="NombreEmp" required>
+                            <option value=""></option>
+                        </select>
                     </div>
                 </div>
                 <div class="Cuatro_Column">
