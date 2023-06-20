@@ -1018,6 +1018,92 @@ if (pathname == "/users/altasPro") {
         cargarNombres();
     });
 
+    //Formulario desplegable
+    const Equipos = $('#EquipM');
+    const Menu = $("#Desplegable");
+
+    const Hardware = $('#HardE');
+    const Software = $('#SoftE');
+
+    const Monitor = $('#MonE');
+    const NSMon = $('#N_Ser_M');
+
+    const Mouse = $('#MouseE');
+    const Teclado = $('#TecladE');
+    const Accesorio = $('#AccesE');
+
+    Menu.hide();
+    //Formulario.reset();
+    Equipos.on('change', function () {
+        if (Equipos.val() == 'CPU') {
+            Menu.slideDown();//Lo abre
+        } else {
+            Menu.slideUp();//Lo cierra
+            //Quita los required
+            Hardware.prop('required', false);
+            Software.prop('required', false);
+            NSMon.prop('required', false);
+            Monitor.prop('required', false);
+            //Pone valores vacío
+            Hardware.val('');
+            Software.val('');
+            NSMon.val('');
+            Monitor.val('');
+            Mouse.val('');
+            Teclado.val('');
+            Accesorio.val('');
+        }
+    });
+    //VALIDAR FORMULARIO DEPENDIENDO SI LLENAN CAMPOS
+    //Funcion general
+    function Listeners(elemento, evento, funcion) {
+        elemento.on(evento, funcion);
+    }
+
+    Listeners(Hardware, 'input', function (e) {
+
+        if (Hardware.val() != "") {
+            Hardware.prop('required', true);
+            Software.prop('required', true);
+        } else {
+            Hardware.prop('required', false);
+            Software.prop('required', false);
+        }
+    });
+
+    Listeners(Software, 'input', function (e) {
+
+        if (Software.val() != "") {
+            Hardware.prop('required', true);
+            Software.prop('required', true);
+        } else {
+            Hardware.prop('required', false);
+            Software.prop('required', false);
+        }
+    });
+
+    Listeners(Monitor, 'input', function (e) {
+
+        if (Monitor.val() != "") {
+            NSMon.prop('required', true);
+            Monitor.prop('required', true);
+        } else {
+            NSMon.prop('required', false);
+            Monitor.prop('required', false);
+        }
+    });
+
+    Listeners(NSMon, 'input', function (e) {
+
+        if (NSMon.val() != "") {
+            NSMon.prop('required', true);
+            Monitor.prop('required', true);
+        } else {
+            NSMon.prop('required', false);
+            Monitor.prop('required', false);
+        }
+    });
+
     window.onpageshow = function () {
         $('#NombreEmp').select2({
             allowClear: true,
@@ -1102,11 +1188,33 @@ if (pathname == "/users/altasPro") {
             e.preventDefault();
 
             if ($("#Num_SerieM").val() != "" && $("#EquipM").val() != "" && $("#MarcEM").val() != "" && $("#ModelEM").val() != "" && $("#NombreEmp").val() != "" && $("#UbiEM").val() != "") {
-                socket.emit('Cambios_Equipos', {Num_Serie: $("#Num_SerieM").val(), Equipo: $("#EquipM").val(), Marca: $("#MarcEM").val(), Modelo: $("#ModelEM").val(), NombreEmp: $("#NombreEmp").val(), Ubi: $("#UbiEM").val() }, { OLDNum_S: valores0 });
+                socket.emit('Cambios_Equipos', { Num_Serie: $("#Num_SerieM").val(), Equipo: $("#EquipM").val(), Marca: $("#MarcEM").val(), Modelo: $("#ModelEM").val(), NombreEmp: $("#NombreEmp").val(), Ubi: $("#UbiEM").val() }, { OLDNum_S: valores0 });
+
+                //Enviar HardWare
+                if ($("#HardE").val() != "" && $("#SoftE").val() != "") {
+                    socket.emit('CambiosPc', { Num_S: $("#Num_SerieM").val(), HardE: $("#HardE").val(), SoftE: $("#SoftE").val() }, { OLDNum_S: valores0 });
+                }
+                //Monitores
+                if ($("#MonE").val() != "" && $("#N_Ser_M").val() != "") {
+                    socket.emit('CambiosMon', { Num_S: $("#Num_SerieM").val(), MonE: $("#MonE").val(), NSMon: $("#N_Ser_M").val() }, { OLDNum_S: valores0 });
+                }
+                //Mouse
+                if ($("#MouseE").val() != "") {
+                    socket.emit('CambiosMouse', { Num_S: $("#Num_SerieM").val(), MousE: $("#MouseE").val() }, { OLDNum_S: valores0 });
+                }
+                //Teclado
+                if ($("#TecladE").val() != "") {
+                    socket.emit('CambiosTecla', { Num_S: $("#Num_SerieM").val(), TeclaE: $("#TecladE").val() }, { OLDNum_S: valores0 });
+                }
+                //Accesorios
+                if ($("#AccesE").val() != "") {
+                    socket.emit('CambiosAcces', { Num_S: $("#Num_SerieM").val(), AccesE: $("#AccesE").val() }, { OLDNum_S: valores0 });
+                }
+                //Respuesta
+                recibirSocket('RespDelEqp');
             }
         }
     });
-    recibirSocket('RespDelEqp');
 
 } else if (pathname == "/users/ModEmp") {
     if (tok == "4dnM3k0nl9s") {
@@ -1183,7 +1291,7 @@ if (pathname == "/users/altasPro") {
     }
 } else if (pathname == "/users/consulMob") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
-        
+
         // Asignación del evento de clic en los botones de eliminar
         window.addEventListener('DOMContentLoaded', () => {
             const botonesEliminar = document.getElementsByClassName("BotonER");
@@ -1267,7 +1375,7 @@ if (pathname == "/users/altasPro") {
                 e.preventDefault();
 
                 if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
-                    socket.emit('Cambios_Mobiliario', {Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() }, { OLDDesc: valores0 });
+                    socket.emit('Cambios_Mobiliario', { Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() }, { OLDDesc: valores0 });
                 }
             }
         });
@@ -1297,9 +1405,9 @@ if (pathname == "/users/altasPro") {
 
         function Enviar(e) {
             e.preventDefault();
-            if ($("#DescM").val() != "" && $("#NombreEmp").val() != "" ) {
+            if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
 
-                socket.emit('Alta_Mob', {Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() });
+                socket.emit('Alta_Mob', { Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() });
 
                 socket.once('Mobiliario_Existente', function (Respuesta) {
                     alert(Respuesta.mensaje);

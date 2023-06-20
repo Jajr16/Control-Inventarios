@@ -28,19 +28,15 @@
         </div>
         <nav class="Dos_Column">
             <ul class="nav-links" id="Linksnav">
-                <li><a href="/users/consulMob">Mobiliario</a></li>
-                <li><a href="/users/consulPro">Productos</a></li>
                 <li><a href="/users/index">Inicio</a></li>
             </ul>
         </nav>
         <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
         <a class="btn" href="#"><button><img src="/images/moon.png" width="20px" height="20px"></button></a>
-        <a onclick="openNav()" class="menu" href="#"><button>Menu</button></a>
+        <a onclick="openNav()" class="menu"><button>Menu</button></a>
         <div id="mobile-menu" class="overlay">
             <a onclick="closeNav()" href="" class="close">&times;</a>
             <div class="overlay-content" id="MenuCel">
-                <a href="/users/consulMob">Mobiliario</a>
-                <a href="/users/consulPro">Productos</a>
                 <a href="/users/index">Inicio</a>
                 <a onclick="CerrarSesion()">Cerrar Sesión</a>
                 <a href="#">Tema</a>
@@ -118,7 +114,7 @@
                                     oninput="mayus(this);" onkeypress="return checkA(event)">
                             </div>
                         </div>
-                        <div class="Dos_Columnas">
+                        <div class="Dos_Columnas Separacion">
                             <div>
                                 <label>Encargado</label>
                                 <select id="NombreEmp" required>
@@ -131,7 +127,48 @@
                                     oninput="mayus(this);" onkeypress="return checkA(event)">
                             </div>
                         </div>
-                        <div class="Cuatro_Column">
+                        <div id="Desplegable">
+                            <div class="Cuatro_Column">
+                                <div>
+                                    <label>Hardware</label>
+                                    <input autocomplete="off" type="text" id="HardE" name="HardE" maxlength="100"
+                                        onkeypress="return checkA(event)" oninput="mayus(this);">
+                                </div>
+                                <div>
+                                    <label>Software</label>
+                                    <input autocomplete="off" type="text" id="SoftE" name="SoftE" maxlength="100"
+                                        onkeypress="return checkA(event)" oninput="mayus(this);">
+                                </div>
+                                <div>
+                                    <label>Monitor</label>
+                                    <input autocomplete="off" type="text" id="MonE" name="MonE" maxlength="100"
+                                        onkeypress="return checkA(event)" oninput="mayus(this);">
+                                </div>
+                                <div>
+                                    <label>N. Serie de Monitor</label>
+                                    <input autocomplete="off" type="text" id="N_Ser_M" name="N_Ser_M" maxlength="100"
+                                        onkeypress="return checkA(event)" oninput="mayus(this);">
+                                </div>
+                            </div>
+                            <div class="Tres_Column">
+                                <div>
+                                    <label>Mouse</label>
+                                    <input autocomplete="off" type="text" id="MouseE" name="MouseE" maxlength="100"
+                                        onkeypress="return checkA(event)" oninput="mayus(this);">
+                                </div>
+                                <div>
+                                    <label>Teclado</label>
+                                    <input autocomplete="off" type="text" id="TecladE" name="TecladE" maxlength="100"
+                                        onkeypress="return checkA(event)" oninput="mayus(this);">
+                                </div>
+                                <div>
+                                    <label>Accesorio</label>
+                                    <input autocomplete="off" type="text" id="AccesE" name="AccesE" maxlength="100"
+                                        onkeypress="return checkA(event)" oninput="mayus(this);">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="Dos_Columnas Separacion">
                             <input type="submit" id="Modify" class="BotonAE" value="Aceptar">
                             <input type="button" class="BotonReg" value="Cancelar">
                         </div>

@@ -30,21 +30,15 @@
         <nav class="Dos_Column">
             <ul class="nav-links" id="Linksnav">
                 <li><a href="/users/index">Inicio</a></li>
-                <li><a href="/users/consulEqp">Equipos</a></li>
-                <li><a href="/users/consulPro">Productos</a></li>
-                <li><a href="/users/consulMob">Mobiliario</a></li>
             </ul>
         </nav>
         <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
         <a class="btn" href="#"><button><img src="/images/moon.png" width="20px" height="20px"></button></a>
-        <a onclick="openNav()" class="menu" href="#"><button>Menu</button></a>
+        <a onclick="openNav()" class="menu"><button>Menu</button></a>
         <div id="mobile-menu" class="overlay">
             <a onclick="closeNav()" href="" class="close">&times;</a>
             <div class="overlay-content" id="MenuCel">
                 <a href="/users/index">Inicio</a>
-                <a href="/users/consulEqp">Equipos</a>
-                <a href="/users/consulPro">Productos</a>
-                <a href="/users/consulMob">Mobiliario</a>
                 <a onclick="CerrarSesion()">Cerrar Sesión</a>
                 <a href="#">Tema</a>
             </div>
@@ -58,20 +52,20 @@
                 <h4>Añadiendo Mobiliario</h4>
             </div>
             <form name="AltaMobiliario" id="AltaMobiliario">
-                <div class="Cuatro_Column">
+                <div class="Dos_Columnas Separacion">
                     <div>
                         <label>Descripción</label>
                         <input autocomplete="off" type="text" id="DescM" name="DescM" required maxlength="400"
                             oninput="mayus(this);" onkeypress="return checkA(event)">
                     </div>
                     <div>
-                        <label>Nombre de empleado</label>
+                        <label>Nombre de encargado</label>
                         <select id="NombreEmp" required>
                             <option value=""></option>
                         </select>
                     </div>
                 </div>
-                <div class="Cuatro_Column">
+                <div class="Dos_Columnas Separacion">
                     <input type="submit" style="height: 6rem; width: 15rem;" value="Aceptar" class="BotonAA">
                     <a class="BotonReg" href="/users/index" style="height: 6rem; width: 15rem;">Regresar</a>
                 </div>

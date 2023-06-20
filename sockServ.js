@@ -883,6 +883,86 @@ io.on('connection', (socket) => {
             }
         });
     });
+    // Cambios de PC
+    socket.on('CambiosPc', async (data, dataOld) => {
+        db.query('select * from pcs where Num_Serie = ?', [data.Num_S], async function (err, result) {
+            if (err) socket.emit(MensajeError);
+            if (result.length > 0) {
+                socket.emit("RespEquipos", { mensaje: "Esta computadora ya está registrada, ingrese otra." });
+            } else {
+                db.query('update pcs set Num_Serie = ?, Hardware = ?, Software = ? where Num_Serie = ?', [data.Num_S, data.HardE, data.SoftE, dataOld.OLDNum_S], async function (err, result) {
+                    if (err) socket.emit(MensajeError);
+                    if (!result) {
+                        socket.emit("RespEquipos", { mensaje: "No se pudo actualizar los datos de la PC." });
+                    }
+                });
+            }
+        });
+    });
+    // Cambios de monitor
+    socket.on('CambiosMon', async (data, dataOld) => {
+        db.query('select * from monitor where Num_Serie = ?', [data.Num_S], async function (err, result) {
+            if (err) socket.emit(MensajeError);
+            if (result.length > 0) {
+                socket.emit("RespEquipos", { mensaje: "Este monitor ya está registrado, ingrese otro." });
+            } else {
+                db.query('update monitor set Num_Serie = ?, Monitor = ?, Num_Serie_Monitor = ? where Num_Serie = ?', [data.Num_S, data.MonE, data.NSMon, dataOld.OLDNum_S], async function (err, result) {
+                    if (err) socket.emit(MensajeError);
+                    if (!result) {
+                        socket.emit("RespEquipos", { mensaje: "No se pudo actualizar los datos del monitor." });
+                    }
+                });
+            }
+        });
+    });
+    // Cambios de mouse
+    socket.on('CambiosMouse', async (data, dataOld) => {
+        db.query('select * from Mouse where Num_Serie = ?', [data.Num_S], async function (err, result) {
+            if (err) socket.emit(MensajeError);
+            if (result.length > 0) {
+                socket.emit("RespEquipos", { mensaje: "Este mouse ya está registrado, ingrese otro." });
+            } else {
+                db.query('update Mouse set Num_Serie = ?, Mouse = ? where Num_Serie = ?', [data.Num_S, data.MousE, dataOld.OLDNum_S], async function (err, result) {
+                    if (err) socket.emit(MensajeError);
+                    if (!result) {
+                        socket.emit("RespEquipos", { mensaje: "No se pudo actualizar los datos del mouse." });
+                    }
+                });
+            }
+        });
+    });
+    // Cambios de teclado
+    socket.on('CambiosTecla', async (data, dataOld) => {
+        db.query('select * from Teclado where Num_Serie = ?', [data.Num_S], async function (err, result) {
+            if (err) socket.emit(MensajeError);
+            if (result.length > 0) {
+                socket.emit("RespEquipos", { mensaje: "Este teclado ya está registrado, ingrese otro." });
+            } else {
+                db.query('update Teclado set Num_Serie = ?, Teclado = ? where Num_Serie = ?', [data.Num_S, data.TeclaE, dataOld.OLDNum_S], async function (err, result) {
+                    if (err) socket.emit(MensajeError);
+                    if (!result) {
+                        socket.emit("RespEquipos", { mensaje: "No se pudo actualizar los datos del teclado." });
+                    }
+                });
+            }
+        });
+    });
+    // Cambio de accesorio
+    socket.on('CambiosAcces', async (data, dataOld) => {
+        db.query('select * from Accesorio where Num_Serie = ?', [data.Num_S], async function (err, result) {
+            if (err) socket.emit(MensajeError);
+            if (result.length > 0) {
+                socket.emit("RespEquipos", { mensaje: "Estos accesorios ya están registrados, ingrese otros." });
+            } else {
+                db.query('update Accesorio set Num_Serie = ?, Accesorio = ? where Num_Serie = ?', [data.Num_S, data.AccesE, dataOld.OLDNum_S], async function (err, result) {
+                    if (err) socket.emit(MensajeError);
+                    if (!result) {
+                        socket.emit("RespEquipos", { mensaje: "No se pudo actualizar los accesorios." });
+                    }
+                });
+            }
+        });
+    });
 
     // altas de equipos
     socket.on('Alta_Equipos', async (data) => {
@@ -902,7 +982,7 @@ io.on('connection', (socket) => {
             }
         });
     });
-
+    // Alta de PC
     socket.on('AltaPc', async (data) => {
         db.query('select * from pcs where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) socket.emit(MensajeError);
@@ -918,7 +998,7 @@ io.on('connection', (socket) => {
             }
         });
     });
-
+    // Alta de monitor
     socket.on('AltMon', async (data) => {
         db.query('select * from monitor where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) socket.emit(MensajeError);
@@ -934,7 +1014,7 @@ io.on('connection', (socket) => {
             }
         });
     });
-
+    // Alta de mouse
     socket.on('AltMouse', async (data) => {
         db.query('select * from Mouse where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) socket.emit(MensajeError);
@@ -950,7 +1030,7 @@ io.on('connection', (socket) => {
             }
         });
     });
-
+    // Alta de teclado
     socket.on('AltTecla', async (data) => {
         db.query('select * from Teclado where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) socket.emit(MensajeError);
@@ -966,7 +1046,7 @@ io.on('connection', (socket) => {
             }
         });
     });
-
+    // Alta de accesorio
     socket.on('AltAcces', async (data) => {
         db.query('select * from Accesorio where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) socket.emit(MensajeError);
