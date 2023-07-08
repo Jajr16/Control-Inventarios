@@ -501,6 +501,8 @@ select empleado.Nom, empleado.Área, (select Nom from empleado as Jefe where Jef
 select distinct(Área) from empleado;
 select*from usuario;
 -- Equipos Consultas
+select*from almacen;
+select*from mobiliario;
 select*from equipo;
 select*from pcs;
 select*from mouse;
@@ -533,6 +535,18 @@ insert into usuario values(
 );
 
 insert into mobiliario (num_Inventario, Descripcion, Num_emp) values (1,"Mesa",777);
+
+
+select*from almacen;
+select*from mobiliario;
+select*from equipo;
+select*from responsivas_e;
+select*from responsivas_m;
+
+SELECT mob.*, e.Nom FROM mobiliario mob JOIN empleado e ON mob.Num_emp = e.Num_emp;
+SELECT resEqp.*, e.Nom FROM responsivas_e resEqp JOIN empleado e ON resEqp.Num_emp = e.Num_emp;
+SELECT resMob.*, e.Nom FROM responsivas_m resMob JOIN empleado e ON resMob.Num_emp = e.Num_emp;
+
 #insert into usuario values(
 #1, 'Prueba','123', '4dnM3k0nl9s');
 #select*from empleado;

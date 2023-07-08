@@ -15,7 +15,6 @@
         rel="stylesheet">
     <link rel='stylesheet' href='/stylesheets/general.css' />
     <link rel='stylesheet' href='/stylesheets/consultas.css' />
-    <link rel='stylesheet' href='/stylesheets/consultas.css' />
     <link rel='stylesheet' href='/stylesheets/modal.css' />
     <link rel='stylesheet' href='/stylesheets/modal2.css' />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
@@ -47,26 +46,17 @@
     </header>
     <script type="text/javascript" src="/javascripts/navbar.js"></script>
     <script type="text/javascript" src="/javascripts/ValidarSesion.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <div class="card" id="productos">
         <div class="card-header">
-            <h4>Equipos en almacén existentes</h4>
+            <h4>Registro de responsivas de equipos</h4>
         </div>
-        <input type="text" id="buscar" oninput="buscar(); mayus(this);" placeholder="BUSCAR EN TABLA"
-            title="Empieza a escribir para buscar">
         <div class="card-body">
             <div class="table-responsive">
-                <table id="DatosEquipos">
+                <table id="DatosEqpSac">
                     <thead>
                         <tr id="firstrow">
                             <th>Número de serie</th>
-                            <th>Equipo</th>
-                            <th>Marca</th>
-                            <th>Modelo</th>
                             <th>Nombre de empleado</th>
-                            <th>Ubicación</th>
-                            <th>Sacar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,35 +64,12 @@
                 </table>
             </div>
         </div>
-    </div>
-
-    <div class="Contenedor_Modal ContMod1">
-        <div class="modal modal1-close mod1 modC1">
-            <div class="header-modal">
-                <h5 id="TituloEliminar" style="padding-bottom: 1rem;"></h5>
-                <p class="close title_modal" onclick="Cerrar1()">X</p>
-            </div>
-            <div style="width: 80%;">
-                <form id="RespEquipos" name="RespEquipos">
-                    <div>
-                        <label>¿Quién requiere este Equipo?</label>
-                        <select id="NombreEmp" required>
-                            <option value=""></option>
-                        </select>
-                    </div>
-                    <div class="Dos_Columnas">
-                        <input type="submit" class="BotonAE" id="ExcelDownload" value="Aceptar">
-                        <input type="button" class="BotonCancelar" onclick="Cerrar1()" value="Cancelar">
-                    </div>
-                </form>
-            </div>
-        </div>
+        <input type="button" class="BotonPDF" id="PDFDownload" value="Descargar PDF">
     </div>
 
 </body>
 <script src="/javascripts/SocketsC.js" type="text/javascript"></script>
 <script src='https://s3.amazonaws.com/popmotion.io/static/dist/popmotion.min.js'></script>
-<script src="/javascripts/modalAltProd.js" type="text/javascript"></script>
 <script src="/javascripts/modal.js" type="text/javascript"></script>
 <script src="/javascripts/Modal2.js" type="text/javascript"></script>
 <script type="text/javascript" src="/javascripts/Mayusculas.js"></script>

@@ -390,6 +390,23 @@ h5 {
     background: linear-gradient(to right, #0aff02, #abffa9);
 }
 
+.BotonPDF {
+    text-decoration: none;
+    width: 50%;
+    border: none;
+    margin-bottom: 2rem;
+    text-align: center;
+    background: linear-gradient(to right, #610008, #db0012);
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonPDF:hover {
+    background: linear-gradient(to right, #db0012, #ff9aa2);
+}
+
 .BotonFiltro {
     text-decoration: none;
     width: 70%;

@@ -117,5 +117,12 @@ router.get('/ModEmp', function (req, res, next) {
 router.get('/FacSacProd', function (req, res, next) {
   res.render('FacSacProd', { title: 'Registro de productos sacados' });
 });
-
+/*** Consultar registro de mobiliario sacado ***/
+router.get('/ResSacMob', function (req, res, next) {
+  res.render('ResSacMob', { title: 'Registro de mobiliario sacado' });
+});
+/*** Consultar registro de equipos sacados ***/
+router.get('/ResSacEqp', function (req, res, next) {
+  res.render('ResSacEqp', { title: 'Registro de equipos sacados' });
+});
 module.exports = router;
