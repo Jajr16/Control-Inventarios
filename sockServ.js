@@ -1088,94 +1088,6 @@ io.on('connection', (socket) => {
         });
     });
 
-    // Consultas de productos existentes
-    socket.on('Consul_EqpExist', async () => {
-
-        // Autenticar que haga las consultas
-        db.query('SELECT eqp.*, e.Nom FROM equipo eqp JOIN empleado e ON eqp.Num_emp = e.Num_emp', function (err, result) {
-            if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
-            if (result.length > 0) {//Si sí hizo una búsqueda
-                for (var i = 0; i < result.length; i++) {
-                    socket.emit('Desp_EquiposExist', { Num_Serie: result[i].Num_Serie, Equipo: result[i].Equipo, Marca: result[i].Marca, Modelo: result[i].Modelo, NombreEmp: result[i].Nom, Ubi: result[i].Ubi });//Mandar usuario y token al cliente
-                }
-                socket.emit('RBEE');
-            } else {
-                socket.emit('Equipos_Inexistentes', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
-            }
-            result.length = 0;
-        });
-    });
-
-    // Bajas en productos existentes
-    socket.on('RespEquiposExist', async (data) => {
-        // Se crea la responsiva
-        db.query('select*from responsivas_e where Num_Serie = ?', [data.Num_S], function (err, result) {
-            if (err) socket.emit(MensajeError);
-            if (result.length > 0) {
-                db.query('select num_emp from empleado where Nom = ?', [data.Emp], function (err, res) {
-                    if (err) console.log("Error de busqueda de empleados: ", err);
-                    console.log(res);
-                    if (res.length > 0) {
-                        db.query('insert into responsivas_e values (?,?)', [data.Num_S, res[0].num_emp], function (err2, result) {
-                            if (err2) socket.emit(MensajeError);
-                            if (result.affectedRows > 0) {
-                                socket.emit('Responsiva_Realizada', { mensaje: 'Responsiva de equipos creada con éxito.' });//Mandar mensaje a cliente
-                            } else {
-                                socket.emit('Fallo_ResponExist', { mensaje: "No se pudo crear la responsiva de equipos." })
-                            }
-                        });
-                    } else {
-                        socket.emit('Fallo_ResponExist', { mensaje: "No se encontró ningún empleado con ese nombre, actualice la página." })
-                    }
-                });
-            }
-        });
-    });
-
-    // Consultas de productos existentes
-    socket.on('Consul_MobExist', async () => {
-
-        // Autenticar que haga las consultas
-        db.query('SELECT mob.*, e.Nom FROM mobiliario mob JOIN empleado e ON mob.Num_emp = e.Num_emp', function (err, result) {
-            if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
-            if (result.length > 0) {//Si sí hizo una búsqueda
-                for (var i = 0; i < result.length; i++) {
-                    socket.emit('Desp_MobiliarioExist', { Num_Inventario: result[i].Num_Inventario, Descripcion: result[i].Descripcion, NombreEmp: result[i].Nom });//Mandar usuario y token al cliente
-                }
-                socket.emit('RBME');
-            } else {
-                socket.emit('Mobiliario_Inexistente', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
-            }
-            result.length = 0;
-        });
-    });
-
-    // Bajas en productos existentes
-    socket.on('RespMobiliarioExist', async (data) => {
-        // Se crea la responsiva
-        db.query('select*from responsivas_e where Num_Serie = ?', [data.Num_S], function (err, result) {
-            if (err) socket.emit(MensajeError);
-            if (result.length > 0) {
-                db.query('select num_emp from empleado where Nom = ?', [data.Emp], function (err, res) {
-                    if (err) console.log("Error de busqueda de empleados: ", err);
-                    console.log(res);
-                    if (res.length > 0) {
-                        db.query('insert into responsivas_e values (?,?)', [data.Num_S, res[0].num_emp], function (err2, result) {
-                            if (err2) socket.emit(MensajeError);
-                            if (result.affectedRows > 0) {
-                                socket.emit('Responsiva_Realizada', { mensaje: 'Responsiva de equipos creada con éxito.' });//Mandar mensaje a cliente
-                            } else {
-                                socket.emit('Fallo_ResponExist', { mensaje: "No se pudo crear la responsiva de equipos." })
-                            }
-                        });
-                    } else {
-                        socket.emit('Fallo_ResponExist', { mensaje: "No se encontró ningún empleado con ese nombre, actualice la página." })
-                    }
-                });
-            }
-        });
-    });
-
     socket.on("DatEmp", async () => {
         db.query('select empleado.Nom, empleado.Área, (select Nom from empleado as Jefe where Jefe.Num_emp = empleado.Num_Jefe) Nom_Jefe from empleado;', async function (err, result) {
             if (err) socket.emit('MensajeEmp', MensajeError);
@@ -1310,21 +1222,6 @@ io.on('connection', (socket) => {
                     }
                 });
             }
-        });
-    });
-
-    // Consulta de registro de responsivas de equipos
-    socket.on('Consul_ResSacEqp', async (data) => {
-
-        // Autenticar que haga las consultas
-        db.query('SELECT resEqp.*, e.Nom FROM responsivas_e resEqp JOIN empleado e ON resEqp.Num_emp = e.Num_emp', function (err, result) {
-            if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
-            if (result.length > 0) {//Si sí hizo una búsqueda
-                for (var i = 0; i < result.length; i++) {
-                    socket.emit('Desp_RespEqp', { Num_Serie: result[i].Num_Serie, Nom: result[i].Nom });//Mandar usuario y token al cliente
-                }
-            }
-            result.length = 0;
         });
     });
 

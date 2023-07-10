@@ -82,25 +82,20 @@ router.get('/cambiosPro', function (req, res, next) {
 
 
 /*** Añadir o borrar registros existentes ***/
-// Añadir o borrar equipos existentes
-router.get('/ABEE', function (req, res, next) {
-  res.render('ABEE', { title: 'Equipos registrados' });
-});
-// Añadir o borrar productos existentes
 router.get('/ABPE', function (req, res, next) {
   res.render('ABPE', { title: 'Productos registrados' });
 });
-// Añadir o borrar mobiliario existente
-router.get('/ABME', function (req, res, next) {
-  res.render('ABME', { title: 'Mobiliario registrado' });
+
+/*** Consultar registro de productos sacados ***/
+router.get('/FacSacProd', function (req, res, next) {
+  res.render('FacSacProd', { title: 'Registro de productos sacados' });
 });
-/*** Termina añadir o borrar registros existentes ***/
 
 // Usuario nuevo
 router.get('/RegistrarUsuario', function (req, res, next) {
   res.render('RegistrarUsuario', { title: 'Crear nuevo usuario' });
 });
-
+// Consultar usuarios
 router.get('/consulUsuarios', function (req, res, next) {
   res.render('consulUsuarios', { title: 'Usuarios registrados' });
 });
@@ -108,21 +103,9 @@ router.get('/consulUsuarios', function (req, res, next) {
 router.get('/RegistroEmpleado', function (req, res, next) {
   res.render('RegistroEmpleado', { title: 'Registrar Empleado' });
 });
-
+// Modificar empleados
 router.get('/ModEmp', function (req, res, next) {
   res.render('ModEmp', { title: 'Modificar Empleado' });
 });
 
-/*** Consultar registro de productos sacados ***/
-router.get('/FacSacProd', function (req, res, next) {
-  res.render('FacSacProd', { title: 'Registro de productos sacados' });
-});
-/*** Consultar registro de mobiliario sacado ***/
-router.get('/ResSacMob', function (req, res, next) {
-  res.render('ResSacMob', { title: 'Registro de mobiliario sacado' });
-});
-/*** Consultar registro de equipos sacados ***/
-router.get('/ResSacEqp', function (req, res, next) {
-  res.render('ResSacEqp', { title: 'Registro de equipos sacados' });
-});
 module.exports = router;
