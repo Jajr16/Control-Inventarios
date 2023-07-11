@@ -403,7 +403,9 @@ alter table almacen add column eliminado TINYINT(1) not null default 0;
 alter table factus_productos add column FIngreso date;
 
 ALTER TABLE empleado AUTO_INCREMENT = 841;
-
+########################DROPS#########################################
+drop table if exists responsivas_e;
+drop table if exists responsivas_m;
 -- almacen.Cod_Barras, almacen.FIngreso, almacen.Categoria, almacen.Articulo, almacen.Marca, almacen.Descripcion, almacen.Proveedor, almacen.NFact
 #select*from usuario where User = "armando" and Pass = "clarac";
 
@@ -433,49 +435,6 @@ ALTER TABLE usuario CHANGE `User` `Usuario` nvarchar(45);
 #select num_emp from empleado where concat(Nom, " ", AP, " ", AM) = "Armando Jiménez Rivera";
 #select Num_emp from Empleado where Nom = "Armando" and AP = "Jiménez" and AM = "Rivera";
 
-DELIMITER |
-create trigger Actualizar_Existencias after update on factus_productos
-  FOR EACH ROW BEGIN
-  if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = old.Cod_Barras) P) = 1) then
-	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_Barras) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = old.Cod_Barras) where Cod_Barras = old.Cod_Barras;
-  else
-	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_Barras) where Cod_Barras = old.Cod_Barras;
-  end if; 
-  END
-| DELIMITER ;
-
-DELIMITER |
-create trigger Actualizar_ExistenciasInsert after insert on factus_productos
-  FOR EACH ROW BEGIN
-	if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = new.Cod_Barras) P) = 1) then
-			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_Barras) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = new.Cod_Barras) where Cod_Barras = new.Cod_Barras;
-		else
-			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_Barras) where Cod_Barras = new.Cod_Barras;
-	end if; 
-  END
-| DELIMITER ;
-
-DELIMITER |
-create trigger Actualizar_Existencias2 after update on salidas_productos
-  FOR EACH ROW BEGIN
-	if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = old.Cod_BarrasS) P) = 1) then
-	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_BarrasS) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = old.Cod_BarrasS) where Cod_Barras = old.Cod_BarrasS;
-  else
-	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_BarrasS) where Cod_Barras = old.Cod_BarrasS;
-  end if; 
-  END
-| DELIMITER ;
-
-DELIMITER |
-create trigger Actualizar_ExistenciasInsercion2 after insert on salidas_productos
-	FOR EACH ROW BEGIN
-		if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = new.Cod_BarrasS) P) = 1) then
-            update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_BarrasS) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = new.Cod_BarrasS) where Cod_Barras = new.Cod_BarrasS;
-        else
-			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_BarrasS) where Cod_Barras = new.Cod_BarrasS;
-        end if; 
-	END
-| DELIMITER ;
 #drop trigger Token;
 #DELIMITER |
 #create trigger Token before insert on Usuario 
@@ -564,3 +523,48 @@ SELECT resMob.*, e.Nom FROM responsivas_m resMob JOIN empleado e ON resMob.Num_e
 #select concat(Nom, " ", AP, " ", AM) NombreCompleto from empleado;
 #update factus_productos set Cantidad = 700 where Nfactura = 'ASKDFJ7';
 #update salidas_productos set Cantidad_Salida = 2 where Cod_BarrasS = 'R' and FSalida = "2023-04-22" and Num_EmpS = 758;
+####################################TRIGGERS###################################
+
+DELIMITER |
+create trigger Actualizar_Existencias after update on factus_productos
+  FOR EACH ROW BEGIN
+  if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = old.Cod_Barras) P) = 1) then
+	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_Barras) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = old.Cod_Barras) where Cod_Barras = old.Cod_Barras;
+  else
+	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_Barras) where Cod_Barras = old.Cod_Barras;
+  end if; 
+  END
+| DELIMITER ;
+
+DELIMITER |
+create trigger Actualizar_ExistenciasInsert after insert on factus_productos
+  FOR EACH ROW BEGIN
+	if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = new.Cod_Barras) P) = 1) then
+			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_Barras) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = new.Cod_Barras) where Cod_Barras = new.Cod_Barras;
+		else
+			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_Barras) where Cod_Barras = new.Cod_Barras;
+	end if; 
+  END
+| DELIMITER ;
+
+DELIMITER |
+create trigger Actualizar_Existencias2 after update on salidas_productos
+  FOR EACH ROW BEGIN
+	if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = old.Cod_BarrasS) P) = 1) then
+	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_BarrasS) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = old.Cod_BarrasS) where Cod_Barras = old.Cod_BarrasS;
+  else
+	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_BarrasS) where Cod_Barras = old.Cod_BarrasS;
+  end if; 
+  END
+| DELIMITER ;
+
+DELIMITER |
+create trigger Actualizar_ExistenciasInsercion2 after insert on salidas_productos
+	FOR EACH ROW BEGIN
+		if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = new.Cod_BarrasS) P) = 1) then
+            update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_BarrasS) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = new.Cod_BarrasS) where Cod_Barras = new.Cod_BarrasS;
+        else
+			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_BarrasS) where Cod_Barras = new.Cod_BarrasS;
+        end if; 
+	END
+| DELIMITER ;

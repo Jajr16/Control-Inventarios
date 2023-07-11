@@ -832,7 +832,7 @@ io.on('connection', (socket) => {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
                 for (var i = 0; i < result.length; i++) {
-                    socket.emit('Desp_Equipos', { Num_Serie: result[i].Num_Serie, Equipo: result[i].Equipo, Marca: result[i].Marca, Modelo: result[i].Modelo, NombreEmp: result[i].Nom, Ubi: result[i].Ubi});//Mandar usuario y token al cliente
+                    socket.emit('Desp_Equipos', { Num_Serie: result[i].Num_Serie, Equipo: result[i].Equipo, Marca: result[i].Marca, Modelo: result[i].Modelo, NombreEmp: result[i].Nom, Ubi: result[i].Ubi });//Mandar usuario y token al cliente
                 }
                 socket.emit('ButtonUp');
             }
@@ -1179,6 +1179,16 @@ io.on('connection', (socket) => {
             }
         });
         data.length = 0;
+        const { generatePDF } = require('./PDF.js');
+
+        // Llamar a la función generatePDF
+        generatePDF()
+            .then(() => {
+                console.log('PDF generado y descargado exitosamente.');
+            })
+            .catch(error => {
+                console.error('Error al generar o descargar el PDF:', error);
+            });
     });
 
     // Bajas en mobiliario
