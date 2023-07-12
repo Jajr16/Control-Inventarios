@@ -1160,35 +1160,34 @@ io.on('connection', (socket) => {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
 
             if (result.length > 0) {//Si sí hizo una búsqueda
-                socket.emit('Mobiliario_Existente', { mensaje: "Este artículo de mobiliario ya estaba registrado.\nEn caso de que quiera agregar más cantidad de este producto, por favor ingrese a la página de 'Ingresar más mobiliario'." });
+                socket.emit('Mobiliario_Respuesta', { mensaje: "Este artículo de mobiliario ya estaba registrado.\nEn caso de que quiera agregar más cantidad de este producto, por favor ingrese a la página de 'Ingresar más mobiliario'.", Res: 'Si'  });
             } else {
                 db.query('SELECT Num_Emp FROM empleado WHERE Nom = ?', [data.NombreEmp], function (err, result) {
                     if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
                     if (result.length > 0) {//Si sí hizo una búsqueda
-                        //Se agrega productos a la BD
-                        var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
-                        db.query('insert into mobiliario values (NULL,?,?)', [data.Descripcion, num_emp], function (err2, result) {
-                            if (err2) console.log("Error de inserción de productos: ", err2);
-                            if (result) {
-                                console.log("Resultado de inserción de productos: ", result);
-                                socket.emit('Mobiliario_Inexistente', { mensaje: 'Mobiliario dado de alta.' });//Mandar mensaje de error a cliente
-                            }
-                        });
+                        // Llamar a la función generatePDF
+                        const { generatePDF } = require('./PDF.js');
+                        generatePDF()
+                            .then(() => {
+                                console.log('PDF generado y descargado exitosamente.');
+                                var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
+                                db.query('insert into mobiliario values (NULL,?,?)', [data.Descripcion, num_emp], function (err2, result) {
+                                    if (err2) console.log("Error de inserción de productos: ", err2);
+                                    if (result) {
+                                        console.log("Resultado de inserción de productos: ", result);
+                                        socket.emit('Mobiliario_Respuesta', { mensaje: 'Mobiliario dado de alta.', Res: 'Si' });//Mandar mensaje de error a cliente
+                                    }
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Error al generar o descargar el PDF:', error);
+                                socket.emit('Mobiliario_Respuesta', {mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
+                            });
                     }
                 });
             }
         });
         data.length = 0;
-        const { generatePDF } = require('./PDF.js');
-
-        // Llamar a la función generatePDF
-        generatePDF()
-            .then(() => {
-                console.log('PDF generado y descargado exitosamente.');
-            })
-            .catch(error => {
-                console.error('Error al generar o descargar el PDF:', error);
-            });
     });
 
     // Bajas en mobiliario

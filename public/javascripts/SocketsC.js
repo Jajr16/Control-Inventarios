@@ -1407,17 +1407,9 @@ if (pathname == "/users/altasPro") {
             e.preventDefault();
             if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
 
-                socket.emit('Alta_Mob', { Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() });
+                enviarSocket('Alta_Mob',{ Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() });
 
-                socket.once('Mobiliario_Existente', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
-
-                socket.once('Mobiliario_Inexistente', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
+                recibirSocket('Mobiliario_Respuesta');
             }
         }
 
