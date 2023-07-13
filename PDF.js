@@ -4,7 +4,7 @@ const fs = require('fs');
 const base64Image = fs.readFileSync(`${process.cwd()}\\public\\images\\LogoReducido.jpg`).toString('base64');
 const imageSrc = `data:image/png;base64,${base64Image}`;
 //-------------------------CSS-------------------------------------------
-const cssContent = fs.readFileSync('./public/stylesheets/general.css', 'utf-8');
+const cssContent = `<style> ${fs.readFileSync(`${process.cwd()}\\public\\stylesheets\\PDF.css`, 'utf-8')} </style>`;
 //-------------------------FUNCIÓN---------------------------------------
 async function generatePDF() {
     const htmlContent = `
@@ -24,18 +24,37 @@ async function generatePDF() {
     
     <body>
         <header class="header">
-        <div class="Tres_Column">
+        <div class="Tres_Columnas_Header">
             <div class="logo">
-                <img src="${imageSrc}" width="150" alt="Logo de la empresa">
+                <img src="${imageSrc}" alt="Logo de la empresa">
+            </div>  
+            <div class="Titulo">
+                <center><b><p style="font-size: 1rem;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE EQUIPO DE CÓMPUTO</p></center>
             </div>
-            <div>
-                <center><b>"INSTITUTO CANADIENSE CLARAC"</b><br><p style="font-size:0.6rem">RESPONSIVA DE EQUIPO DE CÓMPUTO</p></center>
-            </div>
-            <div>
-                <b>FECHA: </b> 10-Junio-23
+            <div style="float:right; width: auto;">
+                <b>FECHA: </b>10-Junio-23
             </div>
         </div><hr>
-            
+        <div class="Dos_Columnas_Separado">
+            <div>
+                <label><b>Nombre:</b></label>
+
+            </div>
+            <div>
+                <label><b>No. Empleado:</b></label>
+            </div>
+        </div>
+        <div class="Tres_Columnas">
+            <div>
+                <label><b>Cargo:</b></label>
+            </div>
+            <div>
+                <label><b>Depto.:</b></label>
+            </div>
+            <div>
+                <label><b>Area:</b></label>
+            </div>
+        </div>
         </header>
         <main class="Seccion">
             
@@ -49,9 +68,9 @@ async function generatePDF() {
     const browser = await puppeteer.launch({ headless: "new" }); // Aquí se pasa la opción "headless: "new""
     const page = await browser.newPage();
 
-    await page.addStyleTag({ content: cssContent });
+    //await page.setContent({ content: cssContent });
 
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+    await page.setContent((cssContent + htmlContent), { waitUntil: 'domcontentloaded' });
 
     await page.pdf({ path: outputPath, format: 'Letter' });
 
