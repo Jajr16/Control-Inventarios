@@ -523,8 +523,11 @@ SELECT resMob.*, e.Nom FROM responsivas_m resMob JOIN empleado e ON resMob.Num_e
 #select concat(Nom, " ", AP, " ", AM) NombreCompleto from empleado;
 #update factus_productos set Cantidad = 700 where Nfactura = 'ASKDFJ7';
 #update salidas_productos set Cantidad_Salida = 2 where Cod_BarrasS = 'R' and FSalida = "2023-04-22" and Num_EmpS = 758;
+#############################BUSQUEDAS DE MOBILIARIO################################
+select*from mobiliario;
+select empleado.Nom, empleado.Área, empleado.Num_emp from empleado;
+select*from empleado;
 ####################################TRIGGERS###################################
-
 DELIMITER |
 create trigger Actualizar_Existencias after update on factus_productos
   FOR EACH ROW BEGIN

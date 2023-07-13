@@ -6,7 +6,7 @@ const imageSrc = `data:image/png;base64,${base64Image}`;
 //-------------------------CSS-------------------------------------------
 const cssContent = `<style> ${fs.readFileSync(`${process.cwd()}\\public\\stylesheets\\PDF.css`, 'utf-8')} </style>`;
 //-------------------------FUNCIÓN---------------------------------------
-async function generatePDF() {
+async function generatePDF(num_emp, areaEmp, NombreEmp) {
     const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -29,30 +29,21 @@ async function generatePDF() {
                 <img src="${imageSrc}" alt="Logo de la empresa">
             </div>  
             <div class="Titulo">
-                <center><b><p style="font-size: 1rem;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE EQUIPO DE CÓMPUTO</p></center>
+                <center><b><p style="font-size: 1rem;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE MOBILIARIO</p></center>
             </div>
             <div style="float:right; width: auto;">
                 <b>FECHA: </b>10-Junio-23
             </div>
         </div><hr>
-        <div class="Dos_Columnas_Separado">
-            <div>
-                <label><b>Nombre:</b></label>
-
+        <div class="Tres_Columnas_Header">
+            <div style="width:40%">
+                <label><b>Nombre: </b></label>${NombreEmp}
             </div>
-            <div>
-                <label><b>No. Empleado:</b></label>
+            <div style="width:40%">
+                <label><b>Área: </b></label>${areaEmp}
             </div>
-        </div>
-        <div class="Tres_Columnas">
-            <div>
-                <label><b>Cargo:</b></label>
-            </div>
-            <div>
-                <label><b>Depto.:</b></label>
-            </div>
-            <div>
-                <label><b>Area:</b></label>
+            <div style="width:20%">
+                <label><b>No. Empleado: </b></label>${num_emp}
             </div>
         </div>
         </header>

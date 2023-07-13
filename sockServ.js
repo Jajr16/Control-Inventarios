@@ -9,6 +9,8 @@ const path = require('path');
 const fs = require('fs');
 var contador = 1;
 var contadorS = 1;
+// Llamar a la función generatePDF
+const { generatePDF } = require('./PDF.js');
 //MENSAJE DE ERROR A ENVIAR
 var MensajeError = "Hubo un error, favor de contactar al personal de sistemas.";
 //Escuchar servidor
@@ -1160,29 +1162,33 @@ io.on('connection', (socket) => {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
 
             if (result.length > 0) {//Si sí hizo una búsqueda
-                socket.emit('Mobiliario_Respuesta', { mensaje: "Este artículo de mobiliario ya estaba registrado.\nEn caso de que quiera agregar más cantidad de este producto, por favor ingrese a la página de 'Ingresar más mobiliario'.", Res: 'Si'  });
+                socket.emit('Mobiliario_Respuesta', { mensaje: "Este artículo de mobiliario ya estaba registrado.\nEn caso de que quiera agregar más cantidad de este producto, por favor ingrese a la página de 'Ingresar más mobiliario'.", Res: 'Si' });
             } else {
-                db.query('SELECT Num_Emp FROM empleado WHERE Nom = ?', [data.NombreEmp], function (err, result) {
+                db.query('SELECT Num_Emp, Área FROM empleado WHERE Nom = ?', [data.NombreEmp], function (err, result) {
                     if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
                     if (result.length > 0) {//Si sí hizo una búsqueda
-                        // Llamar a la función generatePDF
-                        const { generatePDF } = require('./PDF.js');
-                        generatePDF()
-                            .then(() => {
-                                console.log('PDF generado y descargado exitosamente.');
-                                var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
-                                db.query('insert into mobiliario values (NULL,?,?)', [data.Descripcion, num_emp], function (err2, result) {
-                                    if (err2) console.log("Error de inserción de productos: ", err2);
-                                    if (result) {
-                                        console.log("Resultado de inserción de productos: ", result);
-                                        socket.emit('Mobiliario_Respuesta', { mensaje: 'Mobiliario dado de alta.', Res: 'Si' });//Mandar mensaje de error a cliente
-                                    }
-                                });
-                            })
-                            .catch(error => {
-                                console.error('Error al generar o descargar el PDF:', error);
-                                socket.emit('Mobiliario_Respuesta', {mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
-                            });
+
+                        var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
+                        var areaEmp = result[0].Área;
+
+                        db.query('insert into mobiliario values (NULL,?,?)', [data.Descripcion, num_emp], function (err2, result) {
+                            if (err2) console.log("Error de inserción de productos: ", err2);
+                            if (result) {
+                                console.log("Resultado de inserción de productos: ", result);
+                                console.log(num_emp);
+                                console.log(areaEmp);
+                                console.log(data.NombreEmp);
+                                generatePDF(num_emp,areaEmp,data.NombreEmp)
+                                    .then(() => {
+                                        socket.emit('Mobiliario_Respuesta', { mensaje: 'Mobiliario dado de alta, responsiva generada.', Res: 'Si' });//Mandar mensaje de error a cliente
+                                    }).catch(error => {
+                                        console.error('Error al generar o descargar el PDF:', error);
+                                        socket.emit('Mobiliario_Respuesta', { mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
+                                    });
+                            }
+                        });
+
+
                     }
                 });
             }
