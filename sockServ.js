@@ -1178,16 +1178,21 @@ io.on('connection', (socket) => {
                                 console.log(num_emp);
                                 console.log(areaEmp);
                                 console.log(data.NombreEmp);
-                                generatePDF(num_emp,areaEmp,data.NombreEmp)
-                                    .then(() => {
-                                        socket.emit('Mobiliario_Respuesta', { mensaje: 'Mobiliario dado de alta, responsiva generada.', Res: 'Si' });//Mandar mensaje de error a cliente
-                                    }).catch(error => {
-                                        console.error('Error al generar o descargar el PDF:', error);
-                                        socket.emit('Mobiliario_Respuesta', { mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
-                                    });
+
+                                db.query('select*from mobiliario;', function (err, res) {
+                                    if (err) console.log("Error de inserción de productos: ", err);
+                                    if (res) {
+                                        generatePDF(num_emp, areaEmp, data.NombreEmp, res)
+                                            .then(() => {
+                                                socket.emit('Mobiliario_Respuesta', { mensaje: 'Mobiliario dado de alta, responsiva generada.', Res: 'Si' });//Mandar mensaje de error a cliente
+                                            }).catch(error => {
+                                                console.error('Error al generar o descargar el PDF:', error);
+                                                socket.emit('Mobiliario_Respuesta', { mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
+                                            });
+                                    }
+                                });
                             }
                         });
-
 
                     }
                 });
@@ -1221,6 +1226,7 @@ io.on('connection', (socket) => {
 
     });
 
+    
     // Cambios en mobiliario
     socket.on('Cambios_Mobiliario', async (data, dataOld) => {
         db.query('SELECT Num_Emp FROM empleado WHERE Nom = ?', [data.NombreEmp], function (err, result) {
