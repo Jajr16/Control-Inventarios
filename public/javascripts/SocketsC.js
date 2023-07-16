@@ -998,7 +998,7 @@ if (pathname == "/users/altasPro") {
                 enviarSocket("AltAcces", { Num_S: $("#Num_Serie").val(), AccesE: $("#AccesE").val() });
             }
             //Respuesta
-            recibirSocket("RespEquipos");
+            recibirSocket('Equipo_Respuesta');
         }
     });
 

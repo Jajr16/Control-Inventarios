@@ -11,6 +11,8 @@ var contador = 1;
 var contadorS = 1;
 // Llamar a la función generatePDF
 const { generatePDF } = require('./PDF.js');
+// Llamar a la función Equipos_generatePDF
+const { Equipos_generatePDF } = require('./PDF_equipos.js');
 //MENSAJE DE ERROR A ENVIAR
 var MensajeError = "Hubo un error, favor de contactar al personal de sistemas.";
 //Escuchar servidor
@@ -1001,7 +1003,18 @@ io.on('connection', (socket) => {
                 db.query('insert into equipo values(null,?,?,?,?,(select Num_emp from empleado where Nom = ?),?)', [data.Num_S, data.Equipo, data.MarcaE, data.ModelE, data.NomEn, data.UbiE], async function (err, result) {
                     if (err) socket.emit(MensajeError);
                     if (result) {
-                        socket.emit("RespEquipos", { mensaje: "Equipo dado de alta exitosamente.", Res: "Si" });
+                        db.query('select*from equipo;', function (err, res) {
+                            if (err) console.log("Error de inserción de productos: ", err);
+                            if (res) {
+                                Equipos_generatePDF(num_emp, areaEmp, data.NombreEmp, res)
+                                    .then(() => {
+                                        socket.emit('Equipo_Respuesta', { mensaje: 'Equipo dado de alta, responsiva generada.', Res: 'Si' });//Mandar mensaje de error a cliente
+                                    }).catch(error => {
+                                        console.error('Error al generar o descargar el PDF:', error);
+                                        socket.emit('Equipo_Respuesta', { mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
+                                    });
+                            }
+                        });
                     } else {
                         socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta el equipo, inténtelo de nuevo." });
                     }

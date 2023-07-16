@@ -6,8 +6,8 @@ const imageSrc = `data:image/png;base64,${base64Image}`;
 //-------------------------CSS-------------------------------------------
 const cssContent = `<style> ${fs.readFileSync(`${process.cwd()}\\public\\stylesheets\\PDF.css`, 'utf-8')} </style>`;
 //-------------------------FUNCIÓN---------------------------------------
-async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
-    const mobiliario = mobData || [];
+async function Equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpData) {
+    const equipos = eqpData || [];
 
     var htmlContent = `
     <!DOCTYPE html>
@@ -30,7 +30,7 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
                     <img src="${imageSrc}" alt="Logo de la empresa">
                 </div>  
                 <div class="Titulo">
-                    <center><b><p style="font-size: 1rem;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE MOBILIARIO</p></center>
+                    <center><b><p style="font-size: 1rem;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE EQUIPOS</p></center>
                 </div>
                 <div style="float:right; width: auto;">
                     <b>FECHA: </b>10-Junio-23
@@ -58,11 +58,11 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
                 </thead>
                 <tbody>`;
 
-    mobiliario.forEach(mobi => {
+    equipos.forEach(eqps => {
         htmlContent +=
             `<tr>
-                        <td>${mobi.Num_Inventario}</td>
-                        <td>${mobi.Descripcion}</td>
+                        <td>${eqps.Num_Inventario}</td>
+                        <td>${eqps.Descripcion}</td>
                     </tr>`;
     });
     htmlContent += `
@@ -73,7 +73,7 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     </html>
     `;
 
-    const outputPath = 'output.pdf';
+    const outputPath = 'outputEqp.pdf';
 
     const browser = await puppeteer.launch({ headless: "new" }); // Aquí se pasa la opción "headless: "new""
     const page = await browser.newPage();
@@ -97,10 +97,10 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     console.log(`PDF generado exitosamente en: ${outputPath}`);
 }
 
-generatePDF().catch(error => {
+Equipos_generatePDF().catch(error => {
     console.error('Error al generar el PDF:', error);
 });
 
 module.exports = {
-    generatePDF
+    Equipos_generatePDF
 };
