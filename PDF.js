@@ -21,6 +21,7 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
         <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
         <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel='stylesheet' type="text/css" href='./public/stylesheets/PDF.css'/>
     </head>
     
     <body>
@@ -80,15 +81,21 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
 
     //await page.setContent({ content: cssContent });
 
-    await page.setContent((cssContent + htmlContent), { waitUntil: 'domcontentloaded' });
-
+    if(page != 0){
+        await page.setContent((cssContent + htmlContent), { waitUntil: 'domcontentloaded' });
+    }
     const options = {
         format: 'Letter',
         displayHeaderFooter: true,
-        headerTemplate: `
-    
-        `,
     };
+
+    page.on('page', page => {
+        page.evaluate(() => {
+            const header = document.querySelector('.header');
+            header.style.display = 'block';
+        });
+    });
+    
 
     await page.pdf({ path: outputPath, ...options });
 
