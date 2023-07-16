@@ -1,11 +1,11 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-
+//-------------------------IMAGENES--------------------------------------
 const base64Image = fs.readFileSync(`${process.cwd()}\\public\\images\\LogoReducido.jpg`).toString('base64');
 const imageSrc = `data:image/png;base64,${base64Image}`;
-
-const cssContent = fs.readFileSync(`${process.cwd()}\\public\\stylesheets/PDF.css`, 'utf-8');
-
+//-------------------------CSS-------------------------------------------
+const cssContent = `<style> ${fs.readFileSync(`${process.cwd()}\\public\\stylesheets\\PDF.css`, 'utf-8')} </style>`;
+//-------------------------FUNCIÓN---------------------------------------
 async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     const mobiliario = mobData || [];
 
@@ -21,7 +21,7 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
         <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
         <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <style>${cssContent}</style>
+        <link rel='stylesheet' type="text/css" href='./public/stylesheets/PDF.css'/>
     </head>
     
     <body>
@@ -62,78 +62,40 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     mobiliario.forEach(mobi => {
         htmlContent +=
             `<tr>
-                <td>${mobi.Num_Inventario}</td>
-                <td>${mobi.Descripcion}</td>
-            </tr>`;
+                        <td>${mobi.Num_Inventario}</td>
+                        <td>${mobi.Descripcion}</td>
+                    </tr>`;
     });
-
     htmlContent += `
-            </tbody>
-        </table>
-    </main>
+                </tbody>
+            </table>
+        </main>
     </body>
     </html>
     `;
 
     const outputPath = 'output.pdf';
 
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ headless: "new" }); // Aquí se pasa la opción "headless: "new""
     const page = await browser.newPage();
 
+    //await page.setContent({ content: cssContent });
+
+    if(page != 0){
+        await page.setContent((cssContent + htmlContent), { waitUntil: 'domcontentloaded' });
+    }
     const options = {
         format: 'Letter',
         displayHeaderFooter: true,
-        headerTemplate: `
-        <style>
-        .header {
-            display: none;
-        }
-        @page:first {
-            .header {
-            display: none;
-            }
-        }
-        @page {
-            margin-top: 30px;
-            .header {
-            display: block;
-            }
-        }
-        </style>
-        <div class="header">
-            <div class="Tres_Columnas_Header">
-                <div class="logo">
-                    <img src="${imageSrc}" alt="Logo de la empresa">
-                </div>  
-                <div class="Titulo">
-                    <center><b><p style="font-size: 1rem;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE MOBILIARIO</p></center>
-                </div>
-                <div style="float:right; width: auto;">
-                    <b>FECHA: </b>10-Junio-23
-                </div>
-            </div><hr>
-            <div class="Tres_Columnas_Header">
-                <div style="width:40%">
-                    <label><b>Nombre: </b></label>${NombreEmp}
-                </div>
-                <div style="width:40%">
-                    <label><b>Área: </b></label>${areaEmp}
-                </div>
-                <div style="width:20%">
-                    <label><b>No. Empleado: </b></label>${num_emp}
-                </div>
-            </div>
-        </div>
-        `,
-        footerTemplate: `
-        <div style="text-align: center; font-size: 10px; margin-top: 20px;">
-            <span class="pageNumber"></span> / <span class="totalPages"></span>
-        </div>
-        `,
     };
+
+    page.on('page', page => {
+        page.evaluate(() => {
+            const header = document.querySelector('.header');
+            header.style.display = 'block';
+        });
+    });
     
-    await page.setContent(htmlContent, { waitUntil: 'domcontentloaded' });
-    await page.addStyleTag({ content: cssContent });
 
     await page.pdf({ path: outputPath, ...options });
 
