@@ -54,7 +54,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
             th, td {
                 border-top: 1px solid black;
                 border-bottom: 1px solid black;
-                width: 6%;
+                width: 4%;
             }
         </style>
             <main class="Seccion">
@@ -70,6 +70,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
                         <td>${equi.Num_Serie}</td>
                         <td>${equi.Teclado}</td>
                         <td>${equi.Mouse}</td>
+                        <td>${equi.Accesorio}</td>
                         <td>${equi.Monitor}</td>
                         <td>${equi.Num_Serie_Monitor}</td>
                     </tr>`;
@@ -120,7 +121,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
             th {
                 border-top: 2px solid black;
                 border-bottom: 2px solid black;
-                width: 6%;
+                width: 4%;
             }
         </style>
         <div style="width: 100%;">
@@ -158,6 +159,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
                             <th>No. SERIE</th>
                             <th>TECLA</th>
                             <th>MOUSE</th>
+                            <th>ACCESORIO</th>
                             <th>MONITOR</th>
                             <th>N/S MONITOR</th>
                         </tr>
