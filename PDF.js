@@ -1,11 +1,11 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-//-------------------------IMAGENES--------------------------------------
+
 const base64Image = fs.readFileSync(`${process.cwd()}\\public\\images\\LogoReducido.jpg`).toString('base64');
 const imageSrc = `data:image/png;base64,${base64Image}`;
-//-------------------------CSS-------------------------------------------
-const cssContent = `<style> ${fs.readFileSync(`${process.cwd()}\\public\\stylesheets\\PDF.css`, 'utf-8')} </style>`;
-//-------------------------FUNCIÓN---------------------------------------
+
+const cssContent = fs.readFileSync(`${process.cwd()}\\public\\stylesheets/PDF.css`, 'utf-8');
+
 async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     const mobiliario = mobData || [];
 
@@ -21,43 +21,23 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
         <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
         <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel='stylesheet' type="text/css" href='./public/stylesheets/PDF.css'/>
+        <style>${cssContent}</style>
     </head>
-    
     <body>
-        <header class="header">
-            <div class="Tres_Columnas_Header">
-                <div class="logo">
-                    <img src="${imageSrc}" alt="Logo de la empresa">
-                </div>  
-                <div class="Titulo">
-                    <center><b><p style="font-size: 1rem;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE MOBILIARIO</p></center>
-                </div>
-                <div style="float:right; width: auto;">
-                    <b>FECHA: </b>10-Junio-23
-                </div>
-            </div><hr>
-            <div class="Tres_Columnas_Header">
-                <div style="width:40%">
-                    <label><b>Nombre: </b></label>${NombreEmp}
-                </div>
-                <div style="width:40%">
-                    <label><b>Área: </b></label>${areaEmp}
-                </div>
-                <div style="width:20%">
-                    <label><b>No. Empleado: </b></label>${num_emp}
-                </div>
-            </div>
-        </header>
-        <main class="Seccion">
-            <table>
-                <thead>
-                    <tr id="firstrow">
-                        <th>Número de Inventario</th>
-                        <th>Descripción</th>
-                    </tr>
-                </thead>
-                <tbody>`;
+        <style>
+            table{
+                border-collapse: collapse;
+            }
+
+            th, td {
+                border-top: 1px solid black;
+                border-bottom: 1px solid black;
+                width: 50%;
+            }
+        </style>
+            <main class="Seccion">
+                <table style="width: 100%;">               
+                    <tbody>`;
 
     mobiliario.forEach(mobi => {
         htmlContent +=
@@ -66,38 +46,106 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
                         <td>${mobi.Descripcion}</td>
                     </tr>`;
     });
+
     htmlContent += `
-                </tbody>
-            </table>
-        </main>
+                    </tbody>
+                </table>
+            </main>
     </body>
     </html>
     `;
 
     const outputPath = 'output.pdf';
 
-    const browser = await puppeteer.launch({ headless: "new" }); // Aquí se pasa la opción "headless: "new""
+    const browser = await puppeteer.launch({
+        headless: "new",
+        defaultViewport: {
+            width: 750,
+            height: 500,
+            deviceScaleFactor: 1,
+            isMobile: true,
+            hasTouch: false,
+            isLandscape: false,
+        }
+    });
     const page = await browser.newPage();
 
-    //await page.setContent({ content: cssContent });
+    await page.setContent(htmlContent, { waitUntil: 'domcontentloaded' });
+    await page.addStyleTag({ content: cssContent });
 
-    if(page != 0){
-        await page.setContent((cssContent + htmlContent), { waitUntil: 'domcontentloaded' });
-    }
-    const options = {
+    await page.emulateMediaType("screen");
+
+    await page.pdf({
+        path: outputPath,
         format: 'Letter',
         displayHeaderFooter: true,
-    };
+        headerTemplate: `
+        <style>
+            table{
+                border-collapse: collapse;
+            }
 
-    page.on('page', page => {
-        page.evaluate(() => {
-            const header = document.querySelector('.header');
-            header.style.display = 'block';
-        });
+            th {
+                border-top: 2px solid black;
+                border-bottom: 2px solid black;
+                width: 50%;
+            }
+        </style>
+        <div style="width: 100%;">
+            <center style="width: 100%;">
+                <div style="font-size: 8px; width: 100%;">
+                    <div style="display: flex; border-bottom: solid 1px; justify-content: space-evenly; align-items: center; width: 100%;">
+                        <div style="flex: 1; padding: 0 32px; float: left; max-width: 20%;">
+                            <img src="${imageSrc}" height="100px" width="auto" alt="Logo de la empresa">
+                        </div>  
+                        <div style="flex: 1; padding: 0 32px; width: 45%;">
+                            <center><b><p style="font-size: 10px;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE MOBILIARIO</p></center>
+                        </div>
+                        <div style="flex: 1; padding: 0 32px; float:right; width: auto;">
+                            <b>FECHA: </b>10-Junio-23
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-evenly; align-items: center; width: 100%;">
+                        <div style="flex: 1; padding: 0 32px; width:40%">
+                            <label style="display: block; font-weight: 700; text-transform: uppercase; margin-top: 10px;"><b>Nombre: </b></label>${NombreEmp}
+                        </div>
+                        <div style="flex: 1; padding: 0 32px; width:40%">
+                            <label style="display: block; font-weight: 700; text-transform: uppercase; margin-top: 10px;"><b>Área: </b></label>${areaEmp}
+                        </div>
+                        <div style="flex: 1; padding: 0 32px; width:20%">
+                            <label style="display: block; font-weight: 700; text-transform: uppercase; margin-top: 10px;"><b>No. Empleado: </b></label>${num_emp}
+                        </div>
+                    </div>
+                </div>
+                <table style="font-size: 10px; padding-top: 10px; width: 95%;">
+                    <thead>
+                        <tr id="firstrow">
+                            <th>No. INVENTARIO</th>
+                            <th>DESCRIPCIÓN</th>
+                        </tr>
+                    </thead>        
+                </table>         
+            </center>
+        </div>
+        `,
+        footerTemplate: `
+        <center style="font-size: 8px; display: flex; justify-content: space-evenly; align-items: center; width: 100%;">
+            <div style="display: inline-flex; align-items: center; flex-direction: column; padding: 0 2rem; width:45%;">
+                <div style="border-bottom: 1px solid; width: 100%;">.
+                </div>
+                <p><b>REALIZÓ</b></p>
+            </div>
+            <div style="display: inline-flex; align-items: center; flex-direction: column; padding: 0 2rem; width:45%;">
+                <div style="border-bottom: 1px solid; width: 100%;">
+                    <span>${NombreEmp}</span>
+                </div>
+                <p><b>RESPONSABLE</b></p>
+            </div>
+        </center>    
+        `,
+        printBackground: true,
+        margin: { left: "0.5cm", top: "5.69cm", right: "0.5cm", bottom: "3cm" }
     });
-    
-
-    await page.pdf({ path: outputPath, ...options });
 
     await browser.close();
 
