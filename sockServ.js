@@ -10,9 +10,9 @@ const fs = require('fs');
 var contador = 1;
 var contadorS = 1;
 // Llamar a la función generatePDF
-const { generatePDF } = require('./PDF.js');
+const { mobiliario_generatePDF } = require('./PDF_mobiliario.js');
 // Llamar a la función Equipos_generatePDF
-const { Equipos_generatePDF } = require('./PDF_equipos.js');
+const { equipos_generatePDF } = require('./PDF_equipos.js');
 //MENSAJE DE ERROR A ENVIAR
 var MensajeError = "Hubo un error, favor de contactar al personal de sistemas.";
 //Escuchar servidor
@@ -995,18 +995,22 @@ io.on('connection', (socket) => {
 
     // altas de equipos
     socket.on('Alta_Equipos', async (data) => {
-        db.query('select * from equipo where Num_Serie = ?', [data.Num_S], async function (err, result) {
-            if (err) socket.emit(MensajeError);
-            if (result.length > 0) {
-                socket.emit("RespEquipos", { mensaje: "Este producto ya está registrado, ingrese otro." });
-            } else {
+        db.query('SELECT Num_Emp, Área FROM empleado WHERE Nom = ?', [data.NomEn], function (err, result) {
+            if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
+            if (result.length > 0) {//Si sí hizo una búsqueda
+
+                var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
+                var areaEmp = result[0].Área;
+
                 db.query('insert into equipo values(null,?,?,?,?,(select Num_emp from empleado where Nom = ?),?)', [data.Num_S, data.Equipo, data.MarcaE, data.ModelE, data.NomEn, data.UbiE], async function (err, result) {
                     if (err) socket.emit(MensajeError);
                     if (result) {
-                        db.query('select*from equipo;', function (err, res) {
+                        console.log("Resultado de inserción de productos: ", result);
+
+                        db.query('select*from equipo where Num_emp = ?;', [num_emp], function (err, res) {
                             if (err) console.log("Error de inserción de productos: ", err);
                             if (res) {
-                                Equipos_generatePDF(num_emp, areaEmp, data.NombreEmp, res)
+                                equipos_generatePDF(num_emp, areaEmp, data.NomEn, res)
                                     .then(() => {
                                         socket.emit('Equipo_Respuesta', { mensaje: 'Equipo dado de alta, responsiva generada.', Res: 'Si' });//Mandar mensaje de error a cliente
                                     }).catch(error => {
@@ -1015,13 +1019,14 @@ io.on('connection', (socket) => {
                                     });
                             }
                         });
-                    } else {
-                        socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta el equipo, inténtelo de nuevo." });
                     }
                 });
+
             }
         });
+        data.length = 0;
     });
+
     // Alta de PC
     socket.on('AltaPc', async (data) => {
         db.query('select * from pcs where Num_Serie = ?', [data.Num_S], async function (err, result) {
@@ -1184,7 +1189,7 @@ io.on('connection', (socket) => {
                         db.query('select*from mobiliario where Num_emp = ?;', [num_emp], function (err, res) {
                             if (err) console.log("Error de inserción de productos: ", err);
                             if (res) {
-                                generatePDF(num_emp, areaEmp, data.NombreEmp, res)
+                                mobiliario_generatePDF(num_emp, areaEmp, data.NombreEmp, res)
                                     .then(() => {
                                         socket.emit('Mobiliario_Respuesta', { mensaje: 'Mobiliario dado de alta, responsiva generada.', Res: 'Si' });//Mandar mensaje de error a cliente
                                     }).catch(error => {

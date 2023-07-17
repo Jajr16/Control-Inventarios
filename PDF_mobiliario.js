@@ -1,12 +1,33 @@
 const puppeteer = require('puppeteer');
+const path = require('path');
 const fs = require('fs');
+var contador = 1;
 
 const base64Image = fs.readFileSync(`${process.cwd()}\\public\\images\\LogoReducido.jpg`).toString('base64');
 const imageSrc = `data:image/png;base64,${base64Image}`;
 
 const cssContent = fs.readFileSync(`${process.cwd()}\\public\\stylesheets/PDF.css`, 'utf-8');
 
-async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
+// Fecha para generar responsiva
+const date = new Date();
+let fechaDia = date.getDate();
+let fechaMes = date.getMonth() + 1;
+let fechaAño = date.getFullYear();
+let fechaHora = date.getHours();
+let fechaMinutos = date.getMinutes();
+
+if (fechaMes < 10) {
+    fechaMes = "0" + fechaMes;
+}
+if (fechaDia < 10) {
+    fechaDia = "0" + fechaDia;
+}
+
+// Variables de fechas
+let nombreArchivo = "Alta_mobiliario" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
+let fecha_mob = fechaDia + "/" + fechaMes + "/" + fechaAño;
+
+async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     const mobiliario = mobData || [];
 
     var htmlContent = `
@@ -56,7 +77,11 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     </html>
     `;
 
-    const outputPath = 'output.pdf';
+    //Ruta del archivo
+    var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
+    const pathPDF = path.join(DOWNLOAD_DIR, nombreArchivo + '_' + contador + '.pdf');
+
+    const outputPath = pathPDF;
 
     const browser = await puppeteer.launch({
         headless: "new",
@@ -103,7 +128,7 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
                             <center><b><p style="font-size: 10px;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE MOBILIARIO</p></center>
                         </div>
                         <div style="flex: 1; padding: 0 32px; float:right; width: auto;">
-                            <b>FECHA: </b>10-Junio-23
+                            <b>FECHA: </b>${fecha_mob}
                         </div>
                     </div>
                     <div style="display: flex; justify-content: space-evenly; align-items: center; width: 100%;">
@@ -153,10 +178,10 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     console.log(`PDF generado exitosamente en: ${outputPath}`);
 }
 
-generatePDF().catch(error => {
+mobiliario_generatePDF().catch(error => {
     console.error('Error al generar el PDF:', error);
 });
 
 module.exports = {
-    generatePDF
+    mobiliario_generatePDF
 };

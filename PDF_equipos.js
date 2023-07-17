@@ -1,13 +1,34 @@
 const puppeteer = require('puppeteer');
+const path = require('path');
 const fs = require('fs');
-//-------------------------IMAGENES--------------------------------------
+var contador = 1;
+
 const base64Image = fs.readFileSync(`${process.cwd()}\\public\\images\\LogoReducido.jpg`).toString('base64');
 const imageSrc = `data:image/png;base64,${base64Image}`;
-//-------------------------CSS-------------------------------------------
-const cssContent = `<style> ${fs.readFileSync(`${process.cwd()}\\public\\stylesheets\\PDF.css`, 'utf-8')} </style>`;
-//-------------------------FUNCIÓN---------------------------------------
-async function Equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpData) {
-    const equipos = eqpData || [];
+
+const cssContent = fs.readFileSync(`${process.cwd()}\\public\\stylesheets/PDF.css`, 'utf-8');
+
+// Fecha para generar responsiva
+const date = new Date();
+let fechaDia = date.getDate();
+let fechaMes = date.getMonth() + 1;
+let fechaAño = date.getFullYear();
+let fechaHora = date.getHours();
+let fechaMinutos = date.getMinutes();
+
+if (fechaMes < 10) {
+    fechaMes = "0" + fechaMes;
+}
+if (fechaDia < 10) {
+    fechaDia = "0" + fechaDia;
+}
+
+// Variables de fechas
+let nombreArchivo = "Alta_equipos" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
+let fecha_eqp = fechaDia + "/" + fechaMes + "/" + fechaAño;
+
+async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
+    const equipos = eqpsData || [];
 
     var htmlContent = `
     <!DOCTYPE html>
@@ -21,86 +42,158 @@ async function Equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpData) {
         <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
         <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style>${cssContent}</style>
     </head>
-    
     <body>
-        <header class="header">
-            <div class="Tres_Columnas_Header">
-                <div class="logo">
-                    <img src="${imageSrc}" alt="Logo de la empresa">
-                </div>  
-                <div class="Titulo">
-                    <center><b><p style="font-size: 1rem;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE EQUIPOS</p></center>
-                </div>
-                <div style="float:right; width: auto;">
-                    <b>FECHA: </b>10-Junio-23
-                </div>
-            </div><hr>
-            <div class="Tres_Columnas_Header">
-                <div style="width:40%">
-                    <label><b>Nombre: </b></label>${NombreEmp}
-                </div>
-                <div style="width:40%">
-                    <label><b>Área: </b></label>${areaEmp}
-                </div>
-                <div style="width:20%">
-                    <label><b>No. Empleado: </b></label>${num_emp}
-                </div>
-            </div>
-        </header>
-        <main class="Seccion">
-            <table>
-                <thead>
-                    <tr id="firstrow">
-                        <th>Número de Inventario</th>
-                        <th>Descripción</th>
-                    </tr>
-                </thead>
-                <tbody>`;
+        <style>
+            table{
+                border-collapse: collapse;
+                margin-top: 10px;
+            }
 
-    equipos.forEach(eqps => {
+            th, td {
+                border-top: 1px solid black;
+                border-bottom: 1px solid black;
+                width: 6%;
+            }
+        </style>
+            <main class="Seccion">
+                <table style="width: 100%;">               
+                    <tbody>`;
+
+    equipos.forEach(equi => {
         htmlContent +=
             `<tr>
-                        <td>${eqps.Num_Inventario}</td>
-                        <td>${eqps.Descripcion}</td>
+                        <td>${equi.Equipo}</td>
+                        <td>${equi.Marca}</td>
+                        <td>${equi.Modelo}</td>
+                        <td>${equi.Num_Serie}</td>
+                        <td>${equi.Teclado}</td>
+                        <td>${equi.Mouse}</td>
+                        <td>${equi.Monitor}</td>
+                        <td>${equi.Num_Serie_Monitor}</td>
                     </tr>`;
     });
+
     htmlContent += `
-                </tbody>
-            </table>
-        </main>
+                    </tbody>
+                </table>
+            </main>
     </body>
     </html>
     `;
 
-    const outputPath = 'outputEqp.pdf';
+    //Ruta del archivo
+    var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
+    const pathPDF = path.join(DOWNLOAD_DIR, nombreArchivo + '_' + contador + '.pdf');
 
-    const browser = await puppeteer.launch({ headless: "new" }); // Aquí se pasa la opción "headless: "new""
+    const outputPath = pathPDF;
+
+    const browser = await puppeteer.launch({
+        headless: "new",
+        defaultViewport: {
+            width: 750,
+            height: 500,
+            deviceScaleFactor: 1,
+            isMobile: true,
+            hasTouch: false,
+            isLandscape: false,
+        }
+    });
     const page = await browser.newPage();
 
-    //await page.setContent({ content: cssContent });
+    await page.setContent(htmlContent, { waitUntil: 'domcontentloaded' });
+    await page.addStyleTag({ content: cssContent });
 
-    await page.setContent((cssContent + htmlContent), { waitUntil: 'domcontentloaded' });
+    await page.emulateMediaType("screen");
 
-    const options = {
+    await page.pdf({
+        path: outputPath,
         format: 'Letter',
         displayHeaderFooter: true,
         headerTemplate: `
-    
-        `,
-    };
+        <style>
+            table{
+                border-collapse: collapse;
+            }
 
-    await page.pdf({ path: outputPath, ...options });
+            th {
+                border-top: 2px solid black;
+                border-bottom: 2px solid black;
+                width: 6%;
+            }
+        </style>
+        <div style="width: 100%;">
+            <center style="width: 100%;">
+                <div style="font-size: 8px; width: 100%;">
+                    <div style="display: flex; border-bottom: solid 1px; justify-content: space-evenly; align-items: center; width: 100%;">
+                        <div style="flex: 1; padding: 0 32px; float: left; max-width: 20%;">
+                            <img src="${imageSrc}" height="100px" width="auto" alt="Logo de la empresa">
+                        </div>  
+                        <div style="flex: 1; padding: 0 32px; width: 45%;">
+                            <center><b><p style="font-size: 10px;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE EQUIPO DE COMPUTO</p></center>
+                        </div>
+                        <div style="flex: 1; padding: 0 32px; float:right; width: auto;">
+                            <b>FECHA: </b>${fecha_eqp}
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-evenly; align-items: center; width: 100%;">
+                        <div style="flex: 1; padding: 0 32px; width:40%">
+                            <label style="display: block; font-weight: 700; text-transform: uppercase; margin-top: 10px;"><b>Nombre: </b></label>${NombreEmp}
+                        </div>
+                        <div style="flex: 1; padding: 0 32px; width:40%">
+                            <label style="display: block; font-weight: 700; text-transform: uppercase; margin-top: 10px;"><b>Área: </b></label>${areaEmp}
+                        </div>
+                        <div style="flex: 1; padding: 0 32px; width:20%">
+                            <label style="display: block; font-weight: 700; text-transform: uppercase; margin-top: 10px;"><b>No. Empleado: </b></label>${num_emp}
+                        </div>
+                    </div>
+                </div>
+                <table style="font-size: 10px; padding-top: 10px; width: 95%;">
+                    <thead>
+                        <tr id="firstrow">
+                            <th>EQUIPO</th>
+                            <th>MARCA</th>
+                            <th>MODELO</th>
+                            <th>No. SERIE</th>
+                            <th>TECLA</th>
+                            <th>MOUSE</th>
+                            <th>MONITOR</th>
+                            <th>N/S MONITOR</th>
+                        </tr>
+                    </thead>        
+                </table>         
+            </center>
+        </div>
+        `,
+        footerTemplate: `
+        <center style="font-size: 8px; display: flex; justify-content: space-evenly; align-items: center; width: 100%;">
+            <div style="display: inline-flex; align-items: center; flex-direction: column; padding: 0 2rem; width:45%;">
+                <div style="border-bottom: 1px solid; width: 100%;">.
+                </div>
+                <p><b>REALIZÓ</b></p>
+            </div>
+            <div style="display: inline-flex; align-items: center; flex-direction: column; padding: 0 2rem; width:45%;">
+                <div style="border-bottom: 1px solid; width: 100%;">
+                    <span>${NombreEmp}</span>
+                </div>
+                <p><b>RESPONSABLE</b></p>
+            </div>
+        </center>    
+        `,
+        printBackground: true,
+        margin: { left: "0.5cm", top: "5.69cm", right: "0.5cm", bottom: "3cm" }
+    });
 
     await browser.close();
 
     console.log(`PDF generado exitosamente en: ${outputPath}`);
 }
 
-Equipos_generatePDF().catch(error => {
+equipos_generatePDF().catch(error => {
     console.error('Error al generar el PDF:', error);
 });
 
 module.exports = {
-    Equipos_generatePDF
+    equipos_generatePDF
 };
