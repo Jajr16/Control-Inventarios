@@ -27,6 +27,7 @@ async function generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
         <style>
             table{
                 border-collapse: collapse;
+                margin-top: 10px;
             }
 
             th, td {
