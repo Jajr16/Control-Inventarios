@@ -6,7 +6,7 @@ var contador = 1;
 const base64Image = fs.readFileSync(`${process.cwd()}\\public\\images\\LogoReducido.jpg`).toString('base64');
 const imageSrc = `data:image/png;base64,${base64Image}`;
 
-const cssContent = fs.readFileSync(`${process.cwd()}\\public\\stylesheets/PDF.css`, 'utf-8');
+const cssContent = fs.readFileSync(`${process.cwd()}\\public\\stylesheets/PDF_equipos.css`, 'utf-8');
 
 // Fecha para generar responsiva
 const date = new Date();
@@ -58,16 +58,16 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
             }
         </style>
             <main class="Seccion">
-                <table style="width: 100%;">               
+                <table style="width: 100%; font-size: 7px;">               
                     <tbody>`;
 
     equipos.forEach(equi => {
         htmlContent +=
             `<tr>
+                        <td>${equi.Num_Serie}</td>
                         <td>${equi.Equipo}</td>
                         <td>${equi.Marca}</td>
                         <td>${equi.Modelo}</td>
-                        <td>${equi.Num_Serie}</td>
                         <td>${equi.Teclado}</td>
                         <td>${equi.Mouse}</td>
                         <td>${equi.Accesorio}</td>
@@ -87,6 +87,8 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
     //Ruta del archivo
     var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
     const pathPDF = path.join(DOWNLOAD_DIR, nombreArchivo + '_' + contador + '.pdf');
+
+    contador++;
 
     const outputPath = pathPDF;
 
@@ -150,13 +152,13 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
                         </div>
                     </div>
                 </div>
-                <table style="font-size: 10px; padding-top: 10px; width: 95%;">
+                <table style="font-size: 8px; padding-top: 10px; width: 95%;">
                     <thead>
                         <tr id="firstrow">
+                            <th>No. SERIE</th>
                             <th>EQUIPO</th>
                             <th>MARCA</th>
                             <th>MODELO</th>
-                            <th>No. SERIE</th>
                             <th>TECLA</th>
                             <th>MOUSE</th>
                             <th>ACCESORIO</th>
