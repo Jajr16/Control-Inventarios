@@ -108,4 +108,9 @@ router.get('/ModEmp', function (req, res, next) {
   res.render('ModEmp', { title: 'Modificar Empleado' });
 });
 
+/*** Crear responsivas ***/
+router.get('/crear_resp', function (req, res, next) {
+  res.render('crear_resp', { title: 'Crear responsivas' });
+});
+
 module.exports = router;

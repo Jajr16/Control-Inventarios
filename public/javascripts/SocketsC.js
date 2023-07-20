@@ -1414,4 +1414,19 @@ if (pathname == "/users/altasPro") {
         }
 
     }
+} else if (pathname == "/users/crear_resp") {
+    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
+
+        // desplegar lista de nombre de empleados
+        window.addEventListener("load", function (event) {
+            cargarNombres();
+        });
+
+        window.onpageshow = function () {
+            $('#NombreEmp').select2({
+                allowClear: true,
+                placeholder: 'Buscar empleado'
+            });
+        };
+    }
 }

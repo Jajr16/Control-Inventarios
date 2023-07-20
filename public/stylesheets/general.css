@@ -547,6 +547,22 @@ h5 {
     transform: scale(1.1);
 }
 
+.BotonResp {
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background: linear-gradient(to top, #f70036, #580013);
+    color: rgb(255, 184, 211);
+    border-radius: 10%;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonResp:hover {
+    background: linear-gradient(to top, #f70036, #ff8ea7);
+    color: rgb(61, 0, 23);
+    transform: scale(1.1);
+}
+
 .TamBAG{
     width: 100%;
     height: auto;
@@ -629,6 +645,14 @@ h5 {
     text-align: center;
     background: linear-gradient(to top, #e2aef7, #b100f7);
     color: rgb(101, 0, 110);
+    transition: all 0.3s ease 0s;
+}
+.BotonCrearResp {
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background: linear-gradient(to top, #ff8ea7, #f70036);
+    color: rgb(117, 0, 35);
     transition: all 0.3s ease 0s;
 }
 
