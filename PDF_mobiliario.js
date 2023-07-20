@@ -54,7 +54,6 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
             th, td {
                 border-top: 1px solid black;
                 border-bottom: 1px solid black;
-                width: 50%;
             }
         </style>
             <main class="Seccion">
@@ -64,8 +63,8 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     mobiliario.forEach(mobi => {
         htmlContent +=
             `<tr>
-                        <td>${mobi.Num_Inventario}</td>
-                        <td>${mobi.Descripcion}</td>
+                        <td align="center" width="12%">${mobi.Num_Inventario}</td>
+                        <td width="auto">${mobi.Descripcion}</td>
                     </tr>`;
     });
 
@@ -114,18 +113,17 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
             th {
                 border-top: 2px solid black;
                 border-bottom: 2px solid black;
-                width: 50%;
             }
         </style>
         <div style="width: 100%;">
             <center style="width: 100%;">
                 <div style="font-size: 8px; width: 100%;">
-                    <div style="display: flex; border-bottom: solid 1px; justify-content: space-evenly; align-items: center; width: 100%;">
-                        <div style="flex: 1; padding: 0 32px; float: left; max-width: 20%;">
-                            <img src="${imageSrc}" height="100px" width="auto" alt="Logo de la empresa">
+                    <div style="padding-left: 5%; display: flex; border-bottom: solid 1px; justify-content: space-evenly; align-items: center; width: 100%;">
+                        <div style="flex: 1; padding: 0 32px; float: left; max-width: 10%;">
+                            <img src="${imageSrc}" height="80px" width="auto" alt="Logo de la empresa">
                         </div>  
-                        <div style="flex: 1; padding: 0 32px; width: 45%;">
-                            <center><b><p style="font-size: 10px;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE MOBILIARIO</p></center>
+                        <div style="flex: 1; padding-left: 10%; width: 80%;">
+                            <center><b><p style="width: 100%; font-size: 10px;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE MOBILIARIO</p></center>
                         </div>
                         <div style="flex: 1; padding: 0 32px; float:right; width: auto;">
                             <b>FECHA: </b>${fecha_mob}
@@ -146,8 +144,8 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
                 <table style="font-size: 10px; padding-top: 10px; width: 95%;">
                     <thead>
                         <tr id="firstrow">
-                            <th>No. INVENTARIO</th>
-                            <th>DESCRIPCIÓN</th>
+                            <th width="12%">No. INV.</th>
+                            <th align="left" width="auto">DESCRIPCIÓN</th>
                         </tr>
                     </thead>        
                 </table>         
@@ -177,10 +175,6 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
 
     console.log(`PDF generado exitosamente en: ${outputPath}`);
 }
-
-mobiliario_generatePDF().catch(error => {
-    console.error('Error al generar el PDF:', error);
-});
 
 module.exports = {
     mobiliario_generatePDF

@@ -1014,8 +1014,8 @@ io.on('connection', (socket) => {
                                     .then(() => {
                                         socket.emit('Equipo_Respuesta', { mensaje: 'Equipo dado de alta, responsiva generada.', Res: 'Si' });//Mandar mensaje de error a cliente
                                     }).catch(error => {
-                                        console.error('Error al generar o descargar el PDF:', error);
                                         socket.emit('Equipo_Respuesta', { mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
+                                        console.error('Error al generar o descargar el PDF:', error);
                                     });
                             }
                         });
@@ -1193,8 +1193,8 @@ io.on('connection', (socket) => {
                                     .then(() => {
                                         socket.emit('Mobiliario_Respuesta', { mensaje: 'Mobiliario dado de alta, responsiva generada.', Res: 'Si' });//Mandar mensaje de error a cliente
                                     }).catch(error => {
-                                        console.error('Error al generar o descargar el PDF:', error);
                                         socket.emit('Mobiliario_Respuesta', { mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
+                                        console.error('Error al generar o descargar el PDF:', error);
                                     });
                             }
                         });

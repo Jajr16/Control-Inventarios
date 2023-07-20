@@ -62,6 +62,13 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
                     <tbody>`;
 
     equipos.forEach(equi => {
+        console.log(equi);
+        console.log(equi.Monitor);
+        if (equi.Teclado == null) equi.Teclado = '-';
+        if (equi.Mouse == null) equi.Mouse = '-';
+        if (equi.Accesorio == null) equi.Accesorio = '-';
+        if (equi.Monitor == null) equi.Monitor = '-';
+        if (equi.Num_Serie_Monitor == null) equi.Num_Serie_Monitor = '-';
         htmlContent +=
             `<tr>
                         <td>${equi.Num_Serie}</td>
@@ -128,30 +135,30 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
         </style>
         <div style="width: 100%;">
             <center style="width: 100%;">
-                <div style="font-size: 8px; width: 100%;">
-                    <div style="display: flex; border-bottom: solid 1px; justify-content: space-evenly; align-items: center; width: 100%;">
-                        <div style="flex: 1; padding: 0 32px; float: left; max-width: 20%;">
-                            <img src="${imageSrc}" height="100px" width="auto" alt="Logo de la empresa">
-                        </div>  
-                        <div style="flex: 1; padding: 0 32px; width: 45%;">
-                            <center><b><p style="font-size: 10px;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE EQUIPO DE COMPUTO</p></center>
-                        </div>
-                        <div style="flex: 1; padding: 0 32px; float:right; width: auto;">
-                            <b>FECHA: </b>${fecha_eqp}
-                        </div>
+            <div style="font-size: 8px; width: 100%;">
+                <div style="padding-left: 5%; display: flex; border-bottom: solid 1px; justify-content: space-evenly; align-items: center; width: 100%;">
+                    <div style="flex: 1; padding: 0 32px; float: left; max-width: 10%;">
+                        <img src="${imageSrc}" height="80px" width="auto" alt="Logo de la empresa">
+                    </div>  
+                    <div style="flex: 1; padding-left: 10%; width: 80%;">
+                        <center><b><p style="width: 100%; font-size: 10px;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE MOBILIARIO</p></center>
                     </div>
-                    <div style="display: flex; justify-content: space-evenly; align-items: center; width: 100%;">
-                        <div style="flex: 1; padding: 0 32px; width:40%">
-                            <label style="display: block; font-weight: 700; text-transform: uppercase; margin-top: 10px;"><b>Nombre: </b></label>${NombreEmp}
-                        </div>
-                        <div style="flex: 1; padding: 0 32px; width:40%">
-                            <label style="display: block; font-weight: 700; text-transform: uppercase; margin-top: 10px;"><b>Área: </b></label>${areaEmp}
-                        </div>
-                        <div style="flex: 1; padding: 0 32px; width:20%">
-                            <label style="display: block; font-weight: 700; text-transform: uppercase; margin-top: 10px;"><b>No. Empleado: </b></label>${num_emp}
-                        </div>
+                    <div style="flex: 1; padding: 0 32px; float:right; width: auto;">
+                        <b>FECHA: </b>${fecha_eqp}
                     </div>
                 </div>
+                <div style="display: flex; justify-content: space-evenly; align-items: center; width: 100%;">
+                    <div style="flex: 1; padding: 0 32px; width:40%">
+                        <label style="display: block; font-weight: 700; text-transform: uppercase; margin-top: 10px;"><b>Nombre: </b></label>${NombreEmp}
+                    </div>
+                    <div style="flex: 1; padding: 0 32px; width:40%">
+                        <label style="display: block; font-weight: 700; text-transform: uppercase; margin-top: 10px;"><b>Área: </b></label>${areaEmp}
+                    </div>
+                    <div style="flex: 1; padding: 0 32px; width:20%">
+                        <label style="display: block; font-weight: 700; text-transform: uppercase; margin-top: 10px;"><b>No. Empleado: </b></label>${num_emp}
+                    </div>
+                </div>
+            </div>
                 <table style="font-size: 8px; padding-top: 10px; width: 95%;">
                     <thead>
                         <tr id="firstrow">
@@ -193,10 +200,6 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
 
     console.log(`PDF generado exitosamente en: ${outputPath}`);
 }
-
-equipos_generatePDF().catch(error => {
-    console.error('Error al generar el PDF:', error);
-});
 
 module.exports = {
     equipos_generatePDF
