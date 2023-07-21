@@ -1407,7 +1407,7 @@ if (pathname == "/users/altasPro") {
             e.preventDefault();
             if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
 
-                enviarSocket('Alta_Mob',{ Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() });
+                enviarSocket('Alta_Mob', { Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() });
 
                 recibirSocket('Mobiliario_Respuesta');
             }
@@ -1415,11 +1415,22 @@ if (pathname == "/users/altasPro") {
 
     }
 } else if (pathname == "/users/crear_resp") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
+    if (tok == "4dnM3k0nl9s" || tok == "FGJYGd42DSAFA") {
 
         // desplegar lista de nombre de empleados
         window.addEventListener("load", function (event) {
             cargarNombres();
+
+            var selectResponsiva = document.getElementById("Resp");
+            var opcion = document.createElement("option");
+
+            if(tok == "4dnM3k0nl9s"){
+                opcion.text = "EQUIPOS";
+            }else{
+                opcion.text = "MOBILIARIO";
+            }
+            
+            selectResponsiva.add(opcion);
         });
 
         window.onpageshow = function () {
@@ -1428,5 +1439,21 @@ if (pathname == "/users/altasPro") {
                 placeholder: 'Buscar empleado'
             });
         };
+
+        const FormResp = document.querySelector("#crearRespon");
+
+        FormResp.addEventListener("submit", Enviar);
+
+        function Enviar(e) {
+            e.preventDefault();
+            if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
+
+                enviarSocket('Crea_Resp', { Responsiva: $("#Resp").val(), NombreEmp: $("#NombreEmp").val(), Token: tok });
+
+                recibirSocket('Responsiva_Respuesta');
+            }
+        }
+    }else {
+
     }
 }

@@ -999,29 +999,15 @@ io.on('connection', (socket) => {
             if (err) console.log("Error de búsqueda: " + err);//Se imprime algún error que haya ocurrido
             if (result.length > 0) {//Si sí hizo una búsqueda
 
-                var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
-                var areaEmp = result[0].Área;
-
                 db.query('insert into equipo values(null,?,?,?,?,(select Num_emp from empleado where Nom = ?),?)', [data.Num_S, data.Equipo, data.MarcaE, data.ModelE, data.NomEn, data.UbiE], async function (err, result) {
                     if (err) socket.emit(MensajeError);
                     if (result) {
                         console.log("Resultado de inserción de productos: ", result);
-
-                        db.query('SELECT DISTINCT Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Monitor, Monitor.Num_Serie_Monitor, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie WHERE Num_emp = ?;', [num_emp], function (err, res) {
-                            if (err) console.log("Error de inserción de productos: ", err);
-                            if (res) {
-                                equipos_generatePDF(num_emp, areaEmp, data.NomEn, res)
-                                    .then(() => {
-                                        socket.emit('Equipo_Respuesta', { mensaje: 'Equipo dado de alta, responsiva generada.', Res: 'Si' });//Mandar mensaje de error a cliente
-                                    }).catch(error => {
-                                        socket.emit('Equipo_Respuesta', { mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
-                                        console.error('Error al generar o descargar el PDF:', error);
-                                    });
-                            }
-                        });
+                        socket.emit('Equipo_Respuesta', { mensaje: 'Equipo dado de alta, responsiva generada.', Res: 'Si' });//Mandar mensaje de error a cliente
+                    } else {
+                        socket.emit('Equipo_Respuesta', { mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
                     }
                 });
-
             }
         });
         data.length = 0;
@@ -1179,30 +1165,16 @@ io.on('connection', (socket) => {
             if (result.length > 0) {//Si sí hizo una búsqueda
 
                 var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
-                var areaEmp = result[0].Área;
 
                 db.query('insert into mobiliario values (NULL,?,?)', [data.Descripcion, num_emp], function (err2, result) {
                     if (err2) console.log("Error de inserción de productos: ", err2);
                     if (result) {
                         console.log("Resultado de inserción de productos: ", result);
 
-                        db.query('select*from mobiliario where Num_emp = ?;', [num_emp], function (err, res) {
-                            if (err) console.log("Error de inserción de productos: ", err);
-                            if (res) {
-                                mobiliario_generatePDF(num_emp, areaEmp, data.NombreEmp, res)
-                                    .then(() => {
-                                        socket.emit('Mobiliario_Respuesta', { mensaje: 'Mobiliario dado de alta, responsiva generada.', Res: 'Si' });//Mandar mensaje de error a cliente
-                                    }).catch(error => {
-                                        socket.emit('Mobiliario_Respuesta', { mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
-                                        console.error('Error al generar o descargar el PDF:', error);
-                                    });
-                            }
-                        });
+                        socket.emit('Mobiliario_Respuesta', { mensaje: 'Mobiliario dado de alta.', Res: 'Si' });//Mandar mensaje de error a cliente
                     }
                 });
-
             }
-
         });
         data.length = 0;
     });
@@ -1248,6 +1220,44 @@ io.on('connection', (socket) => {
                         socket.emit('RespDelMob', { mensaje: "No se pudo modificar el mobiliario." })
                     }
                 });
+            }
+        });
+    });
+
+    socket.on('Crea_Resp', async (data) => {
+        db.query('SELECT Num_Emp, Área from empleado where Nom = ?', [data.NombreEmp], function (err, res) {
+            if (err) console.log("Error en consulta: ", err);
+            if (res) {
+                var num_emp = res[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
+                var areaEmp = res[0].Área;
+
+                if (data.Responsiva == "MOBILIARIO" && data.Token == "FGJYGd42DSAFA") {
+                    db.query('select*from mobiliario where Num_emp = ?;', [num_emp], function (err, res) {
+                        if (err) console.log("Error de inserción de productos: ", err);
+                        if (res) {
+                            mobiliario_generatePDF(num_emp, areaEmp, data.NombreEmp, res)
+                                .then(() => {
+                                    socket.emit('Responsiva_Respuesta', { mensaje: 'Responsiva de mobiliario generada.', Res: 'Si' });//Mandar mensaje de error a cliente
+                                }).catch(error => {
+                                    socket.emit('Responsiva_Respuesta', { mensaje: 'No se pudo generar la responsiva, inténtelo de nuevo', Res: 'Si' });
+                                    console.error('Error al generar o descargar el PDF:', error);
+                                });
+                        }
+                    });
+                } else if(data.Responsiva == "EQUIPOS" && data.Token == "4dnM3k0nl9s"){
+                    db.query('SELECT DISTINCT Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Monitor, Monitor.Num_Serie_Monitor, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie WHERE Num_emp = ?;', [num_emp], function (err, res) {
+                        if (err) console.log("Error de inserción de productos: ", err);
+                        if (res) {
+                            equipos_generatePDF(num_emp, areaEmp, data.NombreEmp, res)
+                                .then(() => {
+                                    socket.emit('Responsiva_Respuesta', { mensaje: 'Responsiva de equipo generada.', Res: 'Si' });//Mandar mensaje de error a cliente
+                                }).catch(error => {
+                                    socket.emit('Responsiva_Respuesta', { mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
+                                    console.error('Error al generar o descargar el PDF:', error);
+                                });
+                        }
+                    });
+                }
             }
         });
     });
