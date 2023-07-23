@@ -357,6 +357,8 @@ alter table Salidas_Productos add constraint FKNES foreign key(Num_EmpS) referen
 alter table Factus_Productos add constraint FK_CBA foreign key(Cod_Barras) references almacen(Cod_Barras);
 alter table Factus_Productos add constraint FK_NDFA foreign key(Nfactura) references facturas_almacen(Num_Fact);
 
+alter table usuario add constraint FK_Token foreign key(token) references tokens(token);
+
 create unique index FKAEmp on tokens(area);
 alter table empleado add constraint FK_A foreign key(Área) references tokens(area); 
 alter table usuario add constraint FK_T foreign key(token) references tokens(token);
@@ -422,8 +424,6 @@ drop table if exists responsivas_m;
 ALTER TABLE usuario CHANGE `User` `Usuario` nvarchar(45);
 
 #update almacen set Existencia = ((select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = 'c') - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = 'c')) where Cod_Barras = 'c';
-
-
 #select  sum(factus_productos.Cantidad) - sum(salidas_productos.Cantidad_Salida) from factus_productos inner join salidas_productos on factus_productos.Cod_Barras = salidas_productos.Cod_BarrasS where factus_productos.Cod_Barras = 'c';
 #select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = 'JDFK35J2';
 #select sum(factus_productos.Cantidad) - sum(salidas_productos.Cantidad_Salida) from salidas_productos where factus_productos.Cod_Barras = salidas_productos.Cod_BarrasS;
@@ -468,6 +468,8 @@ select*from mouse;
 select*from monitor;
 select*from teclado;
 select*from accesorio;
+select equipo.Num_Serie, pcs.Hardware, pcs.Software, monitor.Monitor, monitor.Num_Serie_Monitor, mouse.Mouse, teclado.Teclado, accesorio.Accesorio from equipo left join monitor on equipo.Num_Serie = monitor.Num_Serie left join mouse on equipo.Num_Serie = mouse.Num_Serie left join pcs on equipo.Num_Serie = pcs.Num_Serie left join Teclado on equipo.Num_Serie = teclado.Num_Serie left join accesorio on equipo.Num_Serie = accesorio.Num_Serie where equipo = 'CPU' and equipo.Num_Serie = 'ADWAD';
+select*from equipo where Equipo = 'CPU';
 select*from Usuario;
 select*from mobiliario;
 delete from mobiliario where Num_Inventario = 4;

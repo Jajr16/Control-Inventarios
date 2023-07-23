@@ -1233,7 +1233,7 @@ io.on('connection', (socket) => {
 
                 if (data.Responsiva == "MOBILIARIO" && data.Token == "FGJYGd42DSAFA") {
                     db.query('select*from mobiliario where Num_emp = ?;', [num_emp], function (err, res) {
-                        if (err) console.log("Error de inserción de productos: ", err);
+                        if (err) console.log("Error de búsqueda en mobiliario: ", err);
                         if (res) {
                             mobiliario_generatePDF(num_emp, areaEmp, data.NombreEmp, res)
                                 .then(() => {
@@ -1244,9 +1244,9 @@ io.on('connection', (socket) => {
                                 });
                         }
                     });
-                } else if(data.Responsiva == "EQUIPOS" && data.Token == "4dnM3k0nl9s"){
+                } else if (data.Responsiva == "EQUIPOS" && data.Token == "4dnM3k0nl9s") {
                     db.query('SELECT DISTINCT Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Monitor, Monitor.Num_Serie_Monitor, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie WHERE Num_emp = ?;', [num_emp], function (err, res) {
-                        if (err) console.log("Error de inserción de productos: ", err);
+                        if (err) console.log("Error de búsqueda en equipos: ", err);
                         if (res) {
                             equipos_generatePDF(num_emp, areaEmp, data.NombreEmp, res)
                                 .then(() => {
@@ -1258,6 +1258,15 @@ io.on('connection', (socket) => {
                         }
                     });
                 }
+            }
+        });
+    });
+
+    socket.on('BuscarCPU', (Num_Serie) => {
+        db.query('select equipo.Num_Serie, pcs.Hardware, pcs.Software, monitor.Monitor, monitor.Num_Serie_Monitor, mouse.Mouse, teclado.Teclado, accesorio.Accesorio from equipo left join monitor on equipo.Num_Serie = monitor.Num_Serie left join mouse on equipo.Num_Serie = mouse.Num_Serie left join pcs on equipo.Num_Serie = pcs.Num_Serie left join Teclado on equipo.Num_Serie = teclado.Num_Serie left join accesorio on equipo.Num_Serie = accesorio.Num_Serie where equipo = "CPU" and equipo.Num_Serie = ?;', [Num_Serie], function (err, res) {
+            if (err) console.log("Error de búsqueda de CPU: ", err);
+            if (res) {
+                socket.emit('ImpCPU', res);
             }
         });
     });

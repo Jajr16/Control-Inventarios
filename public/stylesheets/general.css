@@ -589,6 +589,22 @@ h5 {
     transform: scale(1.1);
 }
 
+.BotonERR {
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background: linear-gradient(to top, #f3647c, #d80036);
+    color: rgb(245, 199, 217);
+    border-radius: 10%;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonERR:hover {
+    background: linear-gradient(to top, #f3647c, #ffd6dd);
+    color: rgb(104, 0, 22);
+    transform: scale(1.1);
+}
+
 .BotonABE {
     text-decoration: none;
     padding: 0.5rem;
@@ -880,4 +896,8 @@ h5 {
     background: linear-gradient(to top, #2f44ff, #0013be);
     text-align: center;
     color: white;
+}
+
+#NombreEmp{
+    width: 100%!important;
 }

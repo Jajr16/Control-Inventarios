@@ -3,6 +3,20 @@ var socket = io.connect("http://localhost:3001");
 var pathname = window.location.pathname;
 //BUSCAR
 // Barra de busqueda
+function cargarSelect(IdType){
+    // desplegar lista de nombre de empleados
+    window.addEventListener("load", function (event) {
+        cargarNombres();
+    });
+    
+    window.onpageshow = function () {
+        $(IdType).select2({
+            allowClear: true,
+            placeholder: 'Buscar empleado'
+        });
+    };
+}
+
 function buscar() {
 
     var filtro = $("#buscar").val().toUpperCase();
@@ -48,13 +62,13 @@ function buscar1() {
 }
 //SELECTS
 function ListaNombres(Nombr) {
-    var selectNombres2 = document.getElementById("NombreEmp");
+    var selectNombres = document.getElementById("NombreEmp");
 
     var opcion = document.createElement("option");
 
     opcion.text = Nombr;
 
-    selectNombres2.add(opcion);
+    selectNombres.add(opcion);
 }
 
 function ListaNombres2(Nombr) {
@@ -285,7 +299,7 @@ if (pathname == "/users/altasPro") {
                 <td>${data.Unidad}</td>
                 <td>${data.Existencia}</td>
                 <td class="BotonER"> Eliminar </td>
-                <td class="BotonMod" onclick='Abrir()'> Modificar </td>
+                <td class="BotonMod" > Modificar </td>
             </tr>
             `;
             }
@@ -483,16 +497,7 @@ if (pathname == "/users/altasPro") {
 } else if (pathname == "/users/ABPE") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
 
-        window.addEventListener("load", function (event) {
-            cargarNombres();
-        });
-
-        window.onpageshow = function () {
-            $('#NombreEmp').select2({
-                allowClear: true,
-                placeholder: 'Buscar empleado'
-            });
-        };
+        cargarSelect('#NombreEmp');
 
         var valores0 = "";
         var valores1 = "";
@@ -529,7 +534,7 @@ if (pathname == "/users/altasPro") {
                 <td id="UnidadP">${data.Unidad}</td>
                 <td id="Existencia">${data.Existencia}</td>
                 <td id="Agregar" class="BotonMod"> Añadir productos</td>
-                <td id="Eliminar" class="BotonER" onclick="Abrir1()"> Sacar productos</td>
+                <td id="Eliminar" class="BotonERR" onclick="Abrir1()"> Sacar productos</td>
             </tr>
             `;
             }
@@ -620,16 +625,7 @@ if (pathname == "/users/altasPro") {
 } else if (pathname == "/users/RegistrarUsuario") {
     if (tok == "4dnM3k0nl9s") {
 
-        window.addEventListener("load", function (event) {
-            cargarNombres();
-        });
-
-        window.onpageshow = function () {
-            $('#NombreEmp').select2({
-                allowClear: true,
-                placeholder: 'Buscar empleado'
-            });
-        };
+        cargarSelect('#NombreEmp');
 
         const FormRegistro = document.querySelector("#Registro");
 
@@ -686,7 +682,7 @@ if (pathname == "/users/altasPro") {
                 <td>${data.Usuario}</td>
                 <td>${data.Pass}</td>
                 <td class="BotonER"> Eliminar </td>
-                <td class="BotonMod" onclick='Abrir()'> Modificar </td>
+                <td class="BotonMod" > Modificar </td>
             </tr>
             `;
 
@@ -775,16 +771,7 @@ if (pathname == "/users/altasPro") {
 } else if (pathname == "/users/RegistroEmpleado") {
     if (tok == "4dnM3k0nl9s") {
 
-        window.addEventListener("load", function (event) {
-            cargarNombres2();
-        });
-
-        window.onpageshow = function () {
-            $('#NomJefe').select2({
-                allowClear: true,
-                placeholder: 'Buscar empleado'
-            });
-        };
+        cargarSelect('#NombreEmp');
 
         const FormRegistro = document.querySelector("#Registro");
         // Registro de usuario
@@ -1003,6 +990,7 @@ if (pathname == "/users/altasPro") {
     });
 
 } else if (pathname == "/users/consulEqp") {
+    cargarSelect('#NombreEmp');
     // Asignación del evento de clic en los botones de eliminar
     window.addEventListener('DOMContentLoaded', () => {
         const botonesEliminar = document.getElementsByClassName("BotonER");
@@ -1012,10 +1000,6 @@ if (pathname == "/users/altasPro") {
                 eliminarEquipo(this, '¿Deseas eliminar este producto de equipos?', 'Bajas_Equipos');
             });
         }
-    });
-    // desplegar lista de nombre de empleados
-    window.addEventListener("load", function (event) {
-        cargarNombres();
     });
 
     //Formulario desplegable
@@ -1032,7 +1016,6 @@ if (pathname == "/users/altasPro") {
     const Teclado = $('#TecladE');
     const Accesorio = $('#AccesE');
 
-    Menu.hide();
     //Formulario.reset();
     Equipos.on('change', function () {
         if (Equipos.val() == 'CPU') {
@@ -1104,13 +1087,6 @@ if (pathname == "/users/altasPro") {
         }
     });
 
-    window.onpageshow = function () {
-        $('#NombreEmp').select2({
-            allowClear: true,
-            placeholder: 'Buscar empleado'
-        });
-    };
-
     socket.emit("Consul_Equipos");
 
     // Consulta de productos
@@ -1126,7 +1102,7 @@ if (pathname == "/users/altasPro") {
             <td>${data.NombreEmp}</td>
             <td>${data.Ubi}</td>
             <td class="BotonER"> Eliminar </td>
-            <td class="BotonMod" onclick='Abrir()'> Modificar </td>
+            <td class="BotonMod"> Modificar </td>
         </tr>
         `;
 
@@ -1173,8 +1149,32 @@ if (pathname == "/users/altasPro") {
             document.getElementById("EquipM").value = valores1;
             document.getElementById("MarcEM").value = valores2;
             document.getElementById("ModelEM").value = valores3;
-            document.getElementById("NombreEmp").value = valores4;
+            $('#NombreEmp').val(valores4).trigger('change.select2');
             document.getElementById("UbiEM").value = valores5;
+
+            if (document.getElementById("EquipM").value == "CPU") {
+                enviarSocket('BuscarCPU', (document.getElementById("Num_SerieM").value));
+
+                socket.on('ImpCPU', (CompCPU) => {
+                    const Componentes = CompCPU || [];
+
+                    Componentes.forEach(CPU => {
+                        $('#HardE').val(CPU.Hardware);
+                        $('#SoftE').val(CPU.Software);
+                        $('#MonE').val(CPU.Monitor);
+                        $('#N_Ser_M').val(CPU.Num_Serie_Monitor);
+                        $('#MouseE').val(CPU.Mouse);
+                        $('#TecladE').val(CPU.Teclado);
+                        $('#AccesE').val(CPU.Accesorio);
+                    });
+                    // Muestra el contenido del div con id "Desplegable"
+                    Menu.show();
+                });
+
+            } else {
+                // Oculta el contenido del div con id "Desplegable" si no es "CPU"
+                Menu.hide();
+            }
         }
 
         // Cambios de equipos
@@ -1218,18 +1218,11 @@ if (pathname == "/users/altasPro") {
 
 } else if (pathname == "/users/ModEmp") {
     if (tok == "4dnM3k0nl9s") {
+
+        cargarSelect('#NomJefe');
+        cargarNombres2();
+
         enviarSocket("DatEmp", "");
-
-        window.addEventListener("load", function (event) {
-            cargarNombres2();
-        });
-
-        window.onpageshow = function () {
-            $('#NomJefe').select2({
-                allowClear: true,
-                placeholder: 'Buscar empleado'
-            });
-        };
 
         // Consulta de productos
         socket.on('DespEmp', async (data) => {
@@ -1291,7 +1284,7 @@ if (pathname == "/users/altasPro") {
     }
 } else if (pathname == "/users/consulMob") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
-
+        cargarSelect('#NombreEmp');
         // Asignación del evento de clic en los botones de eliminar
         window.addEventListener('DOMContentLoaded', () => {
             const botonesEliminar = document.getElementsByClassName("BotonER");
@@ -1302,17 +1295,6 @@ if (pathname == "/users/altasPro") {
                 });
             }
         });
-        // desplegar lista de nombre de empleados
-        window.addEventListener("load", function (event) {
-            cargarNombres();
-        });
-
-        window.onpageshow = function () {
-            $('#NombreEmp').select2({
-                allowClear: true,
-                placeholder: 'Buscar empleado'
-            });
-        };
 
         socket.emit("Consul_Mobiliario");
 
@@ -1325,7 +1307,7 @@ if (pathname == "/users/altasPro") {
                 <td>${data.Descripcion}</td>
                 <td>${data.NombreEmp}</td>
                 <td class="BotonER"> Eliminar </td>
-                <td class="BotonMod" onclick='Abrir()'> Modificar </td>
+                <td class="BotonMod" > Modificar </td>
             </tr>
             `;
 
@@ -1386,17 +1368,7 @@ if (pathname == "/users/altasPro") {
 } else if (pathname == "/users/altasMob") {
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
 
-        // desplegar lista de nombre de empleados
-        window.addEventListener("load", function (event) {
-            cargarNombres();
-        });
-
-        window.onpageshow = function () {
-            $('#NombreEmp').select2({
-                allowClear: true,
-                placeholder: 'Buscar empleado'
-            });
-        };
+        cargarSelect('#NombreEmp');
 
         const FormProduct = document.querySelector("#AltaMobiliario");
 
@@ -1416,29 +1388,20 @@ if (pathname == "/users/altasPro") {
     }
 } else if (pathname == "/users/crear_resp") {
     if (tok == "4dnM3k0nl9s" || tok == "FGJYGd42DSAFA") {
-
+        cargarSelect('#NombreEmp');
         // desplegar lista de nombre de empleados
         window.addEventListener("load", function (event) {
-            cargarNombres();
-
             var selectResponsiva = document.getElementById("Resp");
             var opcion = document.createElement("option");
 
-            if(tok == "4dnM3k0nl9s"){
+            if (tok == "4dnM3k0nl9s") {
                 opcion.text = "EQUIPOS";
-            }else{
+            } else {
                 opcion.text = "MOBILIARIO";
             }
-            
+
             selectResponsiva.add(opcion);
         });
-
-        window.onpageshow = function () {
-            $('#NombreEmp').select2({
-                allowClear: true,
-                placeholder: 'Buscar empleado'
-            });
-        };
 
         const FormResp = document.querySelector("#crearRespon");
 
@@ -1453,7 +1416,7 @@ if (pathname == "/users/altasPro") {
                 recibirSocket('Responsiva_Respuesta');
             }
         }
-    }else {
+    } else {
 
     }
 }

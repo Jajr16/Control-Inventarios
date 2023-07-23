@@ -1,0 +1,8 @@
+--------EQUIPOS---------------
+En caso de ser cpu, tener adicional a él monitor, teclado, mouse, hardware, software.
+Cambios de CPU incluirá todo lo anterior.
+El monitor, mouse, teclado, hardware, software se van a modificar directo del CPU correspondiente.
+
+-------NUEVOS CAMBIOS--------
+Ponerle número de inventario al monitor al formulario y pdf's de equipo
+
