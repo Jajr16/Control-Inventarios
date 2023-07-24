@@ -878,6 +878,7 @@ if (pathname == "/users/altasPro") {
     const Software = $('#SoftE');
 
     const Monitor = $('#MonE');
+    const NIMES = $('#NIME');
     const NSMon = $('#N_Ser_M');
 
     const Mouse = $('#MouseE');
@@ -895,11 +896,13 @@ if (pathname == "/users/altasPro") {
             Hardware.prop('required', false);
             Software.prop('required', false);
             NSMon.prop('required', false);
+            NIMES.prop('required', false);
             Monitor.prop('required', false);
             //Pone valores vacío
             Hardware.val('');
             Software.val('');
             NSMon.val('');
+            NIMES.val('');
             Monitor.val('');
             Mouse.val('');
             Teclado.val('');
@@ -938,9 +941,11 @@ if (pathname == "/users/altasPro") {
 
         if (Monitor.val() != "") {
             NSMon.prop('required', true);
+            NIMES.prop('required', true);
             Monitor.prop('required', true);
         } else {
             NSMon.prop('required', false);
+            NIMES.prop('required', true);
             Monitor.prop('required', false);
         }
     });
@@ -949,9 +954,24 @@ if (pathname == "/users/altasPro") {
 
         if (NSMon.val() != "") {
             NSMon.prop('required', true);
+            NIMES.prop('required', true);
             Monitor.prop('required', true);
         } else {
             NSMon.prop('required', false);
+            NIMES.prop('required', true);
+            Monitor.prop('required', false);
+        }
+    });
+
+    Listeners(NIMES, 'input', function (e) {
+
+        if (NIMES.val() != "") {
+            NSMon.prop('required', true);
+            NIMES.prop('required', true);
+            Monitor.prop('required', true);
+        } else {
+            NSMon.prop('required', false);
+            NIMES.prop('required', true);
             Monitor.prop('required', false);
         }
     });
@@ -969,8 +989,8 @@ if (pathname == "/users/altasPro") {
                 enviarSocket("AltaPc", { Num_S: $("#Num_Serie").val(), HardE: $("#HardE").val(), SoftE: $("#SoftE").val() });
             }
             //Monitores
-            if ($("#MonE").val() != "" && $("#N_Ser_M").val() != "") {
-                enviarSocket("AltMon", { Num_S: $("#Num_Serie").val(), MonE: $("#MonE").val(), NSMon: $("#N_Ser_M").val() });
+            if ($("#MonE").val() != "" && $("#NIME").val() != "" && $("#N_Ser_M").val() != "") {
+                enviarSocket("AltMon", { Num_S: $("#Num_Serie").val(), MonE: $("#MonE").val(), NIME: $("#NIME").val(), NSMon: $("#N_Ser_M").val() });
             }
             //Mouse
             if ($("#MouseE").val() != "") {
@@ -1010,6 +1030,7 @@ if (pathname == "/users/altasPro") {
     const Software = $('#SoftE');
 
     const Monitor = $('#MonE');
+    const NIMES = $('#NIME');
     const NSMon = $('#N_Ser_M');
 
     const Mouse = $('#MouseE');
@@ -1026,11 +1047,13 @@ if (pathname == "/users/altasPro") {
             Hardware.prop('required', false);
             Software.prop('required', false);
             NSMon.prop('required', false);
+            NIMES.prop('required', false);
             Monitor.prop('required', false);
             //Pone valores vacío
             Hardware.val('');
             Software.val('');
             NSMon.val('');
+            NIMES.val('');
             Monitor.val('');
             Mouse.val('');
             Teclado.val('');
@@ -1069,9 +1092,11 @@ if (pathname == "/users/altasPro") {
 
         if (Monitor.val() != "") {
             NSMon.prop('required', true);
+            NIMES.prop('required', true);
             Monitor.prop('required', true);
         } else {
             NSMon.prop('required', false);
+            NIMES.prop('required', true);
             Monitor.prop('required', false);
         }
     });
@@ -1080,9 +1105,24 @@ if (pathname == "/users/altasPro") {
 
         if (NSMon.val() != "") {
             NSMon.prop('required', true);
+            NIMES.prop('required', true);
             Monitor.prop('required', true);
         } else {
             NSMon.prop('required', false);
+            NIMES.prop('required', true);
+            Monitor.prop('required', false);
+        }
+    });
+
+    Listeners(NIMES, 'input', function (e) {
+
+        if (NIMES.val() != "") {
+            NSMon.prop('required', true);
+            NIMES.prop('required', true);
+            Monitor.prop('required', true);
+        } else {
+            NSMon.prop('required', false);
+            NIMES.prop('required', true);
             Monitor.prop('required', false);
         }
     });
@@ -1162,6 +1202,7 @@ if (pathname == "/users/altasPro") {
                         $('#HardE').val(CPU.Hardware);
                         $('#SoftE').val(CPU.Software);
                         $('#MonE').val(CPU.Monitor);
+                        $('#NIME').val(CPU.Num_Inv_Mon);
                         $('#N_Ser_M').val(CPU.Num_Serie_Monitor);
                         $('#MouseE').val(CPU.Mouse);
                         $('#TecladE').val(CPU.Teclado);
@@ -1195,8 +1236,8 @@ if (pathname == "/users/altasPro") {
                     socket.emit('CambiosPc', { Num_S: $("#Num_SerieM").val(), HardE: $("#HardE").val(), SoftE: $("#SoftE").val() }, { OLDNum_S: valores0 });
                 }
                 //Monitores
-                if ($("#MonE").val() != "" && $("#N_Ser_M").val() != "") {
-                    socket.emit('CambiosMon', { Num_S: $("#Num_SerieM").val(), MonE: $("#MonE").val(), NSMon: $("#N_Ser_M").val() }, { OLDNum_S: valores0 });
+                if ($("#MonE").val() != "" && $("#NIME").val() != "" && $("#N_Ser_M").val() != "") {
+                    socket.emit('CambiosMon', { Num_S: $("#Num_SerieM").val(), MonE: $("#MonE").val(), NIME: $("#NIME").val(), NSMon: $("#N_Ser_M").val() }, { OLDNum_S: valores0 });
                 }
                 //Mouse
                 if ($("#MouseE").val() != "") {

@@ -913,14 +913,14 @@ io.on('connection', (socket) => {
         db.query('select * from monitor where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) socket.emit(MensajeError);
             if (result.length > 0) {
-                db.query('update monitor set Num_Serie = ?, Monitor = ?, Num_Serie_Monitor = ? where Num_Serie = ?', [data.Num_S, data.MonE, data.NSMon, dataOld.OLDNum_S], async function (err, result) {
+                db.query('update monitor set Num_Serie = ?, Monitor = ?, Num_Serie_Monitor = ?, Num_Inv_Mon = ? where Num_Serie = ?', [data.Num_S, data.MonE, data.NSMon, data.NIME, dataOld.OLDNum_S], async function (err, result) {
                     if (err) socket.emit(MensajeError);
                     if (!result) {
                         socket.emit("RespEquipos", { mensaje: "No se pudo actualizar los datos del monitor." });
                     }
                 });
             } else {
-                db.query('insert into monitor values(?,?,?)', [data.Num_S, data.MonE, data.NSMon], async function (err, result) {
+                db.query('insert into monitor values(?,?,?,?)', [data.Num_S, data.MonE, data.NSMon, data.NIME], async function (err, result) {
                     if (err) socket.emit(MensajeError);
                     if (!result) {
                         socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del monitor, agréguelo por separado." });
@@ -1003,9 +1003,9 @@ io.on('connection', (socket) => {
                     if (err) socket.emit(MensajeError);
                     if (result) {
                         console.log("Resultado de inserción de productos: ", result);
-                        socket.emit('Equipo_Respuesta', { mensaje: 'Equipo dado de alta, responsiva generada.', Res: 'Si' });//Mandar mensaje de error a cliente
+                        socket.emit('Equipo_Respuesta', { mensaje: 'Equipo dado de alta.', Res: 'Si' });//Mandar mensaje de error a cliente
                     } else {
-                        socket.emit('Equipo_Respuesta', { mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
+                        socket.emit('Equipo_Respuesta', { mensaje: 'No se pudo dar de alta el equipo, inténtelo de nuevo.', Res: 'Si' });
                     }
                 });
             }
@@ -1036,7 +1036,7 @@ io.on('connection', (socket) => {
             if (result.length > 0) {
                 socket.emit("RespEquipos", { mensaje: "Este monitor ya está registrado, ingrese otro." });
             } else {
-                db.query('insert into monitor values(?,?,?)', [data.Num_S, data.MonE, data.NSMon], async function (err, result) {
+                db.query('insert into monitor values(?,?,?,?)', [data.Num_S, data.MonE, data.NSMon, data.NIME], async function (err, result) {
                     if (err) socket.emit(MensajeError);
                     if (!result) {
                         socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del monitor, agréguelo por separado." });
@@ -1245,7 +1245,7 @@ io.on('connection', (socket) => {
                         }
                     });
                 } else if (data.Responsiva == "EQUIPOS" && data.Token == "4dnM3k0nl9s") {
-                    db.query('SELECT DISTINCT Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Monitor, Monitor.Num_Serie_Monitor, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie WHERE Num_emp = ?;', [num_emp], function (err, res) {
+                    db.query('SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Monitor, Monitor.Num_Serie_Monitor, Monitor.Num_Inv_Mon, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie WHERE Num_emp = ?;', [num_emp], function (err, res) {
                         if (err) console.log("Error de búsqueda en equipos: ", err);
                         if (res) {
                             equipos_generatePDF(num_emp, areaEmp, data.NombreEmp, res)
