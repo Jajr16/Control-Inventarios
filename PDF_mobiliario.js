@@ -13,8 +13,6 @@ const date = new Date();
 let fechaDia = date.getDate();
 let fechaMes = date.getMonth() + 1;
 let fechaAño = date.getFullYear();
-let fechaHora = date.getHours();
-let fechaMinutos = date.getMinutes();
 
 if (fechaMes < 10) {
     fechaMes = "0" + fechaMes;
@@ -23,8 +21,6 @@ if (fechaDia < 10) {
     fechaDia = "0" + fechaDia;
 }
 
-// Variables de fechas
-let nombreArchivo = "Alta_mobiliario" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
 let fecha_mob = fechaDia + "/" + fechaMes + "/" + fechaAño;
 
 async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
@@ -76,12 +72,6 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     </html>
     `;
 
-    //Ruta del archivo
-    var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
-    const pathPDF = path.join(DOWNLOAD_DIR, nombreArchivo + '_' + contador + '.pdf');
-
-    const outputPath = pathPDF;
-
     const browser = await puppeteer.launch({
         headless: "new",
         defaultViewport: {
@@ -100,8 +90,7 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
 
     await page.emulateMediaType("screen");
 
-    await page.pdf({
-        path: outputPath,
+    const pdfBuffer = await page.pdf({
         format: 'Letter',
         displayHeaderFooter: true,
         headerTemplate: `
@@ -173,7 +162,8 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
 
     await browser.close();
 
-    console.log(`PDF generado exitosamente en: ${outputPath}`);
+    // Retorna el PDF buffer
+    return pdfBuffer;
 }
 
 module.exports = {

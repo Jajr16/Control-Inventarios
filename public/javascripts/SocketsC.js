@@ -3,12 +3,12 @@ var socket = io.connect("http://localhost:3001");
 var pathname = window.location.pathname;
 //BUSCAR
 // Barra de busqueda
-function cargarSelect(IdType){
+function cargarSelect(IdType) {
     // desplegar lista de nombre de empleados
     window.addEventListener("load", function (event) {
         cargarNombres();
     });
-    
+
     window.onpageshow = function () {
         $(IdType).select2({
             allowClear: true,
@@ -1434,14 +1434,17 @@ if (pathname == "/users/altasPro") {
         window.addEventListener("load", function (event) {
             var selectResponsiva = document.getElementById("Resp");
             var opcion = document.createElement("option");
+            var opcion1 = document.createElement("option");
 
-            if (tok == "4dnM3k0nl9s") {
-                opcion.text = "EQUIPOS";
+            if (tok == "FGJYGd42DSAFA") {
+                opcion.text = "MOBILIARIO";
             } else {
                 opcion.text = "MOBILIARIO";
+                opcion1.text = "EQUIPOS";
             }
 
             selectResponsiva.add(opcion);
+            selectResponsiva.add(opcion1);
         });
 
         const FormResp = document.querySelector("#crearRespon");
@@ -1454,7 +1457,20 @@ if (pathname == "/users/altasPro") {
 
                 enviarSocket('Crea_Resp', { Responsiva: $("#Resp").val(), NombreEmp: $("#NombreEmp").val(), Token: tok });
 
-                recibirSocket('Responsiva_Respuesta');
+                socket.on('Responsiva_Respuesta', function (Respuesta) {
+                    alert(Respuesta.mensaje);
+
+                    // Crear un blob a partir del PDF buffer recibido
+                    const blob = new Blob([Respuesta.pdfBuffer], { type: 'application/pdf' });
+
+                    // Crear una URL a partir del blob para mostrar el PDF en una nueva ventana del navegador
+                    const pdfUrl = URL.createObjectURL(blob);
+
+                    // Abrir el PDF en una nueva ventana o pestaña
+                    window.open(pdfUrl, '_blank');
+
+                    location.reload();
+                });
             }
         }
     } else {
