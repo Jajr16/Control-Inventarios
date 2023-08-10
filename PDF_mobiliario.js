@@ -73,6 +73,8 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     `;
 
     const browser = await puppeteer.launch({
+        ignoreDefaultArgs: ['--disable-popup-blocking'],
+        args: ['--disable-popup-blocking'],
         headless: "new",
         defaultViewport: {
             width: 750,

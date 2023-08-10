@@ -40,7 +40,9 @@ io.on('connection', (socket) => {
         fechaDia = "0" + fechaDia;
     }
 
-    let nombreArchivo = "Almacen" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
+    let nombreArchivoA = "Almacen" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
+    let nombreArchivoM = "Mobiliario" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
+    let nombreArchivoE = "Equipo" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
     let nombreSacarProd = "Retiro_Almacen" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
 
     // Login
@@ -491,7 +493,7 @@ io.on('connection', (socket) => {
     });
 
     // Crear excel de consultas de almacen
-    socket.on('Excel', async () => {
+    socket.on('ExcelA', async () => {
         const workbook = new Excel.Workbook();
         const worksheet = workbook.addWorksheet("My Sheet");
 
@@ -597,7 +599,278 @@ io.on('connection', (socket) => {
 
                 //Ruta del archivo
                 var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
-                const pathExcel = path.join(DOWNLOAD_DIR, nombreArchivo + '_' + contador + '.xlsx');
+                const pathExcel = path.join(DOWNLOAD_DIR, nombreArchivoA + '_' + contador + '.xlsx');
+                await workbook.xlsx.writeFile(pathExcel);
+                socket.emit("RespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
+                contador++;
+            } else {
+                socket.emit("RespExcel", { mensaje: "Hubo un error, favor de contactar a encargados de sistemas" });
+            }
+        });
+        console.log("File is written");
+    });
+
+    // Crear excel de consultas de almacen
+    socket.on('ExcelE', async () => {
+        const workbook = new Excel.Workbook();
+        const worksheet = workbook.addWorksheet("My Sheet");
+
+        worksheet.columns = [
+            { header: 'N. Inv', key: 'N_Inv', width: 11 },
+            { header: 'N. Serie', key: 'NS', width: 18 },
+            { header: 'Equipo', key: 'Eqp', width: 30, },
+            { header: 'Marca', key: 'Marca', width: 25, },
+            { header: 'Modelo', key: 'Modelo', width: 30, },
+            { header: 'Hardware', key: 'Hardware', width: 30, },
+            { header: 'Software', key: 'Software', width: 30, },
+            { header: 'Monitor', key: 'Monitor', width: 30, },
+            { header: 'Teclado', key: 'Teclado', width: 15, },
+            { header: 'Mouse', key: 'Mouse', width: 20, },
+            { header: 'Accesorio', key: 'Acces', width: 20, },
+            { header: 'No.S.M.', key: 'NSM', width: 12, },
+            { header: 'No.I.M.', key: 'NIM', width: 12, },
+            { header: 'Encargado', key: 'Encargado', width: 40, }
+        ];
+
+        db.query('SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Empleado.Nom, IFNULL(pcs.Hardware,"-") Hardware, IFNULL(pcs.Software,"-") Software, IFNULL(monitor.Monitor,"-") Monitor, IFNULL(monitor.Num_Serie_Monitor,"-") NSM, IFNULL(monitor.Num_Inv_Mon,"-") NIM, IFNULL(mouse.Mouse,"-") Mouse, IFNULL(teclado.Teclado,"-") Teclado, IFNULL(accesorio.Accesorio,"-") Accesorio FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie inner join empleado on equipo.Num_emp = empleado.Num_emp;', async function (err, res) {
+            if (err) console.log(err);
+
+            if (res.length > 0) {
+                for (var i = 0; i < res.length; i++) {
+                    worksheet.addRow({ N_Inv: res[i].N_Inventario, NS: res[i].Num_Serie, Eqp: res[i].Equipo, Marca: res[i].Marca, Modelo: res[i].Modelo, Hardware: res[i].Hardware, Software: res[i].Software, Monitor: res[i].Monitor, NSM: res[i].NSM, NIM: res[i].NIM, Mouse: res[i].Mouse, Teclado: res[i].Teclado, Acces: res[i].Accesorio ,Encargado: res[i].Nom });
+                }
+                // save under export.xlsx
+
+                //ESTILO DE EXCEL
+                worksheet.getCell('A1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('A1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('B1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('B1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('C1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('C1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('D1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('D1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('E1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('E1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('F1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('F1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('G1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('G1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('H1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('H1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('I1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('I1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('J1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('J1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('K1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('K1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('L1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('L1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('M1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('M1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('N1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('N1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+                worksheet.autoFilter = 'A:N';
+
+                //Ruta del archivo
+                var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
+                const pathExcel = path.join(DOWNLOAD_DIR, nombreArchivoE + '_' + contador + '.xlsx');
+                await workbook.xlsx.writeFile(pathExcel);
+                socket.emit("RespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
+                contador++;
+            } else {
+                socket.emit("RespExcel", { mensaje: "Hubo un error, favor de contactar a encargados de sistemas" });
+            }
+        });
+        console.log("File is written");
+    });
+
+    // Crear excel de consultas de almacen
+    socket.on('ExcelM', async () => {
+        const workbook = new Excel.Workbook();
+        const worksheet = workbook.addWorksheet("My Sheet");
+
+        worksheet.columns = [
+            { header: 'N. Inv', key: 'N_Inv', width: 11 },
+            { header: 'Descripción', key: 'Desc', width: 50 },
+            { header: 'Encargado', key: 'Encargado', width: 40 }
+        ];
+
+        db.query('select mobiliario.Num_Inventario, mobiliario.Descripcion, empleado.Nom from mobiliario inner join empleado on mobiliario.Num_emp = empleado.Num_emp', async function (err, res) {
+            if (err) console.log(err);
+
+            if (res.length > 0) {
+                for (var i = 0; i < res.length; i++) {
+                    worksheet.addRow({ N_Inv: res[i].Num_Inventario, Desc: res[i].Descripcion, Encargado: res[i].Nom});
+                }
+
+                //ESTILO DE EXCEL
+                worksheet.getCell('A1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('A1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('B1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('B1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getCell('C1').fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'F003A9E' }
+                };
+                worksheet.getCell('C1').font = {
+                    name: 'Arial',
+                    color: { argb: 'FFFFFF' },
+                    bold: true
+                };
+
+                worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+                worksheet.autoFilter = 'A:C';
+
+                //Ruta del archivo
+                var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
+                const pathExcel = path.join(DOWNLOAD_DIR, nombreArchivoM + '_' + contador + '.xlsx');
                 await workbook.xlsx.writeFile(pathExcel);
                 socket.emit("RespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
                 contador++;
@@ -609,7 +882,7 @@ io.on('connection', (socket) => {
     });
 
     // Consulta de registro de productos
-    socket.on('Consul_RegProSac', async (data) => {
+    socket.on('Consul_RegProSac', async () => {
 
         // Autenticar que haga las consultas
         db.query('select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp', function (err, result) {

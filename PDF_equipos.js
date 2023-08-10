@@ -91,6 +91,8 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
     `;
 
     const browser = await puppeteer.launch({
+        ignoreDefaultArgs: ['--disable-popup-blocking'],
+        args: ['--disable-popup-blocking'],
         headless: "new",
         defaultViewport: {
             width: 750,
@@ -152,7 +154,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
                 <table style="font-size: 8px; padding-top: 10px; width: 95%;">
                     <thead>
                         <tr id="firstrow">
-                            <th>No. INVENTARIO</th>
+                            <th>No. INV</th>
                             <th>No. SERIE</th>
                             <th>EQUIPO</th>
                             <th>MARCA</th>

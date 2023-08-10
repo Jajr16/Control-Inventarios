@@ -6,3 +6,6 @@ El monitor, mouse, teclado, hardware, software se van a modificar directo del CP
 -------NUEVOS CAMBIOS--------
 Ponerle número de inventario al monitor al formulario y pdf's de equipo
 
+---------- CAMBIOS EXCELS --------------
+Realizar dos excel's, uno de mobiliario y otro de excel, los campos deben de ser los mismos que se encuentran en el PDF que corresponda.
+En ambos casos se deben de poner todos los empleados, es decir, todos los registros incluyendo los encargados de cada equipo

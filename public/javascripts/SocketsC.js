@@ -1,6 +1,17 @@
 var tok = localStorage.getItem("token");
 var socket = io.connect("http://localhost:3001");
 var pathname = window.location.pathname;
+//////////////////////////////////// EXCEL //////////////////////////////////////
+// Crear excel
+function Excel(Excel) {
+    socket.emit(Excel);
+
+    socket.once("RespExcel", (data) => {
+        alert(data.mensaje);
+        location.reload();
+    });
+} 
+
 //BUSCAR
 // Barra de busqueda
 function cargarSelect(IdType) {
@@ -321,16 +332,6 @@ if (pathname == "/users/altasPro") {
         socket.once('Error', (data) => {
             alert(data.mensaje);
         })
-
-        // Crear excel
-        function Excel() {
-            socket.emit("Excel");
-
-            socket.once("RespExcel", (data) => {
-                alert(data.mensaje);
-                location.reload();
-            });
-        }
 
         //Llenar datos en automático
         var valores0 = "";
