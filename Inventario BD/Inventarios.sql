@@ -514,8 +514,6 @@ insert into mobiliario (num_Inventario, Descripcion, Num_emp) values (1,"Mesa",7
 select*from almacen;
 select*from mobiliario;
 select*from equipo;
-select*from responsivas_e;
-select*from responsivas_m;
 
 SELECT * FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie WHERE Equipo.Num_Serie = 12345;
 
