@@ -241,7 +241,7 @@ select {
     padding: .8rem;
     display: block;
     margin-bottom: 2rem;
-    width: 100%!important;
+    width: 100% !important;
     background-color: rgb(0, 0, 0);
     border: rgb(10, 3, 47) solid 1px;
     border-radius: .5rem;
@@ -563,13 +563,13 @@ h5 {
     transform: scale(1.1);
 }
 
-.TamBAG{
+.TamBAG {
     width: 100%;
     height: auto;
     margin: 0 0 2rem 2rem;
 }
 
-.Alinear{
+.Alinear {
     margin-top: 2.8rem;
 }
 
@@ -663,6 +663,7 @@ h5 {
     color: rgb(101, 0, 110);
     transition: all 0.3s ease 0s;
 }
+
 .BotonCrearResp {
     text-decoration: none;
     padding: 0.5rem;
@@ -865,6 +866,36 @@ h5 {
         display: block;
         width: 100%;
     }
+
+    .menu-horizontal {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .menu-horizontal>li {
+        margin: 10px 0;
+    }
+
+    .menu-horizontal>li:hover {
+        background-color: initial;
+    }
+
+    .menu-vertical {
+        position: static;
+        display: none;
+        background-color: initial;
+    }
+
+    .menu-horizontal li:hover .menu-vertical {
+        display: block;
+        position: relative;
+        width: 100%;
+        background-color: initial;
+    }
+
+    .menu-vertical li {
+        margin: 5px 0;
+    }
 }
 
 @media screen and (max-width:475px) {
@@ -898,6 +929,51 @@ h5 {
     color: white;
 }
 
-#NombreEmp{
-    width: 100%!important;
+#NombreEmp {
+    width: 100% !important;
+}
+
+.menu_index {
+    max-width: 90%;
+    margin: auto;
+    background-color: #0100495d;
+    font-size: 20px;
+}
+
+.menu-horizontal {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    margin: 7%;
+}
+
+.menu-horizontal>li>a {
+    display: block;
+    color: white;
+    text-decoration: none;
+}
+
+.menu-horizontal>li:hover {
+    background-color: #010049;
+}
+
+.menu-vertical {
+    position: absolute;
+    justify-content: space-evenly;
+    align-items: center;
+    display: none;
+    list-style: none;
+    width: 15%;
+    background-color: rgba(0, 0, 0, .5);
+}
+
+.menu-horizontal li:hover .menu-vertical {
+    display: block;
+}
+
+.menu-vertical li a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    margin: 10%;
 }
