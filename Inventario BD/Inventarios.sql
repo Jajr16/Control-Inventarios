@@ -1,5 +1,5 @@
 -- MySQL Workbench Forward Engineering
-
+drop database if exists inventarios;
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
@@ -20,8 +20,6 @@ USE `Inventarios` ;
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Empleado` (
   `Num_emp` INT NOT NULL AUTO_INCREMENT,
   `Nom` NVARCHAR(45) NULL,
-  `AP` VARCHAR(45) NULL,
-  `AM` VARCHAR(45) NULL,
   `Área` VARCHAR(45) NULL,
   `Num_Jefe` INT NULL,
   PRIMARY KEY (`Num_emp`),
@@ -40,9 +38,10 @@ COMMENT = '			';
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Usuario` (
   `Num_Emp` INT NULL,
-  `User` VARCHAR(45) NOT NULL,
-  `Pass` VARCHAR(45) NULL,
-  PRIMARY KEY (`User`),
+  `Usuario` VARCHAR(45) NOT NULL,
+  `Pass` VARCHAR(45) not NULL,
+  `token` varchar(20) not null,
+  PRIMARY KEY (`Usuario`),
   INDEX `Num_emp_idx` (`Num_Emp` ASC),
   CONSTRAINT `Num_EmpUser`
     FOREIGN KEY (`Num_Emp`)
@@ -55,12 +54,12 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Equipo`
 -- -----------------------------------------------------
-drop table PCs;
-drop table Monitor;
-drop table Mouse;
-drop table Teclado;
-drop table Accesorio;
-drop table Equipo;
+drop table if exists PCs;
+drop table if exists Monitor;
+drop table if exists Mouse;
+drop table if exists Teclado;
+drop table if exists Accesorio;
+drop table if exists Equipo;
 CREATE TABLE `Inventarios`.`Equipo` (
   `N_Inventario` int not null auto_increment,
   `Num_Serie` VARCHAR(45) NOT NULL,
@@ -155,8 +154,9 @@ ENGINE = InnoDB;
 -- Table `Inventarios`.`Facturas_Almacen`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Facturas_Almacen` (
-  `Num_Fact` INT NOT NULL AUTO_INCREMENT,
+  `Num_Fact` varchar(10) NOT NULL,
   `Ffact` DATE NULL,
+  `Proveedor` varchar(45),
   PRIMARY KEY (`Num_Fact`))
 ENGINE = InnoDB;
 
@@ -166,23 +166,14 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Almacen` (
   `Cod_Barras` NVARCHAR(45) NOT NULL,
-  `FIngreso` DATE NULL,
   `Categoria` VARCHAR(45) NULL,
   `Articulo` VARCHAR(45) NULL,
   `Marca` VARCHAR(100) NULL,
   `Descripcion` VARCHAR(400) NULL,
-  `Proveedor` VARCHAR(45) NULL,
-  `NFact` INT NULL,
   `Unidad` VARCHAR(45) NULL,
-  `Cantidad` INT NULL,
   `Existencia` INT NULL,
-  PRIMARY KEY (`Cod_Barras`),
-  INDEX `NFact_idx` (`NFact` ASC),
-  CONSTRAINT `NFact`
-    FOREIGN KEY (`NFact`)
-    REFERENCES `Inventarios`.`Facturas_Almacen` (`Num_Fact`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  `eliminado` tinyint(1) not null default 0,
+  PRIMARY KEY (`Cod_Barras`))
 ENGINE = InnoDB;
 
 
@@ -264,7 +255,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Responsivas_E`
 -- -----------------------------------------------------
-drop table Responsivas_E;
+drop table if exists Responsivas_E;
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Responsivas_E` (
   `Num_emp` INT NOT NULL,
   Num_Serie VARCHAR(45) not null NOT NULL,
@@ -294,17 +285,6 @@ START TRANSACTION;
 USE `Inventarios`;
 INSERT INTO `Inventarios`.`Facturas_Almacen` (`Num_Fact`, `Ffact`) VALUES (1, '2023-03-15');
 INSERT INTO `Inventarios`.`Facturas_Almacen` (`Num_Fact`, `Ffact`) VALUES (2, '2023-03-15');
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `Inventarios`.`Almacen`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `Inventarios`;
-INSERT INTO `Inventarios`.`Almacen` (`Cod_Barras`, `FIngreso`, `Categoria`, `Articulo`, `Marca`, `Descripcion`, `Proveedor`, `NFact`, `Unidad`, `Cantidad`, `Existencia`) VALUES ('756981H83', '2023-03-15', 'Papelería', 'Hojas Blancas', 'Scribd', 'Pliego de hojas blancas', 'Lumen', 1, 'Unidad', 10, 10);
-INSERT INTO `Inventarios`.`Almacen` (`Cod_Barras`, `FIngreso`, `Categoria`, `Articulo`, `Marca`, `Descripcion`, `Proveedor`, `NFact`, `Unidad`, `Cantidad`, `Existencia`) VALUES ('684F4GFR8', '2023-03-15', 'Limpieza', 'Fabuloso', 'Fab', 'Jabón líquido', 'Chedrahui', 2, 'Unidad', 5, 5);
 
 COMMIT;
 
@@ -348,6 +328,8 @@ insert into tokens values(
 create table Factus_Productos(
 Cod_Barras nvarchar(45) not null,
 Nfactura nvarchar(10) not null,
+Cantidad int not null,
+FIngreso date not null,
  constraint cPFPS primary key(Cod_Barras, Nfactura)
 );
 
@@ -358,11 +340,18 @@ Num_EmpS int,
 Cantidad_Salida int,
 constraint CPSP primary key(Cod_BarrasS, FSalida, Num_EmpS)
 );
+select*from usuario;
 
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'n0m3l0';
+flush privileges;
+
+ALTER TABLE empleado AUTO_INCREMENT = 841;
+########################DROPS#########################################
 alter table Salidas_Productos add constraint FKCBS foreign key(Cod_BarrasS) references almacen(Cod_Barras);
 alter table Salidas_Productos add constraint FKNES foreign key(Num_EmpS) references empleado(Num_emp);
 
 alter table Factus_Productos add constraint FK_CBA foreign key(Cod_Barras) references almacen(Cod_Barras);
+
 alter table Factus_Productos add constraint FK_NDFA foreign key(Nfactura) references facturas_almacen(Num_Fact);
 
 alter table usuario add constraint FK_Token foreign key(token) references tokens(token);
@@ -371,20 +360,14 @@ create unique index FKAEmp on tokens(area);
 alter table empleado add constraint FK_A foreign key(Área) references tokens(area); 
 alter table usuario add constraint FK_T foreign key(token) references tokens(token);
 
-select*from usuario;
-
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'n0m3l0';
-flush privileges;
-
-alter table usuario add column token int not null default 0;
-alter table usuario modify token nvarchar(20);
-
-update usuario set token = "4dnM3k0nl9z" where User = "armando";
+########################## UPDATES ###################################
+update usuario set token = "4dnM3k0nl9z" where Usuario = "armando";
 update almacen set Existencia = 10 where Cod_Barras = 'b';
 update empleado set Num_Jefe = 1 where Num_emp = 1;
 update empleado set Num_emp = 2 where Num_emp = 758;
 update empleado set Num_Jefe = 663;
 update almacen set eliminado = 0 where eliminado = 1;
+
 -- DELETES
 delete from factus_productos where FIngreso = "2023-04-28";
 delete from facturas_almacen where Ffact = "2023-05-07";
@@ -396,26 +379,6 @@ delete from almacen where Cod_Barras = "684F4GFR8";
 delete from empleado where Num_emp > 840;
 delete from usuario where Num_emp = 107;
 delete from equipo;
--- Quitar columnas
-alter table facturas_almacen drop column Cod_Barras;
-alter table almacen drop column Cantidad;
-alter table almacen drop column NFact;
-alter table almacen drop column FIngreso;
-alter table almacen drop column Proveedor;
-alter table facturas_almacen drop column Cantidad;
-alter table facturas_almacen drop column FIngreso;
-alter table empleado drop column AM;
--- Agregar columnas
-alter table factus_productos add column Cantidad int;
-alter table facturas_almacen add column Ffact date;
-alter table facturas_almacen add column Proveedor nvarchar(45);
-alter table almacen add column eliminado TINYINT(1) not null default 0;
-alter table factus_productos add column FIngreso date;
-
-ALTER TABLE empleado AUTO_INCREMENT = 841;
-########################DROPS#########################################
-drop table if exists responsivas_e;
-drop table if exists responsivas_m;
 -- almacen.Cod_Barras, almacen.FIngreso, almacen.Categoria, almacen.Articulo, almacen.Marca, almacen.Descripcion, almacen.Proveedor, almacen.NFact
 #select*from usuario where User = "armando" and Pass = "clarac";
 
@@ -428,9 +391,6 @@ drop table if exists responsivas_m;
 #select*from usuario where Usuario = 'a' and Pass = '123';
 
 #select sum(Cantidad) as suma from factus_productos where Cod_Barras = "s";
-
-ALTER TABLE usuario CHANGE `User` `Usuario` nvarchar(45);
-
 #update almacen set Existencia = ((select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = 'c') - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = 'c')) where Cod_Barras = 'c';
 #select  sum(factus_productos.Cantidad) - sum(salidas_productos.Cantidad_Salida) from factus_productos inner join salidas_productos on factus_productos.Cod_Barras = salidas_productos.Cod_BarrasS where factus_productos.Cod_Barras = 'c';
 #select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = 'JDFK35J2';
@@ -450,6 +410,54 @@ ALTER TABLE usuario CHANGE `User` `Usuario` nvarchar(45);
 #		update usuario set token = (select tokens.token from tokens inner join empleado on tokens.area = empleado.Área where empleado.Num_Emp = 758);
 #    END
 #| DELIMITER ;
+
+####################################TRIGGERS###################################
+DELIMITER |
+create trigger Actualizar_Existencias after update on factus_productos
+  FOR EACH ROW BEGIN
+  if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = old.Cod_Barras) P) = 1) then
+	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_Barras) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = old.Cod_Barras) where Cod_Barras = old.Cod_Barras;
+  else
+	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_Barras) where Cod_Barras = old.Cod_Barras;
+  end if; 
+  END
+| DELIMITER ;
+
+DELIMITER |
+create trigger Actualizar_ExistenciasInsert after insert on factus_productos
+  FOR EACH ROW BEGIN
+	if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = new.Cod_Barras) P) = 1) then
+			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_Barras) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = new.Cod_Barras) where Cod_Barras = new.Cod_Barras;
+		else
+			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_Barras) where Cod_Barras = new.Cod_Barras;
+	end if; 
+  END
+| DELIMITER ;
+
+DELIMITER |
+create trigger Actualizar_Existencias2 after update on salidas_productos
+  FOR EACH ROW BEGIN
+	if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = old.Cod_BarrasS) P) = 1) then
+	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_BarrasS) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = old.Cod_BarrasS) where Cod_Barras = old.Cod_BarrasS;
+  else
+	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_BarrasS) where Cod_Barras = old.Cod_BarrasS;
+  end if; 
+  END
+| DELIMITER ;
+
+DELIMITER |
+create trigger Actualizar_ExistenciasInsercion2 after insert on salidas_productos
+	FOR EACH ROW BEGIN
+		if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = new.Cod_BarrasS) P) = 1) then
+            update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_BarrasS) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = new.Cod_BarrasS) where Cod_Barras = new.Cod_BarrasS;
+        else
+			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_BarrasS) where Cod_Barras = new.Cod_BarrasS;
+        end if; 
+	END
+| DELIMITER ;
+
+drop table responsivas_e;
+drop table responsivas_m;
 
 -- BUSQUEDAS
 select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = 'c') P;
@@ -497,12 +505,9 @@ JOIN empleado e ON m.Num_emp = e.Num_emp;
 
 SELECT eqp.*, e.Nom FROM equipo eqp JOIN empleado e ON eqp.Num_emp = e.Num_emp;
 
-SELECT Num_Emp FROM empleado WHERE Nom = "armando";
+SELECT * FROM empleado WHERE Nom = "JIMENEZ RIVERA ARMANDO";
 
-insert into equipo (N_Inventario, Num_Serie, Equipo, Marca, Modelo, Num_emp, Ubi) values(1, "213sa", "Monitor", "PC", "Pc", (select Num_emp from empleado where Nom = "armando"), "A");
-
-insert into empleado (Num_emp, Nom, AP, AM, Área, Num_Jefe) values(
-777,"JOSE ALFREDO", "JIMENEZ", "RODRIGUEZ", "SISTEMAS", 777);
+insert into equipo (N_Inventario, Num_Serie, Equipo, Marca, Modelo, Num_emp, Ubi) values(1, "213sa", "Monitor", "PC", "Pc", (select Num_emp from empleado where Nom = "JIMENEZ RIVERA ARMANDO"), "A");
 
 insert into usuario values(
 758, "ajimenez", "Clarac2017", '4dnM3k0nl9s'
@@ -523,8 +528,6 @@ SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Mar
 
 
 SELECT mob.*, e.Nom FROM mobiliario mob JOIN empleado e ON mob.Num_emp = e.Num_emp;
-SELECT resEqp.*, e.Nom FROM responsivas_e resEqp JOIN empleado e ON resEqp.Num_emp = e.Num_emp;
-SELECT resMob.*, e.Nom FROM responsivas_m resMob JOIN empleado e ON resMob.Num_emp = e.Num_emp;
 
 #insert into usuario values(
 #1, 'Prueba','123', '4dnM3k0nl9s');
@@ -547,47 +550,6 @@ SELECT resMob.*, e.Nom FROM responsivas_m resMob JOIN empleado e ON resMob.Num_e
 select*from mobiliario;
 select empleado.Nom, empleado.Área, empleado.Num_emp from empleado;
 select*from empleado;
-####################################TRIGGERS###################################
-DELIMITER |
-create trigger Actualizar_Existencias after update on factus_productos
-  FOR EACH ROW BEGIN
-  if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = old.Cod_Barras) P) = 1) then
-	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_Barras) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = old.Cod_Barras) where Cod_Barras = old.Cod_Barras;
-  else
-	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_Barras) where Cod_Barras = old.Cod_Barras;
-  end if; 
-  END
-| DELIMITER ;
 
-DELIMITER |
-create trigger Actualizar_ExistenciasInsert after insert on factus_productos
-  FOR EACH ROW BEGIN
-	if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = new.Cod_Barras) P) = 1) then
-			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_Barras) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = new.Cod_Barras) where Cod_Barras = new.Cod_Barras;
-		else
-			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_Barras) where Cod_Barras = new.Cod_Barras;
-	end if; 
-  END
-| DELIMITER ;
-
-DELIMITER |
-create trigger Actualizar_Existencias2 after update on salidas_productos
-  FOR EACH ROW BEGIN
-	if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = old.Cod_BarrasS) P) = 1) then
-	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_BarrasS) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = old.Cod_BarrasS) where Cod_Barras = old.Cod_BarrasS;
-  else
-	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_BarrasS) where Cod_Barras = old.Cod_BarrasS;
-  end if; 
-  END
-| DELIMITER ;
-
-DELIMITER |
-create trigger Actualizar_ExistenciasInsercion2 after insert on salidas_productos
-	FOR EACH ROW BEGIN
-		if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = new.Cod_BarrasS) P) = 1) then
-            update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_BarrasS) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = new.Cod_BarrasS) where Cod_Barras = new.Cod_BarrasS;
-        else
-			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_BarrasS) where Cod_Barras = new.Cod_BarrasS;
-        end if; 
-	END
-| DELIMITER ;
+insert into Empleado values(663, 'NAVARRO JIMENEZ MARTHA LIDIA', 'DIRECCION GENERAL', 663);
+update empleado set Num_Jefe = 663;
