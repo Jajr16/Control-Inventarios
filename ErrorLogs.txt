@@ -1,0 +1,13 @@
+fs.appendFile('ErrorLogs.txt', 'Papapapapa', (error) => {
+            if(error){
+                throw error;
+            }
+            console.log('Archivo creado');
+        });
+
+        fs.appendFile('ErrorLogs.txt', 'PPADASKDPoasf', (error) => {
+            if(error){
+                throw error;
+            }
+            console.log('Archivo creado');
+        });

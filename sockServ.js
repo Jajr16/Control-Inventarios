@@ -2,11 +2,14 @@ var app = require('./app');
 var http = require('http');
 var server = http.createServer(app);
 const io = require('socket.io')(server);
+
 //Importar Base de datos
 var db = require("./Conexion/BaseDatos");
 const Excel = require('exceljs');
 const path = require('path');
+
 const fs = require('fs');
+
 var contador = 1;
 var contadorS = 1;
 // Llamar a la función generatePDF
