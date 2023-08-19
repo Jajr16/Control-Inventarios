@@ -1,13 +1,20 @@
-fs.appendFile('ErrorLogs.txt', 'Papapapapa', (error) => {
-            if(error){
-                throw error;
-            }
-            console.log('Archivo creado');
-        });
-
-        fs.appendFile('ErrorLogs.txt', 'PPADASKDPoasf', (error) => {
-            if(error){
-                throw error;
-            }
-            console.log('Archivo creado');
-        });
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist

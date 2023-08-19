@@ -1,0 +1,117 @@
+main {
+    background: linear-gradient(to right, rgba(0, 67, 252, 0.4) 0%, rgba(255, 255, 255, 0.4) 45%, rgb(1, 33, 121) 45%, rgb(1, 33, 121) 100%);
+    padding: 0 1.5rem;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+}
+
+.globo {
+    border-radius: 25px;
+    background: white !important;
+    color: black;
+    padding: 10px;
+    position: relative;
+    margin: 0 auto;
+    font-family: sans-serif;
+    font-weight: 700;
+    z-index: 1;
+    border: black 2px solid;
+    justify-content: center;
+}
+
+.globo::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20rem;
+    background: transparent;
+    width: 0px;
+    height: 0px;
+    border-bottom: 40px solid white;
+    border-right: 40px solid transparent;
+    border-left: 40px solid transparent;
+    transform: rotate(-25deg);
+    z-index: -1;
+}
+
+.Mitad {
+    display: flex;
+    align-items: center;
+    font-size: 1.6rem;
+    width: 100%;
+}
+
+.Mitad div {
+    display: flex;
+    width: 55%;
+    align-items: baseline;
+}
+
+.imagen {
+    margin-left: 6rem;
+}
+
+.Mensaje {
+    color: white;
+    border-bottom: 4px solid white;
+}
+
+.Return {
+    text-decoration: none;
+    border: none !important;
+    width: 60% !important;
+    text-align: center;
+    background: #146EB9 !important;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.Return:hover {
+    background: #063A64;
+    transform: scale(1.1);
+}
+
+/* RESPONSIVE PÁGINA ERROR */
+@media screen and (max-width:1076px) {
+    .globo::after {
+        left: 15rem;
+    }
+
+    .globo {
+        margin-bottom: 1rem;
+    }
+}
+
+@media screen and (min-width: 830px) {
+    .globo::after {
+        left: 10rem;
+    }
+}
+
+@media screen and (min-width: 730px){
+    .globo::after {
+        left: 10rem;
+    }
+}
+
+@media screen and (min-width: 0px) and (max-width: 730px) {
+    .globo {
+        width: 190px;
+    }
+
+    .globo::after {
+        left: 10rem;
+    }
+
+    .Mitad {
+        width: 707px;
+    }
+
+    main, header {
+        width: 730px;
+    }
+}

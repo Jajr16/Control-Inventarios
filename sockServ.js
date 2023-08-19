@@ -23,6 +23,16 @@ server.listen(3001, () => {
     console.log('Servidor iniciado en el puerto 3001.');
 });
 
+async function Errores(Data){
+    console.log('AAAAA');
+    fs.appendFile('ErrorLogs.txt', (Data.toString() + '\n'), (error) => {
+        if(error){
+            throw error;
+        }
+        console.log('Errores escritos');
+    });
+}
+
 // Configuración de socket.io
 io.on('connection', (socket) => {
     console.log('Cliente conectado');
@@ -55,13 +65,15 @@ io.on('connection', (socket) => {
         // Autenticar al usuario utilizando la lógica definida anteriormente
         db.query('select*from usuario where Usuario = BINARY  ? and Pass = BINARY  ?', [data.User, data.Pass], function (err, result) {
             console.log(result);
-            if (err) console.log(err);//Se imprime algún error que haya ocurrido
-            if (result.length > 0) {//Si sí hizo una búsqueda
-                console.log(result[0].token);
-                socket.emit('logInOK', { Usuario: result[0].Usuario, token: result[0].token });//Mandar usuario y token al cliente
-            } else {
-                console.log(result);
-                socket.emit('logInError', { mensaje: 'Nombre de usuario o contraseña incorrectos.' });//Mandar mensaje de error a cliente
+            if (err) {Errores(err); socket.emit('SystemError');}
+            else{//Se imprime algún error que haya ocurrido
+                if (result.length > 0) {//Si sí hizo una búsqueda
+                    console.log(result[0].token);
+                    socket.emit('logInOK', { Usuario: result[0].Usuario, token: result[0].token });//Mandar usuario y token al cliente
+                } else {
+                    console.log(result);
+                    socket.emit('logInError', { mensaje: 'Nombre de usuario o contraseña incorrectos.' });//Mandar mensaje de error a cliente
+                }
             }
         });
 
@@ -80,7 +92,6 @@ io.on('connection', (socket) => {
             }
             result.length = 0;
         });
-
     });
 
     //Buscar facturas

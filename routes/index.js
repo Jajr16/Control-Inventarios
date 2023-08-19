@@ -10,5 +10,11 @@ router.get('/index', function (req, res, next) {
   res.render('index', { title: 'Menú' });
 });
 
+/*** Errores ***/
+router.get('/ErrorPage', function(req, res, next){
+  res.render('ErrorPage', { title: 'Error inesperado'});
+});
+
+
 
 module.exports = router;
