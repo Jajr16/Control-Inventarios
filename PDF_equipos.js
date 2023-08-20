@@ -1,7 +1,5 @@
 const puppeteer = require('puppeteer');
-const path = require('path');
 const fs = require('fs');
-var contador = 1;
 
 const base64Image = fs.readFileSync(`${process.cwd()}\\public\\images\\LogoReducido.jpg`).toString('base64');
 const imageSrc = `data:image/png;base64,${base64Image}`;

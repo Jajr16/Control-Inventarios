@@ -86,29 +86,60 @@ body::-webkit-scrollbar-thumb:hover {
 
 .header .nav-links {
     list-style: none;
+    z-index: 10;
 }
-
-.header .nav-links li {
-    display: inline-block;
-    padding: 0 10px;
-}
-
-.header .nav-links li:hover,
 /**/
 .overlay a:hover {
     transform: scale(1.1);
 }
 
-.header .nav-links a {
+.header .nav-links p {
+    display: block;
     font-size: 700;
     color: #000157;
-    transition: all 0.3s ease 0s;
+    transition: all 0.5s ease 0s;
 }
 
-.header .nav-links a:hover {
+.header .nav-links p:hover {
     color: #0004ff;
     transform: scale(1.1);
 
+}
+.header .nav-links li {
+    display: inline-block;
+    padding: 0 10px;
+    font-size: 700;
+    transition: all 0.4s ease 0s;
+}
+
+.header .nav-links li:hover {
+    transform: scale(1.1);
+
+}
+/**/
+.menu-vertical_nav{
+	position: absolute;
+    justify-content: space-evenly;
+    align-items: center;
+    display: none;
+    list-style: none;
+    background-color: rgba(0, 0, 0, 0.63);
+}
+
+.header .nav-links li:hover .menu-vertical_nav {
+    display: block;
+}
+
+.menu-vertical_nav li a{
+	display: block;
+	color: white;
+	text-decoration: none;
+	padding: 15px 15px 15px 20px;
+}
+
+.menu-vertical_nav li a:hover{
+    color: #0004ff;
+    background-color: rgba(255, 255, 255, 0.747);
 }
 
 /**/
@@ -931,49 +962,4 @@ h5 {
 
 #NombreEmp {
     width: 100% !important;
-}
-
-.menu_index {
-    max-width: 90%;
-    margin: auto;
-    background-color: #0100495d;
-    font-size: 20px;
-}
-
-.menu-horizontal {
-    list-style: none;
-    display: flex;
-    justify-content: space-around;
-    margin: 7%;
-}
-
-.menu-horizontal>li>a {
-    display: block;
-    color: white;
-    text-decoration: none;
-}
-
-.menu-horizontal>li:hover {
-    background-color: #010049;
-}
-
-.menu-vertical {
-    position: absolute;
-    justify-content: space-evenly;
-    align-items: center;
-    display: none;
-    list-style: none;
-    width: 15%;
-    background-color: rgba(0, 0, 0, .5);
-}
-
-.menu-horizontal li:hover .menu-vertical {
-    display: block;
-}
-
-.menu-vertical li a {
-    display: block;
-    color: white;
-    text-decoration: none;
-    margin: 10%;
 }

@@ -27,8 +27,6 @@
     </div>
     <nav class="Dos_Column">
       <ul class="nav-links" id="Linksnav">
-        <li><a href="/users/index">Inicio</a></li>
-        <li><a href="/users/crear_resp">Responsivas</a></li>
       </ul>
     </nav>
     <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
@@ -47,62 +45,49 @@
   <main class="Contenedor Contenido-centrado Seccion">
     <h2 class="FW-300" style="text-align: center;">¡Bienvenido!</h2>
     <h2 class="FW-300" style="text-align: center;">¿Qué deseas hacer?</h2>
-
-    <div class="menu_index">
-      <ul class="menu-horizontal">
-        <li>
-          <h5 class="BotonIZ">Registrar productos</h5>
-          <ul class="menu-vertical" id="RegistrosProd">
-            <li>
-              <div></div>
-            </li>
-            <li>
-              <div></div>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <h5 class="BotonMOB">Registrar Mobiliario</h5>
-          <ul class="menu-vertical" id="RegistrosMob">
-            <li>
-              <div></div>
-            </li>
-            <li>
-              <div></div>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <h5 class="BotonEQP">Registrar Equipos</h5>
-          <ul class="menu-vertical" id="RegistrosEqp">
-            <li>
-              <div></div>
-            </li>
-            <li>
-              <div></div>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <h5 class="BotonCrearResp">Crear responsivas</h5>
-            <ul class="menu-vertical" id="crear_resps">
-              <li>
-                <div></div>
-              </li>
-            </ul>
-        </li>
-        <li>
-          <h5 class="BotonDE" id="TituloOpciones"></h5>
-            <ul class="menu-vertical" id="ProdExistentes">
-              <li>
-                <div></div>
-              </li>
-              <li>
-                <div></div>
-              </li>
-            </ul>
-        </li>
-      </ul>
+    <div class="Dos_Column">
+      <div class="CampoForm">
+        <h5 class="BotonIZ">Registrar productos</h5>
+        <div class="Dos_Columnas Separacion" id="RegistrosProd">
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+    <div class="Dos_Column">
+      <div class="CampoForm">
+        <h5 class="BotonMOB">Registrar Mobiliario</h5>
+        <div class="Dos_Columnas Separacion" id="RegistrosMob">
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+    <div class="Dos_Column">
+      <div class="CampoForm">
+        <h5 class="BotonEQP">Registrar Equipos</h5>
+        <div class="Dos_Columnas Separacion" id="RegistrosEqp">
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+    <div class="Dos_Column">
+      <div class="CampoForm">
+        <h5 class="BotonCrearResp">Crear responsivas</h5>
+        <div class="Dos_Columnas Separacion" id="crear_resps">
+          <div></div>
+        </div>
+      </div>
+    </div>
+    <div class="Dos_Column" id="Mas_Opciones">
+      <div class="CampoForm">
+        <h5 class="BotonDE" id="TituloOpciones"></h5>
+        <div class="Dos_Columnas Separacion" id="ProdExistentes">
+          <div></div>
+          <div></div>
+        </div>
+      </div>
     </div>
   </main>
   <script>
@@ -114,11 +99,13 @@
         document.querySelector("#TituloOpciones").innerHTML = "Más opciones";
 
         $("#ProdExistentes").children().eq(0).html(`
-          <a href="/users/RegistrarUsuario" class="BotonABE TamBAG">Registrar Usuario</a>
-          <a href="/users/consulUsuarios" class="BotonABE TamBAG">Modificar Usuario</a>
-          <a href="/users/RegistroEmpleado" class="BotonABE TamBAG">Registrar Empleado</a>
-          <a href="/users/ModEmp" class="BotonABE TamBAG">Modificar Empleado</a>
-        `);
+        <a href="/users/RegistrarUsuario" class="BotonABE TamBAG">Registrar Usuario</a>
+        <a href="/users/consulUsuarios" class="BotonABE TamBAG">Modificar Usuario</a>
+      `);
+        $("#ProdExistentes").children().eq(1).html(`
+        <a href="/users/RegistroEmpleado" class="BotonABE TamBAG">Registrar Empleado</a>
+        <a href="/users/ModEmp" class="BotonABE TamBAG">Modificar Empleado</a>
+      `);
 
       } else if (tok == "4dnM3k0nl9A") {
 
@@ -128,17 +115,28 @@
         $("#RegistrosProd").children().eq(0).html(`
           <a href="/users/consulPro" class="BotonAG TamBAG">Ver productos</a>
           <a href="/users/ABPE" class="BotonAG TamBAG">Agregar productos existentes</a>
+        `);
+
+        $("#RegistrosProd").children().eq(1).html(`
           <a href="/users/altasPro" class="BotonAG TamBAG">Registrar Productos</a>
           <a href="/users/FacSacProd" class="BotonAG TamBAG">Registro de productos sacados</a>
         `);
 
         $("#RegistrosMob").children().eq(0).html(`
           <a href="/users/consulMob" class="BotonMOBA TamBAG">Ver Mobiliario</a>
+          
+        `);
+
+        $("#RegistrosMob").children().eq(1).html(`
           <a href="/users/altasMob" class="BotonMOBA TamBAG">Registrar Mobiliario</a>
         `);
 
         $("#RegistrosEqp").children().eq(0).html(`
           <a href="/users/consulEqp" class="BotonEQPA TamBAG">Ver Equipos</a>
+          
+        `);
+
+        $("#RegistrosEqp").children().eq(1).html(`
           <a href="/users/altasEqp" class="BotonEQPA TamBAG">Registrar Equipos</a>
         `);
 
