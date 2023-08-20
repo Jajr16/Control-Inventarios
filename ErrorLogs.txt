@@ -18,3 +18,7 @@ Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
 Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
 Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
 Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist18/008/2023 23:42
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist Error obtenido el -> 18/00008/2023 23:43
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist | Error obtenido el -> 18/008/2023 23:43
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuari' doesn't exist | Error obtenido el -> 18/08/2023 23:45
