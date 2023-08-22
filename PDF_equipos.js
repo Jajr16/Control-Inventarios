@@ -131,7 +131,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
                         <img src="${imageSrc}" height="80px" width="auto" alt="Logo de la empresa">
                     </div>  
                     <div style="flex: 1; padding-left: 10%; width: 80%;">
-                        <center><b><p style="width: 100%; font-size: 10px;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE MOBILIARIO</p></center>
+                        <center><b><p style="width: 100%; font-size: 10px;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE EQUIPOS</p></center>
                     </div>
                     <div style="flex: 1; padding: 0 32px; float:right; width: auto;">
                         <b>FECHA: </b>${fecha_eqp}
