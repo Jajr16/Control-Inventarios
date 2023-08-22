@@ -5,7 +5,8 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'n0m3l0',//n0m3l0 //Bocchi26##
-    database: 'Inventarios'
+    database: 'Inventarios',
+    connectTimeout: 10000
 });
 // Conexión a la base de datos
 db.connect((err) => {
