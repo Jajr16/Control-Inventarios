@@ -1263,8 +1263,6 @@ if (pathname == "/users/altasPro") {
             e.preventDefault();
 
             if ($("#Num_SerieM").val() != "" && $("#EquipM").val() != "" && $("#MarcEM").val() != "" && $("#ModelEM").val() != "" && $("#NombreEmp").val() != "" && $("#UbiEM").val() != "") {
-                socket.emit('Cambios_Equipos', { Num_Serie: $("#Num_SerieM").val(), Equipo: $("#EquipM").val(), Marca: $("#MarcEM").val(), Modelo: $("#ModelEM").val(), NombreEmp: $("#NombreEmp").val(), Ubi: $("#UbiEM").val() }, { OLDNum_S: valores0 });
-
                 //Enviar HardWare
                 if ($("#HardE").val() != "" && $("#SoftE").val() != "") {
                     socket.emit('CambiosPc', { Num_S: $("#Num_SerieM").val(), HardE: $("#HardE").val(), SoftE: $("#SoftE").val() }, { OLDNum_S: valores0 });
@@ -1285,8 +1283,10 @@ if (pathname == "/users/altasPro") {
                 if ($("#AccesE").val() != "") {
                     socket.emit('CambiosAcces', { Num_S: $("#Num_SerieM").val(), AccesE: $("#AccesE").val() }, { OLDNum_S: valores0 });
                 }
+
+                socket.emit('Cambios_Equipos', { Num_Serie: $("#Num_SerieM").val(), Equipo: $("#EquipM").val(), Marca: $("#MarcEM").val(), Modelo: $("#ModelEM").val(), NombreEmp: $("#NombreEmp").val(), Ubi: $("#UbiEM").val() }, { OLDNum_S: valores0 });
                 //Respuesta
-                recibirSocket('RespDelEqp');
+                recibirSocket('RespEquipos');
             }
         }
     });

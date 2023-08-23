@@ -677,7 +677,7 @@ io.on('connection', (socket) => {
                     socket.emit("RespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
                     contador++;
                 } else {
-                    socket.emit("RespExcel", { mensaje: "Hubo un error, favor de contactar a encargados de sistemas" });
+                    socket.emit("RespExcel", { mensaje: "No se puede descargar un excel de un registro vacío" });
                 }
             }
         });
@@ -881,7 +881,7 @@ io.on('connection', (socket) => {
                     socket.emit("RespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
                     contador++;
                 } else {
-                    socket.emit("RespExcel", { mensaje: "Hubo un error, favor de contactar a encargados de sistemas" });
+                    socket.emit("RespExcel", { mensaje: "No se puede descargar un excel de un registro vacío" });
                 }
             }
         });
@@ -951,7 +951,7 @@ io.on('connection', (socket) => {
                     socket.emit("RespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
                     contador++;
                 } else {
-                    socket.emit("RespExcel", { mensaje: "Hubo un error, favor de contactar a encargados de sistemas" });
+                    socket.emit("RespExcel", { mensaje: "No se puede descargar un excel de un registro vacío" });
                 }
             }
         });
@@ -1242,9 +1242,9 @@ io.on('connection', (socket) => {
                         if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (result.affectedRows > 0) { //Si sí hizo una búsqueda
-                                socket.emit('RespDelEqp', { mensaje: 'Equipo modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
+                                socket.emit('RespEquipos', { mensaje: 'Equipo modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
                             } else {
-                                socket.emit('RespDelEqp', { mensaje: "No se pudo modificar el equipo." })
+                                socket.emit('RespEquipos', { mensaje: "No se pudo modificar el equipo." })
                             }
                         }
                     });
@@ -1428,13 +1428,13 @@ io.on('connection', (socket) => {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) {
-                    socket.emit("RespEquipos", { mensaje: "Esta computadora ya está registrada, ingrese otra." });
+                    socket.emit("Equipo_Respuesta", { mensaje: "Esta computadora ya está registrada, ingrese otra." });
                 } else {
                     db.query('insert into pcs values(?,?,?)', [data.Num_S, data.HardE, data.SoftE], async function (err, result) {
                         if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (!result) {
-                                socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos de la PC, agréguelo por separado." });
+                                socket.emit("Equipo_Respuesta", { mensaje: "No se pudo dar de alta los datos de la PC, agréguelo por separado." });
                             }
                         }
                     });
@@ -1448,13 +1448,13 @@ io.on('connection', (socket) => {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) {
-                    socket.emit("RespEquipos", { mensaje: "Este monitor ya está registrado, ingrese otro." });
+                    socket.emit("Equipo_Respuesta", { mensaje: "Este monitor ya está registrado, ingrese otro." });
                 } else {
                     db.query('insert into monitor values(?,?,?,?)', [data.Num_S, data.MonE, data.NSMon, data.NIME], async function (err, result) {
                         if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (!result) {
-                                socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del monitor, agréguelo por separado." });
+                                socket.emit("Equipo_Respuesta", { mensaje: "No se pudo dar de alta los datos del monitor, agréguelo por separado." });
                             }
                         }
                     });
@@ -1468,13 +1468,13 @@ io.on('connection', (socket) => {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) {
-                    socket.emit("RespEquipos", { mensaje: "Este mouse ya está registrado, ingrese otro." });
+                    socket.emit("Equipo_Respuesta", { mensaje: "Este mouse ya está registrado, ingrese otro." });
                 } else {
                     db.query('insert into Mouse values(?,?)', [data.Num_S, data.MousE], async function (err, result) {
                         if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (!result) {
-                                socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del mouse, agréguelo por separado." });
+                                socket.emit("Equipo_Respuesta", { mensaje: "No se pudo dar de alta los datos del mouse, agréguelo por separado." });
                             }
                         }
                     });
@@ -1488,13 +1488,13 @@ io.on('connection', (socket) => {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) {
-                    socket.emit("RespEquipos", { mensaje: "Este teclado ya está registrado, ingrese otro." });
+                    socket.emit("Equipo_Respuesta", { mensaje: "Este teclado ya está registrado, ingrese otro." });
                 } else {
                     db.query('insert into Teclado values(?,?)', [data.Num_S, data.TeclaE], async function (err, result) {
                         if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (!result) {
-                                socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del teclado, agréguelo por separado." });
+                                socket.emit("Equipo_Respuesta", { mensaje: "No se pudo dar de alta los datos del teclado, agréguelo por separado." });
                             }
                         }
                     });
@@ -1508,13 +1508,13 @@ io.on('connection', (socket) => {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) {
-                    socket.emit("RespEquipos", { mensaje: "Estos accesorios ya están registrados, ingrese otros." });
+                    socket.emit("Equipo_Respuesta", { mensaje: "Estos accesorios ya están registrados, ingrese otros." });
                 } else {
                     db.query('insert into Accesorio values(?,?)', [data.Num_S, data.AccesE], async function (err, result) {
                         if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (!result) {
-                                socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los accesorios, agréguelos por separado." });
+                                socket.emit("Equipo_Respuesta", { mensaje: "No se pudo dar de alta los accesorios, agréguelos por separado." });
                             }
                         }
                     });
