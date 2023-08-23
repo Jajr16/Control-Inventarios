@@ -1,8 +1,6 @@
 var tok = localStorage.getItem("token");
 
-if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
-
-    document.getElementById("Linksnav").innerHTML += `
+document.getElementById("Linksnav").innerHTML += `
     <li>
         <a href="/users/index">Inicio</a>
     </li>
@@ -71,6 +69,8 @@ if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
         </ul>
     </li>
         `;
+
+if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {
 
     document.getElementById("MenuCel").innerHTML += `
             <a href="/users/RegistrarUsuario">Registrar Usuario</a>
