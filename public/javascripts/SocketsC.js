@@ -10,7 +10,7 @@ function Excel(Excel) {
         alert(data.mensaje);
         location.reload();
     });
-} 
+}
 
 //BUSCAR
 // Barra de busqueda
@@ -1056,7 +1056,24 @@ if (pathname == "/users/altasPro") {
     //Formulario.reset();
     Equipos.on('change', function () {
         if (Equipos.val() == 'CPU') {
-            Menu.slideDown();//Lo abre
+            enviarSocket('BuscarCPU', (document.getElementById("Num_SerieM").value));
+
+            socket.on('ImpCPU', (CompCPU) => {
+                const Componentes = CompCPU || [];
+
+                Componentes.forEach(CPU => {
+                    $('#HardE').val(CPU.Hardware);
+                    $('#SoftE').val(CPU.Software);
+                    $('#MonE').val(CPU.Monitor);
+                    $('#NIME').val(CPU.Num_Inv_Mon);
+                    $('#N_Ser_M').val(CPU.Num_Serie_Monitor);
+                    $('#MouseE').val(CPU.Mouse);
+                    $('#TecladE').val(CPU.Teclado);
+                    $('#AccesE').val(CPU.Accesorio);
+                });
+                // Muestra el contenido del div con id "Desplegable"
+                Menu.show();
+            });
         } else {
             Menu.slideUp();//Lo cierra
             //Quita los required
@@ -1219,6 +1236,7 @@ if (pathname == "/users/altasPro") {
                         $('#SoftE').val(CPU.Software);
                         $('#MonE').val(CPU.Monitor);
                         $('#NIME').val(CPU.Num_Inv_Mon);
+                        console.log(CPU);
                         $('#N_Ser_M').val(CPU.Num_Serie_Monitor);
                         $('#MouseE').val(CPU.Mouse);
                         $('#TecladE').val(CPU.Teclado);

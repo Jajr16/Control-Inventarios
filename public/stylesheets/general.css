@@ -86,8 +86,13 @@ body::-webkit-scrollbar-thumb:hover {
 
 .header .nav-links {
     list-style: none;
-    z-index: 10;
+    z-index: 1;
 }
+
+.modal-container {
+    z-index: 2;
+}
+
 /**/
 .overlay a:hover {
     transform: scale(1.1);
@@ -323,6 +328,7 @@ img {
 .Contenedor {
     max-width: 120rem;
     margin: 0 auto;
+    z-index: 11;
 }
 
 h1 {

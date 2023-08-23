@@ -1281,24 +1281,34 @@ io.on('connection', (socket) => {
     });
     // Cambios de monitor
     socket.on('CambiosMon', async (data, dataOld) => {
-        db.query('select * from monitor where Num_Serie = ?', [data.Num_S], async function (err, result) {
+        console.log(data);
+        db.query('select * from monitor where Num_Inv_Mon = ?', [data.NIME], async function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) {
-                    db.query('update monitor set Num_Serie = ?, Monitor = ?, Num_Serie_Monitor = ?, Num_Inv_Mon = ? where Num_Serie = ?', [data.Num_S, data.MonE, data.NSMon, data.NIME, dataOld.OLDNum_S], async function (err, result) {
-                        if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                        else {
-                            if (!result) {
-                                socket.emit("RespEquipos", { mensaje: "No se pudo actualizar los datos del monitor." });
-                            }
-                        }
-                    });
+                    socket.emit("RespEquipos", { mensaje: "Ese número de inventario ya está registrado, inténtelo de nuevo." });
                 } else {
-                    db.query('insert into monitor values(?,?,?,?)', [data.Num_S, data.MonE, data.NSMon, data.NIME], async function (err, result) {
+                    db.query('select * from monitor where Num_Serie = ?', [data.Num_S], async function (err, result) {
                         if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
-                            if (!result) {
-                                socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del monitor, agréguelo por separado." });
+                            if (result.length > 0) {
+                                db.query('update monitor set Num_Serie = ?, Monitor = ?, Num_Serie_Monitor = ?, Num_Inv_Mon = ? where Num_Serie = ?', [data.Num_S, data.MonE, data.NSMon, data.NIME, dataOld.OLDNum_S], async function (err, result) {
+                                    if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+                                    else {
+                                        if (!result) {
+                                            socket.emit("RespEquipos", { mensaje: "No se pudo actualizar los datos del monitor." });
+                                        }
+                                    }
+                                });
+                            } else {
+                                db.query('insert into monitor values(?,?,?,?)', [data.Num_S, data.MonE, data.NSMon, data.NIME], async function (err, result) {
+                                    if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+                                    else {
+                                        if (!result) {
+                                            socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del monitor, agréguelo por separado." });
+                                        }
+                                    }
+                                });
                             }
                         }
                     });
@@ -1706,7 +1716,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('BuscarCPU', (Num_Serie) => {
-        db.query('select equipo.Num_Serie, pcs.Hardware, pcs.Software, monitor.Monitor, monitor.Num_Serie_Monitor, mouse.Mouse, teclado.Teclado, accesorio.Accesorio from equipo left join monitor on equipo.Num_Serie = monitor.Num_Serie left join mouse on equipo.Num_Serie = mouse.Num_Serie left join pcs on equipo.Num_Serie = pcs.Num_Serie left join Teclado on equipo.Num_Serie = teclado.Num_Serie left join accesorio on equipo.Num_Serie = accesorio.Num_Serie where equipo = "CPU" and equipo.Num_Serie = ?;', [Num_Serie], function (err, res) {
+        db.query('select equipo.Num_Serie, pcs.Hardware, pcs.Software, monitor.Monitor, monitor.Num_Serie_Monitor, monitor.Num_Inv_Mon, mouse.Mouse, teclado.Teclado, accesorio.Accesorio from equipo left join monitor on equipo.Num_Serie = monitor.Num_Serie left join mouse on equipo.Num_Serie = mouse.Num_Serie left join pcs on equipo.Num_Serie = pcs.Num_Serie left join Teclado on equipo.Num_Serie = teclado.Num_Serie left join accesorio on equipo.Num_Serie = accesorio.Num_Serie where equipo = "CPU" and equipo.Num_Serie = ?;', [Num_Serie], function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (res) {

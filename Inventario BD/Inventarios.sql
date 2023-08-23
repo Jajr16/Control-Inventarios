@@ -479,6 +479,7 @@ select*from usuario;
 select*from almacen;
 select*from mobiliario;
 select mobiliario.Num_Inventario, mobiliario.Descripcion, empleado.Nom from mobiliario inner join empleado on mobiliario.Num_emp = empleado.Num_emp;
+select equipo.Num_Serie, pcs.Hardware, pcs.Software, monitor.Monitor, monitor.Num_Serie_Monitor, monitor.Num_Inv_Mon, mouse.Mouse, teclado.Teclado, accesorio.Accesorio from equipo left join monitor on equipo.Num_Serie = monitor.Num_Serie left join mouse on equipo.Num_Serie = mouse.Num_Serie left join pcs on equipo.Num_Serie = pcs.Num_Serie left join Teclado on equipo.Num_Serie = teclado.Num_Serie left join accesorio on equipo.Num_Serie = accesorio.Num_Serie where equipo = "CPU";
 select*from equipo;
 select*from pcs;
 select*from mouse;
