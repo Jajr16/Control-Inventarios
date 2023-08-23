@@ -28,6 +28,20 @@ function cargarSelect(IdType) {
     };
 }
 
+function cargarSelect2(IdType) {
+    // desplegar lista de nombre de empleados
+    window.addEventListener("load", function (event) {
+        cargarNombres2();
+    });
+
+    window.onpageshow = function () {
+        $(IdType).select2({
+            allowClear: true,
+            placeholder: 'Buscar empleado'
+        });
+    };
+}
+
 function buscar() {
 
     var filtro = $("#buscar").val().toUpperCase();
@@ -773,6 +787,7 @@ if (pathname == "/users/altasPro") {
     if (tok == "4dnM3k0nl9s") {
 
         cargarSelect('#NombreEmp');
+        cargarSelect2('#NomJefe');
 
         const FormRegistro = document.querySelector("#Registro");
         // Registro de usuario

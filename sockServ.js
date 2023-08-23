@@ -205,7 +205,7 @@ io.on('connection', (socket) => {
     socket.on('Cambios_Prod', async (data, dataOld) => {
         //Se agrega productos a la BD
         db.query('update almacen set Cod_Barras = ?, Categoria = ?, Articulo = ?, Marca = ?, Descripcion = ?, Unidad = ? where Cod_Barras = ?', [data.CodBarras, data.Cate, data.Producto, data.Marca, data.Descripcion, data.Unidad, dataOld.CBO], function (err2, result) {
-            if (err) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
+            if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.affectedRows > 0) {
                     socket.emit('Producto_Inexistente', { mensaje: 'Artículo modificado con éxito.' });//Mandar mensaje a cliente
