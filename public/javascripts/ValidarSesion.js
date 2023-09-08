@@ -1,6 +1,7 @@
-console.log(localStorage.getItem("token"));
+//console.log(localStorage.getItem("token"));
+console.log(JSON.parse(localStorage.getItem('permisosModulos')));
 
-if (localStorage.getItem("token") == null) {
+if (localStorage.getItem("permisosModulos") == null) {
     location.href = "/";
 }
 

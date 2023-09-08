@@ -66,8 +66,22 @@ io.on('connection', (socket) => {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) {//Si sí hizo una búsqueda
-                    console.log(result[0].token);
-                    socket.emit('logInOK', { Usuario: result[0].Usuario, token: result[0].token });//Mandar usuario y token al cliente
+                    db.query("select permiso, modulo from permisos where Usuario = BINARY ?", [data.User], function (err, res) {
+                        if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+                        if (res.length > 0) {
+
+                            permisosModulos = {};
+
+                            res.forEach(row => {
+                                if (!permisosModulos[row.modulo]) {
+                                    permisosModulos[row.modulo] = []; // Inicializar la lista de permisos para cada módulo
+                                }
+                                permisosModulos[row.modulo].push(row.permiso);
+                            });
+
+                            socket.emit('logInOK', { Usuario: result[0].Usuario, permisosModulos  });//Mandar usuario y token al cliente
+                        }
+                    });
                 } else {
                     console.log(result);
                     socket.emit('logInError', { mensaje: 'Nombre de usuario o contraseña incorrectos.' });//Mandar mensaje de error a cliente
@@ -369,9 +383,6 @@ io.on('connection', (socket) => {
     // Bajas en productos existentes
     socket.on('Bajas_ProdExist', async (data) => {
 
-        var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
-        const workbook = new Excel.Workbook();
-
         db.query('select Existencia from almacen where Cod_Barras = ? and Articulo = ?', [data.Cod_Barras, data.Articulo], function (err, result) {
 
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
@@ -409,12 +420,12 @@ io.on('connection', (socket) => {
     socket.on('Consul_Usuario', async () => {
 
         // Autenticar que haga las consultas
-        db.query('select*from Usuario', function (err, result) {
+        db.query('select empleado.Nom, usuario.Usuario, usuario.Pass from usuario inner join empleado on usuario.Num_Emp = empleado.Num_emp;', function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) {//Si sí hizo una búsqueda
                     for (var i = 0; i < result.length; i++) {
-                        socket.emit('Desp_Usuario', { Usuario: result[i].Usuario, Pass: result[i].Pass });//Mandar usuario y token al cliente
+                        socket.emit('Desp_Usuario', { Empleado: result[i].Nom, Usuario: result[i].Usuario, Pass: result[i].Pass });//Mandar usuario y token al cliente
                     }
                     socket.emit('ButtonUp');
                 }

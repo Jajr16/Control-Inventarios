@@ -83,7 +83,7 @@
     <div class="Dos_Column" id="Mas_Opciones">
       <div class="CampoForm">
         <h5 class="BotonDE" id="TituloOpciones"></h5>
-        <div class="Dos_Columnas Separacion" id="ProdExistentes">
+        <div class="Dos_Columnas Separacion" id="RegistrosGenerales">
           <div></div>
           <div></div>
         </div>
@@ -91,7 +91,48 @@
     </div>
   </main>
   <script>
-    var tok = localStorage.getItem("token");
+    var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
+    document.querySelector("#Mas_Opciones").style.display = "none";
+
+    if (Permisos['ALMACÉN']) {
+
+    }
+
+    if (Permisos['USUARIOS'] || Permisos['EMPLEADOS']) {
+      document.querySelector("#Mas_Opciones").style.display = "flex";
+      document.querySelector("#TituloOpciones").innerHTML = "Más opciones";
+
+      if (Permisos['USUARIOS'] && Permisos['EMPLEADOS']) {
+        $("#RegistrosGenerales").children().eq(0).html(`
+        <a href="/users/RegistrarUsuario" class="BotonABE TamBAG">Registrar Usuario</a>
+        <a href="/users/consulUsuarios" class="BotonABE TamBAG">Modificar Usuario</a>
+        `);
+        $("#RegistrosGenerales").children().eq(1).html(`
+        <a href="/users/RegistroEmpleado" class="BotonABE TamBAG">Registrar Empleado</a>
+        <a href="/users/ModEmp" class="BotonABE TamBAG">Modificar Empleado</a>
+        `);
+      }
+      if (Permisos['USUARIOS']) {
+        if (Permisos['USUARIOS'].includes('1') && Permisos['USUARIOS'].includes('4')) {
+          document.querySelector("#RegistrosGenerales").classList.remove("Dos_Columnas");
+          document.querySelector("#RegistrosGenerales").classList.add("Dos_Column");
+          $("#RegistrosGenerales").children().eq(0).html(`
+          <a href="/users/RegistrarUsuario" class="BotonABE TamBAG">Registrar Usuario</a>
+          <a href="/users/consulUsuarios" class="BotonABE TamBAG">Modificar Usuario</a>
+          `);
+        } 
+        if (Permisos['USUARIOS'].includes('1')) {
+          $("#RegistrosGenerales").children().eq(0).html(`
+          <a href="/users/RegistrarUsuario" class="BotonABE TamBAG">Registrar Usuario</a>
+          `);
+        } 
+        if (Permisos['USUARIOS'].includes('4')) {
+
+        }
+
+      }
+
+    }
     if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A") {
 
       if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z") {

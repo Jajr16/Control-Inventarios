@@ -50,7 +50,6 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Usuario` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Equipo`
 -- -----------------------------------------------------
@@ -315,15 +314,62 @@ token nvarchar(20) not null primary key,
 area nvarchar(45) not null
 );
 
+create table permisos(
+permiso enum("1","2","3","4") not null, #Tambien se puede set 1 Altas 2 Bajas 3 Cambios 4 Consultas
+usuario varchar(25),
+modulo enum("ALMACÉN", "MOBILIARIO", "EQUIPOS","RESPONSIVAS","USUARIOS","EMPLEADOS") not null,
+primary key(permiso, usuario, modulo),
+foreign key (usuario) references usuario(Usuario)
+);
+
 insert into tokens values(
-"4dnM3k0nl9s", "SISTEMAS"),	#ACCESO TOTAL
-("4dnM3k0nl9z", "DIRECCION GENERAL"), #No puede dar de alta usuarios
-("4dnM3k0nl9A", "SERVICIOS GENERALES"),#ALMACEN
-("4dnM3k0nPl9Z", "PREESCOLAR"),
-("7sdGRq24GPR", "PRIMARIA"),
-("57hfGRDGF1HS","SECUNDARIA"),
-("SADwa14AFESPP","PREPARATORIA"),
-("FGJYGd42DSAFA","ADMINISTRACIÓN");#TEMPORALMENTE ALMACEN
+"4dnM3k0nl9s", "SISTEMAS"),	#ACCESO TOTAL #Mobiliario
+("4dnM3k0nl9z", "DIRECCION GENERAL"), #No puede dar de alta usuarios #Mobiliario
+("4dnM3k0nl9A", "SERVICIOS GENERALES"),#ALMACEN #Mobiliario
+("4dnM3k0nPl9Z", "PREESCOLAR"),#Mobiliario
+("7sdGRq24GPR", "PRIMARIA"),#Mobiliario
+("57hfGRDGF1HS","SECUNDARIA"),#Mobiliario
+("SADwa14AFESPP","PREPARATORIA"),#Mobiliario
+("FGJYGd42DSAFA","ADMINISTRACIÓN");#TEMPORALMENTE ALMACEN #Mobiliario
+
+alter table Usuario drop constraint FK_Token;
+alter table usuario drop column token;
+drop table tokens;
+
+select*from usuario;
+insert into permisos values
+(4,"a","ALMACÉN"),
+(3,"a","ALMACÉN"),
+(4,"b","ALMACÉN"),
+(2,"b","ALMACÉN"),
+(1,"ajimenez","ALMACÉN"),#Altas
+(2,"ajimenez","ALMACÉN"),#Bajas
+(3,"ajimenez","ALMACÉN"),#Cambios
+(4,"ajimenez","ALMACÉN"),#Consultas
+(1,"ajimenez","MOBILIARIO"),#Altas
+(2,"ajimenez","MOBILIARIO"),#Bajas
+(3,"ajimenez","MOBILIARIO"),#Cambios
+(4,"ajimenez","MOBILIARIO"),#Consultas
+(1,"ajimenez","EQUIPOS"),#Altas
+(2,"ajimenez","EQUIPOS"),#Bajas
+(3,"ajimenez","EQUIPOS"),#Cambios
+(4,"ajimenez","EQUIPOS"),#Consultas
+(1,"ajimenez","RESPONSIVAS"),#Altas
+(2,"ajimenez","RESPONSIVAS"),#Bajas
+(3,"ajimenez","RESPONSIVAS"),#Cambios
+(4,"ajimenez","RESPONSIVAS"),#Consultas
+(1,"ajimenez","USUARIOS"),#Altas
+(2,"ajimenez","USUARIOS"),#Bajas
+(3,"ajimenez","USUARIOS"),#Cambios
+(4,"ajimenez","USUARIOS"),#Consultas
+(1,"ajimenez","EMPLEADOS"),#Altas
+(2,"ajimenez","EMPLEADOS"),#Bajas
+(3,"ajimenez","EMPLEADOS"),#Cambios
+(4,"ajimenez","EMPLEADOS"),#Consultas
+(1,"ajimenez","RESPONSIVAS"),#Altas
+(2,"ajimenez","RESPONSIVAS"),#Bajas
+(3,"ajimenez","RESPONSIVAS"),#Cambios
+(4,"ajimenez","RESPONSIVAS");#Consultas
 
 create table Factus_Productos(
 Cod_Barras nvarchar(45) not null,
@@ -340,7 +386,7 @@ Num_EmpS int,
 Cantidad_Salida int,
 constraint CPSP primary key(Cod_BarrasS, FSalida, Num_EmpS)
 );
-select*from usuario;
+select*from empleado;
 
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'n0m3l0';
 flush privileges;
@@ -470,6 +516,8 @@ select*from salidas_productos;
 select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp;
 select count(Salidas_Productos.Cod_BarrasS), almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp;
 
+select empleado.Nom, usuario.Usuario, usuario.Pass from usuario inner join empleado on usuario.Num_Emp = empleado.Num_emp;
+
 select*from salida_almacen;
 select*from empleado;
 select empleado.Nom, empleado.Área, (select Nom from empleado as Jefe where Jefe.Num_emp = empleado.Num_Jefe) Nom_Jefe from empleado;
@@ -486,6 +534,9 @@ select*from mouse;
 select*from monitor;
 select*from teclado;
 select*from accesorio;
+
+select*from permisos;
+select usuario.Usuario, usuario.token, permisos.permiso from usuario inner join permisos;
 SELECT IFNULL(NULL, 2);
 #select equipo.N_Inventario, equipo.Num_Serie, pcs.Hardware, pcs.Software, monitor.Monitor, monitor.Num_Serie_Monitor, mouse.Mouse, teclado.Teclado, accesorio.Accesorio from equipo left join monitor on equipo.Num_Serie = monitor.Num_Serie left join mouse on equipo.Num_Serie = mouse.Num_Serie left join pcs on equipo.Num_Serie = pcs.Num_Serie left join Teclado on equipo.Num_Serie = teclado.Num_Serie left join accesorio on equipo.Num_Serie = accesorio.Num_Serie; #where equipo = 'CPU' and equipo.Num_Serie = 'ADWAD';
 #select equipo.N_Inventario, equipo.Num_Serie, equipo.Equipo, IFNULL(pcs.Hardware,"-") Hardware, IFNULL(pcs.Software,"-") Software, IFNULL(monitor.Monitor,"-") Monitor, IFNULL(monitor.Num_Serie_Monitor,"-") NSM, IFNULL(mouse.Mouse,"-") Mouse, IFNULL(teclado.Teclado,"-") Teclado, IFNULL(accesorio.Accesorio,"-") Accesorio, empleado.Nom from equipo left join monitor on equipo.Num_Serie = monitor.Num_Serie left join mouse on equipo.Num_Serie = mouse.Num_Serie left join pcs on equipo.Num_Serie = pcs.Num_Serie left join Teclado on equipo.Num_Serie = teclado.Num_Serie left join accesorio on equipo.Num_Serie = accesorio.Num_Serie inner join empleado on equipo.Num_emp = empleado.Num_emp;

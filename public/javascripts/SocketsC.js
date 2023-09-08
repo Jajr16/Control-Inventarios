@@ -1,4 +1,4 @@
-var tok = localStorage.getItem("token");
+var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
 var socket = io.connect("http://localhost:3001");
 var pathname = window.location.pathname;
 //////////////////////////////////// EXCEL //////////////////////////////////////
@@ -246,171 +246,436 @@ function eliminarEquipo(elementoBoton, mensaje, mensajeSocket) {
         fila.parentNode.removeChild(fila);
     }
 }
-
-
-if (pathname == "/users/altasPro") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
-
-        const FormProduct = document.querySelector("#AltaProductos");
-
-        // Altas de productos
-        FormProduct.addEventListener("submit", Enviar);
-
-        function Enviar(e) {
-            e.preventDefault();
-            if ($("#Cod_Barras").val() != "" && $("#FecActu").val() != "" && $("#Categoria").val() != "" && $("#NomP").val() != "" && $("#MarcActi").val() != "" && $("#DescripcionP").val() != "" && $("#Proveedor").val() != "" && $("#NumFact").val() != "" && $("#CantidadP").val() != "" && $("#UnidadP").val() != "" && $("#FecFact").val()) {
-
-                socket.emit('Alta_Prod', { CodBarras: $("#Cod_Barras").val(), FecAct: $("#FecActu").val(), Cate: $("#Categoria").val(), Producto: $("#NomP").val(), Marca: $("#MarcActi").val(), Descripcion: $("#DescripcionP").val(), Proveedor: $("#Proveedor").val(), NumFactura: $("#NumFact").val(), FechaFac: $("#FecFact").val(), Cantidad: $("#CantidadP").val(), Unidad: $("#UnidadP").val() });
-
-                socket.once('Fact_Exists', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                });
-
-                socket.once('Producto_Existente', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
-
-                socket.once('Producto_Inexistente', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
-            }
-        }
-    } else {
+if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
+    if (!Permisos['EMPLEADOS']) {
         location.href = "index";
-    }
-} else if (pathname == "/users/consulPro") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
+    } else {
+        if (pathname === "/users/RegistroEmpleado" && Permisos['EMPLEADOS'].includes('1')) {
+            cargarSelect('#NombreEmp');
+            cargarSelect2('#NomJefe');
 
-        // Asignación del evento de clic en los botones de eliminar
-        window.addEventListener('DOMContentLoaded', () => {
-            const botonesEliminar = document.getElementsByClassName("BotonER");
+            const FormRegistro = document.querySelector("#Registro");
+            // Registro de usuario
+            FormRegistro.addEventListener('submit', EnviarReg);
 
-            for (let i = 0; i < botonesEliminar.length; i++) {
-                botonesEliminar[i].addEventListener("click", function () {
-                    eliminarProducto(this);
-                });
+            function EnviarReg(e) {
+                e.preventDefault();
+
+                if ($("#Area").val() != "" && $("#NombreEmp").val() != "" && $("#NomJefe").val() != "") {
+
+                    socket.emit('Reg_Emp', { NombreEmp: $("#NombreEmp").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val() });
+
+                    socket.once('Res_Emp', (Respuesta) => {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+
+
+                }
             }
-        });
+        } else if (pathname === "/users/ModEmp" && Permisos['EMPLEADOS'].includes('3')) {
+            cargarSelect('#NomJefe');
+            cargarNombres2();
 
-        socket.emit("Consul_Prod");
-        // Consulta de productos
-        socket.on('Desp_Productos', async (data) => {
-            const tbody = document.querySelector("#DatosProd tbody");
+            enviarSocket("DatEmp", "");
 
-            if (data.eliminado == 1) {
-                tbody.innerHTML += `
-            <tr style="background-color: #590C09">
-                <td>${data.Cod_Barras}</td>
-                <td>${data.Categoria}</td>
-                <td>${data.NArt}</td>
-                <td>${data.NMarca}</td>
-                <td>${data.Desc}</td>
-                <td>${data.Unidad}</td>
-                <td>${data.Existencia}</td>
-                <td> - </td>
-                <td> - </td>
-            </tr>
-            `;
-            } else {
-                tbody.innerHTML += `
+            // Consulta de productos
+            socket.on('DespEmp', async (data) => {
+                const tbody = document.querySelector("#DatosProd tbody");
+
+                let filaHTML = `
             <tr>
-                <td>${data.Cod_Barras}</td>
-                <td>${data.Categoria}</td>
-                <td>${data.NArt}</td>
-                <td>${data.NMarca}</td>
-                <td>${data.Desc}</td>
-                <td>${data.Unidad}</td>
-                <td>${data.Existencia}</td>
-                <td class="BotonER"> Eliminar </td>
-                <td class="BotonMod" > Modificar </td>
-            </tr>
-            `;
-            }
+                <td>${data.NomEmp}</td>
+                <td>${data.Area}</td>
+                <td>${data.NomJefe}</td>`;
+                if (Permisos['EMPLEADOS'].includes('2')) {
+                    filaHTML += `<td class="BotonER"> Eliminar </td>`;
+                }
+                if (Permisos['EMPLEADOS'].includes('3')) {
+                    filaHTML += `<td class="BotonMod" > Modificar </td>`;
+                }
+                filaHTML += `</tr>`;
 
-            // Volver a asignar el evento de clic a los botones de eliminar
-            const botonesEliminar = document.getElementsByClassName("BotonER");
+                tbody.innerHTML += filaHTML;
 
-            for (let i = 0; i < botonesEliminar.length; i++) {
-                botonesEliminar[i].addEventListener("click", function () {
-                    eliminar(this, '¿Deseas eliminar este producto?', 'Bajas_Prod');
-                });
-            }
-        });
+                if (Permisos['EMPLEADOS'].includes('2')) {
+                    // Volver a asignar el evento de clic a los botones de eliminar
+                    const botonesEliminar = document.getElementsByClassName("BotonER");
 
-        socket.once('Producto_Eliminado', (data) => {
-            alert(data.mensaje);
-            location.reload();
-        });
-        socket.once('Error', (data) => {
-            alert(data.mensaje);
-        })
+                    for (let i = 0; i < botonesEliminar.length; i++) {
+                        botonesEliminar[i].addEventListener("click", function () {
+                            eliminarEmp(this, '¿Deseas eliminar este empleado?', 'EmpDelete');
+                        });
+                    }
+                }
+            });
 
-        //Llenar datos en automático
-        var valores0 = "";
-        var valores1 = "";
-        var valores2 = "";
-        var valores3 = "";
-        var valores4 = "";
-        var valores5 = "";
-        var valores6 = "";
-        //Modificar productos
-        socket.on('ButtonUp', () => {
-            let BotonMod = document.getElementsByClassName("BotonMod");
+            var valores0 = "", valores1 = "", valores2 = "";
+            socket.once('ButtonUpEmp', () => {
+                let BotonMod = document.getElementsByClassName("BotonMod");
 
-            for (let i = 0; i < BotonMod.length; i++) {
-                BotonMod[i].addEventListener("click", obtenerValoresMod);
-            }
-
-            function obtenerValoresMod(e) {
-
-                var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
-                // recorremos cada uno de los elementos del array de elementos <td>
-                for (let i = 0; i < elementosTD.length; i++) {
-                    // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                    valores0 = elementosTD[0].innerHTML;
-                    valores1 = elementosTD[1].innerHTML;
-                    valores2 = elementosTD[2].innerHTML;
-                    valores3 = elementosTD[3].innerHTML;
-                    valores4 = elementosTD[4].innerHTML;
-                    valores5 = elementosTD[5].innerHTML;
-                    valores6 = elementosTD[6].innerHTML;
+                for (let i = 0; i < BotonMod.length; i++) {
+                    BotonMod[i].addEventListener("click", LlenarFormEmp);
                 }
 
-                document.getElementById("Cod_BarrasM").value = valores0;
-                document.getElementById("CategoriaM").value = valores1;
-                document.getElementById("NomPM").value = valores2;
-                document.getElementById("MarcActiM").value = valores3;
-                document.getElementById("DescripcionPM").value = valores4;
-                document.getElementById("UnidadPM").value = valores5;
-                //Aqui iniciamos otra cosa para modificar las facturas una por una
-                let BotonFacturasMod = document.getElementById("ModFact");
-                let Titulotable = document.getElementById("title_table");
-                let tablaCreada = false;
-                //Es el botón en el que al darle clic hará una búsqueda de todas las facturas del producto
-                BotonFacturasMod.addEventListener("click", function (e) {
+                function LlenarFormEmp(e) {
+                    var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
 
-                    socket.emit("Traer_Facturas", valores0);
+                    for (let i = 0; i < elementosTD.length; i++) {
+                        // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                        valores0 = elementosTD[0].innerHTML;
+                        valores1 = elementosTD[1].innerHTML;
+                        valores2 = elementosTD[2].innerHTML;
+                    }
+                    document.getElementById("NEM").value = valores0;
+                    document.getElementById("AreaME").value = valores1;
+                    $('#NomJefe').val(valores2).trigger('change.select2');
+                }
+            });
 
-                    Titulotable.innerHTML = `Modificar facturas del artículo '${valores2}'`;
-                    if (tablaCreada) {
-                        let tabla = document.querySelector("#DatosFacturas tbody");
-                        if (tabla.rows.length > 0) {
-                            tabla.innerHTML = "";
-                        }
+            const FormModEmp = $('#ModProduct');
+            FormModEmp.on('submit', function (e) {
+                e.preventDefault();
+
+                if ($('#NEM').val() != "" && $('#AreaME').val() != "" && $('#NomJefe')) {
+                    socket.emit('ModEmp', { NewName: $('#NEM').val(), NewArea: $('#AreaME').val(), NewBoss: $('#NomJefe').val() }, { OldName: valores0 });
+                }
+            });
+
+            recibirSocket('MensajeEmp');
+        } else {
+            location.href = "index";
+        }
+    }
+} else if (pathname === "/users/RegistrarUsuario" || pathname === "/users/consulUsuarios") {
+    if (!Permisos['USUARIOS']) {
+        location.href = 'index';
+    } else {
+        if (pathname === "/users/RegistrarUsuario" && Permisos['USUARIOS'].includes('1')) {
+            cargarSelect('#NombreEmp');
+
+            const FormRegistro = document.querySelector("#Registro");
+
+            // Registro de usuario
+            FormRegistro.addEventListener('submit', EnviarReg);
+
+            function EnviarReg(e) {
+                e.preventDefault();
+                if ($("#NombreEmp").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
+
+                    socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
+
+                    socket.once('Usuario_Existente', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+
+                    socket.once('Usuario_Agregado', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+
+                    socket.once('Usuario_Error', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+                }
+            }
+        } else if (pathname === "/users/consulUsuarios" && Permisos['USUARIOS'].includes('4')) {
+            // Asignación del evento de clic en los botones de eliminar
+            window.addEventListener('DOMContentLoaded', () => {
+                const botonesEliminar = document.getElementsByClassName("BotonER");
+
+                for (let i = 0; i < botonesEliminar.length; i++) {
+                    botonesEliminar[i].addEventListener("click", function () {
+                        eliminarProducto(this);
+                    });
+                }
+            });
+
+            socket.emit("Consul_Usuario");
+
+            // Consulta de productos
+            socket.on('Desp_Usuario', async (data) => {
+                const tbody = document.querySelector("#DatosProd tbody");
+                let filaHTML = `
+            <tr>
+                <td>${data.Empleado}</td>
+                <td>${data.Usuario}</td>
+                <td>${data.Pass}</td>`;
+                if (Permisos['USUARIOS'].includes('2')) {
+                    filaHTML += `<td class="BotonER"> Eliminar </td>`;
+                }
+                if (Permisos['USUARIOS'].includes('3')) {
+                    filaHTML += `<td class="BotonMod" > Modificar </td>`;
+                }
+
+                filaHTML += `</tr>`;
+                tbody.innerHTML += filaHTML;
+
+                if (Permisos['USUARIOS'].includes('2')) {
+                    // Volver a asignar el evento de clic a los botones de eliminar
+                    const botonesEliminar = document.getElementsByClassName("BotonER");
+
+                    for (let i = 0; i < botonesEliminar.length; i++) {
+                        botonesEliminar[i].addEventListener("click", function () {
+                            eliminarUsuario(this);
+                        });
+                    }
+                }
+            });
+
+            function eliminarUsuario(elementoBoton) {
+                var confirmacion = confirm('¿Deseas eliminar este usuario?');
+
+                if (confirmacion) {
+                    var fila = elementoBoton.parentNode;
+                    var Usuario = fila.querySelector("td:first-child").innerHTML;
+
+                    if (localStorage.getItem('user') != Usuario) {
+                        enviarSocket('Bajas_Usuario', Usuario);
+                        // Eliminar la fila de la tabla
+                        fila.parentNode.removeChild(fila);
                     } else {
+                        alert("No puedes eliminar tu propio usuario.");
+                    }
+
+                }
+            }
+
+            //Llenar datos en automático
+            var valores0 = "";
+            var valores1 = "";
+            var valores2 = "";
+
+            //Modificar usuarios
+            socket.on('ButtonUp', () => {
+                let BotonMod = document.getElementsByClassName("BotonMod");
+
+                for (let i = 0; i < BotonMod.length; i++) {
+                    BotonMod[i].addEventListener("click", obtenerValoresMod);
+                }
+
+                function obtenerValoresMod(e) {
+
+                    var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+                    // recorremos cada uno de los elementos del array de elementos <td>
+                    for (let i = 0; i < elementosTD.length; i++) {
+                        // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                        valores0 = elementosTD[0].innerHTML;
+                        valores1 = elementosTD[1].innerHTML;
+                    }
+                    document.getElementById("UsuarioM").value = valores0;
+                    document.getElementById("PassM").value = valores1;
+                }
+
+                // Cambios de productos
+                const FormMod = document.querySelector("#ModProduct");
+
+                // Cambios de productos
+                FormMod.addEventListener("submit", Enviar);
+
+                function Enviar(e) {
+
+                    e.preventDefault();
+
+                    if ($("#UsuarioM").val() != "" && $("#Num_EmpPM").val() != "" && $("#PassM").val() != "") {
+                        socket.emit('Cambios_Usuario', { Usuario: $("#UsuarioM").val(), Nom_Emp: $("#Num_EmpPM").val(), Pass: $("#PassM").val() }, { OLDUser: valores0 });
+
+                        socket.once('Usuario_Inexistente', function (Respuesta) {
+                            alert(Respuesta.mensaje);
+                            location.reload();
+                        });
+
+                        socket.once('Fallo_ModUserd', function (Respuesta) {
+                            alert(Respuesta.mensaje);
+                        });
+                    }
+                }
+                recibirSocket('RespDelUs');
+            });
+        } else {
+            location.href = "index";
+        }
+    }
+} else if (pathname === "/users/altasPro" || pathname === "/users/consulPro" || pathname == "/users/ABPE" || pathname === "/users/FacSacProd") {
+    if (!Permisos['ALMACÉN']) {
+        location.href = "index";
+    } else {
+        if (pathname === "/users/altasPro" && Permisos['ALMACÉN'].includes('1')) {
+            const FormProduct = document.querySelector("#AltaProductos");
+
+            // Altas de productos
+            FormProduct.addEventListener("submit", Enviar);
+
+            function Enviar(e) {
+                e.preventDefault();
+                if ($("#Cod_Barras").val() != "" && $("#FecActu").val() != "" && $("#Categoria").val() != "" && $("#NomP").val() != "" && $("#MarcActi").val() != "" && $("#DescripcionP").val() != "" && $("#Proveedor").val() != "" && $("#NumFact").val() != "" && $("#CantidadP").val() != "" && $("#UnidadP").val() != "" && $("#FecFact").val()) {
+
+                    socket.emit('Alta_Prod', { CodBarras: $("#Cod_Barras").val(), FecAct: $("#FecActu").val(), Cate: $("#Categoria").val(), Producto: $("#NomP").val(), Marca: $("#MarcActi").val(), Descripcion: $("#DescripcionP").val(), Proveedor: $("#Proveedor").val(), NumFactura: $("#NumFact").val(), FechaFac: $("#FecFact").val(), Cantidad: $("#CantidadP").val(), Unidad: $("#UnidadP").val() });
+
+                    socket.once('Fact_Exists', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                    });
+
+                    socket.once('Producto_Existente', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+
+                    socket.once('Producto_Inexistente', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                        location.reload();
+                    });
+                }
+            }
+        } else if (pathname === "/users/consulPro" && Permisos['ALMACÉN'].includes('4')) {
+            // Asignación del evento de clic en los botones de eliminar
+            window.addEventListener('DOMContentLoaded', () => {
+                const botonesEliminar = document.getElementsByClassName("BotonER");
+
+                for (let i = 0; i < botonesEliminar.length; i++) {
+                    botonesEliminar[i].addEventListener("click", function () {
+                        eliminarProducto(this);
+                    });
+                }
+            });
+
+            const thead = document.querySelector("#firstrow");
+
+            let CabHTML = "";
+
+            if (Permisos['ALMACÉN'].includes('2')) {
+                CabHTML += `<th>Eliminar</th>`;
+            }
+            if (Permisos['ALMACÉN'].includes('3')) {
+                CabHTML += `<th>Modificar</th>`;
+            }
+
+            thead.innerHTML += CabHTML;
+
+            socket.emit("Consul_Prod");
+            // Consulta de productos
+            socket.on('Desp_Productos', async (data) => {
+                const tbody = document.querySelector("#DatosProd tbody");
+
+                let filaHTML = `
+                <tr>
+                    <td>${data.Cod_Barras}</td>
+                    <td>${data.Categoria}</td>
+                    <td>${data.NArt}</td>
+                    <td>${data.NMarca}</td>
+                    <td>${data.Desc}</td>
+                    <td>${data.Unidad}</td>
+                    <td>${data.Existencia}</td>`;
+
+                if (data.eliminado == 1) {
+                    if (Permisos['ALMACÉN'].includes('2')) {
+                        filaHTML += `<td> - </td>`;
+                    }
+                    if (Permisos['ALMACÉN'].includes('3')) {
+                        filaHTML += `<td> - </td>`;
+                    }
+                } else {
+                    // Verifica los permisos y agrega los botones correspondientes
+                    if (Permisos['ALMACÉN'].includes('2')) {
+                        filaHTML += `<td class="BotonER"> Eliminar </td>`;
+                    }
+                    if (Permisos['ALMACÉN'].includes('3')) {
+                        filaHTML += `<td class="BotonMod"> Modificar </td>`;
+                    }
+                }
+
+                // Cierra la fila
+                filaHTML += `</tr>`;
+
+                // Agrega la fila completa al tbody
+                tbody.innerHTML += filaHTML;
+
+                if (Permisos['ALMACEN'].includes('2')) {
+                    // Volver a asignar el evento de clic a los botones de eliminar
+                    const botonesEliminar = document.getElementsByClassName("BotonER");
+
+                    for (let i = 0; i < botonesEliminar.length; i++) {
+                        botonesEliminar[i].addEventListener("click", function () {
+                            eliminar(this, '¿Deseas eliminar este producto?', 'Bajas_Prod');
+                        });
+                    }
+                }
+            });
+
+            socket.once('Producto_Eliminado', (data) => {
+                alert(data.mensaje);
+                location.reload();
+            });
+            socket.once('Error', (data) => {
+                alert(data.mensaje);
+            })
+
+            //Llenar datos en automático
+            var valores0 = "";
+            var valores1 = "";
+            var valores2 = "";
+            var valores3 = "";
+            var valores4 = "";
+            var valores5 = "";
+            var valores6 = "";
+            //Modificar productos
+            socket.on('ButtonUp', () => {
+                let BotonMod = document.getElementsByClassName("BotonMod");
+
+                for (let i = 0; i < BotonMod.length; i++) {
+                    BotonMod[i].addEventListener("click", obtenerValoresMod);
+                }
+
+                function obtenerValoresMod(e) {
+
+                    var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+                    // recorremos cada uno de los elementos del array de elementos <td>
+                    for (let i = 0; i < elementosTD.length; i++) {
+                        // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                        valores0 = elementosTD[0].innerHTML;
+                        valores1 = elementosTD[1].innerHTML;
+                        valores2 = elementosTD[2].innerHTML;
+                        valores3 = elementosTD[3].innerHTML;
+                        valores4 = elementosTD[4].innerHTML;
+                        valores5 = elementosTD[5].innerHTML;
+                        valores6 = elementosTD[6].innerHTML;
+                    }
+
+                    document.getElementById("Cod_BarrasM").value = valores0;
+                    document.getElementById("CategoriaM").value = valores1;
+                    document.getElementById("NomPM").value = valores2;
+                    document.getElementById("MarcActiM").value = valores3;
+                    document.getElementById("DescripcionPM").value = valores4;
+                    document.getElementById("UnidadPM").value = valores5;
+                    //Aqui iniciamos otra cosa para modificar las facturas una por una
+                    let BotonFacturasMod = document.getElementById("ModFact");
+                    let Titulotable = document.getElementById("title_table");
+                    let tablaCreada = false;
+                    //Es el botón en el que al darle clic hará una búsqueda de todas las facturas del producto
+                    BotonFacturasMod.addEventListener("click", function (e) {
+
+                        socket.emit("Traer_Facturas", valores0);
+
+                        Titulotable.innerHTML = `Modificar facturas del artículo '${valores2}'`;
+                        if (tablaCreada) {
+                            let tabla = document.querySelector("#DatosFacturas tbody");
+                            if (tabla.rows.length > 0) {
+                                tabla.innerHTML = "";
+                            }
+                        } else {
+                            let tabla = document.querySelector("#DatosFacturas tbody");
+                            tabla.innerHTML = "";
+                            tablaCreada = true;
+                        }
+                    });
+
+                    socket.on("Fact_Enviadas", (data) => {
                         let tabla = document.querySelector("#DatosFacturas tbody");
                         tabla.innerHTML = "";
-                        tablaCreada = true;
-                    }
-                });
-
-                socket.on("Fact_Enviadas", (data) => {
-                    let tabla = document.querySelector("#DatosFacturas tbody");
-                    tabla.innerHTML = "";
-                    for (let i = 0; i < data.FIngreso.length; i++) {
-                        tabla.innerHTML += `
+                        for (let i = 0; i < data.FIngreso.length; i++) {
+                            tabla.innerHTML += `
                     <tr>           
                         <td id="FIngresoV">${data.FIngreso[i]}</td>
                         <td id="CantidadV">${data.Cantidad[i]}</td>
@@ -420,112 +685,107 @@ if (pathname == "/users/altasPro") {
                         <td onclick="Abrir2()" class="BotonModF BotonModifyF">Modificar</td>                           
                     </tr> 
                 `;
-                    }
-                });
+                        }
+                    });
 
 
-            }
-            socket.on("BotonModalFacturas", () => {
-
-                //Se llenará el formulario dependiendo del producto en donde hace clic
-                let BotonModFacturas = document.getElementsByClassName("BotonModifyF");
-
-                for (let i = 0; i < BotonModFacturas.length; i++) {
-                    BotonModFacturas[i].addEventListener("click", LlenarFormFact);
                 }
+                socket.on("BotonModalFacturas", () => {
 
-                var valoresF0 = "";
-                var valoresF1 = "";
-                var valoresF2 = "";
-                var valoresF3 = "";
+                    //Se llenará el formulario dependiendo del producto en donde hace clic
+                    let BotonModFacturas = document.getElementsByClassName("BotonModifyF");
 
-                function LlenarFormFact(e) {
-                    var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
-
-                    for (let i = 0; i < elementosTD.length; i++) {
-                        // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                        valoresF0 = elementosTD[1].innerHTML;
-                        valoresF1 = elementosTD[2].innerHTML;
-                        valoresF2 = elementosTD[3].innerHTML;
-                        valoresF3 = elementosTD[4].innerHTML;
-                    }
-                    document.getElementById("CantidadPMF").value = valoresF0;
-                    document.getElementById("NumFactMF").value = valoresF1;
-                    document.getElementById("FecFactMF").value = valoresF2;
-                    document.getElementById("ProveedorMF").value = valoresF3;
-                }
-
-                //Formulario de facturas
-                let FormularioFac = document.querySelector("#FacturasMody");
-                FormularioFac.addEventListener("submit", function (e) {
-                    e.preventDefault();
-
-                    //Validamos que todo esté lleno para enviar el formulario
-                    if ($("#CantidadPMF").val() != "" && $("#NumFactMF").val() != "" && $("#FecFactMF").val() != "" && $("#ProveedorMF").val()) {
-                        socket.emit("Cambios_Facts", { CodBarras: valores0, Cantidad: $("#CantidadPMF").val(), NumFactura: $("#NumFactMF").val(), FechaFac: $("#FecFactMF").val(), Proveedor: $("#ProveedorMF").val() }, { NFO: valoresF1 });
-
+                    for (let i = 0; i < BotonModFacturas.length; i++) {
+                        BotonModFacturas[i].addEventListener("click", LlenarFormFact);
                     }
 
-                });
-                //Esperamos respuesta del servidor en caso de caso exitoso
-                socket.once('Factu_Exitosa', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
-                //Esperamos respuesta del servidor en caso de caso fallido
-                socket.once('Fallo_Fac', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                });
-                //Esperamos respuesta del servidor en caso de caso fallido
-                socket.once('Fallo_ModFac', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                });
-            });
+                    var valoresF0 = "";
+                    var valoresF1 = "";
+                    var valoresF2 = "";
+                    var valoresF3 = "";
 
-            // Cambios de productos
-            const FormMod = document.querySelector("#ModProduct");
+                    function LlenarFormFact(e) {
+                        var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
 
-            // Cambios de productos
-            FormMod.addEventListener("submit", Enviar);
+                        for (let i = 0; i < elementosTD.length; i++) {
+                            // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                            valoresF0 = elementosTD[1].innerHTML;
+                            valoresF1 = elementosTD[2].innerHTML;
+                            valoresF2 = elementosTD[3].innerHTML;
+                            valoresF3 = elementosTD[4].innerHTML;
+                        }
+                        document.getElementById("CantidadPMF").value = valoresF0;
+                        document.getElementById("NumFactMF").value = valoresF1;
+                        document.getElementById("FecFactMF").value = valoresF2;
+                        document.getElementById("ProveedorMF").value = valoresF3;
+                    }
 
-            function Enviar(e) {
+                    //Formulario de facturas
+                    let FormularioFac = document.querySelector("#FacturasMody");
+                    FormularioFac.addEventListener("submit", function (e) {
+                        e.preventDefault();
 
-                e.preventDefault();
+                        //Validamos que todo esté lleno para enviar el formulario
+                        if ($("#CantidadPMF").val() != "" && $("#NumFactMF").val() != "" && $("#FecFactMF").val() != "" && $("#ProveedorMF").val()) {
+                            socket.emit("Cambios_Facts", { CodBarras: valores0, Cantidad: $("#CantidadPMF").val(), NumFactura: $("#NumFactMF").val(), FechaFac: $("#FecFactMF").val(), Proveedor: $("#ProveedorMF").val() }, { NFO: valoresF1 });
 
-                if ($("#Cod_BarrasM").val() != "" && $("#CategoriaM").val() != "" && $("#NomPM").val() != "" && $("#MarcActiM").val() != "" && $("#DescripcionPM").val() != "" && $("#UnidadPM").val() != "") {
-                    socket.emit('Cambios_Prod', { CodBarras: $("#Cod_BarrasM").val(), Cate: $("#CategoriaM").val(), Producto: $("#NomPM").val(), Marca: $("#MarcActiM").val(), Descripcion: $("#DescripcionPM").val(), Unidad: $("#UnidadPM").val() }, { CBO: valores0, CO: valores1, NAO: valores2, MAO: valores3, DO: valores4, UO: valores5 });
+                        }
 
-                    socket.once('Producto_Inexistente', function (Respuesta) {
+                    });
+                    //Esperamos respuesta del servidor en caso de caso exitoso
+                    socket.once('Factu_Exitosa', function (Respuesta) {
                         alert(Respuesta.mensaje);
                         location.reload();
                     });
-
-                    socket.once('Fallo_Mod', function (Respuesta) {
+                    //Esperamos respuesta del servidor en caso de caso fallido
+                    socket.once('Fallo_Fac', function (Respuesta) {
                         alert(Respuesta.mensaje);
                     });
+                    //Esperamos respuesta del servidor en caso de caso fallido
+                    socket.once('Fallo_ModFac', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+                    });
+                });
+
+                // Cambios de productos
+                const FormMod = document.querySelector("#ModProduct");
+
+                // Cambios de productos
+                FormMod.addEventListener("submit", Enviar);
+
+                function Enviar(e) {
+
+                    e.preventDefault();
+
+                    if ($("#Cod_BarrasM").val() != "" && $("#CategoriaM").val() != "" && $("#NomPM").val() != "" && $("#MarcActiM").val() != "" && $("#DescripcionPM").val() != "" && $("#UnidadPM").val() != "") {
+                        socket.emit('Cambios_Prod', { CodBarras: $("#Cod_BarrasM").val(), Cate: $("#CategoriaM").val(), Producto: $("#NomPM").val(), Marca: $("#MarcActiM").val(), Descripcion: $("#DescripcionPM").val(), Unidad: $("#UnidadPM").val() }, { CBO: valores0, CO: valores1, NAO: valores2, MAO: valores3, DO: valores4, UO: valores5 });
+
+                        socket.once('Producto_Inexistente', function (Respuesta) {
+                            alert(Respuesta.mensaje);
+                            location.reload();
+                        });
+
+                        socket.once('Fallo_Mod', function (Respuesta) {
+                            alert(Respuesta.mensaje);
+                        });
+                    }
                 }
-            }
-        });
-    } else {
-        location.href = "index";
-    }
-} else if (pathname == "/users/ABPE") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
+            });
+        } else if (pathname === "/users/ABPE" && Permisos['ALMACÉN'].includes('1')) {
+            cargarSelect('#NombreEmp');
 
-        cargarSelect('#NombreEmp');
+            var valores0 = "";
+            var valores1 = "";
+            var valores0E = "";
+            var valores2E = "";
 
-        var valores0 = "";
-        var valores1 = "";
-        var valores0E = "";
-        var valores2E = "";
+            socket.emit("Consul_ProdExist");
+            // Consulta de productos
+            socket.on('Desp_ProductosExist', async (data) => {
+                console.log('Datos recibidos:', data.Cod_Barras);
 
-        socket.emit("Consul_ProdExist");
-        // Consulta de productos
-        socket.on('Desp_ProductosExist', async (data) => {
-            console.log('Datos recibidos:', data.Cod_Barras);
-
-            if (data.eliminado == 1) {
-                document.querySelector("#DatosProd tbody").innerHTML += `
+                if (data.eliminado == 1) {
+                    document.querySelector("#DatosProd tbody").innerHTML += `
             <tr style="background-color: #590C09">
             <td id="Cod_Barras">${data.Cod_Barras}</td>
             <td id="Categoria">${data.Categoria}</td>
@@ -538,8 +798,8 @@ if (pathname == "/users/altasPro") {
             <td> - </td>
             </tr>
             `;
-            } else {
-                document.querySelector("#DatosProd tbody").innerHTML += `
+                } else {
+                    document.querySelector("#DatosProd tbody").innerHTML += `
             <tr>
                 <td id="Cod_Barras">${data.Cod_Barras}</td>
                 <td id="Categoria">${data.Categoria}</td>
@@ -552,962 +812,724 @@ if (pathname == "/users/altasPro") {
                 <td id="Eliminar" class="BotonERR" onclick="Abrir1()"> Sacar productos</td>
             </tr>
             `;
-            }
-        });
-
-        // Agregar producto existente
-        socket.on('AgregarProdExist', async () => {
-            let AgregarProdExist = document.getElementsByClassName("BotonMod");
-
-            for (let i = 0; i < AgregarProdExist.length; i++) {
-                AgregarProdExist[i].addEventListener("click", exist);
-            }
-            function exist(e) {
-                var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
-
-                for (let i = 0; i < elementosTD.length; i++) {
-                    // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                    valores0 = elementosTD[0].innerHTML;
-                    valores1 = elementosTD[6].innerHTML;
                 }
-            }
-            const formProdExist = document.querySelector("#AltaExist");
-            formProdExist.addEventListener("submit", EnviarAlta);
+            });
 
-            function EnviarAlta(e) {
-                e.preventDefault();
-                if ($("#FecActu").val() != "" && $("#CantidadPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#FecFact").val() != "") {
-                    socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActu").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFact").val(), Existencia: valores1 });
+            // Agregar producto existente
+            socket.on('AgregarProdExist', async () => {
+                let AgregarProdExist = document.getElementsByClassName("BotonMod");
 
-                    socket.once('Factura_Agregada', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-
-                    socket.once('Fallo_Factura', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-                    socket.once('Ya_Registrado', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
+                for (let i = 0; i < AgregarProdExist.length; i++) {
+                    AgregarProdExist[i].addEventListener("click", exist);
                 }
-            }
-        });
+                function exist(e) {
+                    var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
 
-        // Sacar producto existente
-        socket.on('EliminarProdExist', async () => {
-            let EliminarProdExist = document.getElementsByClassName("BotonER");
-
-            for (let i = 0; i < EliminarProdExist.length; i++) {
-                EliminarProdExist[i].addEventListener("click", existBajas);
-            }
-            function existBajas(e) {
-                var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
-
-                for (let i = 0; i < elementosTD.length; i++) {
-                    // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                    valores0E = elementosTD[0].innerHTML;
-                    valores2E = elementosTD[2].innerHTML;
+                    for (let i = 0; i < elementosTD.length; i++) {
+                        // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                        valores0 = elementosTD[0].innerHTML;
+                        valores1 = elementosTD[6].innerHTML;
+                    }
                 }
+                const formProdExist = document.querySelector("#AltaExist");
+                formProdExist.addEventListener("submit", EnviarAlta);
 
-                document.querySelector("#TituloEliminar").innerHTML = `¿Cuántos productos de "${valores2E}" desea sacar?`;
-
-                const formProdExistBaja = document.querySelector("#BajaExist");
-                formProdExistBaja.addEventListener("submit", EnviarBaja);
-                function EnviarBaja(e) {
+                function EnviarAlta(e) {
                     e.preventDefault();
-                    if ($("#CantidadP").val() != "" && $("#NomJefe") != "") {
-                        socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val(), Articulo: valores2E });
+                    if ($("#FecActu").val() != "" && $("#CantidadPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#FecFact").val() != "") {
+                        socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActu").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFact").val(), Existencia: valores1 });
 
-                        socket.once('Eliminacion_Realizada', function (Respuesta) {
+                        socket.once('Factura_Agregada', function (Respuesta) {
                             alert(Respuesta.mensaje);
                             location.reload();
                         });
-                        socket.once('Fallo_BajasExist', function (Respuesta) {
+
+                        socket.once('Fallo_Factura', function (Respuesta) {
+                            alert(Respuesta.mensaje);
+                            location.reload();
+                        });
+                        socket.once('Ya_Registrado', function (Respuesta) {
                             alert(Respuesta.mensaje);
                             location.reload();
                         });
                     }
                 }
-            }
-        });
+            });
 
-    } else {
-        location.href = "index";
-    }
-} else if (pathname == "/users/RegistrarUsuario") {
-    if (tok == "4dnM3k0nl9s") {
+            // Sacar producto existente
+            socket.on('EliminarProdExist', async () => {
+                let EliminarProdExist = document.getElementsByClassName("BotonER");
 
-        cargarSelect('#NombreEmp');
+                for (let i = 0; i < EliminarProdExist.length; i++) {
+                    EliminarProdExist[i].addEventListener("click", existBajas);
+                }
+                function existBajas(e) {
+                    var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
 
-        const FormRegistro = document.querySelector("#Registro");
+                    for (let i = 0; i < elementosTD.length; i++) {
+                        // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                        valores0E = elementosTD[0].innerHTML;
+                        valores2E = elementosTD[2].innerHTML;
+                    }
 
-        // Registro de usuario
-        FormRegistro.addEventListener('submit', EnviarReg);
+                    document.querySelector("#TituloEliminar").innerHTML = `¿Cuántos productos de "${valores2E}" desea sacar?`;
 
-        function EnviarReg(e) {
-            e.preventDefault();
-            if ($("#NombreEmp").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
+                    const formProdExistBaja = document.querySelector("#BajaExist");
+                    formProdExistBaja.addEventListener("submit", EnviarBaja);
+                    function EnviarBaja(e) {
+                        e.preventDefault();
+                        if ($("#CantidadP").val() != "" && $("#NomJefe") != "") {
+                            socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val(), Articulo: valores2E });
 
-                socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
+                            socket.once('Eliminacion_Realizada', function (Respuesta) {
+                                alert(Respuesta.mensaje);
+                                location.reload();
+                            });
+                            socket.once('Fallo_BajasExist', function (Respuesta) {
+                                alert(Respuesta.mensaje);
+                                location.reload();
+                            });
+                        }
+                    }
+                }
+            });
+        } else if (pathname === "/users/FacSacProd" && Permisos['ALMACÉN'].includes('4')) {
+            //Desplegar facturas existentes
+            socket.emit("Consul_RegProSac");
+            // Consulta de productos
+            socket.on('Desp_Productos', async (data) => {
+                console.log('Datos recibidos:', data.Cod_BarrasS);
 
-                socket.once('Usuario_Existente', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
+                document.querySelector("#DatosProSac tbody").innerHTML += `
+        <tr>
+            <td id="Cod_BarrasS">${data.Cod_BarrasS}</td>
+            <td id="ArticuloS">${data.Articulo}</td>
+            <td id="ExistenciaS">${data.Existencia}</td>
+            <td id="EncargadoS">${data.Nom}</td>
+            <td id="Cantidad_Salida">${data.Cantidad_Salida}</td>
+            <td id="FSalida">${data.FSalida}</td>
+        </tr>
+        `;
+            });
 
-                socket.once('Usuario_Agregado', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
+            // Buscar por fecha
+            function FiltrarFechas() {
+                if ($("#fechaInicio").val() != "" && $("#fechaFin").val() != "") {
+                    $("#Adverticement").removeClass("anuncio");
+                    $("#Adverticement").text('');
 
-                socket.once('Usuario_Error', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
-            }
-        }
-    } else {
-        location.href = "index";
-    }
-} else if (pathname == "/users/consulUsuarios") {
-    if (tok == "4dnM3k0nl9s") {
+                    var filtroInicio = new Date($("#fechaInicio").val()); // Obtener la fecha de inicio como objeto Date
+                    var filtroFin = new Date($("#fechaFin").val()); // Obtener la fecha de fin como objeto Date
+                    filtroFin.setDate(filtroFin.getDate() + 1);
+                    console.log(filtroFin);
 
-        // Asignación del evento de clic en los botones de eliminar
-        window.addEventListener('DOMContentLoaded', () => {
-            const botonesEliminar = document.getElementsByClassName("BotonER");
+                    $("#DatosProSac td").each(function () {
+                        var fechaEnTd = new Date($(this).text());
 
-            for (let i = 0; i < botonesEliminar.length; i++) {
-                botonesEliminar[i].addEventListener("click", function () {
-                    eliminarProducto(this);
-                });
-            }
-        });
+                        // Comprobar si la fecha en el td está dentro del rango filtrado
+                        if (!isNaN(fechaEnTd) && fechaEnTd >= filtroInicio && fechaEnTd <= filtroFin) {
+                            $(this).addClass("existe");
+                        } else {
+                            $(this).removeClass("existe");
+                        }
+                    });
 
-        socket.emit("Consul_Usuario");
-
-        // Consulta de productos
-        socket.on('Desp_Usuario', async (data) => {
-            const tbody = document.querySelector("#DatosProd tbody");
-
-            tbody.innerHTML += `
-            <tr>
-                <td>${data.Usuario}</td>
-                <td>${data.Pass}</td>
-                <td class="BotonER"> Eliminar </td>
-                <td class="BotonMod" > Modificar </td>
-            </tr>
-            `;
-
-            // Volver a asignar el evento de clic a los botones de eliminar
-            const botonesEliminar = document.getElementsByClassName("BotonER");
-
-            for (let i = 0; i < botonesEliminar.length; i++) {
-                botonesEliminar[i].addEventListener("click", function () {
-                    eliminarUsuario(this);
-                });
-            }
-        });
-
-        function eliminarUsuario(elementoBoton) {
-            var confirmacion = confirm('¿Deseas eliminar este usuario?');
-
-            if (confirmacion) {
-                var fila = elementoBoton.parentNode;
-                var Usuario = fila.querySelector("td:first-child").innerHTML;
-
-                if (localStorage.getItem('user') != Usuario) {
-                    enviarSocket('Bajas_Usuario', Usuario);
-                    // Eliminar la fila de la tabla
-                    fila.parentNode.removeChild(fila);
+                    $("#DatosProSac tbody tr").each(function () {
+                        if ($(this).children(".existe").length > 0) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
                 } else {
-                    alert("No puedes eliminar tu propio usuario.");
-                }
-
-            }
-        }
-
-        //Llenar datos en automático
-        var valores0 = "";
-        var valores1 = "";
-        var valores2 = "";
-
-        //Modificar usuarios
-        socket.on('ButtonUp', () => {
-            let BotonMod = document.getElementsByClassName("BotonMod");
-
-            for (let i = 0; i < BotonMod.length; i++) {
-                BotonMod[i].addEventListener("click", obtenerValoresMod);
-            }
-
-            function obtenerValoresMod(e) {
-
-                var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
-                // recorremos cada uno de los elementos del array de elementos <td>
-                for (let i = 0; i < elementosTD.length; i++) {
-                    // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                    valores0 = elementosTD[0].innerHTML;
-                    valores1 = elementosTD[1].innerHTML;
-                }
-                document.getElementById("UsuarioM").value = valores0;
-                document.getElementById("PassM").value = valores1;
-            }
-
-            // Cambios de productos
-            const FormMod = document.querySelector("#ModProduct");
-
-            // Cambios de productos
-            FormMod.addEventListener("submit", Enviar);
-
-            function Enviar(e) {
-
-                e.preventDefault();
-
-                if ($("#UsuarioM").val() != "" && $("#Num_EmpPM").val() != "" && $("#PassM").val() != "") {
-                    socket.emit('Cambios_Usuario', { Usuario: $("#UsuarioM").val(), Nom_Emp: $("#Num_EmpPM").val(), Pass: $("#PassM").val() }, { OLDUser: valores0 });
-
-                    socket.once('Usuario_Inexistente', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-
-                    socket.once('Fallo_ModUserd', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                    });
+                    $("#Adverticement").text('Llene todos los campos.');
+                    $("#Adverticement").addClass("anuncio");
                 }
             }
-            recibirSocket('RespDelUs');
-        });
-    } else {
-        location.href = "index";
-    }
-} else if (pathname == "/users/RegistroEmpleado") {
-    if (tok == "4dnM3k0nl9s") {
 
-        cargarSelect('#NombreEmp');
-        cargarSelect2('#NomJefe');
-
-        const FormRegistro = document.querySelector("#Registro");
-        // Registro de usuario
-        FormRegistro.addEventListener('submit', EnviarReg);
-
-        function EnviarReg(e) {
-            e.preventDefault();
-
-            if ($("#Area").val() != "" && $("#NombreEmp").val() != "" && $("#NomJefe").val() != "") {
-
-                socket.emit('Reg_Emp', { NombreEmp: $("#NombreEmp").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val() });
-
-                socket.once('Res_Emp', (Respuesta) => {
-                    alert(Respuesta.mensaje);
-                    location.reload();
-                });
-
-            }
-        }
-    }
-} else if (pathname == "/users/FacSacProd") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" /*TEMPOTAL*/) {
-
-        //Desplegar facturas existentes
-        socket.emit("Consul_RegProSac");
-        // Consulta de productos
-        socket.on('Desp_Productos', async (data) => {
-            console.log('Datos recibidos:', data.Cod_BarrasS);
-
-            document.querySelector("#DatosProSac tbody").innerHTML += `
-            <tr>
-                <td id="Cod_BarrasS">${data.Cod_BarrasS}</td>
-                <td id="ArticuloS">${data.Articulo}</td>
-                <td id="ExistenciaS">${data.Existencia}</td>
-                <td id="EncargadoS">${data.Nom}</td>
-                <td id="Cantidad_Salida">${data.Cantidad_Salida}</td>
-                <td id="FSalida">${data.FSalida}</td>
-            </tr>
-            `;
-        });
-
-        // Buscar por fecha
-        function FiltrarFechas() {
-            if ($("#fechaInicio").val() != "" && $("#fechaFin").val() != "") {
-                $("#Adverticement").removeClass("anuncio");
-                $("#Adverticement").text('');
+            // Crear excel de facturas
+            function ExcelFacSac() {
 
                 var filtroInicio = new Date($("#fechaInicio").val()); // Obtener la fecha de inicio como objeto Date
                 var filtroFin = new Date($("#fechaFin").val()); // Obtener la fecha de fin como objeto Date
                 filtroFin.setDate(filtroFin.getDate() + 1);
-                console.log(filtroFin);
 
-                $("#DatosProSac td").each(function () {
-                    var fechaEnTd = new Date($(this).text());
+                socket.emit("SacarExcel", { fechaInicio: filtroInicio, fechaFin: filtroFin });
 
-                    // Comprobar si la fecha en el td está dentro del rango filtrado
-                    if (!isNaN(fechaEnTd) && fechaEnTd >= filtroInicio && fechaEnTd <= filtroFin) {
-                        $(this).addClass("existe");
-                    } else {
-                        $(this).removeClass("existe");
-                    }
-                });
-
-                $("#DatosProSac tbody tr").each(function () {
-                    if ($(this).children(".existe").length > 0) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            } else {
-                $("#Adverticement").text('Llene todos los campos.');
-                $("#Adverticement").addClass("anuncio");
-            }
-        }
-
-        // Crear excel de facturas
-        function ExcelFacSac() {
-
-            var filtroInicio = new Date($("#fechaInicio").val()); // Obtener la fecha de inicio como objeto Date
-            var filtroFin = new Date($("#fechaFin").val()); // Obtener la fecha de fin como objeto Date
-            filtroFin.setDate(filtroFin.getDate() + 1);
-
-            socket.emit("SacarExcel", { fechaInicio: filtroInicio, fechaFin: filtroFin });
-
-            socket.once("SacarRespExcel", (data) => {
-                alert(data.mensaje);
-                location.reload();
-            });
-        }
-
-    } else {
-        location.href = "index";
-    }
-} else if (pathname == "/users/altasEqp") {
-    window.addEventListener("load", function (event) {
-        cargarNombres();
-    });
-    //Formulario desplegable
-    const Equipos = $('#Equip');
-    const Menu = $("#Desplegable");
-
-    const Hardware = $('#HardE');
-    const Software = $('#SoftE');
-
-    const Monitor = $('#MonE');
-    const NIMES = $('#NIME');
-    const NSMon = $('#N_Ser_M');
-
-    const Mouse = $('#MouseE');
-    const Teclado = $('#TecladE');
-    const Accesorio = $('#AccesE');
-
-    Menu.hide();
-    //Formulario.reset();
-    Equipos.on('change', function () {
-        if (Equipos.val() == 'CPU') {
-            Menu.slideDown();//Lo abre
-        } else {
-            Menu.slideUp();//Lo cierra
-            //Quita los required
-            Hardware.prop('required', false);
-            Software.prop('required', false);
-            NSMon.prop('required', false);
-            NIMES.prop('required', false);
-            Monitor.prop('required', false);
-            //Pone valores vacío
-            Hardware.val('');
-            Software.val('');
-            NSMon.val('');
-            NIMES.val('');
-            Monitor.val('');
-            Mouse.val('');
-            Teclado.val('');
-            Accesorio.val('');
-        }
-    });
-    //VALIDAR FORMULARIO DEPENDIENDO SI LLENAN CAMPOS
-    //Funcion general
-    function Listeners(elemento, evento, funcion) {
-        elemento.on(evento, funcion);
-    }
-
-    Listeners(Hardware, 'input', function (e) {
-
-        if (Hardware.val() != "") {
-            Hardware.prop('required', true);
-            Software.prop('required', true);
-        } else {
-            Hardware.prop('required', false);
-            Software.prop('required', false);
-        }
-    });
-
-    Listeners(Software, 'input', function (e) {
-
-        if (Software.val() != "") {
-            Hardware.prop('required', true);
-            Software.prop('required', true);
-        } else {
-            Hardware.prop('required', false);
-            Software.prop('required', false);
-        }
-    });
-
-    Listeners(Monitor, 'input', function (e) {
-
-        if (Monitor.val() != "") {
-            NSMon.prop('required', true);
-            NIMES.prop('required', true);
-            Monitor.prop('required', true);
-        } else {
-            NSMon.prop('required', false);
-            NIMES.prop('required', true);
-            Monitor.prop('required', false);
-        }
-    });
-
-    Listeners(NSMon, 'input', function (e) {
-
-        if (NSMon.val() != "") {
-            NSMon.prop('required', true);
-            NIMES.prop('required', true);
-            Monitor.prop('required', true);
-        } else {
-            NSMon.prop('required', false);
-            NIMES.prop('required', true);
-            Monitor.prop('required', false);
-        }
-    });
-
-    Listeners(NIMES, 'input', function (e) {
-
-        if (NIMES.val() != "") {
-            NSMon.prop('required', true);
-            NIMES.prop('required', true);
-            Monitor.prop('required', true);
-        } else {
-            NSMon.prop('required', false);
-            NIMES.prop('required', true);
-            Monitor.prop('required', false);
-        }
-    });
-
-    const FormEquip = $('#AltaEquip');
-    FormEquip.on('submit', function (e) {
-        e.preventDefault();
-
-        if ($("#Num_Serie").val() != "" && $("#Equip").val() != "" && $("#MarcE").val() != "" && $("#ModelE").val() != "" && $("#UbiE").val() != "" && $("#NombreEmp").val() != "") {
-            //Enviar Equipo
-            enviarSocket("Alta_Equipos", { Num_S: $("#Num_Serie").val(), Equipo: $("#Equip").val(), MarcaE: $("#MarcE").val(), ModelE: $("#ModelE").val(), UbiE: $("#UbiE").val(), NomEn: $("#NombreEmp").val() });
-
-            //Enviar HardWare
-            if ($("#HardE").val() != "" && $("#SoftE").val() != "") {
-                enviarSocket("AltaPc", { Num_S: $("#Num_Serie").val(), HardE: $("#HardE").val(), SoftE: $("#SoftE").val() });
-            }
-            //Monitores
-            if ($("#MonE").val() != "" && $("#NIME").val() != "" && $("#N_Ser_M").val() != "") {
-                enviarSocket("AltMon", { Num_S: $("#Num_Serie").val(), MonE: $("#MonE").val(), NIME: $("#NIME").val(), NSMon: $("#N_Ser_M").val() });
-            }
-            //Mouse
-            if ($("#MouseE").val() != "") {
-                enviarSocket("AltMouse", { Num_S: $("#Num_Serie").val(), MousE: $("#MouseE").val() });
-            }
-            //Teclado
-            if ($("#TecladE").val() != "") {
-                enviarSocket("AltTecla", { Num_S: $("#Num_Serie").val(), TeclaE: $("#TecladE").val() });
-            }
-            //Accesorios
-            if ($("#AccesE").val() != "") {
-                enviarSocket("AltAcces", { Num_S: $("#Num_Serie").val(), AccesE: $("#AccesE").val() });
-            }
-            //Respuesta
-            recibirSocket('Equipo_Respuesta');
-        }
-    });
-
-} else if (pathname == "/users/consulEqp") {
-    cargarSelect('#NombreEmp');
-    // Asignación del evento de clic en los botones de eliminar
-    window.addEventListener('DOMContentLoaded', () => {
-        const botonesEliminar = document.getElementsByClassName("BotonER");
-
-        for (let i = 0; i < botonesEliminar.length; i++) {
-            botonesEliminar[i].addEventListener("click", function () {
-                eliminarEquipo(this, '¿Deseas eliminar este producto de equipos?', 'Bajas_Equipos');
-            });
-        }
-    });
-
-    //Formulario desplegable
-    const Equipos = $('#EquipM');
-    const Menu = $("#Desplegable");
-
-    const Hardware = $('#HardE');
-    const Software = $('#SoftE');
-
-    const Monitor = $('#MonE');
-    const NIMES = $('#NIME');
-    const NSMon = $('#N_Ser_M');
-
-    const Mouse = $('#MouseE');
-    const Teclado = $('#TecladE');
-    const Accesorio = $('#AccesE');
-
-    //Formulario.reset();
-    Equipos.on('change', function () {
-        if (Equipos.val() == 'CPU') {
-            enviarSocket('BuscarCPU', (document.getElementById("Num_SerieM").value));
-
-            socket.on('ImpCPU', (CompCPU) => {
-                const Componentes = CompCPU || [];
-
-                Componentes.forEach(CPU => {
-                    $('#HardE').val(CPU.Hardware);
-                    $('#SoftE').val(CPU.Software);
-                    $('#MonE').val(CPU.Monitor);
-                    $('#NIME').val(CPU.Num_Inv_Mon);
-                    $('#N_Ser_M').val(CPU.Num_Serie_Monitor);
-                    $('#MouseE').val(CPU.Mouse);
-                    $('#TecladE').val(CPU.Teclado);
-                    $('#AccesE').val(CPU.Accesorio);
-                });
-                // Muestra el contenido del div con id "Desplegable"
-                Menu.show();
-            });
-        } else {
-            Menu.slideUp();//Lo cierra
-            //Quita los required
-            Hardware.prop('required', false);
-            Software.prop('required', false);
-            NSMon.prop('required', false);
-            NIMES.prop('required', false);
-            Monitor.prop('required', false);
-            //Pone valores vacío
-            Hardware.val('');
-            Software.val('');
-            NSMon.val('');
-            NIMES.val('');
-            Monitor.val('');
-            Mouse.val('');
-            Teclado.val('');
-            Accesorio.val('');
-        }
-    });
-    //VALIDAR FORMULARIO DEPENDIENDO SI LLENAN CAMPOS
-    //Funcion general
-    function Listeners(elemento, evento, funcion) {
-        elemento.on(evento, funcion);
-    }
-
-    Listeners(Hardware, 'input', function (e) {
-
-        if (Hardware.val() != "") {
-            Hardware.prop('required', true);
-            Software.prop('required', true);
-        } else {
-            Hardware.prop('required', false);
-            Software.prop('required', false);
-        }
-    });
-
-    Listeners(Software, 'input', function (e) {
-
-        if (Software.val() != "") {
-            Hardware.prop('required', true);
-            Software.prop('required', true);
-        } else {
-            Hardware.prop('required', false);
-            Software.prop('required', false);
-        }
-    });
-
-    Listeners(Monitor, 'input', function (e) {
-
-        if (Monitor.val() != "") {
-            NSMon.prop('required', true);
-            NIMES.prop('required', true);
-            Monitor.prop('required', true);
-        } else {
-            NSMon.prop('required', false);
-            NIMES.prop('required', true);
-            Monitor.prop('required', false);
-        }
-    });
-
-    Listeners(NSMon, 'input', function (e) {
-
-        if (NSMon.val() != "") {
-            NSMon.prop('required', true);
-            NIMES.prop('required', true);
-            Monitor.prop('required', true);
-        } else {
-            NSMon.prop('required', false);
-            NIMES.prop('required', true);
-            Monitor.prop('required', false);
-        }
-    });
-
-    Listeners(NIMES, 'input', function (e) {
-
-        if (NIMES.val() != "") {
-            NSMon.prop('required', true);
-            NIMES.prop('required', true);
-            Monitor.prop('required', true);
-        } else {
-            NSMon.prop('required', false);
-            NIMES.prop('required', true);
-            Monitor.prop('required', false);
-        }
-    });
-
-    socket.emit("Consul_Equipos");
-
-    // Consulta de productos
-    socket.on('Desp_Equipos', async (data) => {
-        const tbody = document.querySelector("#DatosProd tbody");
-
-        tbody.innerHTML += `
-        <tr>
-            <td>${data.Num_Serie}</td>
-            <td>${data.Equipo}</td>
-            <td>${data.Marca}</td>
-            <td>${data.Modelo}</td>
-            <td>${data.NombreEmp}</td>
-            <td>${data.Ubi}</td>
-            <td class="BotonER"> Eliminar </td>
-            <td class="BotonMod"> Modificar </td>
-        </tr>
-        `;
-
-        // Volver a asignar el evento de clic a los botones de eliminar
-        const botonesEliminar = document.getElementsByClassName("BotonER");
-
-        for (let i = 0; i < botonesEliminar.length; i++) {
-            botonesEliminar[i].addEventListener("click", function () {
-                eliminarEquipo(this, '¿Deseas eliminar este producto de equipos?', 'Bajas_Equipos');
-            });
-        }
-    });
-
-    //Llenar datos en automático
-    var valores0 = "";
-    var valores1 = "";
-    var valores2 = "";
-    var valores3 = "";
-    var valores4 = "";
-    var valores5 = "";
-
-    //Modificar usuarios
-    socket.on('ButtonUp', () => {
-        let BotonMod = document.getElementsByClassName("BotonMod");
-
-        for (let i = 0; i < BotonMod.length; i++) {
-            BotonMod[i].addEventListener("click", obtenerValoresMod);
-        }
-
-        function obtenerValoresMod(e) {
-
-            var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
-            // recorremos cada uno de los elementos del array de elementos <td>
-            for (let i = 0; i < elementosTD.length; i++) {
-                // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                valores0 = elementosTD[0].innerHTML;
-                valores1 = elementosTD[1].innerHTML;
-                valores2 = elementosTD[2].innerHTML;
-                valores3 = elementosTD[3].innerHTML;
-                valores4 = elementosTD[4].innerHTML;
-                valores5 = elementosTD[5].innerHTML;
-            }
-            document.getElementById("Num_SerieM").value = valores0;
-            document.getElementById("EquipM").value = valores1;
-            document.getElementById("MarcEM").value = valores2;
-            document.getElementById("ModelEM").value = valores3;
-            $('#NombreEmp').val(valores4).trigger('change.select2');
-            document.getElementById("UbiEM").value = valores5;
-
-            if (document.getElementById("EquipM").value == "CPU") {
-                enviarSocket('BuscarCPU', (document.getElementById("Num_SerieM").value));
-
-                socket.on('ImpCPU', (CompCPU) => {
-                    const Componentes = CompCPU || [];
-
-                    Componentes.forEach(CPU => {
-                        $('#HardE').val(CPU.Hardware);
-                        $('#SoftE').val(CPU.Software);
-                        $('#MonE').val(CPU.Monitor);
-                        $('#NIME').val(CPU.Num_Inv_Mon);
-                        console.log(CPU);
-                        $('#N_Ser_M').val(CPU.Num_Serie_Monitor);
-                        $('#MouseE').val(CPU.Mouse);
-                        $('#TecladE').val(CPU.Teclado);
-                        $('#AccesE').val(CPU.Accesorio);
-                    });
-                    // Muestra el contenido del div con id "Desplegable"
-                    Menu.show();
-                });
-
-            } else {
-                // Oculta el contenido del div con id "Desplegable" si no es "CPU"
-                Menu.hide();
-            }
-        }
-
-        // Cambios de equipos
-        const FormMod = document.querySelector("#ModEquipos");
-
-        // Cambios de equipos
-        FormMod.addEventListener("submit", Enviar);
-
-        function Enviar(e) {
-
-            e.preventDefault();
-
-            if ($("#Num_SerieM").val() != "" && $("#EquipM").val() != "" && $("#MarcEM").val() != "" && $("#ModelEM").val() != "" && $("#NombreEmp").val() != "" && $("#UbiEM").val() != "") {
-                //Enviar HardWare
-                if ($("#HardE").val() != "" && $("#SoftE").val() != "") {
-                    socket.emit('CambiosPc', { Num_S: $("#Num_SerieM").val(), HardE: $("#HardE").val(), SoftE: $("#SoftE").val() }, { OLDNum_S: valores0 });
-                }
-                //Monitores
-                if ($("#MonE").val() != "" && $("#NIME").val() != "" && $("#N_Ser_M").val() != "") {
-                    socket.emit('CambiosMon', { Num_S: $("#Num_SerieM").val(), MonE: $("#MonE").val(), NIME: $("#NIME").val(), NSMon: $("#N_Ser_M").val() }, { OLDNum_S: valores0 });
-                }
-                //Mouse
-                if ($("#MouseE").val() != "") {
-                    socket.emit('CambiosMouse', { Num_S: $("#Num_SerieM").val(), MousE: $("#MouseE").val() }, { OLDNum_S: valores0 });
-                }
-                //Teclado
-                if ($("#TecladE").val() != "") {
-                    socket.emit('CambiosTecla', { Num_S: $("#Num_SerieM").val(), TeclaE: $("#TecladE").val() }, { OLDNum_S: valores0 });
-                }
-                //Accesorios
-                if ($("#AccesE").val() != "") {
-                    socket.emit('CambiosAcces', { Num_S: $("#Num_SerieM").val(), AccesE: $("#AccesE").val() }, { OLDNum_S: valores0 });
-                }
-
-                socket.emit('Cambios_Equipos', { Num_Serie: $("#Num_SerieM").val(), Equipo: $("#EquipM").val(), Marca: $("#MarcEM").val(), Modelo: $("#ModelEM").val(), NombreEmp: $("#NombreEmp").val(), Ubi: $("#UbiEM").val() }, { OLDNum_S: valores0 });
-                //Respuesta
-                recibirSocket('RespEquipos');
-            }
-        }
-    });
-
-} else if (pathname == "/users/ModEmp") {
-    if (tok == "4dnM3k0nl9s") {
-
-        cargarSelect('#NomJefe');
-        cargarNombres2();
-
-        enviarSocket("DatEmp", "");
-
-        // Consulta de productos
-        socket.on('DespEmp', async (data) => {
-            const tbody = document.querySelector("#DatosProd tbody");
-
-            tbody.innerHTML += `
-            <tr>
-                <td>${data.NomEmp}</td>
-                <td>${data.Area}</td>
-                <td>${data.NomJefe}</td>
-                <td class="BotonER"> Eliminar </td>
-                <td class="BotonMod"> Modificar </td>
-            </tr>
-            `;
-
-            // Volver a asignar el evento de clic a los botones de eliminar
-            const botonesEliminar = document.getElementsByClassName("BotonER");
-
-            for (let i = 0; i < botonesEliminar.length; i++) {
-                botonesEliminar[i].addEventListener("click", function () {
-                    eliminarEmp(this, '¿Deseas eliminar este empleado?', 'EmpDelete');
-                });
-            }
-        });
-
-        var valores0 = "", valores1 = "", valores2 = "";
-        socket.once('ButtonUpEmp', () => {
-            let BotonMod = document.getElementsByClassName("BotonMod");
-
-            for (let i = 0; i < BotonMod.length; i++) {
-                BotonMod[i].addEventListener("click", LlenarFormEmp);
-            }
-
-            function LlenarFormEmp(e) {
-                var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
-
-                for (let i = 0; i < elementosTD.length; i++) {
-                    // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                    valores0 = elementosTD[0].innerHTML;
-                    valores1 = elementosTD[1].innerHTML;
-                    valores2 = elementosTD[2].innerHTML;
-                }
-                document.getElementById("NEM").value = valores0;
-                document.getElementById("AreaME").value = valores1;
-                $('#NomJefe').val(valores2).trigger('change.select2');
-            }
-        });
-
-        const FormModEmp = $('#ModProduct');
-        FormModEmp.on('submit', function (e) {
-            e.preventDefault();
-
-            if ($('#NEM').val() != "" && $('#AreaME').val() != "" && $('#NomJefe')) {
-                socket.emit('ModEmp', { NewName: $('#NEM').val(), NewArea: $('#AreaME').val(), NewBoss: $('#NomJefe').val() }, { OldName: valores0 });
-            }
-        });
-
-        recibirSocket('MensajeEmp');
-    }
-} else if (pathname == "/users/consulMob") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
-        cargarSelect('#NombreEmp');
-        // Asignación del evento de clic en los botones de eliminar
-        window.addEventListener('DOMContentLoaded', () => {
-            const botonesEliminar = document.getElementsByClassName("BotonER");
-
-            for (let i = 0; i < botonesEliminar.length; i++) {
-                botonesEliminar[i].addEventListener("click", function () {
-                    eliminarMobiliario(this, '¿Deseas eliminar este producto de mobiliario?', 'Bajas_Mobiliario');
-                });
-            }
-        });
-
-        socket.emit("Consul_Mobiliario");
-
-        // Consulta de mobiliario
-        socket.on('Desp_Mobiliario', async (data) => {
-            const tbody = document.querySelector("#DatosProd tbody");
-
-            tbody.innerHTML += `
-            <tr>
-                <td>${data.Descripcion}</td>
-                <td>${data.NombreEmp}</td>
-                <td class="BotonER"> Eliminar </td>
-                <td class="BotonMod" > Modificar </td>
-            </tr>
-            `;
-
-            // Volver a asignar el evento de clic a los botones de eliminar
-            const botonesEliminar = document.getElementsByClassName("BotonER");
-
-            for (let i = 0; i < botonesEliminar.length; i++) {
-                botonesEliminar[i].addEventListener("click", function () {
-                    eliminarMobiliario(this, '¿Deseas eliminar este producto de mobiliario?', 'Bajas_Mobiliario');
-                });
-            }
-        });
-
-        //Llenar datos en automático
-        var valores0 = "";
-        var valores1 = "";
-
-        //Modificar mobiliario
-        socket.on('ButtonUp', () => {
-            let BotonMod = document.getElementsByClassName("BotonMod");
-
-            for (let i = 0; i < BotonMod.length; i++) {
-                BotonMod[i].addEventListener("click", obtenerValoresMod);
-            }
-
-            function obtenerValoresMod(e) {
-
-                var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
-                // recorremos cada uno de los elementos del array de elementos <td>
-                for (let i = 0; i < elementosTD.length; i++) {
-                    // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                    valores0 = elementosTD[0].innerHTML;
-                    valores1 = elementosTD[1].innerHTML;
-                }
-                document.getElementById("DescM").value = valores0;
-                document.getElementById("NombreEmp").value = valores1;
-            }
-
-            // Cambios de mobiliario
-            const FormMod = document.querySelector("#ModMobi");
-
-            // Cambios de mobiliario
-            FormMod.addEventListener("submit", Enviar);
-
-            function Enviar(e) {
-
-                e.preventDefault();
-
-                if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
-                    socket.emit('Cambios_Mobiliario', { Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() }, { OLDDesc: valores0 });
-                }
-            }
-        });
-        recibirSocket('RespDelMob');
-    } else {
-        location.href = "index";
-    }
-} else if (pathname == "/users/altasMob") {
-    if (tok == "4dnM3k0nl9s" || tok == "4dnM3k0nl9z" || tok == "4dnM3k0nl9A" || tok == "FGJYGd42DSAFA" || tok == "4dnM3k0nl9w" /*TEMPOTAL*/) {
-
-        cargarSelect('#NombreEmp');
-
-        const FormProduct = document.querySelector("#AltaMobiliario");
-
-        // Altas de mobiliario
-        FormProduct.addEventListener("submit", Enviar);
-
-        function Enviar(e) {
-            e.preventDefault();
-            if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
-
-                enviarSocket('Alta_Mob', { Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() });
-
-                recibirSocket('Mobiliario_Respuesta');
-            }
-        }
-
-    }
-} else if (pathname == "/users/crear_resp") {
-    if (tok == "4dnM3k0nl9s" || tok == "FGJYGd42DSAFA") {
-        cargarSelect('#NombreEmp');
-        // desplegar lista de nombre de empleados
-        window.addEventListener("load", function (event) {
-            var selectResponsiva = document.getElementById("Resp");
-            var opcion = document.createElement("option");
-            var opcion1 = document.createElement("option");
-
-            if (tok == "FGJYGd42DSAFA") {
-                opcion.text = "MOBILIARIO";
-            } else {
-                opcion.text = "MOBILIARIO";
-                opcion1.text = "EQUIPOS";
-            }
-
-            selectResponsiva.add(opcion);
-            selectResponsiva.add(opcion1);
-        });
-
-        const FormResp = document.querySelector("#crearRespon");
-
-        FormResp.addEventListener("submit", Enviar);
-
-        function Enviar(e) {
-            e.preventDefault();
-            if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
-
-                enviarSocket('Crea_Resp', { Responsiva: $("#Resp").val(), NombreEmp: $("#NombreEmp").val(), Token: tok });
-
-                socket.on('Responsiva_Respuesta', function (Respuesta) {
-                    alert(Respuesta.mensaje);
-
-                    // Crear un blob a partir del PDF buffer recibido
-                    const blob = new Blob([Respuesta.pdfBuffer], { type: 'application/pdf' });
-
-                    // Crear una URL a partir del blob para mostrar el PDF en una nueva ventana del navegador
-                    const pdfUrl = URL.createObjectURL(blob);
-
-                    // Abrir el PDF en una nueva ventana o pestaña
-                    window.open(pdfUrl, '_blank');
-
+                socket.once("SacarRespExcel", (data) => {
+                    alert(data.mensaje);
                     location.reload();
                 });
             }
+        } else {
+            location.href = "index";
         }
+    }
+} else if (pathname == "/users/altasEqp" || pathname === "/users/consulEqp") {
+    if (!Permisos['EQUIPOS']) {
+        location.href = "index";
     } else {
+        if (pathname == "/users/altasEqp" && Permisos['EQUIPOS'].includes('1')) {
+            window.addEventListener("load", function (event) {
+                cargarNombres();
+            });
+            //Formulario desplegable
+            const Equipos = $('#Equip');
+            const Menu = $("#Desplegable");
 
+            const Hardware = $('#HardE');
+            const Software = $('#SoftE');
+
+            const Monitor = $('#MonE');
+            const NIMES = $('#NIME');
+            const NSMon = $('#N_Ser_M');
+
+            const Mouse = $('#MouseE');
+            const Teclado = $('#TecladE');
+            const Accesorio = $('#AccesE');
+
+            Menu.hide();
+            //Formulario.reset();
+            Equipos.on('change', function () {
+                if (Equipos.val() == 'CPU') {
+                    Menu.slideDown();//Lo abre
+                } else {
+                    Menu.slideUp();//Lo cierra
+                    //Quita los required
+                    Hardware.prop('required', false);
+                    Software.prop('required', false);
+                    NSMon.prop('required', false);
+                    NIMES.prop('required', false);
+                    Monitor.prop('required', false);
+                    //Pone valores vacío
+                    Hardware.val('');
+                    Software.val('');
+                    NSMon.val('');
+                    NIMES.val('');
+                    Monitor.val('');
+                    Mouse.val('');
+                    Teclado.val('');
+                    Accesorio.val('');
+                }
+            });
+            //VALIDAR FORMULARIO DEPENDIENDO SI LLENAN CAMPOS
+            //Funcion general
+            function Listeners(elemento, evento, funcion) {
+                elemento.on(evento, funcion);
+            }
+
+            Listeners(Hardware, 'input', function (e) {
+
+                if (Hardware.val() != "") {
+                    Hardware.prop('required', true);
+                    Software.prop('required', true);
+                } else {
+                    Hardware.prop('required', false);
+                    Software.prop('required', false);
+                }
+            });
+
+            Listeners(Software, 'input', function (e) {
+
+                if (Software.val() != "") {
+                    Hardware.prop('required', true);
+                    Software.prop('required', true);
+                } else {
+                    Hardware.prop('required', false);
+                    Software.prop('required', false);
+                }
+            });
+
+            Listeners(Monitor, 'input', function (e) {
+
+                if (Monitor.val() != "") {
+                    NSMon.prop('required', true);
+                    NIMES.prop('required', true);
+                    Monitor.prop('required', true);
+                } else {
+                    NSMon.prop('required', false);
+                    NIMES.prop('required', true);
+                    Monitor.prop('required', false);
+                }
+            });
+
+            Listeners(NSMon, 'input', function (e) {
+
+                if (NSMon.val() != "") {
+                    NSMon.prop('required', true);
+                    NIMES.prop('required', true);
+                    Monitor.prop('required', true);
+                } else {
+                    NSMon.prop('required', false);
+                    NIMES.prop('required', true);
+                    Monitor.prop('required', false);
+                }
+            });
+
+            Listeners(NIMES, 'input', function (e) {
+
+                if (NIMES.val() != "") {
+                    NSMon.prop('required', true);
+                    NIMES.prop('required', true);
+                    Monitor.prop('required', true);
+                } else {
+                    NSMon.prop('required', false);
+                    NIMES.prop('required', true);
+                    Monitor.prop('required', false);
+                }
+            });
+
+            const FormEquip = $('#AltaEquip');
+            FormEquip.on('submit', function (e) {
+                e.preventDefault();
+
+                if ($("#Num_Serie").val() != "" && $("#Equip").val() != "" && $("#MarcE").val() != "" && $("#ModelE").val() != "" && $("#UbiE").val() != "" && $("#NombreEmp").val() != "") {
+                    //Enviar Equipo
+                    enviarSocket("Alta_Equipos", { Num_S: $("#Num_Serie").val(), Equipo: $("#Equip").val(), MarcaE: $("#MarcE").val(), ModelE: $("#ModelE").val(), UbiE: $("#UbiE").val(), NomEn: $("#NombreEmp").val() });
+
+                    //Enviar HardWare
+                    if ($("#HardE").val() != "" && $("#SoftE").val() != "") {
+                        enviarSocket("AltaPc", { Num_S: $("#Num_Serie").val(), HardE: $("#HardE").val(), SoftE: $("#SoftE").val() });
+                    }
+                    //Monitores
+                    if ($("#MonE").val() != "" && $("#NIME").val() != "" && $("#N_Ser_M").val() != "") {
+                        enviarSocket("AltMon", { Num_S: $("#Num_Serie").val(), MonE: $("#MonE").val(), NIME: $("#NIME").val(), NSMon: $("#N_Ser_M").val() });
+                    }
+                    //Mouse
+                    if ($("#MouseE").val() != "") {
+                        enviarSocket("AltMouse", { Num_S: $("#Num_Serie").val(), MousE: $("#MouseE").val() });
+                    }
+                    //Teclado
+                    if ($("#TecladE").val() != "") {
+                        enviarSocket("AltTecla", { Num_S: $("#Num_Serie").val(), TeclaE: $("#TecladE").val() });
+                    }
+                    //Accesorios
+                    if ($("#AccesE").val() != "") {
+                        enviarSocket("AltAcces", { Num_S: $("#Num_Serie").val(), AccesE: $("#AccesE").val() });
+                    }
+                    //Respuesta
+                    recibirSocket('Equipo_Respuesta');
+                }
+            });
+        } else if (pathname == "/users/consulEqp" && Permisos['EQUIPOS'].includes('4')) {
+            cargarSelect('#NombreEmp');
+
+            //Formulario desplegable
+            const Equipos = $('#EquipM');
+            const Menu = $("#Desplegable");
+
+            const Hardware = $('#HardE');
+            const Software = $('#SoftE');
+
+            const Monitor = $('#MonE');
+            const NIMES = $('#NIME');
+            const NSMon = $('#N_Ser_M');
+
+            const Mouse = $('#MouseE');
+            const Teclado = $('#TecladE');
+            const Accesorio = $('#AccesE');
+
+            //Formulario.reset();
+            Equipos.on('change', function () {
+                if (Equipos.val() == 'CPU') {
+                    enviarSocket('BuscarCPU', (document.getElementById("Num_SerieM").value));
+
+                    socket.on('ImpCPU', (CompCPU) => {
+                        const Componentes = CompCPU || [];
+
+                        Componentes.forEach(CPU => {
+                            $('#HardE').val(CPU.Hardware);
+                            $('#SoftE').val(CPU.Software);
+                            $('#MonE').val(CPU.Monitor);
+                            $('#NIME').val(CPU.Num_Inv_Mon);
+                            $('#N_Ser_M').val(CPU.Num_Serie_Monitor);
+                            $('#MouseE').val(CPU.Mouse);
+                            $('#TecladE').val(CPU.Teclado);
+                            $('#AccesE').val(CPU.Accesorio);
+                        });
+                        // Muestra el contenido del div con id "Desplegable"
+                        Menu.show();
+                    });
+                } else {
+                    Menu.slideUp();//Lo cierra
+                    //Quita los required
+                    Hardware.prop('required', false);
+                    Software.prop('required', false);
+                    NSMon.prop('required', false);
+                    NIMES.prop('required', false);
+                    Monitor.prop('required', false);
+                    //Pone valores vacío
+                    Hardware.val('');
+                    Software.val('');
+                    NSMon.val('');
+                    NIMES.val('');
+                    Monitor.val('');
+                    Mouse.val('');
+                    Teclado.val('');
+                    Accesorio.val('');
+                }
+            });
+            //VALIDAR FORMULARIO DEPENDIENDO SI LLENAN CAMPOS
+            //Funcion general
+            function Listeners(elemento, evento, funcion) {
+                elemento.on(evento, funcion);
+            }
+
+            Listeners(Hardware, 'input', function (e) {
+
+                if (Hardware.val() != "") {
+                    Hardware.prop('required', true);
+                    Software.prop('required', true);
+                } else {
+                    Hardware.prop('required', false);
+                    Software.prop('required', false);
+                }
+            });
+
+            Listeners(Software, 'input', function (e) {
+
+                if (Software.val() != "") {
+                    Hardware.prop('required', true);
+                    Software.prop('required', true);
+                } else {
+                    Hardware.prop('required', false);
+                    Software.prop('required', false);
+                }
+            });
+
+            Listeners(Monitor, 'input', function (e) {
+
+                if (Monitor.val() != "") {
+                    NSMon.prop('required', true);
+                    NIMES.prop('required', true);
+                    Monitor.prop('required', true);
+                } else {
+                    NSMon.prop('required', false);
+                    NIMES.prop('required', true);
+                    Monitor.prop('required', false);
+                }
+            });
+
+            Listeners(NSMon, 'input', function (e) {
+
+                if (NSMon.val() != "") {
+                    NSMon.prop('required', true);
+                    NIMES.prop('required', true);
+                    Monitor.prop('required', true);
+                } else {
+                    NSMon.prop('required', false);
+                    NIMES.prop('required', true);
+                    Monitor.prop('required', false);
+                }
+            });
+
+            Listeners(NIMES, 'input', function (e) {
+
+                if (NIMES.val() != "") {
+                    NSMon.prop('required', true);
+                    NIMES.prop('required', true);
+                    Monitor.prop('required', true);
+                } else {
+                    NSMon.prop('required', false);
+                    NIMES.prop('required', true);
+                    Monitor.prop('required', false);
+                }
+            });
+
+            socket.emit("Consul_Equipos");
+
+            // Consulta de productos
+            socket.on('Desp_Equipos', async (data) => {
+                const tbody = document.querySelector("#DatosProd tbody");
+                let filaHTML = `
+                <tr>
+                    <td>${data.Num_Serie}</td>
+                    <td>${data.Equipo}</td>
+                    <td>${data.Marca}</td>
+                    <td>${data.Modelo}</td>
+                    <td>${data.NombreEmp}</td>
+                    <td>${data.Ubi}</td>`;
+                if (Permisos['EQUIPOS'].includes('2')) {
+                    filaHTML += `<td class="BotonER"> Eliminar </td>`;
+                }
+                if (Permisos['EQUIPOS'].includes('3')) {
+                    filaHTML += `<td class="BotonMod"> Modificar </td>`;
+                }
+                filaHTML += `</tr>`;
+
+                tbody.innerHTML += filaHTML;
+
+                if (Permisos['EQUIPOS'].includes('2')) {
+                    // Volver a asignar el evento de clic a los botones de eliminar
+                    const botonesEliminar = document.getElementsByClassName("BotonER");
+
+                    for (let i = 0; i < botonesEliminar.length; i++) {
+                        botonesEliminar[i].addEventListener("click", function () {
+                            eliminarEquipo(this, '¿Deseas eliminar este producto de equipos?', 'Bajas_Equipos');
+                        });
+                    }
+                }
+            });
+
+            //Llenar datos en automático
+            var valores0 = "";
+            var valores1 = "";
+            var valores2 = "";
+            var valores3 = "";
+            var valores4 = "";
+            var valores5 = "";
+
+            //Modificar usuarios
+            socket.on('ButtonUp', () => {
+                let BotonMod = document.getElementsByClassName("BotonMod");
+
+                for (let i = 0; i < BotonMod.length; i++) {
+                    BotonMod[i].addEventListener("click", obtenerValoresMod);
+                }
+
+                function obtenerValoresMod(e) {
+
+                    var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+                    // recorremos cada uno de los elementos del array de elementos <td>
+                    for (let i = 0; i < elementosTD.length; i++) {
+                        // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                        valores0 = elementosTD[0].innerHTML;
+                        valores1 = elementosTD[1].innerHTML;
+                        valores2 = elementosTD[2].innerHTML;
+                        valores3 = elementosTD[3].innerHTML;
+                        valores4 = elementosTD[4].innerHTML;
+                        valores5 = elementosTD[5].innerHTML;
+                    }
+                    document.getElementById("Num_SerieM").value = valores0;
+                    document.getElementById("EquipM").value = valores1;
+                    document.getElementById("MarcEM").value = valores2;
+                    document.getElementById("ModelEM").value = valores3;
+                    $('#NombreEmp').val(valores4).trigger('change.select2');
+                    document.getElementById("UbiEM").value = valores5;
+
+                    if (document.getElementById("EquipM").value == "CPU") {
+                        enviarSocket('BuscarCPU', (document.getElementById("Num_SerieM").value));
+
+                        socket.on('ImpCPU', (CompCPU) => {
+                            const Componentes = CompCPU || [];
+
+                            Componentes.forEach(CPU => {
+                                $('#HardE').val(CPU.Hardware);
+                                $('#SoftE').val(CPU.Software);
+                                $('#MonE').val(CPU.Monitor);
+                                $('#NIME').val(CPU.Num_Inv_Mon);
+                                console.log(CPU);
+                                $('#N_Ser_M').val(CPU.Num_Serie_Monitor);
+                                $('#MouseE').val(CPU.Mouse);
+                                $('#TecladE').val(CPU.Teclado);
+                                $('#AccesE').val(CPU.Accesorio);
+                            });
+                            // Muestra el contenido del div con id "Desplegable"
+                            Menu.show();
+                        });
+
+                    } else {
+                        // Oculta el contenido del div con id "Desplegable" si no es "CPU"
+                        Menu.hide();
+                    }
+                }
+
+                // Cambios de equipos
+                const FormMod = document.querySelector("#ModEquipos");
+
+                // Cambios de equipos
+                FormMod.addEventListener("submit", Enviar);
+
+                function Enviar(e) {
+
+                    e.preventDefault();
+
+                    if ($("#Num_SerieM").val() != "" && $("#EquipM").val() != "" && $("#MarcEM").val() != "" && $("#ModelEM").val() != "" && $("#NombreEmp").val() != "" && $("#UbiEM").val() != "") {
+                        //Enviar HardWare
+                        if ($("#HardE").val() != "" && $("#SoftE").val() != "") {
+                            socket.emit('CambiosPc', { Num_S: $("#Num_SerieM").val(), HardE: $("#HardE").val(), SoftE: $("#SoftE").val() }, { OLDNum_S: valores0 });
+                        }
+                        //Monitores
+                        if ($("#MonE").val() != "" && $("#NIME").val() != "" && $("#N_Ser_M").val() != "") {
+                            socket.emit('CambiosMon', { Num_S: $("#Num_SerieM").val(), MonE: $("#MonE").val(), NIME: $("#NIME").val(), NSMon: $("#N_Ser_M").val() }, { OLDNum_S: valores0 });
+                        }
+                        //Mouse
+                        if ($("#MouseE").val() != "") {
+                            socket.emit('CambiosMouse', { Num_S: $("#Num_SerieM").val(), MousE: $("#MouseE").val() }, { OLDNum_S: valores0 });
+                        }
+                        //Teclado
+                        if ($("#TecladE").val() != "") {
+                            socket.emit('CambiosTecla', { Num_S: $("#Num_SerieM").val(), TeclaE: $("#TecladE").val() }, { OLDNum_S: valores0 });
+                        }
+                        //Accesorios
+                        if ($("#AccesE").val() != "") {
+                            socket.emit('CambiosAcces', { Num_S: $("#Num_SerieM").val(), AccesE: $("#AccesE").val() }, { OLDNum_S: valores0 });
+                        }
+
+                        socket.emit('Cambios_Equipos', { Num_Serie: $("#Num_SerieM").val(), Equipo: $("#EquipM").val(), Marca: $("#MarcEM").val(), Modelo: $("#ModelEM").val(), NombreEmp: $("#NombreEmp").val(), Ubi: $("#UbiEM").val() }, { OLDNum_S: valores0 });
+                        //Respuesta
+                        recibirSocket('RespEquipos');
+                    }
+                }
+            });
+        } else {
+            location.href = "index";
+        }
+    }
+} else if (pathname == "/users/consulMob" || pathname === "/users/altasMob") {
+    if (!Permisos['MOBILIARIO']) {
+        location.href = "index";
+    } else {
+        if (pathname == "/users/consulMob" && Permisos['MOBILIARIO'].includes('4')) {
+            cargarSelect('#NombreEmp');
+            socket.emit("Consul_Mobiliario");
+
+            // Consulta de mobiliario
+            socket.on('Desp_Mobiliario', async (data) => {
+                const tbody = document.querySelector("#DatosProd tbody");
+
+                let filaHTML = `
+                <tr>
+                    <td>${data.Descripcion}</td>
+                    <td>${data.NombreEmp}</td>`;
+
+                if (Permisos['MOBILIARIO'].includes('2')) {
+                    filaHTML += `<td class="BotonER"> Eliminar </td>`;
+                }
+                if (Permisos['MOBILIARIO'].includes('3')) {
+                    filaHTML += ` <td class="BotonMod" > Modificar </td>`;
+                }
+
+                filaHTML += `</tr>`;
+
+                tbody.innerHTML += filaHTML;
+
+                if (Permisos['MOBILIARIO'].includes('2')) {
+                    // Volver a asignar el evento de clic a los botones de eliminar
+                    const botonesEliminar = document.getElementsByClassName("BotonER");
+
+                    for (let i = 0; i < botonesEliminar.length; i++) {
+                        botonesEliminar[i].addEventListener("click", function () {
+                            eliminarMobiliario(this, '¿Deseas eliminar este producto de mobiliario?', 'Bajas_Mobiliario');
+                        });
+                    }
+                }
+
+            });
+
+            //Llenar datos en automático
+            var valores0 = "";
+            var valores1 = "";
+
+            //Modificar mobiliario
+            socket.on('ButtonUp', () => {
+                let BotonMod = document.getElementsByClassName("BotonMod");
+
+                for (let i = 0; i < BotonMod.length; i++) {
+                    BotonMod[i].addEventListener("click", obtenerValoresMod);
+                }
+
+                function obtenerValoresMod(e) {
+
+                    var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
+                    // recorremos cada uno de los elementos del array de elementos <td>
+                    for (let i = 0; i < elementosTD.length; i++) {
+                        // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                        valores0 = elementosTD[0].innerHTML;
+                        valores1 = elementosTD[1].innerHTML;
+                    }
+                    document.getElementById("DescM").value = valores0;
+                    document.getElementById("NombreEmp").value = valores1;
+                }
+
+                // Cambios de mobiliario
+                const FormMod = document.querySelector("#ModMobi");
+
+                // Cambios de mobiliario
+                FormMod.addEventListener("submit", Enviar);
+
+                function Enviar(e) {
+
+                    e.preventDefault();
+
+                    if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
+                        socket.emit('Cambios_Mobiliario', { Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() }, { OLDDesc: valores0 });
+                    }
+                }
+            });
+            recibirSocket('RespDelMob');
+        } else if (pathname == "/users/altasMob" && Permisos['MOBILIARIO'].includes('1')) {
+            cargarSelect('#NombreEmp');
+
+            const FormProduct = document.querySelector("#AltaMobiliario");
+
+            // Altas de mobiliario
+            FormProduct.addEventListener("submit", Enviar);
+
+            function Enviar(e) {
+                e.preventDefault();
+                if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
+
+                    enviarSocket('Alta_Mob', { Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() });
+
+                    recibirSocket('Mobiliario_Respuesta');
+                }
+            }
+        } else {
+            location.href = "index";
+        }
+    }
+} else if (pathname == "/users/crear_resp") {
+    if (!Permisos['RESPONSIVAS']) {
+        location.href = "index";
+    } else {
+        if (pathname == "/users/crear_resp" && Permisos['RESPONSIVAS'].includes('4')) {
+            cargarSelect('#NombreEmp');
+            // desplegar lista de nombre de empleados
+            window.addEventListener("load", function (event) {
+                var selectResponsiva = document.getElementById("Resp");
+                var opcion = document.createElement("option");
+                var opcion1 = document.createElement("option");
+
+                if (tok == "FGJYGd42DSAFA") {
+                    opcion.text = "MOBILIARIO";
+                } else {
+                    opcion.text = "MOBILIARIO";
+                    opcion1.text = "EQUIPOS";
+                }
+
+                selectResponsiva.add(opcion);
+                selectResponsiva.add(opcion1);
+            });
+
+            const FormResp = document.querySelector("#crearRespon");
+
+            FormResp.addEventListener("submit", Enviar);
+
+            function Enviar(e) {
+                e.preventDefault();
+                if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
+
+                    enviarSocket('Crea_Resp', { Responsiva: $("#Resp").val(), NombreEmp: $("#NombreEmp").val(), Token: tok });
+
+                    socket.on('Responsiva_Respuesta', function (Respuesta) {
+                        alert(Respuesta.mensaje);
+
+                        // Crear un blob a partir del PDF buffer recibido
+                        const blob = new Blob([Respuesta.pdfBuffer], { type: 'application/pdf' });
+
+                        // Crear una URL a partir del blob para mostrar el PDF en una nueva ventana del navegador
+                        const pdfUrl = URL.createObjectURL(blob);
+
+                        // Abrir el PDF en una nueva ventana o pestaña
+                        window.open(pdfUrl, '_blank');
+
+                        location.reload();
+                    });
+                }
+            }
+        }else {
+            location.href = "index";
+        }
     }
 }
