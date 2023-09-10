@@ -338,6 +338,7 @@ drop table tokens;
 
 select*from usuario;
 insert into permisos values
+(1,"a","ALMACÉN"),
 (4,"a","ALMACÉN"),
 (3,"a","ALMACÉN"),
 (4,"b","ALMACÉN"),
@@ -354,10 +355,6 @@ insert into permisos values
 (2,"ajimenez","EQUIPOS"),#Bajas
 (3,"ajimenez","EQUIPOS"),#Cambios
 (4,"ajimenez","EQUIPOS"),#Consultas
-(1,"ajimenez","RESPONSIVAS"),#Altas
-(2,"ajimenez","RESPONSIVAS"),#Bajas
-(3,"ajimenez","RESPONSIVAS"),#Cambios
-(4,"ajimenez","RESPONSIVAS"),#Consultas
 (1,"ajimenez","USUARIOS"),#Altas
 (2,"ajimenez","USUARIOS"),#Bajas
 (3,"ajimenez","USUARIOS"),#Cambios

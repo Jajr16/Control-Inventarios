@@ -251,7 +251,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         location.href = "index";
     } else {
         if (pathname === "/users/RegistroEmpleado" && Permisos['EMPLEADOS'].includes('1')) {
-            cargarSelect('#NombreEmp');
             cargarSelect2('#NomJefe');
 
             const FormRegistro = document.querySelector("#Registro");
@@ -274,7 +273,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 }
             }
         } else if (pathname === "/users/ModEmp" && Permisos['EMPLEADOS'].includes('3')) {
-            cargarSelect('#NomJefe');
             cargarNombres2();
 
             enviarSocket("DatEmp", "");
@@ -1528,7 +1526,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     });
                 }
             }
-        }else {
+        } else {
             location.href = "index";
         }
     }

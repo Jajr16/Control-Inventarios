@@ -79,7 +79,7 @@ io.on('connection', (socket) => {
                                 permisosModulos[row.modulo].push(row.permiso);
                             });
 
-                            socket.emit('logInOK', { Usuario: result[0].Usuario, permisosModulos  });//Mandar usuario y token al cliente
+                            socket.emit('logInOK', { Usuario: result[0].Usuario, permisosModulos });//Mandar usuario y token al cliente
                         }
                     });
                 } else {
@@ -453,27 +453,21 @@ io.on('connection', (socket) => {
                             if (result.length > 0) {//Si sí hizo una búsqueda
                                 socket.emit('Usuario_Existente', { mensaje: "Este usuario ya está registrado." });
                             } else {
-                                db.query('select tokens.token from tokens inner join empleado on tokens.area = empleado.Área where empleado.Num_Emp = ?', resultG[0].Num_emp, function (err, result) {
-                                    if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                                    else {
-                                        if (result.length > 0) {
-                                            db.query('insert into Usuario values (?,?,?,?)', [resultG[0].Num_emp, data.N_User, data.ContraNueva, result[0].token], function (err, result) {
+                                if (result.length > 0) {
+                                    db.query('insert into Usuario values (?,?,?)', [resultG[0].Num_emp, data.N_User, data.ContraNueva], function (err, result) {
 
-                                                if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                                                else {
+                                        if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+                                        else {
 
-                                                    if (result) {
-                                                        console.log("Resultado de inserción de Usuario: ", result);
-                                                        socket.emit('Usuario_Agregado', { mensaje: "Usuario agregado con éxito." });
-                                                    } else {
-                                                        socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
-                                                    }
-                                                }
-                                            });
+                                            if (result) {
+                                                console.log("Resultado de inserción de Usuario: ", result);
+                                                socket.emit('Usuario_Agregado', { mensaje: "Usuario agregado con éxito." });
+                                            } else {
+                                                socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
+                                            }
                                         }
-                                    }
-                                });
-
+                                    });
+                                }
                             }
                         }
                     });

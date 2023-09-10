@@ -109,10 +109,12 @@ body::-webkit-scrollbar-thumb:hover {
     transform: scale(1.1);
 
 }
+
 .header .nav-links li {
     display: inline-block;
     padding: 0 10px;
-    font-size: 15px; /* Tamaño de letra */
+    font-size: 15px;
+    /* Tamaño de letra */
     transition: all 0.4s ease 0s;
 }
 
@@ -120,29 +122,32 @@ body::-webkit-scrollbar-thumb:hover {
     transform: scale(1.1);
 
 }
+
 /**/
-.menu-vertical_nav{
-	position: absolute;
+.menu-vertical_nav {
+    position: absolute;
     justify-content: space-evenly;
     align-items: center;
     display: none;
     list-style: none;
     background-color: rgba(0, 0, 0, 0.63);
-    padding-left: 8px; /* Margen izquierdo */
+    padding-left: 8px;
+    /* Margen izquierdo */
 }
 
 .header .nav-links li:hover .menu-vertical_nav {
     display: block;
 }
 
-.menu-vertical_nav li a{
-	display: block;
-	color: white;
-	text-decoration: none;
-	padding: 15px 15px 15px 20px; /* Margenes */
+.menu-vertical_nav li a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 15px 15px 15px 20px;
+    /* Margenes */
 }
 
-.menu-vertical_nav li a:hover{
+.menu-vertical_nav li a:hover {
     color: #0004ff;
     background-color: rgba(255, 255, 255, 0.747);
 }
@@ -267,11 +272,7 @@ form {
     height: 3.5rem;
 }
 
-.Dos_Columnas {
-    margin-top: 2rem;
-}
-
-input:not([type="submit"]),
+input:not([type="submit"]):not([type="checkbox"]),
 textarea,
 select {
     padding: .8rem;
@@ -297,7 +298,17 @@ label {
 legend {
     font-size: 2rem;
     color: #c4c4c4;
+}
 
+input[type="checkbox"],
+.Text_Checkbox {
+    margin-right: 1rem;
+    display: flex;
+    color: black;
+}
+
+.Dos_Column:has(.Text_Checkbox) {
+    justify-content: space-between;
 }
 
 /* Encabezado */
@@ -784,6 +795,27 @@ h5 {
     width: 47%;
 }
 
+.ListaPermisos {
+    padding: 0 !important;
+}
+
+.ListaPermisos span {
+    display: flex;
+}
+
+.Column_permisos {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.Column_permisos div {
+    display: inline-flex;
+    align-items: center;
+    flex-direction: column;
+}
+
 .Tres_Column {
     display: flex;
     justify-content: space-evenly;
@@ -831,6 +863,10 @@ h5 {
 .Dos_Column div label {
     width: 40%;
     margin-left: 3rem;
+}
+
+.Dos_Columnas {
+    margin-top: 2rem;
 }
 
 /* LogIn */
