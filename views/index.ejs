@@ -85,14 +85,16 @@
 
     function AgregarDivs(divModify, n, Options, cont) {
       if (n === 0) {
-        divModify.html(Options.Options1);
+        divModify.append(Options.Options1);
+        divModify.append(Options.Options2);
+        console.log(Options)
       } else {
 
         for (let i = 0; i < 2; i++) {
           const divOpcion = document.createElement('div');
           divModify.append(divOpcion);
         }
-
+        console.log(Options);
         divModify.children().eq(0).html(Options.Options1);
         divModify.children().eq(1).html(Options.Options2);
 
@@ -147,22 +149,25 @@
       divOpciones = $("#RegistrosGenerales");
       Options1 = '';
       Options2 = '';
-
-      if (Permisos['USUARIOS'].includes('1')) {
-        Options1 += `<a href="/users/RegistrarUsuario" class="BotonABE TamBAG">Registrar Usuario</a>`;
-        cont++;
+      if (Permisos['USUARIOS']) {
+        if (Permisos['USUARIOS'].includes('1')) {
+          Options1 += `<a href="/users/RegistrarUsuario" class="BotonABE TamBAG">Registrar Usuario</a>`;
+          cont++;
+        }
+        if (Permisos['USUARIOS'].includes('4') || Permisos['USUARIOS'].includes('2') || Permisos['USUARIOS'].includes('3')) {
+          Options1 += `<a href="/users/consulUsuarios" class="BotonABE TamBAG">Modificar Usuario</a>`;
+          cont++;
+        }
       }
-      if (Permisos['USUARIOS'].includes('4') || Permisos['USUARIOS'].includes('2') || Permisos['USUARIOS'].includes('3')) {
-        Options1 += `<a href="/users/consulUsuarios" class="BotonABE TamBAG">Modificar Usuario</a>`;
-        cont++;
-      }
-      if (Permisos['EMPLEADOS'].includes('1')) {
-        Options2 += `<a href="/users/RegistroEmpleado" class="BotonABE TamBAG">Registrar Empleado</a>`;
-        cont++;
-      }
-      if (Permisos['EMPLEADOS'].includes('4') || Permisos['EMPLEADOS'].includes('2') || Permisos['EMPLEADOS'].includes('3')) {
-        Options2 += `<a href="/users/ModEmp" class="BotonABE TamBAG">Modificar Empleado</a>`;
-        cont++;
+      if (Permisos['EMPLEADOS']) {
+        if (Permisos['EMPLEADOS'].includes('1')) {
+          Options2 += `<a href="/users/RegistroEmpleado" class="BotonABE TamBAG">Registrar Empleado</a>`;
+          cont++;
+        }
+        if (Permisos['EMPLEADOS'].includes('4') || Permisos['EMPLEADOS'].includes('2') || Permisos['EMPLEADOS'].includes('3')) {
+          Options2 += `<a href="/users/ModEmp" class="BotonABE TamBAG">Modificar Empleado</a>`;
+          cont++;
+        }
       }
       if (cont === 1 || cont === 2) {
         n = 0;
@@ -189,6 +194,8 @@
         Options1 += `<a href="/users/consulEqp" class="BotonEQPA TamBAG">Ver Equipos</a>`;
         cont++;
       }
+      console.log("A"+Options1);
+      console.log(cont);
       if (cont === 1 || cont === 2) {
         n = 0;
       } else {
