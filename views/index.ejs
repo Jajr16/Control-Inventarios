@@ -114,7 +114,7 @@
       cont = 0;
       divOpciones = $("#RegistrosProd");
 
-      if (Permisos['ALMACÉN'].includes('4')) {
+      if (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('3')) {
         Options1 += `<a href="/users/consulPro" class="BotonAG TamBAG">Ver productos</a>`;
         cont++;
       }
@@ -152,7 +152,7 @@
         Options1 += `<a href="/users/RegistrarUsuario" class="BotonABE TamBAG">Registrar Usuario</a>`;
         cont++;
       }
-      if (Permisos['USUARIOS'].includes('4')) {
+      if (Permisos['USUARIOS'].includes('4') || Permisos['USUARIOS'].includes('2') || Permisos['USUARIOS'].includes('3')) {
         Options1 += `<a href="/users/consulUsuarios" class="BotonABE TamBAG">Modificar Usuario</a>`;
         cont++;
       }
@@ -160,7 +160,7 @@
         Options2 += `<a href="/users/RegistroEmpleado" class="BotonABE TamBAG">Registrar Empleado</a>`;
         cont++;
       }
-      if (Permisos['EMPLEADOS'].includes('4')) {
+      if (Permisos['EMPLEADOS'].includes('4') || Permisos['EMPLEADOS'].includes('2') || Permisos['EMPLEADOS'].includes('3')) {
         Options2 += `<a href="/users/ModEmp" class="BotonABE TamBAG">Modificar Empleado</a>`;
         cont++;
       }
@@ -185,7 +185,7 @@
         Options1 += `<a href="/users/altasEqp" class="BotonEQPA TamBAG">Registrar Equipos</a>`;
         cont++;
       }
-      if (Permisos['EQUIPOS'].includes('4')) {
+      if (Permisos['EQUIPOS'].includes('4') || Permisos['EQUIPOS'].includes('2') || Permisos['EQUIPOS'].includes('3')) {
         Options1 += `<a href="/users/consulEqp" class="BotonEQPA TamBAG">Ver Equipos</a>`;
         cont++;
       }
@@ -210,7 +210,7 @@
         Options1 += `<a href="/users/altasMob" class="BotonMOBA TamBAG">Registrar Mobiliario</a>`;
         cont++;
       }
-      if (Permisos['MOBILIARIO'].includes('4')) {
+      if (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('3')) {
         Options1 += `<a href="/users/consulMob" class="BotonMOBA TamBAG">Ver Mobiliario</a>`;
         cont++;
       }

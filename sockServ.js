@@ -442,7 +442,6 @@ io.on('connection', (socket) => {
 
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
-
                 if (resultG.length > 0) {//Si sí hizo una búsqueda
 
                     db.query('select*from Usuario where Usuario = ?', [data.N_User], function (err, result) {
@@ -453,21 +452,36 @@ io.on('connection', (socket) => {
                             if (result.length > 0) {//Si sí hizo una búsqueda
                                 socket.emit('Usuario_Existente', { mensaje: "Este usuario ya está registrado." });
                             } else {
-                                if (result.length > 0) {
-                                    db.query('insert into Usuario values (?,?,?)', [resultG[0].Num_emp, data.N_User, data.ContraNueva], function (err, result) {
+                                db.query('insert into Usuario values (?,?,?)', [resultG[0].Num_emp, data.N_User, data.ContraNueva], function (err, result) {
 
-                                        if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                                        else {
+                                    if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
 
-                                            if (result) {
-                                                console.log("Resultado de inserción de Usuario: ", result);
-                                                socket.emit('Usuario_Agregado', { mensaje: "Usuario agregado con éxito." });
-                                            } else {
-                                                socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
-                                            }
+                                    if (result) {
+                                        var errores = false; // Variable para rastrear si hubo errores
+                                        data.permisos.forEach(function (permisoUser) {
+                                            var accion = 0;
+                                            if (permisoUser.accion === 'Altas') accion = 1;
+                                            else if (permisoUser.accion === 'Bajas') accion = 2;
+                                            else if (permisoUser.accion === 'Cambios') accion = 3;
+                                            else if (permisoUser.accion === 'Consultas') accion = 4;
+
+                                            console.log(permisoUser.modulo.slice(1));
+                                            db.query('insert into permisos values (?,?,?)', [accion, data.N_User, permisoUser.modulo.slice(1)], function (err, res) {
+                                                if (err) { Errores(err); socket.emit('SystemError'); errores = true; } // Se hace un control de errores
+                                                else if (res) {
+                                                    console.log("Permiso dado");
+                                                }
+                                            });
+                                        });
+                                        if (!errores) {
+                                            socket.emit('Usuario_Agregado', { mensaje: "Usuario agregado con éxito." });
                                         }
-                                    });
-                                }
+                                    } else {
+                                        socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
+                                    }
+
+                                });
+
                             }
                         }
                     });

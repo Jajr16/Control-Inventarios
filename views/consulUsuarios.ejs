@@ -73,7 +73,7 @@
             <div class="modal-container cancel-modal">
                 <div class="Contenedor Contenido-centrado Alta">
                     <form name="ModProduct" id="ModProduct">
-                        <div class="Tres_Column">
+                        <div class="Dos_Columnas">
                             <div>
                                 <label>Nombre de usuario</label>
                                 <input autocomplete="off" type="text" id="UsuarioM" min="1" name="UsuarioM" required
@@ -84,7 +84,164 @@
                                 <input autocomplete="off" type="text" id="PassM" name="PassM" required maxlength="45">
                             </div>
                         </div>
-                        <div class="Cuatro_Column">
+                        <center>
+                            <div>
+                                <label class="label">Seleccione los módulos a otorgar</label>
+                                <div class="Column_permisos">
+                                    <div>
+                                        <label class="Text_Checkbox"><input type="checkbox" name="modulo"
+                                                value="ALMACÉN" id="ALMACÉN">ALMACÉN
+                                        </label>
+                                        <div id="listaCheckboxesA" style="display: none;">
+                                            <div class="ListaPermisos">
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="1A">
+                                                        Agregar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="2A">
+                                                        Eliminar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="3A">
+                                                        Modificar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="4A">
+                                                        Consultar</label>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="Text_Checkbox"><input type="checkbox" name="modulo"
+                                                value="MOBILIARIO" id="MOBILIARIO">MOBILIARIO</label>
+                                        <div id="listaCheckboxesM" style="display: none;">
+                                            <div class="ListaPermisos">
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="1M">
+                                                        Agregar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="2M">
+                                                        Eliminar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="3M">
+                                                        Modificar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="4M">
+                                                        Consultar</label>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="Text_Checkbox"><input type="checkbox" name="modulo"
+                                                value="EQUIPOS" id="EQUIPOS">EQUIPOS</label>
+                                        <div id="listaCheckboxesEqp" style="display: none;">
+                                            <div class="ListaPermisos">
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="1E">
+                                                        Agregar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="2E">
+                                                        Eliminar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="3E">
+                                                        Modificar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="4E">
+                                                        Consultar</label>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="Column_permisos">
+                                    <div>
+                                        <label class="Text_Checkbox"><input type="checkbox" name="modulo"
+                                                value="RESPONSIVAS" id="RESPONSIVAS">
+                                            RESPONSIVAS</label>
+                                        <div id="listaCheckboxesR" style="display: none;">
+                                            <div class="ListaPermisos">
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="1R">
+                                                        Agregar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="2R">
+                                                        Eliminar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="3R">
+                                                        Modificar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="4R">
+                                                        Consultar</label>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="Text_Checkbox"><input type="checkbox" name="modulo"
+                                                value="USUARIOS" id="USUARIOS">
+                                            USUARIOS</label>
+                                        <div id="listaCheckboxesU" style="display: none;">
+                                            <div class="ListaPermisos">
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="1U">
+                                                        Agregar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="2U">
+                                                        Eliminar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="3U">
+                                                        Modificar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="4U">
+                                                        Consultar</label>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="Text_Checkbox"><input type="checkbox" name="modulo"
+                                                value="EMPLEADOS" id="EMPLEADOS">
+                                            EMPLEADOS</label>
+                                        <div id="listaCheckboxesE" style="display: none;">
+                                            <div class="ListaPermisos">
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="1EM">
+                                                        Agregar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="2EM">
+                                                        Eliminar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="3EM">
+                                                        Modificar</label>
+                                                </span>
+                                                <span>
+                                                    <label class="Text_Checkbox"><input type="checkbox" id="4EM">
+                                                        Consultar</label>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </center>
+                        <div class="Dos_Columnas">
                             <input type="submit" id="Modify" class="BotonAE" value="Aceptar">
                             <input type="button" class="BotonReg" value="Cancelar">
                         </div>

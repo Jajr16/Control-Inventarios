@@ -302,9 +302,11 @@ legend {
 
 input[type="checkbox"],
 .Text_Checkbox {
+    margin-top: 0;
     margin-right: 1rem;
     display: flex;
     color: black;
+    text-transform: none;
 }
 
 .Dos_Column:has(.Text_Checkbox) {

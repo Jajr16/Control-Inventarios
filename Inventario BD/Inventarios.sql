@@ -337,6 +337,7 @@ alter table usuario drop column token;
 drop table tokens;
 
 select*from usuario;
+select*from permisos;
 insert into permisos values
 (1,"a","ALMACÉN"),
 (4,"a","ALMACÉN"),

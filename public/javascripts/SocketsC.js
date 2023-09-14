@@ -1,6 +1,56 @@
 var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
 var socket = io.connect("http://localhost:3001");
 var pathname = window.location.pathname;
+//////////////////////// PERMISOS /////////////////////
+function PermisosGenerales() {
+    // Configuración de permisos por módulo
+    var permisosPorModulo = [
+        { modulo: '#ALMACÉN', contenedor: '#listaCheckboxesA', checks: ['[id$="A"]'], permisos: { Altas: '#1A', Bajas: '#2A', Cambios: '#3A', Consultas: '#4A' } },
+        { modulo: '#MOBILIARIO', contenedor: '#listaCheckboxesM', checks: ['[id$="M"]'], permisos: { Altas: '#1M', Bajas: '#2M', Cambios: '#3M', Consultas: '#4M' } },
+        { modulo: '#EQUIPOS', contenedor: '#listaCheckboxesEqp', checks: ['[id$="E"]'], permisos: { Altas: '#1E', Bajas: '#2E', Cambios: '#3E', Consultas: '#4E' } },
+        { modulo: '#RESPONSIVAS', contenedor: '#listaCheckboxesR', checks: ['[id$="R"]'], permisos: { Altas: '#1R', Bajas: '#2R', Cambios: '#3R', Consultas: '#4R' } },
+        { modulo: '#USUARIOS', contenedor: '#listaCheckboxesU', checks: ['[id$="U"]'], permisos: { Altas: '#1U', Bajas: '#2U', Cambios: '#3U', Consultas: '#4U' } },
+        { modulo: '#EMPLEADOS', contenedor: '#listaCheckboxesE', checks: ['[id$="EM"]'], permisos: { Altas: '#1EM', Bajas: '#2EM', Cambios: '#3EM', Consultas: '#4EM' } }
+    ];
+    $(document).ready(function () {
+        // Manejar el evento de cambio en los checkboxes principales
+        permisosPorModulo.forEach(function (permiso) {
+            $(permiso.modulo).change(function () {
+                $(permiso.contenedor).toggle(this.checked);
+
+                if (!this.checked) {
+                    permiso.checks.forEach(function (check) {
+                        $(check).prop('checked', false);
+                    });
+                }
+            });
+        });
+    });
+    return permisosPorModulo;
+}
+function obtenerPermisosSeleccionadosConModulo(permisosPorModulo) {
+    var permisosSeleccionados = [];
+
+    permisosPorModulo.forEach(function (permiso) {
+        var modulo = permiso.modulo;
+        var permisos = permiso.permisos;
+
+        if ($(modulo).is(':checked')) {
+            Object.keys(permisos).forEach(function (accion) {
+                var checkboxId = permisos[accion];
+                if ($(checkboxId).is(':checked')) {
+                    var permisoSeleccionado = {
+                        modulo: modulo,
+                        accion: accion
+                    };
+                    permisosSeleccionados.push(permisoSeleccionado);
+                }
+            });
+        }
+    });
+
+    return permisosSeleccionados;
+}
 //////////////////////////////////// EXCEL //////////////////////////////////////
 // Crear excel
 function Excel(Excel) {
@@ -272,7 +322,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                 }
             }
-        } else if (pathname === "/users/ModEmp" && Permisos['EMPLEADOS'].includes('3')) {
+        } else if (pathname === "/users/ModEmp" && (Permisos['EMPLEADOS'].includes('4') || Permisos['EMPLEADOS'].includes('2') || Permisos['EMPLEADOS'].includes('3'))) {
             cargarNombres2();
 
             enviarSocket("DatEmp", "");
@@ -352,16 +402,20 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         if (pathname === "/users/RegistrarUsuario" && Permisos['USUARIOS'].includes('1')) {
             cargarSelect('#NombreEmp');
 
+            var permisosModulos = PermisosGenerales();
+
             const FormRegistro = document.querySelector("#Registro");
 
             // Registro de usuario
             FormRegistro.addEventListener('submit', EnviarReg);
 
             function EnviarReg(e) {
+
+                var permisosDados = obtenerPermisosSeleccionadosConModulo(permisosModulos);
+
                 e.preventDefault();
                 if ($("#NombreEmp").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
-
-                    socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val() });
+                    socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val(), permisos: permisosDados });
 
                     socket.once('Usuario_Existente', function (Respuesta) {
                         alert(Respuesta.mensaje);
@@ -379,7 +433,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     });
                 }
             }
-        } else if (pathname === "/users/consulUsuarios" && Permisos['USUARIOS'].includes('4')) {
+        } else if (pathname === "/users/consulUsuarios" && (Permisos['USUARIOS'].includes('4') || Permisos['USUARIOS'].includes('2') || Permisos['USUARIOS'].includes('3'))) {
             // Asignación del evento de clic en los botones de eliminar
             window.addEventListener('DOMContentLoaded', () => {
                 const botonesEliminar = document.getElementsByClassName("BotonER");
@@ -460,8 +514,8 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     // recorremos cada uno de los elementos del array de elementos <td>
                     for (let i = 0; i < elementosTD.length; i++) {
                         // obtenemos cada uno de los valores y los ponemos en la variable "valores"
-                        valores0 = elementosTD[0].innerHTML;
-                        valores1 = elementosTD[1].innerHTML;
+                        valores0 = elementosTD[1].innerHTML;
+                        valores1 = elementosTD[2].innerHTML;
                     }
                     document.getElementById("UsuarioM").value = valores0;
                     document.getElementById("PassM").value = valores1;
@@ -469,16 +523,19 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                 // Cambios de productos
                 const FormMod = document.querySelector("#ModProduct");
+                var PermisosMod = PermisosGenerales();
 
                 // Cambios de productos
                 FormMod.addEventListener("submit", Enviar);
 
                 function Enviar(e) {
 
+                    var permisosDados = obtenerPermisosSeleccionadosConModulo(PermisosMod);
+
                     e.preventDefault();
 
                     if ($("#UsuarioM").val() != "" && $("#Num_EmpPM").val() != "" && $("#PassM").val() != "") {
-                        socket.emit('Cambios_Usuario', { Usuario: $("#UsuarioM").val(), Nom_Emp: $("#Num_EmpPM").val(), Pass: $("#PassM").val() }, { OLDUser: valores0 });
+                        socket.emit('Cambios_Usuario', { Usuario: $("#UsuarioM").val(), Nom_Emp: $("#Num_EmpPM").val(), Pass: $("#PassM").val(), permisos: PermisosMod }, { OLDUser: valores0 });
 
                         socket.once('Usuario_Inexistente', function (Respuesta) {
                             alert(Respuesta.mensaje);
@@ -527,7 +584,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     });
                 }
             }
-        } else if (pathname === "/users/consulPro" && Permisos['ALMACÉN'].includes('4')) {
+        } else if (pathname === "/users/consulPro" && (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('3'))) {
             // Asignación del evento de clic en los botones de eliminar
             window.addEventListener('DOMContentLoaded', () => {
                 const botonesEliminar = document.getElementsByClassName("BotonER");
@@ -1109,8 +1166,21 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     recibirSocket('Equipo_Respuesta');
                 }
             });
-        } else if (pathname == "/users/consulEqp" && Permisos['EQUIPOS'].includes('4')) {
+        } else if (pathname == "/users/consulEqp" && (Permisos['EQUIPOS'].includes('4') || Permisos['EQUIPOS'].includes('2') || Permisos['EQUIPOS'].includes('3'))) {
             cargarSelect('#NombreEmp');
+
+            const thead = document.querySelector("#firstrow");
+
+            let CabHTML = "";
+
+            if (Permisos['EQUIPOS'].includes('2')) {
+                CabHTML += `<th>Eliminar</th>`;
+            }
+            if (Permisos['EQUIPOS'].includes('3')) {
+                CabHTML += `<th>Modificar</th>`;
+            }
+
+            thead.innerHTML += CabHTML;
 
             //Formulario desplegable
             const Equipos = $('#EquipM');
@@ -1378,7 +1448,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
     if (!Permisos['MOBILIARIO']) {
         location.href = "index";
     } else {
-        if (pathname == "/users/consulMob" && Permisos['MOBILIARIO'].includes('4')) {
+        if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('3'))) {
             cargarSelect('#NombreEmp');
             socket.emit("Consul_Mobiliario");
 
