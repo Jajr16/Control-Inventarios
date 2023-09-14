@@ -29,3 +29,12 @@ Error: WARN_DATA_TRUNCATED: Data truncated for column 'modulo' at row 1 | Error 
 Error: WARN_DATA_TRUNCATED: Data truncated for column 'modulo' at row 1 | Error obtenido el -> 13/09/2023 20:41
 Error: WARN_DATA_TRUNCATED: Data truncated for column 'modulo' at row 1 | Error obtenido el -> 13/09/2023 20:49
 Error: WARN_DATA_TRUNCATED: Data truncated for column 'modulo' at row 1 | Error obtenido el -> 13/09/2023 20:49
+Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect integer value: 'SI' for column 'Num_emp' at row 1 | Error obtenido el -> 14/09/2023 12:10
+Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect integer value: 'SI' for column 'Num_emp' at row 1 | Error obtenido el -> 14/09/2023 12:10
+Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect integer value: 'SI' for column 'Num_emp' at row 1 | Error obtenido el -> 14/09/2023 12:10
+Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect integer value: 'AGUA' for column 'Num_emp' at row 1 | Error obtenido el -> 14/09/2023 12:15
+Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect integer value: 'AGUA' for column 'Num_emp' at row 1 | Error obtenido el -> 14/09/2023 12:23
+Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect integer value: 'FGHJ' for column 'Num_emp' at row 1 | Error obtenido el -> 14/09/2023 12:23
+Error: ER_BAD_FIELD_ERROR: Unknown column 'Area' in 'field list' | Error obtenido el -> 14/09/2023 12:32
+Error: ER_BAD_FIELD_ERROR: Unknown column 'Area' in 'field list' | Error obtenido el -> 14/09/2023 12:34
+Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect integer value: 'FGHFF' for column 'Cantidad' at row 12 | Error obtenido el -> 14/09/2023 12:34

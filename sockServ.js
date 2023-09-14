@@ -1,23 +1,26 @@
-var app = require('./app');
-var http = require('http');
-var server = http.createServer(app);
-const io = require('socket.io')(server);
+// Importar módulos necesarios
+var app = require('./app');  // Importar la aplicación Express definida en 'app.js'
+var http = require('http');   // Importar el módulo HTTP de Node.js
+var server = http.createServer(app);  // Crear un servidor HTTP utilizando la aplicación Express
 
-//Importar Base de datos
-var db = require("./Conexion/BaseDatos");
-const Excel = require('exceljs');
-const path = require('path');
+const io = require('socket.io')(server);  // Configurar Socket.io para trabajar con el servidor HTTP
 
-const fs = require('fs');
+// Importar Base de datos y otras dependencias
+var db = require("./Conexion/BaseDatos"); // Importar la conexión a la base de datos
+const Excel = require('exceljs');  // Importar la librería para trabajar con archivos Excel
+const path = require('path');   // Importar el módulo 'path' de Node.js para trabajar con rutas de archivos
 
-// Fecha para generar excel
-const date = new Date();
+const fs = require('fs');  // Importar el módulo 'fs' para trabajar con el sistema de archivos
+
+// Definir variables de fecha y contador
+const date = new Date();  // Obtener la fecha y hora actual
 let fechaDia = date.getDate();
 let fechaMes = date.getMonth() + 1;
 let fechaAño = date.getFullYear();
 let fechaHora = date.getHours();
 let fechaMinutos = date.getMinutes();
 
+// Formatear la fecha y hora para que tengan dos dígitos en caso necesario
 if (fechaMes < 10) {
     fechaMes = "0" + fechaMes;
 }
@@ -27,17 +30,20 @@ if (fechaDia < 10) {
 
 var contador = 1;
 var contadorS = 1;
-// Llamar a la función generatePDF
+
+// Importar funciones para generar archivos PDF
 const { mobiliario_generatePDF } = require('./PDF_mobiliario.js');
-// Llamar a la función Equipos_generatePDF
 const { equipos_generatePDF } = require('./PDF_equipos.js');
-//MENSAJE DE ERROR A ENVIAR
+
+// Definir mensaje de error
 var MensajeError = "Hubo un error, favor de contactar al personal de sistemas.";
-//Escuchar servidor
+
+// Escuchar en el puerto 3001 y mostrar mensaje en consola cuando el servidor se inicie
 server.listen(3001, () => {
     console.log('Servidor iniciado en el puerto 3001.');
 });
 
+// Función para manejar errores y escribir en un archivo de registro
 async function Errores(Data) {
     fs.appendFile('ErrorLogs.txt', (Data.toString() + ` | Error obtenido el -> ${fechaDia}/${fechaMes}/${fechaAño} ${fechaHora}:${fechaMinutos}\n`), (error) => {
         if (error) {
@@ -47,59 +53,64 @@ async function Errores(Data) {
     });
 }
 
-// Configuración de socket.io
+// Configuración de Socket.io para manejar conexiones de clientes
 io.on('connection', (socket) => {
     console.log('Cliente conectado');
 
+    // Generar nombres de archivos basados en la fecha y hora
     let nombreArchivoA = "Almacen" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
     let nombreArchivoM = "Mobiliario" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
     let nombreArchivoE = "Equipo" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
     let nombreSacarProd = "Retiro_Almacen" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
 
-    // Login
+    // Manejar eventos de inicio de sesión (Login)
     socket.on('LG', async (data) => {
-
-        console.log('Datos recibidos:', data);
-        // Autenticar al usuario utilizando la lógica definida anteriormente
+        // Autenticar al usuario utilizando la base de datos
         db.query('select*from usuario where Usuario = BINARY  ? and Pass = BINARY  ?', [data.User, data.Pass], function (err, result) {
             console.log(result);
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
-                if (result.length > 0) {//Si sí hizo una búsqueda
+            if (err) {
+                Errores(err);
+                socket.emit('SystemError');
+            } else {
+                if (result.length > 0) {
+                    // Si el usuario existe en la base de datos, enviar información al cliente
+                    // Incluye permisos de módulos
                     db.query("select permiso, modulo from permisos where Usuario = BINARY ?", [data.User], function (err, res) {
-                        if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+                        if (err) {
+                            Errores(err);
+                            socket.emit('SystemError');
+                        }
                         if (res.length > 0) {
-
-                            permisosModulos = {};
-
+                            // Organizar permisos por módulo y enviar al cliente
+                            let permisosModulos = {};
                             res.forEach(row => {
                                 if (!permisosModulos[row.modulo]) {
-                                    permisosModulos[row.modulo] = []; // Inicializar la lista de permisos para cada módulo
+                                    permisosModulos[row.modulo] = [];
                                 }
                                 permisosModulos[row.modulo].push(row.permiso);
                             });
-
-                            socket.emit('logInOK', { Usuario: result[0].Usuario, permisosModulos });//Mandar usuario y token al cliente
+                            socket.emit('logInOK', { Usuario: result[0].Usuario, permisosModulos });
                         }
                     });
                 } else {
                     console.log(result);
-                    socket.emit('logInError', { mensaje: 'Nombre de usuario o contraseña incorrectos.' });//Mandar mensaje de error a cliente
+                    socket.emit('logInError', { mensaje: 'Nombre de usuario o contraseña incorrectos.' });
                 }
             }
         });
-
     });
 
-    // Consultas de productos
+    // Manejar consultas de productos (Consultas de productos)
     socket.on('Consul_Prod', async () => {
-        // Autenticar que haga las consultas
+        // Consultar productos en la base de datos y enviar al cliente
         db.query('select *from almacen order by eliminado', function (err, result) {
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
-                if (result.length > 0) {//Si sí hizo una búsqueda
+            if (err) {
+                Errores(err);
+                socket.emit('SystemError');
+            } else {
+                if (result.length > 0) {
                     for (var i = 0; i < result.length; i++) {
-                        socket.emit('Desp_Productos', { Cod_Barras: result[i].Cod_Barras, Categoria: result[i].Categoria, NArt: result[i].Articulo, NMarca: result[i].Marca, Desc: result[i].Descripcion, Unidad: result[i].Unidad, Existencia: result[i].Existencia, eliminado: result[i].eliminado });//Mandar usuario y token al cliente
+                        socket.emit('Desp_Productos', { Cod_Barras: result[i].Cod_Barras, Categoria: result[i].Categoria, NArt: result[i].Articulo, NMarca: result[i].Marca, Desc: result[i].Descripcion, Unidad: result[i].Unidad, Existencia: result[i].Existencia, eliminado: result[i].eliminado });
                     }
                     socket.emit('ButtonUp');
                 }
@@ -108,12 +119,16 @@ io.on('connection', (socket) => {
         });
     });
 
-    //Buscar facturas
+    // Buscar facturas
     socket.on('Traer_Facturas', async (data) => {
+        // Consultar facturas y productos relacionados en la base de datos
         db.query('select almacen.Articulo, factus_productos.Nfactura, factus_productos.Cantidad, factus_productos.FIngreso, facturas_almacen.Ffact, facturas_almacen.Proveedor from factus_productos inner join facturas_almacen on facturas_almacen.Num_Fact = factus_productos.Nfactura inner join almacen on factus_productos.Cod_Barras = almacen.Cod_Barras where factus_productos.Cod_Barras = ?', data, function (err, result) {
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
-                if (result.length > 0) {//Si sí hizo una búsqueda
+            if (err) {
+                Errores(err);
+                socket.emit('SystemError');
+            } else {
+                if (result.length > 0) {
+                    // Procesar y enviar datos de facturas al cliente
                     let FecFactura = [];
                     let NumFactu = [];
                     let Canti = [];
@@ -123,14 +138,14 @@ io.on('connection', (socket) => {
                     for (var i = 0; i < result.length; i++) {
                         var FechasIngresos = new Date(result[i].FIngreso);
                         var Fecha_Factura = new Date(result[i].Ffact);
-                        //Agregar datos al arreglo
+                        // Agregar datos al arreglo
                         FecFactura.push(Fecha_Factura.toISOString().slice(0, 10));
                         NumFactu.push(result[i].Nfactura);
                         Canti.push(result[i].Cantidad);
                         FIngre.push(FechasIngresos.toISOString().slice(0, 10));
                         Prove.push(result[i].Proveedor);
-
                     }
+                    // Enviar datos de facturas al cliente
                     socket.emit("Fact_Enviadas", { NomProd: result[0].Articulo, NFactura: NumFactu, Cantidad: Canti, FIngreso: FIngre, FFactura: FecFactura, Proveedor: Prove });
 
                     socket.emit("BotonModalFacturas");
@@ -143,35 +158,42 @@ io.on('connection', (socket) => {
 
     // Altas de productos
     socket.on('Alta_Prod', async (data) => {
-
-        //Autentificar que no exista un producto igual
+        // Autenticar si un producto con el mismo código de barras ya existe en la base de datos
         db.query('select*from almacen where Cod_Barras = ?', [data.CodBarras], function (err, result) {
-
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
-
-                if (result.length > 0) {//Si sí hizo una búsqueda
+            if (err) {
+                Errores(err);
+                socket.emit('SystemError');
+            } else {
+                if (result.length > 0) {
+                    // Enviar mensaje al cliente si el producto ya existe
                     socket.emit('Producto_Existente', { mensaje: "Este artículo ya estaba registrado.\nEn caso de que quiera agregar más cantidad de este producto, por favor ingrese a la página de 'Ingresar más productos'." });
                 } else {
-                    //Se agrega productos a la BD
+                    // Agregar un nuevo producto a la base de datos
                     db.query('insert into almacen values (?,?,?,?,?,?,?,?)', [data.CodBarras, data.Cate, data.Producto, data.Marca, data.Descripcion, data.Unidad, data.Cantidad, 0], function (err2, result) {
-                        if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
-                        else {
+                        if (err2) {
+                            Errores(err2);
+                            socket.emit('SystemError');
+                        } else {
                             if (result) {
-                                db.query('insert into Facturas_Almacen values(?,?,?)', [data.NumFactura, data.FechaFac, data.Proveedor], function (err1, result) {//Insertar factura
-                                    if (err1) { Errores(err1); socket.emit('SystemError'); } // Se hace un control de errores
-                                    else {
+                                // Insertar la factura relacionada con el producto
+                                db.query('insert into Facturas_Almacen values(?,?,?)', [data.NumFactura, data.FechaFac, data.Proveedor], function (err1, result) {
+                                    if (err1) {
+                                        Errores(err1);
+                                        socket.emit('SystemError');
+                                    } else {
                                         if (result) {
+                                            // Insertar la relación entre producto y factura
                                             db.query('insert into factus_productos values(?,?,?,?)', [data.CodBarras, data.NumFactura, data.Cantidad, data.FecAct], function (err, result) {
-                                                if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                                                else {
+                                                if (err) {
+                                                    Errores(err);
+                                                    socket.emit('SystemError');
+                                                } else {
                                                     if (result) {
                                                         console.log("Resultado de inserción de productos: ", result);
-                                                        socket.emit('Producto_Inexistente', { mensaje: 'Producto dado de alta.' });//Mandar mensaje de error a cliente
+                                                        socket.emit('Producto_Inexistente', { mensaje: 'Producto dado de alta.' });
                                                     }
                                                 }
                                             });
-
                                         }
                                     }
                                 });
@@ -181,50 +203,50 @@ io.on('connection', (socket) => {
                 }
             }
         });
-
         data.length = 0;
-
     });
 
     // Bajas en productos
     socket.on('Bajas_Prod', async (data) => {
-
-        // Autenticar que haga las consultas
+        // Consultar productos en la base de datos y marcar como eliminado
         db.query('select*from almacen', function (err, result) {
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
-                if (result.length > 0) {//Si sí hizo una búsqueda
+            if (err) {
+                Errores(err);
+                socket.emit('SystemError');
+            } else {
+                if (result.length > 0) {
                     db.query('update almacen set eliminado = 1 where Cod_Barras = ?;', [data], function (err, result) {
-
-                        if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                        else {
+                        if (err) {
+                            Errores(err);
+                            socket.emit('SystemError');
+                        } else {
                             if (result.affectedRows > 0) {
                                 console.log("Resultado de eliminacion de productos: ", result);
-                                socket.emit('Producto_Eliminado', { mensaje: 'Producto dado de baja.' });//Mandar mensaje de éxito a cliente
+                                socket.emit('Producto_Eliminado', { mensaje: 'Producto dado de baja.' });
                             } else {
                                 socket.emit('Error', { mensaje: "Producto no eliminado, inténtelo de nuevo." });
                             }
                         }
                     });
-
                 } else {
-                    socket.emit('Productos_Inexistentes', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
+                    socket.emit('Productos_Inexistentes', { mensaje: 'No hay datos para mostrar' });
                 }
             }
         });
-
     });
 
     // Cambios en productos
     socket.on('Cambios_Prod', async (data, dataOld) => {
-        //Se agrega productos a la BD
+        // Actualizar datos de productos en la base de datos
         db.query('update almacen set Cod_Barras = ?, Categoria = ?, Articulo = ?, Marca = ?, Descripcion = ?, Unidad = ? where Cod_Barras = ?', [data.CodBarras, data.Cate, data.Producto, data.Marca, data.Descripcion, data.Unidad, dataOld.CBO], function (err2, result) {
-            if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
+            if (err2) {
+                Errores(err2);
+                socket.emit('SystemError');
+            } else {
                 if (result.affectedRows > 0) {
-                    socket.emit('Producto_Inexistente', { mensaje: 'Artículo modificado con éxito.' });//Mandar mensaje a cliente
+                    socket.emit('Producto_Inexistente', { mensaje: 'Artículo modificado con éxito.' });
                 } else {
-                    socket.emit('Fallo_Mod', { mensaje: "No se pudo modificar el artículo." })
+                    socket.emit('Fallo_Mod', { mensaje: "No se pudo modificar el artículo." });
                 }
             }
         });
@@ -232,29 +254,33 @@ io.on('connection', (socket) => {
 
     // Cambios en facturas
     socket.on("Cambios_Facts", async (data, dataOld) => {
-
+        // Actualizar datos de facturas en la base de datos
         db.query('update factus_productos set Cantidad = ? where Nfactura = ? and Cod_Barras = ?', [data.Cantidad, dataOld.NFO, data.CodBarras], function (err, result) {
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
+            if (err) {
+                Errores(err);
+                socket.emit('SystemError');
+            } else {
                 if (result.affectedRows > 0) {
                     db.query('select*from factus_productos where Num_Fact = ? ', [data.NumFactu], function () {
                         if (result.length > 0) {
-                            socket.emit('Fallo_Fac', { mensaje: 'Ese número de factura ya está registrado, favor de ingresar otro.' })
+                            socket.emit('Fallo_Fac', { mensaje: 'Ese número de factura ya está registrado, favor de ingresar otro.' });
                         } else {
-                            db.query('update Facturas_Almacen set Num_Fact = ?, Ffact = ?, Proveedor = ? where Num_Fact = ?', [data.NumFactura, data.FechaFac, data.Proveedor, dataOld.NFO], function (err1, result) {//Insertar factura
-                                if (err1) { Errores(err1); socket.emit('SystemError'); } // Se hace un control de errores
-                                else {
+                            db.query('update Facturas_Almacen set Num_Fact = ?, Ffact = ?, Proveedor = ? where Num_Fact = ?', [data.NumFactura, data.FechaFac, data.Proveedor, dataOld.NFO], function (err1, result) {
+                                if (err1) {
+                                    Errores(err1);
+                                    socket.emit('SystemError');
+                                } else {
                                     if (result.affectedRows > 0) {
                                         socket.emit("Factu_Exitosa", { mensaje: "La factura fue modificada con éxito." });
                                     } else {
-                                        socket.emit('Fallo_Fac', { mensaje: "No se pudo modificar la factura." })
+                                        socket.emit('Fallo_Fac', { mensaje: "No se pudo modificar la factura." });
                                     }
                                 }
                             });
                         }
                     });
                 } else {
-                    socket.emit('Fallo_ModFac', { mensaje: "No se pudo modificar la factura de almacen." })
+                    socket.emit('Fallo_ModFac', { mensaje: "No se pudo modificar la factura de almacen." });
                 }
             }
         });
@@ -262,56 +288,78 @@ io.on('connection', (socket) => {
 
     // Consultas de productos existentes
     socket.on('Consul_ProdExist', async () => {
-
-        // Autenticar que haga las consultas
+        // Realizar una consulta a la base de datos para obtener productos existentes
         db.query('select *from almacen order by eliminado', function (err, result) {
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
-                if (result.length > 0) {//Si sí hizo una búsqueda
+            if (err) {
+                Errores(err);
+                socket.emit('SystemError');
+            } else {
+                if (result.length > 0) {
+                    // Enviar información de productos existentes al cliente
                     for (var i = 0; i < result.length; i++) {
-                        //FIngreso: FechasIngresos.toISOString().slice(0, 10),
-
-                        socket.emit('Desp_ProductosExist', { Cod_Barras: result[i].Cod_Barras, Categoria: result[i].Categoria, NArt: result[i].Articulo, NMarca: result[i].Marca, Desc: result[i].Descripcion, Unidad: result[i].Unidad, Existencia: result[i].Existencia, eliminado: result[i].eliminado });//Mandar usuario y token al cliente
+                        socket.emit('Desp_ProductosExist', {
+                            Cod_Barras: result[i].Cod_Barras,
+                            Categoria: result[i].Categoria,
+                            NArt: result[i].Articulo,
+                            NMarca: result[i].Marca,
+                            Desc: result[i].Descripcion,
+                            Unidad: result[i].Unidad,
+                            Existencia: result[i].Existencia,
+                            eliminado: result[i].eliminado
+                        });
                     }
+                    // Habilitar opciones para agregar y eliminar productos existentes
                     socket.emit('AgregarProdExist');
                     socket.emit('EliminarProdExist');
                 } else {
-                    socket.emit('Productos_Inexistentes', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
+                    socket.emit('Productos_Inexistentes', { mensaje: 'No hay datos para mostrar' });
                 }
                 result.length = 0;
             }
         });
-
     });
 
-    // Cambios en productos existentes
+    // Altas de productos existentes
     socket.on('Altas_ProdExist', async (data) => {
+        // Verificar si la factura ya existe en la base de datos
         db.query('select*from facturas_almacen where Num_Fact = ?', [data.NumFactura], function (err2, result) {
-            if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
+            if (err2) {
+                Errores(err2);
+                socket.emit('SystemError');
+            } else {
                 if (result.length > 0) {
+                    // Verificar si la relación entre producto y factura ya existe
                     db.query('select*from Factus_Productos where Nfactura = ? and Cod_Barras = ?', [data.NumFactura, data.Cod_Barras], function (err2, result1) {
-                        if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
-                        else {
+                        if (err2) {
+                            Errores(err2);
+                            socket.emit('SystemError');
+                        } else {
                             if (result1.length > 0) {
+                                // Enviar mensaje al cliente si la factura ya está registrada para este producto
                                 socket.emit('Ya_Registrado', { mensaje: 'Factura registrada anteriormente para este producto.' });
                             } else {
+                                // Agregar la relación entre producto y factura
                                 db.query('insert into Factus_Productos values (?,?,?,?)', [data.Cod_Barras, data.NumFactura, data.Cantidad, data.FecAct], function (err, result) {
-                                    if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                                    else {
+                                    if (err) {
+                                        Errores(err);
+                                        socket.emit('SystemError');
+                                    } else {
                                         if (result) {
+                                            // Actualizar la existencia de productos
                                             db.query('update almacen set Existencia = ? where Cod_Barras = ?', [(parseInt(data.Existencia) + parseInt(data.Cantidad)), data.Cod_Barras], function (err2, result1) {
-                                                if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
-                                                else {
+                                                if (err2) {
+                                                    Errores(err2);
+                                                    socket.emit('SystemError');
+                                                } else {
                                                     if (result.affectedRows > 0) {
-                                                        socket.emit('Factura_Agregada', { mensaje: 'Factura agregada con éxito.' });//Mandar mensaje a cliente
+                                                        socket.emit('Factura_Agregada', { mensaje: 'Factura agregada con éxito.' });
                                                     } else {
-                                                        socket.emit('Fallo_Factura', { mensaje: "No se pudo actualizar la existencia de productos." })
+                                                        socket.emit('Fallo_Factura', { mensaje: "No se pudo actualizar la existencia de productos." });
                                                     }
                                                 }
                                             });
                                         } else {
-                                            socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura de productos." })
+                                            socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura de productos." });
                                         }
                                     }
                                 });
@@ -319,29 +367,33 @@ io.on('connection', (socket) => {
                         }
                     });
                 } else {
-                    //Se agrega productos a la BD
+                    // Agregar una nueva factura y la relación entre producto y factura
                     db.query('insert into facturas_almacen values (?,?,?)', [data.NumFactura, data.FechaFac, data.Proveedor], function (err2, result) {
-                        if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
-                        else {
+                        if (err2) {
+                            Errores(err2);
+                            socket.emit('SystemError');
+                        } else {
                             if (result) {
                                 db.query('insert into Factus_Productos values (?,?,?,?)', [data.Cod_Barras, data.NumFactura, data.Cantidad, data.FecAct], function (err, result) {
                                     if (result) {
                                         db.query('update almacen set Existencia = ? where Cod_Barras = ?', [(parseInt(data.Existencia) + parseInt(data.Cantidad)), data.Cod_Barras], function (err2, result1) {
-                                            if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
-                                            else {
+                                            if (err2) {
+                                                Errores(err2);
+                                                socket.emit('SystemError');
+                                            } else {
                                                 if (result.affectedRows > 0) {
-                                                    socket.emit('Factura_Agregada', { mensaje: 'Factura agregada con éxito.' });//Mandar mensaje a cliente
+                                                    socket.emit('Factura_Agregada', { mensaje: 'Factura agregada con éxito.' });
                                                 } else {
-                                                    socket.emit('Fallo_Factura', { mensaje: "No se pudo actualizar la existencia de productos." })
+                                                    socket.emit('Fallo_Factura', { mensaje: "No se pudo actualizar la existencia de productos." });
                                                 }
                                             }
                                         });
                                     } else {
-                                        socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura de productos." })
+                                        socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura de productos." });
                                     }
                                 });
                             } else {
-                                socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura." })
+                                socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura." });
                             }
                         }
                     });
@@ -350,18 +402,23 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Obtener la fecha y hora actual
     const hoy = new Date();
 
+    // Obtener el día, el mes y el año
     let dia = hoy.getDate();
-    let mes = hoy.getMonth() + 1;
+    let mes = hoy.getMonth() + 1; // Los meses comienzan desde 0, por lo que se agrega 1 para obtener el mes actual
     let anio = hoy.getFullYear();
 
+    // Obtener los segundos, minutos y horas
     let segundos = hoy.getSeconds();
     let minutos = hoy.getMinutes();
     let horas = hoy.getHours();
 
+    // Inicializar una variable para el formato de fecha y hora
     let formato1 = "";
 
+    // Agregar ceros a la izquierda si es necesario para asegurarse de que tengan dos dígitos
     if (segundos < 10) {
         segundos = "0" + segundos;
     }
@@ -378,38 +435,48 @@ io.on('connection', (socket) => {
         dia = "0" + dia;
     }
 
+    // Crear una cadena de formato de fecha y hora en el formato deseado (YYYY-MM-DD HH:mm:ss)
     formato1 = `${anio}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
+
 
     // Bajas en productos existentes
     socket.on('Bajas_ProdExist', async (data) => {
-
+        // Consultar la existencia actual del producto en la base de datos
         db.query('select Existencia from almacen where Cod_Barras = ? and Articulo = ?', [data.Cod_Barras, data.Articulo], function (err, result) {
-
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
+            if (err) {
+                Errores(err);
+                socket.emit('SystemError');
+            } else {
                 if (result.length > 0) {
+                    // Verificar si la cantidad a sacar no excede la existencia del producto
                     if (parseInt(result[0].Existencia) > 0 && parseInt(data.Cantidad) <= parseInt(result[0].Existencia)) {
+                        // Consultar el número de empleado a partir del nombre del empleado
                         db.query('select num_emp from empleado where Nom = ?', [data.Emp], function (err, res) {
-                            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                            else {
+                            if (err) {
+                                Errores(err);
+                                socket.emit('SystemError');
+                            } else {
                                 if (res.length > 0) {
+                                    // Registrar la salida de productos en la tabla de salidas_productos
                                     db.query('insert into salidas_productos values (?,?,?,?)', [data.Cod_Barras, formato1, res[0].num_emp, data.Cantidad], function (err2, result) {
-                                        if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
-                                        else {
+                                        if (err2) {
+                                            Errores(err2);
+                                            socket.emit('SystemError');
+                                        } else {
                                             if (result.affectedRows > 0) {
-                                                socket.emit('Eliminacion_Realizada', { mensaje: 'Productos sacados con éxito.' });//Mandar mensaje a cliente
+                                                socket.emit('Eliminacion_Realizada', { mensaje: 'Productos sacados con éxito.' });
                                             } else {
-                                                socket.emit('Fallo_BajasExist', { mensaje: "No se pudo actualizar la existencia de productos." })
+                                                socket.emit('Fallo_BajasExist', { mensaje: "No se pudo actualizar la existencia de productos." });
                                             }
                                         }
                                     });
                                 } else {
-                                    socket.emit('Fallo_BajasExist', { mensaje: "No se encontró ningún empleado con ese nombre, actualice la página." })
+                                    socket.emit('Fallo_BajasExist', { mensaje: "No se encontró ningún empleado con ese nombre, actualice la página." });
                                 }
                             }
                         });
                     } else {
-                        socket.emit('Fallo_BajasExist', { mensaje: "Cantidad de productos a sacar superior a existencia." })
+                        socket.emit('Fallo_BajasExist', { mensaje: "Cantidad de productos a sacar superior a existencia." });
                     }
                 }
             }
@@ -418,44 +485,49 @@ io.on('connection', (socket) => {
 
     // Consultas de usuario
     socket.on('Consul_Usuario', async () => {
-
-        // Autenticar que haga las consultas
+        // Realizar una consulta para obtener información de usuarios
         db.query('select empleado.Nom, usuario.Usuario, usuario.Pass from usuario inner join empleado on usuario.Num_Emp = empleado.Num_emp;', function (err, result) {
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
-                if (result.length > 0) {//Si sí hizo una búsqueda
+            if (err) {
+                Errores(err);
+                socket.emit('SystemError');
+            } else {
+                if (result.length > 0) {
+                    // Enviar información de usuarios al cliente
                     for (var i = 0; i < result.length; i++) {
-                        socket.emit('Desp_Usuario', { Empleado: result[i].Nom, Usuario: result[i].Usuario, Pass: result[i].Pass });//Mandar usuario y token al cliente
+                        socket.emit('Desp_Usuario', { Empleado: result[i].Nom, Usuario: result[i].Usuario, Pass: result[i].Pass });
                     }
+                    // Enviar señal para actualizar la interfaz del cliente
                     socket.emit('ButtonUp');
                 }
                 result.length = 0;
             }
         });
-
     });
 
     // Altas de Usuarios
     socket.on('Registro_Usuario', async (data) => {
-        //Autentificar que no exista un usuario igual
-        db.query('select*from Empleado where Nom = ?', [data.NombreEmp], function (err, resultG) {
-
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
-                if (resultG.length > 0) {//Si sí hizo una búsqueda
-
-                    db.query('select*from Usuario where Usuario = ?', [data.N_User], function (err, result) {
-
-                        if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                        else {
-
-                            if (result.length > 0) {//Si sí hizo una búsqueda
+        // Autenticar que no exista un usuario igual en la base de datos de Empleado
+        db.query('select * from Empleado where Nom = ?', [data.NombreEmp], function (err, resultG) {
+            if (err) {
+                Errores(err);
+                socket.emit('SystemError');
+            } else {
+                if (resultG.length > 0) {
+                    // Verificar si el usuario ya está registrado
+                    db.query('select * from Usuario where Usuario = ?', [data.N_User], function (err, result) {
+                        if (err) {
+                            Errores(err);
+                            socket.emit('SystemError');
+                        } else {
+                            if (result.length > 0) {
                                 socket.emit('Usuario_Existente', { mensaje: "Este usuario ya está registrado." });
                             } else {
+                                // Insertar el nuevo usuario en la tabla de Usuario
                                 db.query('insert into Usuario values (?,?,?)', [resultG[0].Num_emp, data.N_User, data.ContraNueva], function (err, result) {
-
-                                    if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-
+                                    if (err) {
+                                        Errores(err);
+                                        socket.emit('SystemError');
+                                    }
                                     if (result) {
                                         var errores = false; // Variable para rastrear si hubo errores
                                         data.permisos.forEach(function (permisoUser) {
@@ -466,9 +538,13 @@ io.on('connection', (socket) => {
                                             else if (permisoUser.accion === 'Consultas') accion = 4;
 
                                             console.log(permisoUser.modulo.slice(1));
+                                            // Insertar permisos en la tabla de permisos
                                             db.query('insert into permisos values (?,?,?)', [accion, data.N_User, permisoUser.modulo.slice(1)], function (err, res) {
-                                                if (err) { Errores(err); socket.emit('SystemError'); errores = true; } // Se hace un control de errores
-                                                else if (res) {
+                                                if (err) {
+                                                    Errores(err);
+                                                    socket.emit('SystemError');
+                                                    errores = true;
+                                                } else if (res) {
                                                     console.log("Permiso dado");
                                                 }
                                             });
@@ -479,14 +555,12 @@ io.on('connection', (socket) => {
                                     } else {
                                         socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
                                     }
-
                                 });
-
                             }
                         }
                     });
                 } else {
-                    socket.emit('Usuario_Error', { mensaje: "No se encontró el usuario, inténtelo de nuevo, si el problema persiste, llame a los encargados de sistemas." });
+                    socket.emit('Usuario_Error', { mensaje: "No se encontró el usuario, inténtelo de nuevo o llame a los encargados de sistemas." });
                 }
             }
         });
@@ -494,43 +568,46 @@ io.on('connection', (socket) => {
 
     // Bajas en usuarios
     socket.on('Bajas_Usuario', async (data) => {
-
-        // Autenticar que haga las consultas
-        db.query('select*from Usuario', function (err, result) {
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
-                if (result.length > 0) { //Si sí hizo una búsqueda
+        // Consultar la tabla de Usuario para eliminar un usuario
+        db.query('select * from Usuario', function (err, result) {
+            if (err) {
+                Errores(err);
+                socket.emit('SystemError');
+            } else {
+                if (result.length > 0) {
+                    // Eliminar el usuario de la tabla Usuario
                     db.query('delete from Usuario where Usuario = ?', data, function (err, result) {
-                        if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                        else {
+                        if (err) {
+                            Errores(err);
+                            socket.emit('SystemError');
+                        } else {
                             if (result.affectedRows > 0) {
-                                console.log("Resultado de eliminacion de usuario: ", result);
-                                socket.emit('RespDelUs', { mensaje: 'Usuario dado de baja.' });//Mandar mensaje de éxito a cliente
+                                console.log("Resultado de eliminación de usuario: ", result);
+                                socket.emit('RespDelUs', { mensaje: 'Usuario dado de baja.' });
                             } else {
                                 socket.emit('RespDelUs', { mensaje: "Usuario no eliminado, inténtelo de nuevo." });
                             }
                         }
                     });
-
                 } else {
-                    socket.emit('RespDelUs', { mensaje: 'No hay datos para mostrar' });//Mandar mensaje de error a cliente
+                    socket.emit('RespDelUs', { mensaje: 'No hay datos para mostrar' });
                 }
             }
         });
-
     });
 
     // Cambios en usuarios
     socket.on('Cambios_Usuario', async (data, dataOld) => {
-
-        //Se agrega productos a la BD
+        // Actualizar información de usuario en la tabla Usuario
         db.query('update Usuario set Usuario = ?, Pass = ? where Usuario = ?', [data.Usuario, data.Pass, dataOld.OLDUser], function (err2, result) {
-            if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
-                if (result.affectedRows > 0) { //Si sí hizo una búsqueda
-                    socket.emit('RespDelUs', { mensaje: 'Usuario modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
+            if (err2) {
+                Errores(err2);
+                socket.emit('SystemError');
+            } else {
+                if (result.affectedRows > 0) {
+                    socket.emit('RespDelUs', { mensaje: 'Usuario modificado con éxito.', Res: 'Si' });
                 } else {
-                    socket.emit('RespDelUs', { mensaje: "No se pudo modificar el usuario." })
+                    socket.emit('RespDelUs', { mensaje: "No se pudo modificar el usuario." });
                 }
             }
         });
@@ -539,20 +616,28 @@ io.on('connection', (socket) => {
     // Altas de empleado
     socket.on('Reg_Emp', async (data) => {
         console.log(data);
-        db.query('select*from Empleado where Nom = ?', [data.NombreEmp], function (err, result) {
-
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
-                if (result.length > 0) {//Si sí hizo una búsqueda
+        // Consultar si el empleado ya está registrado
+        db.query('select * from Empleado where Nom = ?', [data.NombreEmp], function (err, result) {
+            if (err) {
+                Errores(err);
+                socket.emit('SystemError');
+            } else {
+                if (result.length > 0) {
                     socket.emit('Res_Emp', { mensaje: "Este empleado ya está registrado." });
                 } else {
+                    // Consultar el número de empleado del jefe
                     db.query('select Num_emp from Empleado where Nom = ?', [data.NomJefe], function (err, result) {
-                        if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                        else {
-                            if (result.length > 0) {//Si sí hizo una búsqueda
+                        if (err) {
+                            Errores(err);
+                            socket.emit('SystemError');
+                        } else {
+                            if (result.length > 0) {
+                                // Insertar el nuevo empleado en la tabla Empleado
                                 db.query('insert into Empleado values(null, ?, ?, ?)', [data.NombreEmp, data.Area, result[0].Num_emp], function (err, res) {
-                                    if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                                    else {
+                                    if (err) {
+                                        Errores(err);
+                                        socket.emit('SystemError');
+                                    } else {
                                         if (res) {
                                             socket.emit('Res_Emp', { mensaje: "Empleado dado de alta." });
                                         }
@@ -570,9 +655,12 @@ io.on('connection', (socket) => {
 
     // Lista de empleados
     socket.on('List_empleados', (data) => {
+        // Consultar la lista de nombres de empleados
         db.query('select Nom from empleado', function (err, res) {
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-            else {
+            if (err) {
+                Errores(err);
+                socket.emit('SystemError');
+            } else {
                 if (res.length > 0) {
                     for (var i = 0; i < res.length; i++) {
                         if (data == "Jefes") socket.emit('ListaNombres2', { Nombres: res[i].Nom });
@@ -1603,7 +1691,7 @@ io.on('connection', (socket) => {
             else {
                 if (result.length > 0) {//Si sí hizo una búsqueda
                     for (var i = 0; i < result.length; i++) {
-                        socket.emit('Desp_Mobiliario', { Descripcion: result[i].Descripcion, NombreEmp: result[i].Nom });//Mandar usuario y token al cliente
+                        socket.emit('Desp_Mobiliario', { Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, AreaM: result[i].AreaM, NombreEmp: result[i].Nom });//Mandar usuario y token al cliente
                     }
                     socket.emit('ButtonUp');
                 }
@@ -1623,7 +1711,7 @@ io.on('connection', (socket) => {
 
                     var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
 
-                    db.query('insert into mobiliario values (NULL,?,?)', [data.Descripcion, num_emp], function (err2, result) {
+                    db.query('insert into mobiliario values (NULL,?,?,?,?,?)', [data.Descripcion, num_emp, data.Ubicacion, data.Cantidad, data.AreaM], function (err2, result) {
                         if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (result) {
@@ -1675,7 +1763,7 @@ io.on('connection', (socket) => {
                 if (result.length > 0) { //Si sí hizo una búsqueda
                     var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
                     //Se agrega productos a la BD
-                    db.query('update mobiliario set Descripcion = ?, Num_emp = ? where Descripcion = ?', [data.Descripcion, num_emp, dataOld.OLDDesc], function (err2, result) {
+                    db.query('update mobiliario set Descripcion = ?, Ubicacion = ?, Cantidad = ?, AreaM = ?, Num_emp = ? where Descripcion = ?', [data.Descripcion, data.Ubicacion, data.Cantidad, data.AreaM, num_emp, dataOld.OLDDesc], function (err2, result) {
                         if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (result.affectedRows > 0) { //Si sí hizo una búsqueda

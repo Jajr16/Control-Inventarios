@@ -50,10 +50,51 @@
                 <h4>Añadiendo Mobiliario</h4>
             </div>
             <form name="AltaMobiliario" id="AltaMobiliario">
-                <div class="Dos_Columnas Separacion">
+                <div class="Tres_Column Separacion">
                     <div>
                         <label>Descripción</label>
-                        <input autocomplete="off" type="text" id="DescM" name="DescM" required maxlength="400"
+                        <select id="DescM" name="DescM" required>
+                            <option value=""></option>
+                            <option>ARCHIVERO</option>
+                            <option>BANCO</option>
+                            <option>CAJONERA</option>
+                            <option>CAFETERA</option>
+                            <option>CARRITOS</option>
+                            <option>CRUCIFIJO</option>
+                            <option>CUADROS</option>
+                            <option>ESCRITORIO</option>
+                            <option>HORNO DE MICROONDAS</option>
+                            <option>HORNO ELECTRICO</option>
+                            <option>LOCKERS</option>
+                            <option>MESA</option>
+                            <option>MUEBLE CON ENTREPAÑOS</option>
+                            <option>MULTICONTACTOS</option>
+                            <option>PERCHERO</option>
+                            <option>PIZARRON</option>
+                            <option>PUPITRE</option>
+                            <option>RELOJ</option>
+                            <option>REFRIGERADOR</option>
+                            <option>ROTAFOLIO</option>
+                            <option>SILLA CON RUEDAS</option>
+                            <option>SILLA EJECUTIVA</option>
+                            <option>SILLA SIN RUEDAS</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Ubicación</label>
+                        <input autocomplete="off" type="text" id="UbiM" name="UbiM" required maxlength="400"
+                            oninput="mayus(this);" onkeypress="return checkA(event)">
+                    </div>
+                    <div>
+                        <label>Cantidad</label>
+                        <input autocomplete="off" type="number" id="CantidadM" name="CantidadM" required min="1"
+                          onkeypress="return checkN(event)">
+                    </div>
+                </div>
+                <div class="Dos_Columnas Separacion">
+                    <div>
+                        <label>Área</label>
+                        <input autocomplete="off" type="text" id="AreaM" name="AreaM" required maxlength="200"
                             oninput="mayus(this);" onkeypress="return checkA(event)">
                     </div>
                     <div>

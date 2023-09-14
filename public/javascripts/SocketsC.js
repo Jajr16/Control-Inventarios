@@ -1459,6 +1459,9 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 let filaHTML = `
                 <tr>
                     <td>${data.Descripcion}</td>
+                    <td>${data.Ubicacion}</td>
+                    <td>${data.Cantidad}</td>
+                    <td>${data.AreaM}</td>
                     <td>${data.NombreEmp}</td>`;
 
                 if (Permisos['MOBILIARIO'].includes('2')) {
@@ -1482,12 +1485,14 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         });
                     }
                 }
-
             });
 
             //Llenar datos en automático
             var valores0 = "";
             var valores1 = "";
+            var valores2 = "";
+            var valores3 = "";
+            var valores4 = "";
 
             //Modificar mobiliario
             socket.on('ButtonUp', () => {
@@ -1505,9 +1510,15 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         // obtenemos cada uno de los valores y los ponemos en la variable "valores"
                         valores0 = elementosTD[0].innerHTML;
                         valores1 = elementosTD[1].innerHTML;
+                        valores2 = elementosTD[2].innerHTML;
+                        valores3 = elementosTD[3].innerHTML;
+                        valores4 = elementosTD[4].innerHTML;
                     }
                     document.getElementById("DescM").value = valores0;
-                    document.getElementById("NombreEmp").value = valores1;
+                    document.getElementById("UbiM").value = valores1;
+                    document.getElementById("CantidadM").value = valores2;
+                    document.getElementById("AreaM").value = valores3;
+                    document.getElementById("NombreEmp").value = valores4;
                 }
 
                 // Cambios de mobiliario
@@ -1520,8 +1531,8 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     e.preventDefault();
 
-                    if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
-                        socket.emit('Cambios_Mobiliario', { Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() }, { OLDDesc: valores0 });
+                    if ($("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "" && $("#AreaM").val() != "" && $("#NombreEmp").val() != "") {
+                        socket.emit('Cambios_Mobiliario', { Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), AreaM: $("#AreaM").val(), NombreEmp: $("#NombreEmp").val() }, { OLDDesc: valores0 });
                     }
                 }
             });
@@ -1536,9 +1547,9 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
             function Enviar(e) {
                 e.preventDefault();
-                if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
+                if ($("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "" && $("#AreaM").val() != "" && $("#NombreEmp").val() != "") {
 
-                    enviarSocket('Alta_Mob', { Descripcion: $("#DescM").val(), NombreEmp: $("#NombreEmp").val() });
+                    enviarSocket('Alta_Mob', { Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), AreaM: $("#AreaM").val(), NombreEmp: $("#NombreEmp").val() });
 
                     recibirSocket('Mobiliario_Respuesta');
                 }

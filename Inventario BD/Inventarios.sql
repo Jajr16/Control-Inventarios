@@ -148,6 +148,14 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Mobiliario` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
+select*from Mobiliario;
+
+ALTER TABLE `Inventarios`.`Mobiliario`
+ADD COLUMN `Ubicacion` VARCHAR(400) NULL,
+ADD COLUMN `Cantidad` INT NULL,
+ADD COLUMN `AreaM` VARCHAR(200) NULL;
+
+alter table Mobiliario drop column Area;
 
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Facturas_Almacen`
@@ -339,11 +347,6 @@ drop table tokens;
 select*from usuario;
 select*from permisos;
 insert into permisos values
-(1,"a","ALMACÉN"),
-(4,"a","ALMACÉN"),
-(3,"a","ALMACÉN"),
-(4,"b","ALMACÉN"),
-(2,"b","ALMACÉN"),
 (1,"ajimenez","ALMACÉN"),#Altas
 (2,"ajimenez","ALMACÉN"),#Bajas
 (3,"ajimenez","ALMACÉN"),#Cambios
@@ -368,6 +371,32 @@ insert into permisos values
 (2,"ajimenez","RESPONSIVAS"),#Bajas
 (3,"ajimenez","RESPONSIVAS"),#Cambios
 (4,"ajimenez","RESPONSIVAS");#Consultas
+
+insert into permisos values
+(1,"armando","ALMACÉN"),#Altas
+(2,"armando","ALMACÉN"),#Bajas
+(3,"armando","ALMACÉN"),#Cambios
+(4,"armando","ALMACÉN"),#Consultas
+(1,"armando","MOBILIARIO"),#Altas
+(2,"armando","MOBILIARIO"),#Bajas
+(3,"armando","MOBILIARIO"),#Cambios
+(4,"armando","MOBILIARIO"),#Consultas
+(1,"armando","EQUIPOS"),#Altas
+(2,"armando","EQUIPOS"),#Bajas
+(3,"armando","EQUIPOS"),#Cambios
+(4,"armando","EQUIPOS"),#Consultas
+(1,"armando","USUARIOS"),#Altas
+(2,"armando","USUARIOS"),#Bajas
+(3,"armando","USUARIOS"),#Cambios
+(4,"armando","USUARIOS"),#Consultas
+(1,"armando","EMPLEADOS"),#Altas
+(2,"armando","EMPLEADOS"),#Bajas
+(3,"armando","EMPLEADOS"),#Cambios
+(4,"armando","EMPLEADOS"),#Consultas
+(1,"armando","RESPONSIVAS"),#Altas
+(2,"armando","RESPONSIVAS"),#Bajas
+(3,"armando","RESPONSIVAS"),#Cambios
+(4,"armando","RESPONSIVAS");#Consultas
 
 create table Factus_Productos(
 Cod_Barras nvarchar(45) not null,

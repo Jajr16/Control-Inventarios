@@ -1,5 +1,6 @@
 'use strict';
 
+// Importando funciones de popmotion necesarias
 var _window$popmotion = window.popmotion;
 var css = _window$popmotion.css;
 var transform = _window$popmotion.transform;
@@ -13,18 +14,18 @@ var interpolate = transform.interpolate;
 var trigger = undefined;
 var isClosing = false;
 
-// Select DOM
+// Seleccionar elementos del DOM
 var modalTriggersDom = document.querySelectorAll('.BotonMod');
 var dimmer = document.querySelector('.overlay');
 var modalContainer = document.querySelector('.modal-container');
 var modal = document.querySelector('.Contenedor');
 
-// Create CSS renderers
+// Crear renderizadores CSS
 var dimmerRenderer = css(dimmer);
 var modalContainerRenderer = css(modalContainer);
 var modalRenderer = css(modal);
 
-// Return the center x, y of a bounding box
+// Devolver el centro x, y de un cuadro delimitador
 function findCenter(_ref) {
   var top = _ref.top;
   var left = _ref.left;
@@ -38,9 +39,9 @@ function findCenter(_ref) {
 }
 
 /*
-  Generate a function that will take a progress value (0 - 1)
-  and use that to tween the modal from the source to the destination
-  bounding boxes
+  Generar una función que tomará un valor de progreso (0 - 1)
+  y lo utilizará para animar el modal desde la fuente hasta la
+  posición de destino de los cuadros delimitadores
 */
 var vRange = [0, 1];
 function generateModalTweener(sourceBBox, destinationBBox) {
@@ -67,21 +68,21 @@ function openModal(e) {
   if (e.target && e.target.classList.contains('BotonMod')) {
     trigger = e.target;
 
-    // Get bounding box of triggering element
+    // Obtener el cuadro delimitador del elemento que desencadenó
     var triggerBBox = trigger.getBoundingClientRect();
 
-    // Temporarily show modal container to measure modal
+    // Mostrar temporalmente el contenedor del modal para medir el modal
     dimmerRenderer.set('display', 'block').render();
     modalContainerRenderer.set('display', 'flex').render();
     modalRenderer.set('opacity', 0).render();
 
-    // Get bounding box of final modal position
+    // Obtener el cuadro delimitador final de la posición del modal
     var modalBBox = modal.getBoundingClientRect();
 
-    // Get a function to tween the modal from the trigger
+    // Obtener una función para animar el modal desde el desencadenante
     var modalTweener = generateModalTweener(triggerBBox, modalBBox);
 
-    // Fade in overlay
+    // Hacer aparecer la superposición
     tween({
       duration: 200,
       onUpdate: function onUpdate(v) {
