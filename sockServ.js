@@ -504,6 +504,19 @@ io.on('connection', (socket) => {
         });
     });
 
+    socket.on('PermisosUser', async (data) => {
+        db.query('select permiso, modulo from permisos where usuario = ?', [data], function (err, res) {
+            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+            else {
+                if (res.length > 0) {
+                    for (var i = 0; i < res.length; i++) {
+                        socket.emit('Desp_Permisos', { modulos: res[i].modulo, permisos: res[i].permiso });
+                    }
+                }
+            }
+        });
+    });
+
     // Altas de Usuarios
     socket.on('Registro_Usuario', async (data) => {
         // Autenticar que no exista un usuario igual en la base de datos de Empleado
@@ -600,12 +613,34 @@ io.on('connection', (socket) => {
     socket.on('Cambios_Usuario', async (data, dataOld) => {
         // Actualizar información de usuario en la tabla Usuario
         db.query('update Usuario set Usuario = ?, Pass = ? where Usuario = ?', [data.Usuario, data.Pass, dataOld.OLDUser], function (err2, result) {
-            if (err2) {
-                Errores(err2);
-                socket.emit('SystemError');
-            } else {
+            if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
+            else {
                 if (result.affectedRows > 0) {
-                    socket.emit('RespDelUs', { mensaje: 'Usuario modificado con éxito.', Res: 'Si' });
+                    db.query('delete from permisos where Usuario = ?', [data.Usuario], function (err, res) {
+                        if (err) { Errores(err); socket.emit('SystemError'); errores = true; } // Se hace un control de errores
+                        else {
+                            if (res.affectedRows > 0) {
+                                var errores = false; // Variable para rastrear si hubo errores
+                                data.permisos.forEach(function (permisoUser) {
+                                    var accion = 0;
+                                    if (permisoUser.accion === 'Altas') accion = 1;
+                                    else if (permisoUser.accion === 'Bajas') accion = 2;
+                                    else if (permisoUser.accion === 'Cambios') accion = 3;
+                                    else if (permisoUser.accion === 'Consultas') accion = 4;
+
+                                    db.query('insert into permisos values (?,?,?)', [accion, data.Usuario, permisoUser.modulo.slice(1)], function (err, res) {
+                                        if (err) { Errores(err); socket.emit('SystemError'); errores = true; } // Se hace un control de errores
+                                        else if (res) {
+                                            console.log("Permiso dado");
+                                        }
+                                    });
+                                });
+                                if (!errores) {
+                                    socket.emit('RespDelUs', { mensaje: 'Usuario modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
+                                }
+                            }
+                        }
+                    });
                 } else {
                     socket.emit('RespDelUs', { mensaje: "No se pudo modificar el usuario." });
                 }
