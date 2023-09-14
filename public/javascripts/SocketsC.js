@@ -2,22 +2,22 @@ var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
 var socket = io.connect("http://localhost:3001");
 var pathname = window.location.pathname;
 //////////////////////// PERMISOS /////////////////////
+// Configuración de permisos por módulo
+var permisosPorModulo = [
+    { modulo: '#ALMACÉN', contenedor: '#listaCheckboxesA', checks: ['[id$="A"]'], permisos: { Altas: '#1A', Bajas: '#2A', Cambios: '#3A', Consultas: '#4A' } },
+    { modulo: '#MOBILIARIO', contenedor: '#listaCheckboxesM', checks: ['[id$="M"]'], permisos: { Altas: '#1M', Bajas: '#2M', Cambios: '#3M', Consultas: '#4M' } },
+    { modulo: '#EQUIPOS', contenedor: '#listaCheckboxesEqp', checks: ['[id$="E"]'], permisos: { Altas: '#1E', Bajas: '#2E', Cambios: '#3E', Consultas: '#4E' } },
+    { modulo: '#RESPONSIVAS', contenedor: '#listaCheckboxesR', checks: ['[id$="R"]'], permisos: { Altas: '#1R', Bajas: '#2R', Cambios: '#3R', Consultas: '#4R' } },
+    { modulo: '#USUARIOS', contenedor: '#listaCheckboxesU', checks: ['[id$="U"]'], permisos: { Altas: '#1U', Bajas: '#2U', Cambios: '#3U', Consultas: '#4U' } },
+    { modulo: '#EMPLEADOS', contenedor: '#listaCheckboxesE', checks: ['[id$="EM"]'], permisos: { Altas: '#1EM', Bajas: '#2EM', Cambios: '#3EM', Consultas: '#4EM' } }
+];
+
 function PermisosGenerales() {
-    // Configuración de permisos por módulo
-    var permisosPorModulo = [
-        { modulo: '#ALMACÉN', contenedor: '#listaCheckboxesA', checks: ['[id$="A"]'], permisos: { Altas: '#1A', Bajas: '#2A', Cambios: '#3A', Consultas: '#4A' } },
-        { modulo: '#MOBILIARIO', contenedor: '#listaCheckboxesM', checks: ['[id$="M"]'], permisos: { Altas: '#1M', Bajas: '#2M', Cambios: '#3M', Consultas: '#4M' } },
-        { modulo: '#EQUIPOS', contenedor: '#listaCheckboxesEqp', checks: ['[id$="E"]'], permisos: { Altas: '#1E', Bajas: '#2E', Cambios: '#3E', Consultas: '#4E' } },
-        { modulo: '#RESPONSIVAS', contenedor: '#listaCheckboxesR', checks: ['[id$="R"]'], permisos: { Altas: '#1R', Bajas: '#2R', Cambios: '#3R', Consultas: '#4R' } },
-        { modulo: '#USUARIOS', contenedor: '#listaCheckboxesU', checks: ['[id$="U"]'], permisos: { Altas: '#1U', Bajas: '#2U', Cambios: '#3U', Consultas: '#4U' } },
-        { modulo: '#EMPLEADOS', contenedor: '#listaCheckboxesE', checks: ['[id$="EM"]'], permisos: { Altas: '#1EM', Bajas: '#2EM', Cambios: '#3EM', Consultas: '#4EM' } }
-    ];
     $(document).ready(function () {
         // Manejar el evento de cambio en los checkboxes principales
         permisosPorModulo.forEach(function (permiso) {
             $(permiso.modulo).change(function () {
                 $(permiso.contenedor).toggle(this.checked);
-
                 if (!this.checked) {
                     permiso.checks.forEach(function (check) {
                         $(check).prop('checked', false);
@@ -26,9 +26,8 @@ function PermisosGenerales() {
             });
         });
     });
-    return permisosPorModulo;
 }
-function obtenerPermisosSeleccionadosConModulo(permisosPorModulo) {
+function obtenerPermisosSeleccionadosConModulo() {
     var permisosSeleccionados = [];
 
     permisosPorModulo.forEach(function (permiso) {
@@ -326,6 +325,18 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             cargarNombres2();
 
             enviarSocket("DatEmp", "");
+            const thead = document.querySelector("#firstrow");
+
+            let CabHTML = "";
+
+            if (Permisos['EMPLEADOS'].includes('2')) {
+                CabHTML += `<th>Eliminar</th>`;
+            }
+            if (Permisos['EMPLEADOS'].includes('3')) {
+                CabHTML += `<th>Modificar</th>`;
+            }
+
+            thead.innerHTML += CabHTML;
 
             // Consulta de productos
             socket.on('DespEmp', async (data) => {
@@ -402,7 +413,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         if (pathname === "/users/RegistrarUsuario" && Permisos['USUARIOS'].includes('1')) {
             cargarSelect('#NombreEmp');
 
-            var permisosModulos = PermisosGenerales();
+            PermisosGenerales();
 
             const FormRegistro = document.querySelector("#Registro");
 
@@ -411,7 +422,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
             function EnviarReg(e) {
 
-                var permisosDados = obtenerPermisosSeleccionadosConModulo(permisosModulos);
+                var permisosDados = obtenerPermisosSeleccionadosConModulo();
 
                 e.preventDefault();
                 if ($("#NombreEmp").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
@@ -444,6 +455,19 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     });
                 }
             });
+
+            const thead = document.querySelector("#firstrow");
+
+            let CabHTML = "";
+
+            if (Permisos['USUARIOS'].includes('2')) {
+                CabHTML += `<th>Eliminar</th>`;
+            }
+            if (Permisos['USUARIOS'].includes('3')) {
+                CabHTML += `<th>Modificar</th>`;
+            }
+
+            thead.innerHTML += CabHTML;
 
             socket.emit("Consul_Usuario");
 
@@ -502,6 +526,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
             //Modificar usuarios
             socket.on('ButtonUp', () => {
+
                 let BotonMod = document.getElementsByClassName("BotonMod");
 
                 for (let i = 0; i < BotonMod.length; i++) {
@@ -509,6 +534,11 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 }
 
                 function obtenerValoresMod(e) {
+                    $(":checkbox").prop("checked", false);
+                    // Ocultar todos los contenedores
+                    permisosPorModulo.forEach(function (permiso) {
+                        $(permiso.contenedor).hide();
+                    });
 
                     var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
                     // recorremos cada uno de los elementos del array de elementos <td>
@@ -519,23 +549,72 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     }
                     document.getElementById("UsuarioM").value = valores0;
                     document.getElementById("PassM").value = valores1;
+
+                    enviarSocket('PermisosUser', valores0);
+
+                    socket.on('Desp_Permisos', async (data) => {
+                        console.log(data);
+                        $(`#${data.modulos}`).prop('checked', true);
+                        PermisosGenerales();
+
+                        // Mostrar solo el contenedor del módulo correspondiente
+                        const moduloCorrespondiente = permisosPorModulo.find(permiso => permiso.modulo === `#${data.modulos}`);
+                        if (moduloCorrespondiente) {
+                            $(moduloCorrespondiente.contenedor).show();
+                            permisosPorModulo.forEach(function (permiso) {
+                                if (data.modulos === 'ALMACÉN' && permiso.modulo.slice(1) === 'ALMACÉN') {
+                                    if (data.permisos.includes(1)) { $(permiso.permisos.Altas).prop('checked', true); }
+                                    if (data.permisos.includes(2)) { $(permiso.permisos.Bajas).prop('checked', true); }
+                                    if (data.permisos.includes(3)) { $(permiso.permisos.Cambios).prop('checked', true); }
+                                    if (data.permisos.includes(4)) { $(permiso.permisos.Consultas).prop('checked', true); }
+                                }
+                                if (data.modulos === 'MOBILIARIO' && permiso.modulo.slice(1) === 'MOBILIARIO') {
+                                    if (data.permisos.includes(1)) { $(permiso.permisos.Altas).prop('checked', true); console.log(data.permisos.includes(2)); }
+                                    if (data.permisos.includes(2)) { $(permiso.permisos.Bajas).prop('checked', true); }
+                                    if (data.permisos.includes(3)) { $(permiso.permisos.Cambios).prop('checked', true); }
+                                    if (data.permisos.includes(4)) { $(permiso.permisos.Consultas).prop('checked', true); }
+                                }
+                                if (data.modulos === 'EQUIPOS' && permiso.modulo.slice(1) === 'EQUIPOS') {
+                                    if (data.permisos.includes(1)) { $(permiso.permisos.Altas).prop('checked', true); }
+                                    if (data.permisos.includes(2)) { $(permiso.permisos.Bajas).prop('checked', true); }
+                                    if (data.permisos.includes(3)) { $(permiso.permisos.Cambios).prop('checked', true); }
+                                    if (data.permisos.includes(4)) { $(permiso.permisos.Consultas).prop('checked', true); }
+                                }
+                                if (data.modulos === 'RESPONSIVAS' && permiso.modulo.slice(1) === 'RESPONSIVAS') {
+                                    if (data.permisos.includes(1)) { $(permiso.permisos.Altas).prop('checked', true); }
+                                }
+                                if (data.modulos === 'USUARIOS' && permiso.modulo.slice(1) === 'USUARIOS') {
+                                    if (data.permisos.includes(1)) { $(permiso.permisos.Altas).prop('checked', true); }
+                                    if (data.permisos.includes(2)) { $(permiso.permisos.Bajas).prop('checked', true); }
+                                    if (data.permisos.includes(3)) { $(permiso.permisos.Cambios).prop('checked', true); }
+                                    if (data.permisos.includes(4)) { $(permiso.permisos.Consultas).prop('checked', true); }
+                                }
+                                if (data.modulos === 'EMPLEADOS' && permiso.modulo.slice(1) === 'EMPLEADOS') {
+                                    if (data.permisos.includes(1)) { $(permiso.permisos.Altas).prop('checked', true); }
+                                    if (data.permisos.includes(2)) { $(permiso.permisos.Bajas).prop('checked', true); }
+                                    if (data.permisos.includes(3)) { $(permiso.permisos.Cambios).prop('checked', true); }
+                                    if (data.permisos.includes(4)) { $(permiso.permisos.Consultas).prop('checked', true); }
+                                }
+                            });
+                        }
+                    });
+
                 }
 
                 // Cambios de productos
                 const FormMod = document.querySelector("#ModProduct");
-                var PermisosMod = PermisosGenerales();
 
                 // Cambios de productos
                 FormMod.addEventListener("submit", Enviar);
 
                 function Enviar(e) {
 
-                    var permisosDados = obtenerPermisosSeleccionadosConModulo(PermisosMod);
+                    var permisosDados = obtenerPermisosSeleccionadosConModulo();
 
                     e.preventDefault();
 
                     if ($("#UsuarioM").val() != "" && $("#Num_EmpPM").val() != "" && $("#PassM").val() != "") {
-                        socket.emit('Cambios_Usuario', { Usuario: $("#UsuarioM").val(), Nom_Emp: $("#Num_EmpPM").val(), Pass: $("#PassM").val(), permisos: PermisosMod }, { OLDUser: valores0 });
+                        socket.emit('Cambios_Usuario', { Usuario: $("#UsuarioM").val(), Nom_Emp: $("#Num_EmpPM").val(), Pass: $("#PassM").val(), permisos: permisosDados }, { OLDUser: valores0 });
 
                         socket.once('Usuario_Inexistente', function (Respuesta) {
                             alert(Respuesta.mensaje);
@@ -1452,6 +1531,19 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             cargarSelect('#NombreEmp');
             socket.emit("Consul_Mobiliario");
 
+            const thead = document.querySelector("#firstrow");
+
+            let CabHTML = "";
+
+            if (Permisos['MOBILIARIO'].includes('2')) {
+                CabHTML += `<th>Eliminar</th>`;
+            }
+            if (Permisos['MOBILIARIO'].includes('3')) {
+                CabHTML += `<th>Modificar</th>`;
+            }
+
+            thead.innerHTML += CabHTML;
+
             // Consulta de mobiliario
             socket.on('Desp_Mobiliario', async (data) => {
                 const tbody = document.querySelector("#DatosProd tbody");
@@ -1562,7 +1654,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
     if (!Permisos['RESPONSIVAS']) {
         location.href = "index";
     } else {
-        if (pathname == "/users/crear_resp" && Permisos['RESPONSIVAS'].includes('4')) {
+        if (pathname == "/users/crear_resp" && Permisos['RESPONSIVAS'].includes('1')) {
             cargarSelect('#NombreEmp');
             // desplegar lista de nombre de empleados
             window.addEventListener("load", function (event) {
