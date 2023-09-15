@@ -87,14 +87,12 @@
       if (n === 0) {
         divModify.append(Options.Options1);
         divModify.append(Options.Options2);
-        console.log(Options)
       } else {
 
         for (let i = 0; i < 2; i++) {
           const divOpcion = document.createElement('div');
           divModify.append(divOpcion);
         }
-        console.log(Options);
         divModify.children().eq(0).html(Options.Options1);
         divModify.children().eq(1).html(Options.Options2);
 
@@ -194,8 +192,6 @@
         Options1 += `<a href="/users/consulEqp" class="BotonEQPA TamBAG">Ver Equipos</a>`;
         cont++;
       }
-      console.log("A"+Options1);
-      console.log(cont);
       if (cont === 1 || cont === 2) {
         n = 0;
       } else {

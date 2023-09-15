@@ -553,7 +553,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     enviarSocket('PermisosUser', valores0);
 
                     socket.on('Desp_Permisos', async (data) => {
-                        console.log(data);
                         $(`#${data.modulos}`).prop('checked', true);
                         PermisosGenerales();
 
@@ -569,7 +568,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                                     if (data.permisos.includes(4)) { $(permiso.permisos.Consultas).prop('checked', true); }
                                 }
                                 if (data.modulos === 'MOBILIARIO' && permiso.modulo.slice(1) === 'MOBILIARIO') {
-                                    if (data.permisos.includes(1)) { $(permiso.permisos.Altas).prop('checked', true); console.log(data.permisos.includes(2)); }
+                                    if (data.permisos.includes(1)) { $(permiso.permisos.Altas).prop('checked', true); }
                                     if (data.permisos.includes(2)) { $(permiso.permisos.Bajas).prop('checked', true); }
                                     if (data.permisos.includes(3)) { $(permiso.permisos.Cambios).prop('checked', true); }
                                     if (data.permisos.includes(4)) { $(permiso.permisos.Consultas).prop('checked', true); }
@@ -916,7 +915,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             socket.emit("Consul_ProdExist");
             // Consulta de productos
             socket.on('Desp_ProductosExist', async (data) => {
-                console.log('Datos recibidos:', data.Cod_Barras);
 
                 if (data.eliminado == 1) {
                     document.querySelector("#DatosProd tbody").innerHTML += `
@@ -1032,7 +1030,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             socket.emit("Consul_RegProSac");
             // Consulta de productos
             socket.on('Desp_Productos', async (data) => {
-                console.log('Datos recibidos:', data.Cod_BarrasS);
 
                 document.querySelector("#DatosProSac tbody").innerHTML += `
         <tr>
@@ -1055,7 +1052,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     var filtroInicio = new Date($("#fechaInicio").val()); // Obtener la fecha de inicio como objeto Date
                     var filtroFin = new Date($("#fechaFin").val()); // Obtener la fecha de fin como objeto Date
                     filtroFin.setDate(filtroFin.getDate() + 1);
-                    console.log(filtroFin);
 
                     $("#DatosProSac td").each(function () {
                         var fechaEnTd = new Date($(this).text());
@@ -1465,7 +1461,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                                 $('#SoftE').val(CPU.Software);
                                 $('#MonE').val(CPU.Monitor);
                                 $('#NIME').val(CPU.Num_Inv_Mon);
-                                console.log(CPU);
                                 $('#N_Ser_M').val(CPU.Num_Serie_Monitor);
                                 $('#MouseE').val(CPU.Mouse);
                                 $('#TecladE').val(CPU.Teclado);
@@ -1547,7 +1542,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             // Consulta de mobiliario
             socket.on('Desp_Mobiliario', async (data) => {
                 const tbody = document.querySelector("#DatosProd tbody");
-                console.log(data);
                 let filaHTML = `
                 <tr>
                     <td>${data.Descripcion}</td>

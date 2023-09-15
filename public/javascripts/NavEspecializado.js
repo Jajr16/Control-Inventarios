@@ -1,6 +1,5 @@
 // Variable de permisos
 var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
-console.log(Permisos);
 
 // Esto aplica para todos los usuarios
 document.getElementById("Linksnav").innerHTML += `
