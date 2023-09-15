@@ -1803,7 +1803,7 @@ io.on('connection', (socket) => {
 
                     var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
                     var area = result[0].Área; // Se obtiene el area del arreglo
-                    var nomComp = result[0].Nom + " " + result[0].AP + " " + result[0].AM; // Se obtiene el nombre completo del empleado
+                    var nomComp = result[0].Nom; // Se obtiene el nombre completo del empleado
 
                     db.query('insert into mobiliario values (NULL,?,?,?,?,?,?)', [data.Descripcion, num_emp, data.Ubicacion, data.Cantidad, nomComp, area], function (err2, result) {
                         if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
