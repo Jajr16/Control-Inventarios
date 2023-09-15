@@ -24,3 +24,4 @@ pm2 monit - Monitorear la aplicación
 pm2 flush - Eliminar logs
 pm2 show 0 - Información detallada de aplicación
 $ pm2 delete '' - Elimina procesos
+-- watch - Reiniciar la aplicación ante una modificación
