@@ -1,6 +1,5 @@
 // Limpiar el almacenamiento local
 localStorage.clear();
-console.log(localStorage.getItem("token"));
 
 // Conectar con el servidor mediante socket.io
 var socket = io.connect("http://localhost:3001");

@@ -1528,8 +1528,8 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         location.href = "index";
     } else {
         if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('3'))) {
-            nombreUsuario('#NombreEmp');
-            socket.emit("Consul_Mobiliario");
+            
+            socket.emit("Consul_Mobiliario",localStorage.getItem('user'));
 
             const thead = document.querySelector("#firstrow");
 

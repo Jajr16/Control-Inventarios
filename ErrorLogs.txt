@@ -40,3 +40,9 @@ Error: ER_BAD_FIELD_ERROR: Unknown column 'Area' in 'field list' | Error obtenid
 Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect integer value: 'FGHFF' for column 'Cantidad' at row 12 | Error obtenido el -> 14/09/2023 12:34
 Error: ER_WRONG_VALUE_COUNT_ON_ROW: Column count doesn't match value count at row 1 | Error obtenido el -> 14/09/2023 19:6
 Error: ER_WRONG_VALUE_COUNT_ON_ROW: Column count doesn't match value count at row 1 | Error obtenido el -> 14/09/2023 19:6
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1 | Error obtenido el -> 15/09/2023 1:21
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1 | Error obtenido el -> 15/09/2023 1:22
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1 | Error obtenido el -> 15/09/2023 1:22
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1 | Error obtenido el -> 15/09/2023 1:24
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1 | Error obtenido el -> 15/09/2023 1:24
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1 | Error obtenido el -> 15/09/2023 1:28

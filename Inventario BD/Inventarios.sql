@@ -1,5 +1,4 @@
 -- MySQL Workbench Forward Engineering
-drop database if exists inventarios;
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
@@ -148,7 +147,12 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Mobiliario` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
+select*from empleado;
+select*from usuario;
 select*from Mobiliario;
+SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp where e.nom = (select empleado.nom from empleado inner join usuario on empleado.Num_emp = usuario.Num_Emp where usuario.Usuario = 'ajimenez');
+
+insert into mobiliario values (3,"Mesa",759,'PRUEBA',4,'FARMACIA');
 
 ALTER TABLE `Inventarios`.`Mobiliario`
 ADD COLUMN `Ubicacion` VARCHAR(400) NULL,
@@ -344,6 +348,8 @@ alter table Usuario drop constraint FK_Token;
 alter table usuario drop column token;
 drop table tokens;
 
+select Área from empleado inner join usuario on empleado.Num_emp = usuario.Num_emp where usuario = 'ajimenez';
+
 select*from usuario;
 select*from permisos;
 insert into permisos values
@@ -427,14 +433,7 @@ alter table Factus_Productos add constraint FK_CBA foreign key(Cod_Barras) refer
 
 alter table Factus_Productos add constraint FK_NDFA foreign key(Nfactura) references facturas_almacen(Num_Fact);
 
-alter table usuario add constraint FK_Token foreign key(token) references tokens(token);
-
-create unique index FKAEmp on tokens(area);
-alter table empleado add constraint FK_A foreign key(Área) references tokens(area); 
-alter table usuario add constraint FK_T foreign key(token) references tokens(token);
-
 ########################## UPDATES ###################################
-update usuario set token = "4dnM3k0nl9z" where Usuario = "armando";
 update almacen set Existencia = 10 where Cod_Barras = 'b';
 update empleado set Num_Jefe = 1 where Num_emp = 1;
 update empleado set Num_emp = 2 where Num_emp = 758;
@@ -573,9 +572,9 @@ select*from equipo where Equipo = 'CPU';
 select*from Usuario;
 select*from mobiliario;
 delete from mobiliario where Num_Inventario = 4;
-insert into Usuario (Num_Emp, Usuario, Pass, token) values(759, "ajimenez", "clarac1", "4dnM3k0nl9s");
+insert into Usuario (Num_Emp, Usuario, Pass) values(758, "ajimenez", "clarac1");
 delete from Usuario where Usuario = "a";
-update Usuario set Usuario = "ajimenez", Num_Emp = 759, Pass = "clarac1" where Usuario = "ajimenez";
+update Usuario set Usuario = "ajimenez", Num_Emp = 758, Pass = "Clarac2017" where Usuario = "ajimenez";
 select * from Salidas_Productos where FSalida BETWEEN "2023-05-16" and "2023-05-17";
 
 SELECT m.*, e.Nom
@@ -591,9 +590,6 @@ insert into equipo (N_Inventario, Num_Serie, Equipo, Marca, Modelo, Num_emp, Ubi
 insert into usuario values(
 758, "ajimenez", "Clarac2017", '4dnM3k0nl9s'
 );
-
-insert into mobiliario (num_Inventario, Descripcion, Num_emp) values (1,"Mesa",777);
-
 
 select*from almacen;
 select*from mobiliario;
@@ -626,6 +622,7 @@ SELECT mob.*, e.Nom FROM mobiliario mob JOIN empleado e ON mob.Num_emp = e.Num_e
 #update factus_productos set Cantidad = 700 where Nfactura = 'ASKDFJ7';
 #update salidas_productos set Cantidad_Salida = 2 where Cod_BarrasS = 'R' and FSalida = "2023-04-22" and Num_EmpS = 758;
 #############################BUSQUEDAS DE MOBILIARIO################################
+
 select*from mobiliario;
 select empleado.Nom, empleado.Área, empleado.Num_emp from empleado;
 select*from empleado;
