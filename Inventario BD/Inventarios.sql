@@ -37,7 +37,7 @@ select*from Mobiliario;
 
 SELECT Num_Emp, Área, Nom, AP, AM FROM empleado WHERE Nom = "armando";
 SELECT empleado.Num_Emp, empleado.Área, empleado.Nom FROM empleado inner join Usuario on empleado.Num_emp = usuario.Num_emp where usuario.usuario = 'ajimenez';
-SELECT e.Num_Emp, e.Área, e.Nom FROM empleado e WHERE e.Num_Emp = (SELECT u.Num_Emp FROM Usuario u WHERE u.Usuario = 'ajimenez'
+SELECT e.Num_Emp, e.Área, e.Nom FROM empleado e WHERE e.Num_Emp = (SELECT u.Num_Emp FROM Usuario u WHERE u.Usuario = 'ajimenez');
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Usuario`
 -- -----------------------------------------------------
@@ -599,6 +599,7 @@ insert into usuario values(
 select*from almacen;
 select*from mobiliario;
 select*from equipo;
+select*from permisos;
 
 SELECT * FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie WHERE Equipo.Num_Serie = 12345;
 
