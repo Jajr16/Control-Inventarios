@@ -1528,7 +1528,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         location.href = "index";
     } else {
         if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('3'))) {
-            cargarSelect('#NombreEmp');
+            nombreUsuario('#NombreEmp');
             socket.emit("Consul_Mobiliario");
 
             const thead = document.querySelector("#firstrow");
@@ -1630,7 +1630,13 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             });
             recibirSocket('RespDelMob');
         } else if (pathname == "/users/altasMob" && Permisos['MOBILIARIO'].includes('1')) {
-            cargarSelect('#NombreEmp');
+
+            const nombreUsuario = localStorage.getItem('user');
+
+            if (nombreUsuario) {
+                document.querySelector('#NombreEmp').value = nombreUsuario;
+            }
+
 
             const FormProduct = document.querySelector("#AltaMobiliario");
 

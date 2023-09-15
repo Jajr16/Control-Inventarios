@@ -107,9 +107,8 @@
                     </div>
                     <div>
                         <label>Nombre de encargado</label>
-                        <select id="NombreEmp" required style="width: 100%;">
-                            <option value=""></option>
-                        </select>
+                        <input autocomplete="off" type="text" id="NombreEmp" name="NombreEmp" required maxlength="400" disabled
+                            oninput="mayus(this);" onkeypress="return checkA(event)">
                     </div>
                 </div>
                 <div class="Dos_Columnas Separacion">
