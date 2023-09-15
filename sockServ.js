@@ -1766,7 +1766,7 @@ io.on('connection', (socket) => {
                             else {
                                 if (result.length > 0) {//Si sí hizo una búsqueda
                                     for (var i = 0; i < result.length; i++) {
-                                        socket.emit('Desp_Mobiliario', { Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, AreaM: result[i].AreaM, NombreEmp: result[i].Nom });//Mandar usuario y token al cliente
+                                        socket.emit('Desp_Mobiliario', { Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, NombreCom: result[i].NombreCom, Area: result[i].Area });//Mandar usuario y token al cliente
                                     }
                                     socket.emit('ButtonUp');
                                 }
@@ -1779,7 +1779,7 @@ io.on('connection', (socket) => {
                             else {
                                 if (result.length > 0) {//Si sí hizo una búsqueda
                                     for (var i = 0; i < result.length; i++) {
-                                        socket.emit('Desp_Mobiliario', { Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, AreaM: result[i].AreaM, NombreEmp: result[i].Nom });//Mandar usuario y token al cliente
+                                        socket.emit('Desp_Mobiliario', { Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, NombreCom: result[i].NombreCom, Area: result[i].Area });//Mandar usuario y token al cliente
                                     }
                                     socket.emit('ButtonUp');
                                 }
@@ -1796,14 +1796,16 @@ io.on('connection', (socket) => {
     // Altas de mobiliario
     socket.on('Alta_Mob', async (data) => {
 
-        db.query('SELECT Num_Emp, Área FROM empleado WHERE Nom = ?', [data.NombreEmp], function (err, result) {
+        db.query('SELECT Num_Emp, Área, Nom, AP, AM FROM empleado WHERE Nom = ?', [data.NombreEmp], function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) {//Si sí hizo una búsqueda
 
                     var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
+                    var area = result[0].Área; // Se obtiene el area del arreglo
+                    var nomComp = result[0].Nom + " " + result[0].AP + " " + result[0].AM; // Se obtiene el nombre completo del empleado
 
-                    db.query('insert into mobiliario values (NULL,?,?,?,?,?)', [data.Descripcion, num_emp, data.Ubicacion, data.Cantidad, data.AreaM], function (err2, result) {
+                    db.query('insert into mobiliario values (NULL,?,?,?,?,?,?)', [data.Descripcion, num_emp, data.Ubicacion, data.Cantidad, nomComp, area], function (err2, result) {
                         if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (result) {

@@ -31,6 +31,11 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Empleado` (
 ENGINE = InnoDB
 COMMENT = '			';
 
+select*from Usuario;
+select*from Empleado;
+select*from Mobiliario;
+
+SELECT Num_Emp, Área, Nom, AP, AM FROM empleado WHERE Nom = "armando";
 
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Usuario`
@@ -155,9 +160,8 @@ SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp whe
 insert into mobiliario values (3,"Mesa",759,'PRUEBA',4,'FARMACIA');
 
 ALTER TABLE `Inventarios`.`Mobiliario`
-ADD COLUMN `Ubicacion` VARCHAR(400) NULL,
-ADD COLUMN `Cantidad` INT NULL,
-ADD COLUMN `AreaM` VARCHAR(200) NULL;
+ADD COLUMN `NombreCom` VARCHAR(200) NULL,
+ADD COLUMN `Area` VARCHAR(200) NULL;
 
 alter table Mobiliario drop column Area;
 
