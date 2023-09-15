@@ -37,7 +37,7 @@ select*from Mobiliario;
 
 SELECT Num_Emp, Área, Nom, AP, AM FROM empleado WHERE Nom = "armando";
 SELECT empleado.Num_Emp, empleado.Área, empleado.Nom FROM empleado inner join Usuario on empleado.Num_emp = usuario.Num_emp where usuario.usuario = 'ajimenez';
-
+SELECT e.Num_Emp, e.Área, e.Nom FROM empleado e WHERE e.Num_Emp = (SELECT u.Num_Emp FROM Usuario u WHERE u.Usuario = 'ajimenez'
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Usuario`
 -- -----------------------------------------------------

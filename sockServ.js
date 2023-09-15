@@ -1797,7 +1797,7 @@ io.on('connection', (socket) => {
     // Altas de mobiliario
     socket.on('Alta_Mob', async (data) => {
 
-        db.query('SELECT empleado.Num_Emp, empleado.Área, empleado.Nom FROM empleado inner join Usuario on empleado.Num_emp = usuario.Num_emp where usuario.usuario = ?;', [data.NombreEmp], function (err, result) {
+        db.query('SELECT e.Num_Emp, e.Área, e.Nom FROM empleado e WHERE e.Num_Emp = (SELECT u.Num_Emp FROM Usuario u WHERE u.Usuario = ?)', [data.NombreEmp], function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) {//Si sí hizo una búsqueda
