@@ -1547,7 +1547,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             // Consulta de mobiliario
             socket.on('Desp_Mobiliario', async (data) => {
                 const tbody = document.querySelector("#DatosProd tbody");
-
+                console.log(data);
                 let filaHTML = `
                 <tr>
                     <td>${data.Descripcion}</td>
