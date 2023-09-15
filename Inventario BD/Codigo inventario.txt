@@ -1,0 +1,26 @@
+Listado de comandos
+pm2 list - Verificar información sobre los procesos listados
+pm2 log - Ver todos los logs del sistema
+pm2 startup - Generará el script de arranque
+pm2 save - Guardar la lista de procesos
+pm2 start process.json - Una vez configurado el archivo json se ejecuta este comando sustituyendo process por el nombre del archivo correspondiente
+******* Ejemplo de archivo JSON ***********
+{
+  apps : [{
+    name        : "Server",
+    script      : "./server.js",
+    instances: 2,
+    env: {
+      "PORT": "3001"
+    }
+  },
+  {
+    name: "Worker",
+    script: "./worker.js"
+    }]
+}
+
+pm2 monit - Monitorear la aplicación
+pm2 flush - Eliminar logs
+pm2 show 0 - Información detallada de aplicación
+$ pm2 delete '' - Elimina procesos
