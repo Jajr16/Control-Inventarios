@@ -143,6 +143,9 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Mobiliario` (
   `Num_Inventario` INT NOT NULL AUTO_INCREMENT,
   `Descripcion` VARCHAR(400) NULL,
   `Num_emp` INT NULL,
+  `Ubicacion` varchar(400),
+  `Cantidad` int,
+  `AreaM` VARCHAR(200) NULL,
   PRIMARY KEY (`Num_Inventario`),
   INDEX `Num_emp_idx` (`Num_emp` ASC),
   CONSTRAINT `Num_RespM`
@@ -151,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Mobiliario` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
-
+	
 select*from empleado;
 select*from usuario;
 select*from Mobiliario;
@@ -160,7 +163,6 @@ SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp whe
 insert into mobiliario values (3,"Mesa",759,'PRUEBA',4,'FARMACIA');
 
 ALTER TABLE `Inventarios`.`Mobiliario`
-ADD COLUMN `NombreCom` VARCHAR(200) NULL,
 ADD COLUMN `Area` VARCHAR(200) NULL;
 
 alter table Mobiliario drop column Area;
@@ -337,6 +339,7 @@ modulo enum("ALMACÉN", "MOBILIARIO", "EQUIPOS","RESPONSIVAS","USUARIOS","EMPLEA
 primary key(permiso, usuario, modulo),
 foreign key (usuario) references usuario(Usuario) on delete cascade on update cascade
 );
+
 
 insert into tokens values(
 "4dnM3k0nl9s", "SISTEMAS"),	#ACCESO TOTAL #Mobiliario

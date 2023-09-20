@@ -1869,13 +1869,13 @@ io.on('connection', (socket) => {
 
     // Cambios en mobiliario
     socket.on('Cambios_Mobiliario', async (data, dataOld) => {
-        db.query('SELECT Num_Emp FROM empleado WHERE Nom = ?', [data.NombreEmp], function (err, result) {
+        db.query('SELECT Num_Emp FROM empleado WHERE Nom = ?', [data.Empleado], function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) { //Si sí hizo una búsqueda
                     var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
                     //Se agrega productos a la BD
-                    db.query('update mobiliario set Descripcion = ?, Ubicacion = ?, Cantidad = ?, AreaM = ?, Num_emp = ? where Descripcion = ?', [data.Descripcion, data.Ubicacion, data.Cantidad, data.AreaM, num_emp, dataOld.OLDDesc], function (err2, result) {
+                    db.query('update mobiliario set Descripcion = ?, Ubicacion = ?, Cantidad = ? where Num_emp = ? and Descripcion = ?', [data.Descripcion, data.Ubicacion, data.Cantidad, num_emp, dataOld.OLDDesc], function (err2, result) {
                         if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (result.affectedRows > 0) { //Si sí hizo una búsqueda
@@ -1891,6 +1891,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('Crea_Resp', async (data) => {
+        console.log(data);
         db.query('SELECT Num_Emp, Área from empleado where Nom = ?', [data.NombreEmp], function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
@@ -1913,14 +1914,14 @@ io.on('connection', (socket) => {
                                 }
                             }
                         });
-                    } else if (data.Token == "4dnM3k0nl9s" && data.Responsiva == "EQUIPOS") {
+                    } else if (data.Responsiva == "EQUIPOS") {
                         db.query('SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Monitor, Monitor.Num_Serie_Monitor, Monitor.Num_Inv_Mon, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie WHERE Num_emp = ?;', [num_emp], function (err, res) {
                             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
                             else {
                                 if (res) {
                                     equipos_generatePDF(num_emp, areaEmp, data.NombreEmp, res)
                                         .then((pdfBuffer) => {
-                                            socket.emit('Responsiva_Respuesta', { mensaje: 'Responsiva generada.', Res: 'Si', pdfBuffer });//Mandar mensaje de error a cliente
+                                            socket.emit('Responsiva_Respuesta', { mensaje: 'Responsiva de equipos generada.', Res: 'Si', pdfBuffer });//Mandar mensaje de error a cliente
                                         }).catch(error => {
                                             socket.emit('Responsiva_Respuesta', { mensaje: 'No se pudo generar el PDF, inténtelo de nuevo', Res: 'Si' });
                                             console.error('Error al generar o descargar el PDF:', error);

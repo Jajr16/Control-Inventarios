@@ -724,7 +724,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 // Agrega la fila completa al tbody
                 tbody.innerHTML += filaHTML;
 
-                if (Permisos['ALMACEN'].includes('2')) {
+                if (Permisos['ALMACÉN'].includes('2')) {
                     // Volver a asignar el evento de clic a los botones de eliminar
                     const botonesEliminar = document.getElementsByClassName("BotonER");
 
@@ -917,18 +917,18 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                 if (data.eliminado == 1) {
                     document.querySelector("#DatosProd tbody").innerHTML += `
-            <tr style="background-color: #590C09">
-            <td id="Cod_Barras">${data.Cod_Barras}</td>
-            <td id="Categoria">${data.Categoria}</td>
-            <td id="NomP">${data.NArt}</td>
-            <td id="MarcActi">${data.NMarca}</td>
-            <td id="DescripcionP">${data.Desc}</td>
-            <td id="UnidadP">${data.Unidad}</td>
-            <td id="Existencia">${data.Existencia}</td>
-            <td> - </td>
-            <td> - </td>
-            </tr>
-            `;
+                        <tr style="background-color: #590C09">
+                        <td id="Cod_Barras">${data.Cod_Barras}</td>
+                        <td id="Categoria">${data.Categoria}</td>
+                        <td id="NomP">${data.NArt}</td>
+                        <td id="MarcActi">${data.NMarca}</td>
+                        <td id="DescripcionP">${data.Desc}</td>
+                        <td id="UnidadP">${data.Unidad}</td>
+                        <td id="Existencia">${data.Existencia}</td>
+                        <td> - </td>
+                        <td> - </td>
+                        </tr>
+                        `;
                 } else {
                     document.querySelector("#DatosProd tbody").innerHTML += `
             <tr>
@@ -989,7 +989,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
             // Sacar producto existente
             socket.on('EliminarProdExist', async () => {
-                let EliminarProdExist = document.getElementsByClassName("BotonER");
+                let EliminarProdExist = document.getElementsByClassName("BotonERR");
 
                 for (let i = 0; i < EliminarProdExist.length; i++) {
                     EliminarProdExist[i].addEventListener("click", existBajas);
@@ -1580,6 +1580,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             var valores0 = "";
             var valores1 = "";
             var valores2 = "";
+            var valores3 = "";
 
             //Modificar mobiliario
             socket.on('ButtonUp', () => {
@@ -1598,6 +1599,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         valores0 = elementosTD[0].innerHTML;
                         valores1 = elementosTD[1].innerHTML;
                         valores2 = elementosTD[2].innerHTML;
+                        valores3 = elementosTD[3].innerHTML;
                     }
                     document.getElementById("DescM").value = valores0;
                     document.getElementById("UbiM").value = valores1;
@@ -1615,7 +1617,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     e.preventDefault();
 
                     if ($("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "") {
-                        socket.emit('Cambios_Mobiliario', { Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val() }, { OLDDesc: valores0 });
+                        socket.emit('Cambios_Mobiliario', { Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), Empleado: valores3.replace(/\s+$/, '') }, { OLDDesc: valores0 });
                     }
                 }
             });
@@ -1655,9 +1657,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 var opcion = document.createElement("option");
                 var opcion1 = document.createElement("option");
 
-                if (tok == "FGJYGd42DSAFA") {
-                    opcion.text = "MOBILIARIO";
-                } else {
+                if (Permisos['RESPONSIVAS']) {
                     opcion.text = "MOBILIARIO";
                     opcion1.text = "EQUIPOS";
                 }
@@ -1674,7 +1674,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 e.preventDefault();
                 if ($("#DescM").val() != "" && $("#NombreEmp").val() != "") {
 
-                    enviarSocket('Crea_Resp', { Responsiva: $("#Resp").val(), NombreEmp: $("#NombreEmp").val(), Token: tok });
+                    enviarSocket('Crea_Resp', { Responsiva: $("#Resp").val(), NombreEmp: $("#NombreEmp").val() });
 
                     socket.on('Responsiva_Respuesta', function (Respuesta) {
                         alert(Respuesta.mensaje);
