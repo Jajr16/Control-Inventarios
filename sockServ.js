@@ -589,6 +589,7 @@ io.on('connection', (socket) => {
             } else {
                 if (result.length > 0) {
                     // Eliminar el usuario de la tabla Usuario
+                    console.log(data);
                     db.query('delete from Usuario where Usuario = ?', data, function (err, result) {
                         if (err) {
                             Errores(err);
@@ -619,7 +620,7 @@ io.on('connection', (socket) => {
                     db.query('delete from permisos where Usuario = ?', [data.Usuario], function (err, res) {
                         if (err) { Errores(err); socket.emit('SystemError'); errores = true; } // Se hace un control de errores
                         else {
-                            if (res.affectedRows > 0) {
+                            if (res) {
                                 var errores = false; // Variable para rastrear si hubo errores
                                 data.permisos.forEach(function (permisoUser) {
                                     var accion = 0;
@@ -635,6 +636,7 @@ io.on('connection', (socket) => {
                                         }
                                     });
                                 });
+                                console.log(errores);
                                 if (!errores) {
                                     socket.emit('RespDelUs', { mensaje: 'Usuario modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
                                 }
@@ -1460,33 +1462,46 @@ io.on('connection', (socket) => {
     // Cambios de monitor
     socket.on('CambiosMon', async (data, dataOld) => {
         console.log(data);
-        db.query('select * from monitor where Num_Inv_Mon = ?', [data.NIME], async function (err, result) {
+        console.log(dataOld);
+
+        db.query('select * from monitor where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) {
-                    socket.emit("RespEquipos", { mensaje: "Ese número de inventario ya está registrado, inténtelo de nuevo." });
+                    if (data.NIME === dataOld.OldNIME) {
+                        db.query('update monitor set Num_Serie = ?, Monitor = ?, Num_Serie_Monitor = ?, Num_Inv_Mon = ? where Num_Serie = ?', [data.Num_S, data.MonE, data.NSMon, data.NIME, dataOld.OLDNum_S], async function (err, result) {
+                            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+                            else {
+                                if (!result) {
+                                    socket.emit("RespEquipos", { mensaje: "No se pudo actualizar los datos del monitor." });
+                                }
+                            }
+                        });
+                    } else {
+                        db.query('select * from monitor where Num_Inv_Mon = ?', [data.NIME], async function (err, result) {
+                            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+                            else {
+                                if (result.length > 0) {
+                                    socket.emit("RespEquipos", { mensaje: "Ese número de inventario ya está registrado, inténtelo de nuevo." });
+                                } else {
+                                    db.query('update monitor set Num_Serie = ?, Monitor = ?, Num_Serie_Monitor = ?, Num_Inv_Mon = ? where Num_Serie = ?', [data.Num_S, data.MonE, data.NSMon, data.NIME, dataOld.OLDNum_S], async function (err, result) {
+                                        if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+                                        else {
+                                            if (!result) {
+                                                socket.emit("RespEquipos", { mensaje: "No se pudo actualizar los datos del monitor." });
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
                 } else {
-                    db.query('select * from monitor where Num_Serie = ?', [data.Num_S], async function (err, result) {
+                    db.query('insert into monitor values(?,?,?,?)', [data.Num_S, data.MonE, data.NSMon, data.NIME], async function (err, result) {
                         if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
-                            if (result.length > 0) {
-                                db.query('update monitor set Num_Serie = ?, Monitor = ?, Num_Serie_Monitor = ?, Num_Inv_Mon = ? where Num_Serie = ?', [data.Num_S, data.MonE, data.NSMon, data.NIME, dataOld.OLDNum_S], async function (err, result) {
-                                    if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                                    else {
-                                        if (!result) {
-                                            socket.emit("RespEquipos", { mensaje: "No se pudo actualizar los datos del monitor." });
-                                        }
-                                    }
-                                });
-                            } else {
-                                db.query('insert into monitor values(?,?,?,?)', [data.Num_S, data.MonE, data.NSMon, data.NIME], async function (err, result) {
-                                    if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
-                                    else {
-                                        if (!result) {
-                                            socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del monitor, agréguelo por separado." });
-                                        }
-                                    }
-                                });
+                            if (!result) {
+                                socket.emit("RespEquipos", { mensaje: "No se pudo dar de alta los datos del monitor, agréguelo por separado." });
                             }
                         }
                     });

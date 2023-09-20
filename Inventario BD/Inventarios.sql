@@ -45,7 +45,6 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Usuario` (
   `Num_Emp` INT NULL,
   `Usuario` VARCHAR(45) NOT NULL,
   `Pass` VARCHAR(45) not NULL,
-  `token` varchar(20) not null,
   PRIMARY KEY (`Usuario`),
   INDEX `Num_emp_idx` (`Num_Emp` ASC),
   CONSTRAINT `Num_EmpUser`
@@ -104,7 +103,7 @@ create table Monitor(
 
 -- Nuevo cambio en monitor
 ALTER TABLE Monitor
-ADD Num_Inv_Mon INT;
+add Num_Inv_Mon int;
 -- Borrar todos los datos de la tabla
 DELETE FROM Monitor;
 -- Consultar tabla de monitor
@@ -330,13 +329,13 @@ create table tokens(
 token nvarchar(20) not null primary key,
 area nvarchar(45) not null
 );
-
+drop table permisos;
 create table permisos(
 permiso enum("1","2","3","4") not null, #Tambien se puede set 1 Altas 2 Bajas 3 Cambios 4 Consultas
 usuario varchar(25),
 modulo enum("ALMACÉN", "MOBILIARIO", "EQUIPOS","RESPONSIVAS","USUARIOS","EMPLEADOS") not null,
 primary key(permiso, usuario, modulo),
-foreign key (usuario) references usuario(Usuario)
+foreign key (usuario) references usuario(Usuario) on delete cascade on update cascade
 );
 
 insert into tokens values(
@@ -357,6 +356,9 @@ select Área from empleado inner join usuario on empleado.Num_emp = usuario.Num_
 
 select*from usuario;
 select*from permisos;
+
+
+
 insert into permisos values
 (1,"ajimenez","ALMACÉN"),#Altas
 (2,"ajimenez","ALMACÉN"),#Bajas

@@ -49,3 +49,7 @@ Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual th
 Error: ER_BAD_FIELD_ERROR: Unknown column 'AP' in 'field list' | Error obtenido el -> 15/09/2023 2:3
 Error: ER_BAD_FIELD_ERROR: Unknown column 'AP' in 'field list' | Error obtenido el -> 15/09/2023 2:3
 Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?)' at line 1 | Error obtenido el -> 15/09/2023 2:15
+Error: ER_ROW_IS_REFERENCED_2: Cannot delete or update a parent row: a foreign key constraint fails (`inventarios`.`permisos`, CONSTRAINT `permisos_ibfk_1` FOREIGN KEY (`usuario`) REFERENCES `usuario` (`Usuario`)) | Error obtenido el -> 19/09/2023 17:45
+Error: ER_ROW_IS_REFERENCED_2: Cannot delete or update a parent row: a foreign key constraint fails (`inventarios`.`permisos`, CONSTRAINT `permisos_ibfk_1` FOREIGN KEY (`usuario`) REFERENCES `usuario` (`Usuario`)) | Error obtenido el -> 19/09/2023 17:45
+Error: ER_NO_REFERENCED_ROW_2: Cannot add or update a child row: a foreign key constraint fails (`inventarios`.`pcs`, CONSTRAINT `pcs_ibfk_1` FOREIGN KEY (`Num_Serie`) REFERENCES `equipo` (`Num_Serie`) ON DELETE CASCADE ON UPDATE CASCADE) | Error obtenido el -> 19/09/2023 18:15
+Error: ER_NO_REFERENCED_ROW_2: Cannot add or update a child row: a foreign key constraint fails (`inventarios`.`mouse`, CONSTRAINT `mouse_ibfk_1` FOREIGN KEY (`Num_Serie`) REFERENCES `equipo` (`Num_Serie`) ON DELETE CASCADE ON UPDATE CASCADE) | Error obtenido el -> 19/09/2023 18:15

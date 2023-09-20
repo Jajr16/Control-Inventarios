@@ -322,7 +322,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 }
             }
         } else if (pathname === "/users/ModEmp" && (Permisos['EMPLEADOS'].includes('4') || Permisos['EMPLEADOS'].includes('2') || Permisos['EMPLEADOS'].includes('3'))) {
-            cargarNombres2();
+            cargarSelect2('#NomJefe');
 
             enviarSocket("DatEmp", "");
             const thead = document.querySelector("#firstrow");
@@ -388,7 +388,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     }
                     document.getElementById("NEM").value = valores0;
                     document.getElementById("AreaME").value = valores1;
-                    $('#NomJefe').val(valores2).trigger('change.select2');
+                    $('#NomJefe').val(valores2.replace(/\s+$/, '')).trigger('change.select2');
                 }
             });
 
@@ -506,8 +506,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                 if (confirmacion) {
                     var fila = elementoBoton.parentNode;
-                    var Usuario = fila.querySelector("td:first-child").innerHTML;
-
+                    var Usuario = fila.querySelector("td:nth-child(2)").innerHTML;
                     if (localStorage.getItem('user') != Usuario) {
                         enviarSocket('Bajas_Usuario', Usuario);
                         // Eliminar la fila de la tabla
@@ -1100,9 +1099,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         location.href = "index";
     } else {
         if (pathname == "/users/altasEqp" && Permisos['EQUIPOS'].includes('1')) {
-            window.addEventListener("load", function (event) {
-                cargarNombres();
-            });
+            cargarSelect('#NombreEmp');
             //Formulario desplegable
             const Equipos = $('#Equip');
             const Menu = $("#Desplegable");
@@ -1421,7 +1418,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             var valores3 = "";
             var valores4 = "";
             var valores5 = "";
-
+            var NIMEviejo = "";
             //Modificar usuarios
             socket.on('ButtonUp', () => {
                 let BotonMod = document.getElementsByClassName("BotonMod");
@@ -1429,9 +1426,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 for (let i = 0; i < BotonMod.length; i++) {
                     BotonMod[i].addEventListener("click", obtenerValoresMod);
                 }
-
                 function obtenerValoresMod(e) {
-
                     var elementosTD = e.srcElement.parentElement.getElementsByTagName("td");
                     // recorremos cada uno de los elementos del array de elementos <td>
                     for (let i = 0; i < elementosTD.length; i++) {
@@ -1447,7 +1442,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     document.getElementById("EquipM").value = valores1;
                     document.getElementById("MarcEM").value = valores2;
                     document.getElementById("ModelEM").value = valores3;
-                    $('#NombreEmp').val(valores4).trigger('change.select2');
+                    $('#NombreEmp').val(valores4.replace(/\s+$/, '')).trigger('change.select2');
                     document.getElementById("UbiEM").value = valores5;
 
                     if (document.getElementById("EquipM").value == "CPU") {
@@ -1465,7 +1460,19 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                                 $('#MouseE').val(CPU.Mouse);
                                 $('#TecladE').val(CPU.Teclado);
                                 $('#AccesE').val(CPU.Accesorio);
+                                NIMEviejo = CPU.Num_Inv_Mon;
                             });
+                            const FormMod = document.querySelector("#ModEquipos");
+                            FormMod.addEventListener("submit", function () {
+                                if ($("#Num_SerieM").val() != "" && $("#EquipM").val() != "" && $("#MarcEM").val() != "" && $("#ModelEM").val() != "" && $("#NombreEmp").val() != "" && $("#UbiEM").val() != "") {
+                                    //Monitores
+                                    if ($("#MonE").val() != "" && $("#NIME").val() != "" && $("#N_Ser_M").val() != "") {
+                                        socket.emit('CambiosMon', { Num_S: $("#Num_SerieM").val(), MonE: $("#MonE").val(), NIME: $("#NIME").val(), NSMon: $("#N_Ser_M").val() }, { OLDNum_S: valores0, OldNIME: NIMEviejo });
+                                    }
+                                }
+                            });
+
+                            console.log(NIMEviejo)
                             // Muestra el contenido del div con id "Desplegable"
                             Menu.show();
                         });
@@ -1475,7 +1482,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         Menu.hide();
                     }
                 }
-
                 // Cambios de equipos
                 const FormMod = document.querySelector("#ModEquipos");
 
@@ -1490,10 +1496,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         //Enviar HardWare
                         if ($("#HardE").val() != "" && $("#SoftE").val() != "") {
                             socket.emit('CambiosPc', { Num_S: $("#Num_SerieM").val(), HardE: $("#HardE").val(), SoftE: $("#SoftE").val() }, { OLDNum_S: valores0 });
-                        }
-                        //Monitores
-                        if ($("#MonE").val() != "" && $("#NIME").val() != "" && $("#N_Ser_M").val() != "") {
-                            socket.emit('CambiosMon', { Num_S: $("#Num_SerieM").val(), MonE: $("#MonE").val(), NIME: $("#NIME").val(), NSMon: $("#N_Ser_M").val() }, { OLDNum_S: valores0 });
                         }
                         //Mouse
                         if ($("#MouseE").val() != "") {
@@ -1523,8 +1525,8 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         location.href = "index";
     } else {
         if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('3'))) {
-            
-            socket.emit("Consul_Mobiliario",localStorage.getItem('user'));
+
+            socket.emit("Consul_Mobiliario", localStorage.getItem('user'));
 
             const thead = document.querySelector("#firstrow");
 
