@@ -550,11 +550,9 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     document.getElementById("PassM").value = valores1;
 
                     enviarSocket('PermisosUser', valores0);
-
+                    PermisosGenerales();
                     socket.on('Desp_Permisos', async (data) => {
                         $(`#${data.modulos}`).prop('checked', true);
-                        PermisosGenerales();
-
                         // Mostrar solo el contenedor del módulo correspondiente
                         const moduloCorrespondiente = permisosPorModulo.find(permiso => permiso.modulo === `#${data.modulos}`);
                         if (moduloCorrespondiente) {
