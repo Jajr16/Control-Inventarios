@@ -640,3 +640,5 @@ select*from empleado;
 
 insert into Empleado values(663, 'NAVARRO JIMENEZ MARTHA LIDIA', 'DIRECCION GENERAL', 663);
 update empleado set Num_Jefe = 663;
+
+update empleado set Nom = replace(Nom,'Ã‘','Ñ');

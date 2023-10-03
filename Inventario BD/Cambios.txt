@@ -9,3 +9,25 @@ Ponerle número de inventario al monitor al formulario y pdf's de equipo
 ---------- CAMBIOS EXCELS --------------
 Realizar dos excel's, uno de mobiliario y otro de excel, los campos deben de ser los mismos que se encuentran en el PDF que corresponda.
 En ambos casos se deben de poner todos los empleados, es decir, todos los registros incluyendo los encargados de cada equipo
+
+--------- PETICIONES -----------
+POR PARTE DE QUIEN LO PIDE -------->
+Usuarios hacen solicitudes, jefes de área van a ser los únicos que hagan las peticiones, buscan en almacén todo lo de papelería, lo van a buscar y le ponen cuántos necesitan, se va a poder seleccionar varias cosas (tipo como un carrito de compras) 
+
+Dirección va a entrar y verá qué peticiones hay hechas por los usuarios, ellos aceptarán qué pedidos se autorizarán, una vez autorizados, se verá reflejada la petición en almacén (los que dan de alta en almacén).
+
+Una vez que se entreguen los productos, se deberá validar que ya se entregó por ambas partes (almacenista y dirección), una vez que ya se confirmaron ambos, el cambio se verá reflejado en el almacén (cantidad de productos)
+
+De parte del almacenista se deberá de poder ver un historial de todo lo que ha entregado, también se verá un historial de lo que hicieron peticiones, en este caso el estatus será Solicitado y entregado en caso de almacén aparecerá "por entregar" y "entregado" 
+
+Solicitud de nuevo producto: En caso de que no haya algún producto, el usuario que hace peticiones podrá llenar otro formulario en donde pida productos que no hay en el almacén, esta petición o solicitud se mandará primero a dirección y hasta ser autorizado le mandará notificación al almacenista
+
+Si se hace una petición de algo que ya está inventariado solamente se va a pedir la cantidad de lo que se va a pedir, y seleccinoar la cosa que quieren. 
+En caso de no haya algo inventariado solamente la descripción y la cantidad
+En ambos casos guardar quién hace la petición y la fecha
+
+Dirección solamente le dará un clic a un botón de si admite o rechaza, también poner un botón que acepte todas las peticiones que dirección desee (esto a consideración)
+
+Para el almacenista solo se le mostrará una especie de notificación en donde se notificará del producto, la cantidad y la fecha, se le mostrará un checkbox en donde el podrá seleccionar en caso de que ya lo haya entregado
+
+Para el que hace peticiones se le mostrará un historial de qué peticiones hizo, también que al logearse se les aparezca una pequeña ventanita en caso de tener productos pendientes que se le autoricen o que se le entreguen, si ya no tiene pendientes o no autorizados, no se mostrará nada

@@ -551,6 +551,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     enviarSocket('PermisosUser', valores0);
                     PermisosGenerales();
+                    
                     socket.on('Desp_Permisos', async (data) => {
                         $(`#${data.modulos}`).prop('checked', true);
                         // Mostrar solo el contenedor del módulo correspondiente
