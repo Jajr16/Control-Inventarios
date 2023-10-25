@@ -639,6 +639,21 @@ h5 {
     transform: scale(1.1);
 }
 
+.BotonAC {
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background: linear-gradient(to top, #64cbf3, #0084b8);
+    color: rgb(199, 236, 245);
+    border-radius: 10%;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonAC:hover {
+    background: linear-gradient(to top, #64cbf3, #c2eafa);
+    color: rgb(0, 101, 104);
+}
+
 .BotonERR {
     text-decoration: none;
     padding: 0.5rem;

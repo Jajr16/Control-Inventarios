@@ -682,6 +682,9 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             if (Permisos['ALMACÉN'].includes('3')) {
                 CabHTML += `<th>Modificar</th>`;
             }
+            if (Permisos['ALMACÉN'].includes('4')) {
+                CabHTML += `<th>Agregar a carrito</th>`;
+            }
 
             thead.innerHTML += CabHTML;
 
@@ -707,6 +710,9 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     if (Permisos['ALMACÉN'].includes('3')) {
                         filaHTML += `<td> - </td>`;
                     }
+                    if (Permisos['ALMACÉN'].includes('4')) {
+                        filaHTML += `<td> - </td>`;
+                    }
                 } else {
                     // Verifica los permisos y agrega los botones correspondientes
                     if (Permisos['ALMACÉN'].includes('2')) {
@@ -714,6 +720,9 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     }
                     if (Permisos['ALMACÉN'].includes('3')) {
                         filaHTML += `<td class="BotonMod"> Modificar </td>`;
+                    }
+                    if (Permisos['ALMACÉN'].includes('4')) {
+                        filaHTML += `<td class="BotonAC" onclick="addToCart('${data.Cod_Barras}', '${data.NArt}', 1)"> Agregar a carrito </td>`;
                     }
                 }
 
