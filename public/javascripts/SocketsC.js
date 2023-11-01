@@ -722,7 +722,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         filaHTML += `<td class="BotonMod"> Modificar </td>`;
                     }
                     if (Permisos['ALMACÉN'].includes('4')) {
-                        filaHTML += `<td class="BotonAC" onclick="addToCart('${data.Cod_Barras}', '${data.NArt}', 1)"> Agregar a carrito </td>`;
+                        filaHTML += `<td class="BotonAC" onclick="Abrir3()"> Agregar a carrito </td>`;
                     }
                 }
 
@@ -1642,9 +1642,13 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
             function Enviar(e) {
                 e.preventDefault();
-                if ($("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "" && nombreUsuario != "") {
+                if ($("#ArtM").val() != "" && $("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "" && nombreUsuario != "") {
+                    
+                    if($("#ArtM").val() == "OTRO"){
+                        
+                    }
 
-                    enviarSocket('Alta_Mob', { Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), NombreEmp: nombreUsuario });
+                    enviarSocket('Alta_Mob', {Articulo: $("#ArtM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), NombreEmp: nombreUsuario });
 
                     recibirSocket('Mobiliario_Respuesta');
                 }

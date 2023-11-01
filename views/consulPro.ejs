@@ -68,8 +68,6 @@
                 </table>
             </div>
         </div>
-        <input type="button" class="BotonAC" id="AgreCarr" onclick="Abrir3()"
-                                value="Ver el carrito">
         <input type="button" class="BotonExcel" id="ExcelDownload" onclick="Excel('ExcelA')" value="Descargar Excel">
         <div class="pen">
             <div class="controls">
@@ -213,13 +211,18 @@
                     <p class="close title_modal" onclick="Cerrar3()">X</p>
                 </div>
                 <div>
-                    <div class="cart">
+                    <!-- <div class="cart">
                         <h2>Carrito de Compras</h2>
                         <ul id="cart-items">
                             <!-- Elementos del carrito se agregan dinámicamente aquí -->
-                        </ul>
+                        <!-- </ul>
                         <p>Total de productos: <span id="cart-total">0</span></p>
+                    </div> -->
+                    <div>
+                        <label>Cantidad a agregar:</label>
+                        <input type="text" oninput="return checkN(e)" id="Cantidad_Carrito" name="Cantidad_Carrito" autocomplete="off">
                     </div>
+
                 </div>
             </div>
         </div>
