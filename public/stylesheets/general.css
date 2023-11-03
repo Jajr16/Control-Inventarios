@@ -1022,3 +1022,19 @@ h5 {
 #NombreEmp {
     width: 100% !important;
 }
+
+/* Estilos para el contenedor div */
+.Carrito_Cant div {
+    margin-bottom: 0;
+    display: flex;
+    vertical-align: middle;
+}
+
+/* Estilo para el input */
+.Carrito_Cant input {
+    margin-right: 10px; /* Espacio entre el input y los íconos */
+}
+
+.Cantidad_Carrito {
+    margin-bottom: 0!important;
+}

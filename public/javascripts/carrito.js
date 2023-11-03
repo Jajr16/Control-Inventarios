@@ -1,6 +1,4 @@
-const cart = [];
-
-function addToCart(id, name, cantidad) {
+function addToCart(id, name, cantidad, cart) {
     // Buscar si el producto ya está en el carrito
     const existingItem = cart.find(item => item.id === id);
 
@@ -11,12 +9,13 @@ function addToCart(id, name, cantidad) {
         // Si el producto no existe en el carrito, añadirlo
         cart.push({ id, name, cantidad });
     }
-
+    console.log(cart);
+    localStorage.setItem('carrito', JSON.stringify(cart));
     // Actualizar el carrito
-    updateCart();
+    updateCart(cart);
 }
 
-function updateCart() {
+function updateCart(cart) {
     const cartItems = document.getElementById("cart-items");
     const cartTotal = document.getElementById("cart-total");
     // Total de productos

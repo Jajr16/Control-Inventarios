@@ -1,4 +1,5 @@
 var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
+var carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 var socket = io.connect("http://localhost:3001");
 var pathname = window.location.pathname;
 //////////////////////// PERMISOS /////////////////////
@@ -551,7 +552,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     enviarSocket('PermisosUser', valores0);
                     PermisosGenerales();
-                    
+
                     socket.on('Desp_Permisos', async (data) => {
                         $(`#${data.modulos}`).prop('checked', true);
                         // Mostrar solo el contenedor del módulo correspondiente
@@ -683,7 +684,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 CabHTML += `<th>Modificar</th>`;
             }
             if (Permisos['ALMACÉN'].includes('4')) {
-                CabHTML += `<th>Agregar a carrito</th>`;
+                CabHTML += `<th>Solicitar Artículo</th>`;
             }
 
             thead.innerHTML += CabHTML;
@@ -722,7 +723,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         filaHTML += `<td class="BotonMod"> Modificar </td>`;
                     }
                     if (Permisos['ALMACÉN'].includes('4')) {
-                        filaHTML += `<td class="BotonAC" onclick="Abrir3()"> Agregar a carrito </td>`;
+                        filaHTML += `<td class="BotonAC Carrito_Cant" id="Carrito_Cant"> Solicitar artículo </td>`;
                     }
                 }
 
@@ -731,6 +732,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                 // Agrega la fila completa al tbody
                 tbody.innerHTML += filaHTML;
+
 
                 if (Permisos['ALMACÉN'].includes('2')) {
                     // Volver a asignar el evento de clic a los botones de eliminar
@@ -741,6 +743,54 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                             eliminar(this, '¿Deseas eliminar este producto?', 'Bajas_Prod');
                         });
                     }
+                }
+
+                if (Permisos['ALMACÉN'].includes('4')) {
+                    const botonesCarritos = document.getElementsByClassName("BotonAC");
+
+                    for (let i = 0; i < botonesCarritos.length; i++) {
+                        botonesCarritos[i].addEventListener("click", function (e) {
+                            const btnClickeado = this;
+
+                            if (btnClickeado.classList.contains('BotonAC')) {
+                                // Elimina la clase 'BotonAC'
+                                btnClickeado.classList.remove('BotonAC');
+                                // Crea un nuevo elemento <div> con el input y los íconos
+                                const nuevoContenido = document.createElement('div');
+                                nuevoContenido.innerHTML = '<input type="text" class="Cantidad_Carrito" id="Cantidad_Carrito" name="Cantidad_Carrito" autocomplete="off" onkeypress="return checkN(event)"><span class="icon-check">✔</span><span class="icon-cross">✘</span>';
+
+                                // Reemplaza el contenido del td con el nuevo elemento
+                                btnClickeado.innerHTML = '';
+                                btnClickeado.appendChild(nuevoContenido);
+
+                                const check_icon = nuevoContenido.querySelector(".icon-check");
+
+                                check_icon.addEventListener("click", function (e) {
+                                    const palomita = this.parentElement.parentElement.parentElement;
+                                    const padreInput = palomita.getElementsByTagName("td");
+                                    const inputCarrito = palomita.querySelector(".Cantidad_Carrito");
+
+                                    var codigoBarras = padreInput[0].innerHTML;
+                                    var nomProducto = padreInput[2].innerHTML;
+
+                                    addToCart(codigoBarras, nomProducto, parseFloat(inputCarrito.value), carrito);
+                                    Abrir3();
+                                });
+
+                                const cancel_icon = nuevoContenido.querySelector(".icon-cross");
+
+                                cancel_icon.addEventListener("click", function (e) {
+                                    e.stopPropagation(); // Detener la propagación del clic en el ícono
+                                    if (!btnClickeado.classList.contains('BotonAC')) {
+                                        nuevoContenido.remove();
+                                        btnClickeado.classList.add('BotonAC');
+                                        btnClickeado.innerHTML = 'Solicitar articulo';
+                                    }
+                                });
+                            }
+                        });
+                    }
+
                 }
             });
 
@@ -1535,7 +1585,10 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('3'))) {
 
             socket.emit("Consul_Mobiliario", localStorage.getItem('user'));
-
+            
+            if(carrito){
+                console.log(carrito);
+            }
             const thead = document.querySelector("#firstrow");
 
             let CabHTML = "";
@@ -1643,12 +1696,12 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             function Enviar(e) {
                 e.preventDefault();
                 if ($("#ArtM").val() != "" && $("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "" && nombreUsuario != "") {
-                    
-                    if($("#ArtM").val() == "OTRO"){
-                        
+
+                    if ($("#ArtM").val() == "OTRO") {
+
                     }
 
-                    enviarSocket('Alta_Mob', {Articulo: $("#ArtM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), NombreEmp: nombreUsuario });
+                    enviarSocket('Alta_Mob', { Articulo: $("#ArtM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), NombreEmp: nombreUsuario });
 
                     recibirSocket('Mobiliario_Respuesta');
                 }
