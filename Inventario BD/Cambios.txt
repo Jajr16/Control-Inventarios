@@ -31,3 +31,7 @@ Dirección solamente le dará un clic a un botón de si admite o rechaza, tambi�
 Para el almacenista solo se le mostrará una especie de notificación en donde se notificará del producto, la cantidad y la fecha, se le mostrará un checkbox en donde el podrá seleccionar en caso de que ya lo haya entregado
 
 Para el que hace peticiones se le mostrará un historial de qué peticiones hizo, también que al logearse se les aparezca una pequeña ventanita en caso de tener productos pendientes que se le autoricen o que se le entreguen, si ya no tiene pendientes o no autorizados, no se mostrará nada
+
+Dos permisos extra, que sean solicitar y permitir.
+Ícono en donde aparecerán los productos que aún no se envían, una vez que se le da a enviar petición, esos productos se van a limpiar y se le enviará a dirección.
+Ventana específica para peticiones donde aparecerán todos los productos solicitados y su status.
