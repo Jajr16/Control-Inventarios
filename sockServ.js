@@ -1776,12 +1776,12 @@ io.on('connection', (socket) => {
             else {
                 if (res.length > 0) {//Si sí hizo una búsqueda
                     if (!(res[0].Área === 'SISTEMAS')) {
-                        db.query('SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp where e.nom = (select empleado.nom from empleado inner join usuario on empleado.Num_emp = usuario.Num_Emp where usuario.Usuario = ?);', [data], function (err, result) {
+                        db.query('select*from mobiliario', [data], function (err, result) {
                             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
                             else {
                                 if (result.length > 0) {//Si sí hizo una búsqueda
                                     for (var i = 0; i < result.length; i++) {
-                                        socket.emit('Desp_Mobiliario', { Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, NombreCom: result[i].NombreCom, Area: result[i].Area });//Mandar usuario y token al cliente
+                                        socket.emit('Desp_Mobiliario', { Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].Area });//Mandar usuario y token al cliente
                                     }
                                     socket.emit('ButtonUp');
                                 }
@@ -1795,7 +1795,7 @@ io.on('connection', (socket) => {
                                 if (result.length > 0) {//Si sí hizo una búsqueda
                                     console.log(result);
                                     for (var i = 0; i < result.length; i++) {
-                                        socket.emit('Desp_Mobiliario', { Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, NombreCom: result[i].Nom, Area: result[i].AreaM });//Mandar usuario y token al cliente
+                                        socket.emit('Desp_Mobiliario', { Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].AreaM });//Mandar usuario y token al cliente
                                     }
                                     socket.emit('ButtonUp');
                                 }
@@ -1812,16 +1812,15 @@ io.on('connection', (socket) => {
     // Altas de mobiliario
     socket.on('Alta_Mob', async (data) => {
 
-        db.query('SELECT e.Num_Emp, e.Área, e.Nom FROM empleado e WHERE e.Num_Emp = (SELECT u.Num_Emp FROM Usuario u WHERE u.Usuario = ?)', [data.NombreEmp], function (err, result) {
+        db.query('SELECT empleado.Num_Emp, empleado.Área FROM empleado inner join usuario on usuario.Num_Emp = empleado.Num_emp', function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) {//Si sí hizo una búsqueda
 
                     var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
                     var area = result[0].Área; // Se obtiene el area del arreglo
-                    var nomComp = result[0].Nom; // Se obtiene el nombre completo del empleado
 
-                    db.query('insert into mobiliario values (NULL,?,?,?,?,?)', [data.Descripcion, num_emp, data.Ubicacion, data.Cantidad, area], function (err2, result) {
+                    db.query('insert into mobiliario values (NULL,?,?,?,?,?,?)', [data.Articulo, data.Descripcion, num_emp, data.Ubicacion, data.Cantidad, area], function (err2, result) {
                         if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (result) {
@@ -1847,7 +1846,7 @@ io.on('connection', (socket) => {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (result.length > 0) { //Si sí hizo una búsqueda
-                    db.query('delete from mobiliario where Descripcion = ?', data, function (err, result) {
+                    db.query('delete from mobiliario where Articulo = ?', data, function (err, result) {
                         if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (result.affectedRows > 0) {
@@ -1869,22 +1868,13 @@ io.on('connection', (socket) => {
 
     // Cambios en mobiliario
     socket.on('Cambios_Mobiliario', async (data, dataOld) => {
-        db.query('SELECT Num_Emp FROM empleado WHERE Nom = ?', [data.Empleado], function (err, result) {
-            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+        db.query('update mobiliario set Articulo = ?, Descripcion = ?, Ubicacion = ?, Cantidad = ? where Articulo = ?', [data.Articulo, data.Descripcion, data.Ubicacion, data.Cantidad, dataOld.OLDArtM], function (err2, result) {
+            if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
             else {
-                if (result.length > 0) { //Si sí hizo una búsqueda
-                    var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
-                    //Se agrega productos a la BD
-                    db.query('update mobiliario set Descripcion = ?, Ubicacion = ?, Cantidad = ? where Num_emp = ? and Descripcion = ?', [data.Descripcion, data.Ubicacion, data.Cantidad, num_emp, dataOld.OLDDesc], function (err2, result) {
-                        if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
-                        else {
-                            if (result.affectedRows > 0) { //Si sí hizo una búsqueda
-                                socket.emit('RespDelMob', { mensaje: 'Mobiliario modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
-                            } else {
-                                socket.emit('RespDelMob', { mensaje: "No se pudo modificar el mobiliario." })
-                            }
-                        }
-                    });
+                if (result.affectedRows > 0) { //Si sí hizo una búsqueda
+                    socket.emit('RespDelMob', { mensaje: 'Mobiliario modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
+                } else {
+                    socket.emit('RespDelMob', { mensaje: "No se pudo modificar el mobiliario." })
                 }
             }
         });

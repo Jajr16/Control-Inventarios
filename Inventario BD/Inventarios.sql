@@ -642,3 +642,18 @@ insert into Empleado values(663, 'NAVARRO JIMENEZ MARTHA LIDIA', 'DIRECCION GENE
 update empleado set Num_Jefe = 663;
 
 update empleado set Nom = replace(Nom,'Ã‘','Ñ');
+
+ALTER TABLE `Inventarios`.`Mobiliario`
+ADD COLUMN `articulos` VARCHAR(100) NULL AFTER `Num_Inventario`;
+
+ALTER TABLE `Inventarios`.`Mobiliario`
+CHANGE COLUMN `articulos` `Articulo` VARCHAR(100) NULL;
+
+ALTER TABLE `Inventarios`.`Mobiliario`
+DROP COLUMN `NombreCom`;
+
+SELECT empleado.Num_Emp FROM empleado inner join usuario on usuario.Num_Emp = empleado.Num_emp;
+
+SELECT empleado.Num_Emp, empleado.Área FROM empleado inner join usuario on usuario.Num_Emp = empleado.Num_emp;
+
+DELETE FROM `Mobiliario`;

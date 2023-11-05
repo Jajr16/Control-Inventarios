@@ -55,10 +55,10 @@
                 <table id="DatosProd">
                     <thead>
                         <tr id="firstrow">
+                            <th>Artículo</th>
                             <th>Descripción</th>
                             <th>Ubicación</th>
                             <th>Cantidad</th>
-                            <th>Nombre de encargado</th>
                             <th>Área</th>
                         </tr>
                     </thead>
@@ -75,10 +75,10 @@
             <div class="modal-container cancel-modal">
                 <div class="Contenedor Contenido-centrado Alta">
                     <form name="ModMobi" id="ModMobi">
-                        <div class="Tres_Column Separacion">
+                        <div class="Dos_Columnas Separacion">
                             <div>
-                                <label>Descripción</label>
-                                <select id="DescM" name="DescM" required>
+                                <label>Artículo</label>
+                                <select id="ArtM" name="ArtM" required>
                                     <option value=""></option>
                                     <option>ARCHIVERO</option>
                                     <option>BANCO</option>
@@ -103,8 +103,16 @@
                                     <option>SILLA CON RUEDAS</option>
                                     <option>SILLA EJECUTIVA</option>
                                     <option>SILLA SIN RUEDAS</option>
+                                    <option>OTRO</option>
                                 </select>
                             </div>
+                            <div>
+                                <label>Descripción</label>
+                                <input type="text" id="DescM" name="DescM" oninput="mayus(this);"
+                                    onkeypress="return checkA(event)" required>
+                            </div>
+                        </div>
+                        <div class="Dos_Columnas">
                             <div>
                                 <label>Ubicación</label>
                                 <input autocomplete="off" type="text" id="UbiM" name="UbiM" required maxlength="400"
@@ -112,8 +120,17 @@
                             </div>
                             <div>
                                 <label>Cantidad</label>
-                                <input autocomplete="off" type="number" id="CantidadM" name="CantidadM" required min="1"
-                                  onkeypress="return checkN(event)">
+                                <input autocomplete="off" type="text" id="CantidadM" name="CantidadM" required min="1"
+                                    onkeypress="return checkN(event)">
+                            </div>
+                        </div>
+                        <div id="DesplegableM">
+                            <div class="Dos_Columnas">
+                                <div>
+                                    <label>Otros</label>
+                                    <input autocomplete="off" type="text" id="OtrosM" name="OtrosM" maxlength="100"
+                                        onkeypress="return checkA(event)" oninput="mayus(this);">
+                                </div>
                             </div>
                         </div>
                         <div class="Dos_Columnas Separacion">

@@ -472,7 +472,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
             socket.emit("Consul_Usuario");
 
-            // Consulta de productos
+            // Consulta de usuarios
             socket.on('Desp_Usuario', async (data) => {
                 const tbody = document.querySelector("#DatosProd tbody");
                 let filaHTML = `
@@ -1586,6 +1586,41 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
             socket.emit("Consul_Mobiliario", localStorage.getItem('user'));
             
+            //Formulario desplegable
+            const ArtiDesp = $('#ArtM');
+            const MenuM = $("#DesplegableM");
+
+            const otrosM = $('#OtrosM');
+
+            MenuM.hide();
+            //Formulario.reset();
+            ArtiDesp.on('change', function () {
+                if (ArtiDesp.val() == 'OTRO') {
+                    MenuM.slideDown();//Lo abre
+                } else {
+                    MenuM.slideUp();//Lo cierra
+                    //Quita los required
+                    otrosM.prop('required', false);
+
+                    //Pone valores vacío
+                    otrosM.val('');
+                }
+            });
+            //VALIDAR FORMULARIO DEPENDIENDO SI LLENAN CAMPOS
+            //Funcion general
+            function Listeners(elemento, evento, funcion) {
+                elemento.on(evento, funcion);
+            }
+
+            Listeners(otrosM, 'input', function (e) {
+
+                if (otrosM.val() != "") {
+                    otrosM.prop('required', true);
+                } else {
+                    otrosM.prop('required', false);
+                }
+            });
+
             if(carrito){
                 console.log(carrito);
             }
@@ -1607,10 +1642,10 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 const tbody = document.querySelector("#DatosProd tbody");
                 let filaHTML = `
                 <tr>
+                    <td>${data.Articulo}</td>
                     <td>${data.Descripcion}</td>
                     <td>${data.Ubicacion}</td>
                     <td>${data.Cantidad}</td>
-                    <td>${data.NombreCom}</td>
                     <td>${data.Area}</td>
                     `;
 
@@ -1662,9 +1697,10 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         valores2 = elementosTD[2].innerHTML;
                         valores3 = elementosTD[3].innerHTML;
                     }
-                    document.getElementById("DescM").value = valores0;
-                    document.getElementById("UbiM").value = valores1;
-                    document.getElementById("CantidadM").value = valores2;
+                    document.getElementById("ArtM").value = valores0;
+                    document.getElementById("DescM").value = valores1;
+                    document.getElementById("UbiM").value = valores2;
+                    document.getElementById("CantidadM").value = valores3;
                 }
 
                 // Cambios de mobiliario
@@ -1677,31 +1713,73 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     e.preventDefault();
 
-                    if ($("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "") {
-                        socket.emit('Cambios_Mobiliario', { Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), Empleado: valores3.replace(/\s+$/, '') }, { OLDDesc: valores0 });
+                    if ($("#ArtM").val() != "" && $("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "") {
+
+                        //Si pone otros
+                        if ($("#OtrosM").val() != "") {
+                            socket.emit('Cambios_Mobiliario', { Articulo: $("#OtrosM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val() }, { OLDArtM: valores0 });
+                        }
+                        else {
+                            socket.emit('Cambios_Mobiliario', { Articulo: $("#ArtM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val() }, { OLDArtM: valores0 });
+                        }
+                        
                     }
                 }
             });
             recibirSocket('RespDelMob');
         } else if (pathname == "/users/altasMob" && Permisos['MOBILIARIO'].includes('1')) {
 
-            // Recupera el nombre del usuario
-            const nombreUsuario = localStorage.getItem('user');
-
             const FormProduct = document.querySelector("#AltaMobiliario");
+
+            //Formulario desplegable
+            const ArtiDesp = $('#ArtM');
+            const MenuM = $("#DesplegableM");
+
+            const otrosM = $('#OtrosM');
+
+            MenuM.hide();
+            //Formulario.reset();
+            ArtiDesp.on('change', function () {
+                if (ArtiDesp.val() == 'OTRO') {
+                    MenuM.slideDown();//Lo abre
+                } else {
+                    MenuM.slideUp();//Lo cierra
+                    //Quita los required
+                    otrosM.prop('required', false);
+
+                    //Pone valores vacío
+                    otrosM.val('');
+                }
+            });
+            //VALIDAR FORMULARIO DEPENDIENDO SI LLENAN CAMPOS
+            //Funcion general
+            function Listeners(elemento, evento, funcion) {
+                elemento.on(evento, funcion);
+            }
+
+            Listeners(otrosM, 'input', function (e) {
+
+                if (otrosM.val() != "") {
+                    otrosM.prop('required', true);
+                } else {
+                    otrosM.prop('required', false);
+                }
+            });
 
             // Altas de mobiliario
             FormProduct.addEventListener("submit", Enviar);
 
             function Enviar(e) {
                 e.preventDefault();
-                if ($("#ArtM").val() != "" && $("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "" && nombreUsuario != "") {
+                if ($("#ArtM").val() != "" && $("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "") {
 
-                    if ($("#ArtM").val() == "OTRO") {
-
+                    //Si pone otros
+                    if ($("#OtrosM").val() != "") {
+                        enviarSocket("Alta_Mob", { Articulo: $("#OtrosM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val() });
                     }
-
-                    enviarSocket('Alta_Mob', { Articulo: $("#ArtM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), NombreEmp: nombreUsuario });
+                    else {
+                        enviarSocket('Alta_Mob', { Articulo: $("#ArtM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val() });
+                    }
 
                     recibirSocket('Mobiliario_Respuesta');
                 }

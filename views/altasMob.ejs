@@ -83,7 +83,8 @@
                     </div>
                     <div>
                         <label>Descripción</label>
-                        <input type="text" id="DescM" name="DescM" oninput="mayus(this);" onkeypress="return checkA(event)" required>
+                        <input type="text" id="DescM" name="DescM" oninput="mayus(this);"
+                            onkeypress="return checkA(event)" required>
                     </div>
                 </div>
                 <div class="Dos_Columnas">
@@ -96,6 +97,15 @@
                         <label>Cantidad</label>
                         <input autocomplete="off" type="text" id="CantidadM" name="CantidadM" required min="1"
                             onkeypress="return checkN(event)">
+                    </div>
+                </div>
+                <div id="DesplegableM">
+                    <div class="Dos_Columnas">
+                        <div>
+                            <label>Otros</label>
+                            <input autocomplete="off" type="text" id="OtrosM" name="OtrosM" maxlength="100"
+                                onkeypress="return checkA(event)" oninput="mayus(this);">
+                        </div>
                     </div>
                 </div>
                 <div class="Dos_Columnas Separacion">
