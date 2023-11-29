@@ -80,29 +80,25 @@
                                 <label>Artículo</label>
                                 <select id="ArtM" name="ArtM" required>
                                     <option value=""></option>
-                                    <option>ARCHIVERO</option>
-                                    <option>BANCO</option>
-                                    <option>CAJONERA</option>
-                                    <option>CAFETERA</option>
-                                    <option>CARRITOS</option>
-                                    <option>CRUCIFIJO</option>
-                                    <option>CUADROS</option>
-                                    <option>ESCRITORIO</option>
-                                    <option>HORNO DE MICROONDAS</option>
-                                    <option>HORNO ELECTRICO</option>
-                                    <option>LOCKERS</option>
-                                    <option>MESA</option>
-                                    <option>MUEBLE CON ENTREPAÑOS</option>
-                                    <option>MULTICONTACTOS</option>
-                                    <option>PERCHERO</option>
-                                    <option>PIZARRON</option>
-                                    <option>PUPITRE</option>
-                                    <option>RELOJ</option>
-                                    <option>REFRIGERADOR</option>
-                                    <option>ROTAFOLIO</option>
-                                    <option>SILLA CON RUEDAS</option>
-                                    <option>SILLA EJECUTIVA</option>
-                                    <option>SILLA SIN RUEDAS</option>
+                                    <script>
+                                        $(document).ready(function () {
+                                            // Cargar las opciones desde el archivo JSON
+                                            $.getJSON('/javascripts/almacen_mobiliario.json', function (data) {
+                                                // Acceder directamente al array en el JSON
+                                                var opciones = data;
+                            
+                                                // Agregar las opciones al elemento select con Select2
+                                                $('#ArtM').select2({
+                                                    data: opciones.map(function (opcion) {
+                                                        return { id: opcion.ARTICULO, text: opcion.ARTICULO };
+                                                    }),
+                                                    placeholder: 'Selecciona un artículo',
+                                                    allowClear: true,
+                                                    width: '100%'
+                                                });
+                                            });
+                                        });
+                                    </script>
                                     <option>OTRO</option>
                                 </select>
                             </div>
