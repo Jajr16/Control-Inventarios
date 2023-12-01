@@ -1,5 +1,6 @@
 var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
 var carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+var user = localStorage.getItem('user');
 var socket = io.connect("http://localhost:3001");
 var pathname = window.location.pathname;
 //////////////////////// PERMISOS /////////////////////
@@ -1775,10 +1776,10 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     //Si pone otros
                     if ($("#OtrosM").val() != "") {
-                        enviarSocket("Alta_Mob", { Articulo: $("#OtrosM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val() });
+                        enviarSocket("Alta_Mob", { Articulo: $("#OtrosM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), User: user });
                     }
                     else {
-                        enviarSocket('Alta_Mob', { Articulo: $("#ArtM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val() });
+                        enviarSocket('Alta_Mob', { Articulo: $("#ArtM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), User: user  });
                     }
 
                     recibirSocket('Mobiliario_Respuesta');

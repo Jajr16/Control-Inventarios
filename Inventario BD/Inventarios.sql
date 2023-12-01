@@ -31,13 +31,6 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Empleado` (
 ENGINE = InnoDB
 COMMENT = '			';
 
-select*from Usuario;
-select*from Empleado;
-select*from Mobiliario;
-
-SELECT Num_Emp, Área, Nom, AP, AM FROM empleado WHERE Nom = "armando";
-SELECT empleado.Num_Emp, empleado.Área, empleado.Nom FROM empleado inner join Usuario on empleado.Num_emp = usuario.Num_emp where usuario.usuario = 'ajimenez';
-SELECT e.Num_Emp, e.Área, e.Nom FROM empleado e WHERE e.Num_Emp = (SELECT u.Num_Emp FROM Usuario u WHERE u.Usuario = 'ajimenez');
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Usuario`
 -- -----------------------------------------------------
@@ -636,8 +629,9 @@ SELECT mob.*, e.Nom FROM mobiliario mob JOIN empleado e ON mob.Num_emp = e.Num_e
 
 select*from mobiliario;
 select empleado.Nom, empleado.Área, empleado.Num_emp from empleado;
+select*from usuario;
 select*from empleado;
-
+SELECT empleado.Num_Emp, empleado.Área FROM empleado where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = 'ajimenez');
 insert into Empleado values(663, 'NAVARRO JIMENEZ MARTHA LIDIA', 'DIRECCION GENERAL', 663);
 update empleado set Num_Jefe = 663;
 
