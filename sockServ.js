@@ -90,6 +90,8 @@ io.on('connection', (socket) => {
                                 permisosModulos[row.modulo].push(row.permiso);
                             });
                             socket.emit('logInOK', { Usuario: result[0].Usuario, permisosModulos });
+                        }else {
+                            socket.emit('logInError', { mensaje: 'El usuario no cuenta con ningún permiso.' });
                         }
                     });
                 } else {
