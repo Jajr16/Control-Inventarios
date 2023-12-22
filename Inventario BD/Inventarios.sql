@@ -266,6 +266,7 @@ ENGINE = InnoDB;
 -- Table `Inventarios`.`Responsivas_E`
 -- -----------------------------------------------------
 drop table if exists Responsivas_E;
+drop table if exists Responsivas_M;
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Responsivas_E` (
   `Num_emp` INT NOT NULL,
   Num_Serie VARCHAR(45) not null NOT NULL,
@@ -651,3 +652,32 @@ SELECT empleado.Num_Emp FROM empleado inner join usuario on usuario.Num_Emp = em
 SELECT empleado.Num_Emp, empleado.Área FROM empleado inner join usuario on usuario.Num_Emp = empleado.Num_emp;
 
 DELETE FROM `Mobiliario`;
+
+-- Cambio de llave primaria de Mobiliario
+select*from Mobiliario;
+
+-- Se quita el autoincrement
+ALTER TABLE Mobiliario
+MODIFY COLUMN Num_Inventario INT;
+
+-- Se elimina la anterior llave primaria
+ALTER TABLE Mobiliario
+DROP PRIMARY KEY;
+
+-- Se crea una llave primaria de 3 columnas
+ALTER TABLE Mobiliario
+ADD PRIMARY KEY (Articulo, Descripcion, Num_emp);
+
+-- Se busca una tabla que tenga referenciada la llave primaria
+SELECT
+  TABLE_NAME,
+  COLUMN_NAME,
+  CONSTRAINT_NAME,
+  REFERENCED_TABLE_NAME,
+  REFERENCED_COLUMN_NAME
+FROM
+  INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE
+  REFERENCED_TABLE_NAME = 'Mobiliario' AND
+  REFERENCED_COLUMN_NAME = 'Num_Inventario';
+

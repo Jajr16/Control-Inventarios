@@ -1041,6 +1041,7 @@ io.on('connection', (socket) => {
 
         worksheet.columns = [
             { header: 'N. Inv', key: 'N_Inv', width: 11 },
+            { header: 'Artículo', key: 'Arti', width: 50 },
             { header: 'Descripción', key: 'Desc', width: 50 },
             { header: 'Ubicación', key: 'Ubi', width: 40 },
             { header: 'Cantidad', key: 'Cant', width: 15 },
@@ -1048,12 +1049,12 @@ io.on('connection', (socket) => {
             { header: 'Encargado', key: 'Encargado', width: 40 }
         ];
 
-        db.query('select mobiliario.Num_Inventario, mobiliario.Descripcion, mobiliario.Ubicacion, mobiliario.Cantidad, mobiliario.AreaM,empleado.Nom from mobiliario inner join empleado on mobiliario.Num_emp = empleado.Num_emp', async function (err, res) {
+        db.query('select mobiliario.Num_Inventario, mobiliario.Articulo, mobiliario.Descripcion, mobiliario.Ubicacion, mobiliario.Cantidad, mobiliario.Area, empleado.Nom from mobiliario inner join empleado on mobiliario.Num_emp = empleado.Num_emp', async function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (res.length > 0) {
                     for (var i = 0; i < res.length; i++) {
-                        worksheet.addRow({ N_Inv: res[i].Num_Inventario, Desc: res[i].Descripcion, Ubi: res[i].Ubicacion, Cant: res[i].Cantidad, Area: res[i].AreaM, Encargado: res[i].Nom });
+                        worksheet.addRow({ N_Inv: res[i].Num_Inventario, Arti: res[i].Articulo, Desc: res[i].Descripcion, Ubi: res[i].Ubicacion, Cant: res[i].Cantidad, Area: res[i].Area, Encargado: res[i].Nom });
                     }
 
                     //ESTILO DE EXCEL
@@ -1123,8 +1124,19 @@ io.on('connection', (socket) => {
                         bold: true
                     };
 
+                    worksheet.getCell('G1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('G1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
                     worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
-                    worksheet.autoFilter = 'A:F';
+                    worksheet.autoFilter = 'A:G';
 
                     //Ruta del archivo
                     var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
