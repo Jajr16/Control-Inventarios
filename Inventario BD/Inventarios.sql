@@ -680,4 +680,38 @@ FROM
 WHERE
   REFERENCED_TABLE_NAME = 'Mobiliario' AND
   REFERENCED_COLUMN_NAME = 'Num_Inventario';
+  
+-- Tabla de solicitudes de almacen
+CREATE TABLE soli_car (
+    Cod_Barras_SC VARCHAR(45) PRIMARY KEY,
+    Nombre_SC VARCHAR(45),
+    cantidad_SC INT(10),
+    emp_SC VARCHAR(45),
+    dir_LLSC VARCHAR(45),
+    soli_Resp BOOLEAN, -- Si la solicitud fue respondida
+    Acept BOOLEAN, -- Si la solicitud fue aceptada o no
+    cerrada BOOLEAN -- Si la solicitud ya fue cerrada
+    -- FOREIGN KEY (emp_SC) REFERENCES otra_tabla_emp_SC(emp_SC), -- Reemplazar "otra_tabla_emp_SC" con el nombre de la tabla de usuario o empleado y la columna correspondiente
+    -- FOREIGN KEY (dir_LLSC) REFERENCES otra_tabla_dir_LLSC(dir_LLSC) -- Reemplazar "otra_tabla_dir_LLSC" con el nombre de la tabla donde se encuentre el director y la columna correspondiente
+);
 
+-- Se añade otra columna a empleado para que se activen las solicitudes
+ALTER TABLE empleado
+ADD COLUMN Soli_Car BOOLEAN,
+ADD COLUMN Acept_Dir BOOLEAN,
+ADD COLUMN Soli_cerrada BOOLEAN
+;
+
+-- Se cambian todos los valores a false
+UPDATE empleado
+SET Soli_Car = FALSE,
+	Acept_Dir = FALSE,
+	Soli_cerrada = FALSE;
+
+UPDATE soli_car
+SET soli_Resp = FALSE,
+	Acept = FALSE,
+	cerrada = FALSE;
+
+select*from soli_car;
+select*from empleado;
