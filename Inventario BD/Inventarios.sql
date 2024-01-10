@@ -697,9 +697,9 @@ CREATE TABLE soli_car (
 
 -- Se añade otra columna a empleado para que se activen las solicitudes
 ALTER TABLE empleado
-ADD COLUMN Soli_Car BOOLEAN,
-ADD COLUMN Acept_Dir BOOLEAN,
-ADD COLUMN Soli_cerrada BOOLEAN
+drop COLUMN Soli_Car ,
+drop COLUMN Acept_Dir ,
+drop COLUMN Soli_cerrada 
 ;
 
 -- Se cambian todos los valores a false
