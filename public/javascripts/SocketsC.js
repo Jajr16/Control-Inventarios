@@ -207,7 +207,7 @@ function checkA(e) {
     }
 
     // Patrón de entrada, en este caso solo acepta numeros y letras
-    patron = /[A-Za-z0-9]/;
+    patron = /[A-Za-z0-9ñÑ]/;
     tecla_final = String.fromCharCode(tecla);
     return patron.test(tecla_final);
 }
@@ -767,9 +767,16 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                                 const check_icon = nuevoContenido.querySelector(".icon-check");
 
                                 check_icon.addEventListener("click", function (e) {
+                                    
                                     const palomita = this.parentElement.parentElement.parentElement;
-                                    const padreInput = palomita.getElementsByTagName("td");
                                     const inputCarrito = palomita.querySelector(".Cantidad_Carrito");
+
+                                    if (inputCarrito.value.trim() === '') {
+                                        alert('Ingresa un valor válido');
+                                        return;
+                                    }
+
+                                    const padreInput = palomita.getElementsByTagName("td");
 
                                     var codigoBarras = padreInput[0].innerHTML;
                                     var nomProducto = padreInput[2].innerHTML;
