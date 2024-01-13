@@ -712,6 +712,22 @@ UPDATE soli_car
 SET soli_Resp = FALSE,
 	Acept = FALSE,
 	cerrada = FALSE;
+    
+-- Modify table soli_car
+alter table soli_car drop column Nombre_SC;
+alter table soli_car drop column soli_Resp;
+alter table soli_car drop column dir_LLSC;
+alter table soli_car add column request_date date;
+alter table soli_car modify emp_SC int;
+alter table Salidas_Productos add constraint FKCBS foreign key(Cod_BarrasS) references almacen(Cod_Barras);
+alter table soli_car add constraint PKSC primary key(Cod_Barras_SC, emp_SC, request_date);
+alter table soli_car add constraint FKSC_CB foreign key(Cod_Barras_SC) references almacen(Cod_Barras);
+alter table soli_car add constraint FKSC_EM foreign key(emp_SC) references empleado(Num_emp);
 
-select*from soli_car;
-select*from empleado;
+create table soli_Warehousman_soli(
+	warehousman int,
+    delivered tinyint(1),
+    Cod_Barras_SC varchar(45),
+    request_date date,
+    primary key(warehousman, Cod_Barras_SC, request_date)
+);
