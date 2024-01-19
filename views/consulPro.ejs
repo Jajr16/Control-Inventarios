@@ -1,234 +1,182 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <title>
-        <%= title%>
-    </title>
-    <meta http-equiv="Expires" content="0">
-    <meta http-equiv="Last-Modified" content="0">
-    <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap"
-        rel="stylesheet">
-    <link rel='stylesheet' href='/stylesheets/general.css' />
-    <link rel='stylesheet' href='/stylesheets/consultas.css' />
-    <link rel='stylesheet' href='/stylesheets/modal.css' />
-    <link rel='stylesheet' href='/stylesheets/modal2.css' />
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    <script src="/socket.io/socket.io.js" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css">
-</head>
-
-<body>
-    <header class="header">
-        <div class="logo">
-            <img src="/images/logoC.png" alt="Logo de la empresa">
+<link rel='stylesheet' href='/stylesheets/modal2.css' />
+<div class="card" id="productos">
+    <div class="card-header">
+        <h4>Productos en almacén</h4>
+    </div>
+    <input type="text" id="buscar" oninput="buscar(); mayus(this);" placeholder="BUSCAR EN TABLA"
+        title="Empieza a escribir para buscar">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="DatosProd">
+                <thead>
+                    <tr id="firstrow">
+                        <th>Código de barras</th>
+                        <th>Categoría</th>
+                        <th>Nombre del artículo</th>
+                        <th>Marca del artículo</th>
+                        <th>Descripción</th>
+                        <th>Unidad</th>
+                        <th>En Existencia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
-        <nav class="Dos_Column">
-            <ul class="nav-links" id="Linksnav">
-            </ul>
-        </nav>
-        <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
-        <a onclick="openNav()" class="menu"><button>Menu</button></a>
-        <div id="mobile-menu" class="overlay">
-            <a onclick="closeNav()" href="" class="close">&times;</a>
-            <div class="overlay-content" id="MenuCel">
-                <a href="/users/index">Inicio</a>
-                <a onclick="CerrarSesion()">Cerrar Sesión</a>
-            </div>
+    </div>
+    <input type="button" class="BotonExcel" id="ExcelDownload" onclick="Excel('ExcelA')" value="Descargar Excel">
+    <div class="pen">
+        <div class="controls">
         </div>
-    </header>
-    <script type="text/javascript" src="/javascripts/navbar.js"></script>
-    <script type="text/javascript" src="/javascripts/ValidarSesion.js"></script>
-    <div class="card" id="productos">
-        <div class="card-header">
-            <h4>Productos en almacén</h4>
-        </div>
-        <input type="text" id="buscar" oninput="buscar(); mayus(this);" placeholder="BUSCAR EN TABLA"
-            title="Empieza a escribir para buscar">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table id="DatosProd">
-                    <thead>
-                        <tr id="firstrow">
-                            <th>Código de barras</th>
-                            <th>Categoría</th>
-                            <th>Nombre del artículo</th>
-                            <th>Marca del artículo</th>
-                            <th>Descripción</th>
-                            <th>Unidad</th>
-                            <th>En Existencia</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <input type="button" class="BotonExcel" id="ExcelDownload" onclick="Excel('ExcelA')" value="Descargar Excel">
-        <div class="pen">
-            <div class="controls">
-            </div>
-            <div class="overlay cancel-modal"></div>
-            <div class="modal-container cancel-modal">
-                <div class="Contenedor Contenido-centrado Alta">
-                    <form name="ModProduct" id="ModProduct">
-                        <div class="Tres_Column">
-                            <div>
-                                <label>Código de barras</label>
-                                <input autocomplete="off" type="text" id="Cod_BarrasM" min="1" name="Cod_BarrasM"
-                                    required maxlength="45" oninput="mayus(this);">
-                            </div>
-                            <div>
-                                <label>Categoría</label>
-                                <select id="CategoriaM" name="CategoriaM" required>
-                                    <option value=""></option>
-                                    <option>PAPELERÍA</option>
-                                    <option>LIMPIEZA</option>
-                                    <option>FERRETERÍA</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label>Nombre del artículo</label>
-                                <input autocomplete="off" type="text" id="NomPM" name="NomPM" required maxlength="45"
-                                    oninput="mayus(this);">
-                            </div>
+        <div class="overlay cancel-modal"></div>
+        <div class="modal-container cancel-modal">
+            <div class="Contenedor Contenido-centrado Alta">
+                <form name="ModProduct" id="ModProduct">
+                    <div class="Tres_Column">
+                        <div>
+                            <label>Código de barras</label>
+                            <input autocomplete="off" type="text" id="Cod_BarrasM" min="1" name="Cod_BarrasM" required
+                                maxlength="45" oninput="mayus(this);">
                         </div>
-                        <div class="Tres_Column">
-                            <div>
-                                <label>Marca del artículo</label>
-                                <input autocomplete="off" type="text" id="MarcActiM" name="MarcActiM" required
-                                    maxlength="100" oninput="mayus(this);">
-                            </div>
-                            <div>
-                                <label>Descripción</label>
-                                <input autocomplete="off" type="text" id="DescripcionPM" name="DescripcionPM" required
-                                    maxlength="400" oninput="mayus(this);">
-                            </div>
-                            <div>
-                                <label>Unidad</label>
-                                <select id="UnidadPM" name="UnidadPM" required>
-                                    <option value=""></option>
-                                    <option>UNIDAD</option>
-                                    <option>LITROS</option>
-                                    <option>KILOS</option>
-                                    <option>METROS</option>
-                                </select>
-                            </div>
-
+                        <div>
+                            <label>Categoría</label>
+                            <select id="CategoriaM" name="CategoriaM" required>
+                                <option value=""></option>
+                                <option>PAPELERÍA</option>
+                                <option>LIMPIEZA</option>
+                                <option>FERRETERÍA</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Nombre del artículo</label>
+                            <input autocomplete="off" type="text" id="NomPM" name="NomPM" required maxlength="45"
+                                oninput="mayus(this);">
+                        </div>
+                    </div>
+                    <div class="Tres_Column">
+                        <div>
+                            <label>Marca del artículo</label>
+                            <input autocomplete="off" type="text" id="MarcActiM" name="MarcActiM" required
+                                maxlength="100" oninput="mayus(this);">
+                        </div>
+                        <div>
+                            <label>Descripción</label>
+                            <input autocomplete="off" type="text" id="DescripcionPM" name="DescripcionPM" required
+                                maxlength="400" oninput="mayus(this);">
+                        </div>
+                        <div>
+                            <label>Unidad</label>
+                            <select id="UnidadPM" name="UnidadPM" required>
+                                <option value=""></option>
+                                <option>UNIDAD</option>
+                                <option>LITROS</option>
+                                <option>KILOS</option>
+                                <option>METROS</option>
+                            </select>
                         </div>
 
-                        <div class="Cuatro_Column">
-                            <input type="submit" id="Modify" class="BotonAE" value="Aceptar">
-                            <input type="button" class="BotonModF" id="ModFact" onclick="Abrir1()"
-                                value="Modificar Facturas">
-                            <input type="button" class="BotonReg" value="Cancelar">
-                        </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div class="Cuatro_Column">
+                        <input type="submit" id="Modify" class="BotonAE" value="Aceptar">
+                        <input type="button" class="BotonModF" id="ModFact" onclick="Abrir1()"
+                            value="Modificar Facturas">
+                        <input type="button" class="BotonReg" value="Cancelar">
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 
-        <div class="Contenedor_Modal ContMod1">
-            <div class="modal1 modal1-close mod1 modC1">
-                <div class="header-modal">
-                    <p class="close title_modal" onclick="Cerrar1()">X</p>
-                </div>
-                <div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <input type="text" id="buscar1" oninput="buscar1(); mayus(this);"
-                                placeholder="BUSCAR EN TABLA" title="Empieza a escribir para buscar">
-                            <table id="DatosFacturas">
-                                <caption id="title_table"></caption>
-                                <thead>
-                                    <tr id="firstrow">
-                                        <th>Fecha de ingreso</th>
-                                        <th>Cantidad</th>
-                                        <th>Número Factura</th>
-                                        <th>Fecha de factura</th>
-                                        <th>Proveedor</th>
-                                        <th>Modificar</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
+    <div class="Contenedor_Modal ContMod1">
+        <div class="modal1 modal1-close mod1 modC1">
+            <div class="header-modal">
+                <p class="close title_modal" onclick="Cerrar1()">X</p>
+            </div>
+            <div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <input type="text" id="buscar1" oninput="buscar1(); mayus(this);" placeholder="BUSCAR EN TABLA"
+                            title="Empieza a escribir para buscar">
+                        <table id="DatosFacturas">
+                            <caption id="title_table"></caption>
+                            <thead>
+                                <tr id="firstrow">
+                                    <th>Fecha de ingreso</th>
+                                    <th>Cantidad</th>
+                                    <th>Número Factura</th>
+                                    <th>Fecha de factura</th>
+                                    <th>Proveedor</th>
+                                    <th>Modificar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
 
-        <div class="Contenedor_Modal ContMod2">
-            <div class="modal modal2-close mod2 modC2">
-                <div class="header-modal">
-                    <p class="close title_modal" onclick="Cerrar2()">X</p>
-                </div>
-                <div>
-                    <form id="FacturasMody">
-                        <div class="Dos_Columnas">
-                            <div>
-                                <label>Cantidad</label>
-                                <input autocomplete="off" type="number" id="CantidadPMF" name="CantidadPM" required
-                                    min="0">
-                            </div>
-
-                            <div>
-                                <label>Número de factura</label>
-                                <input autocomplete="off" type="text" id="NumFactMF" name="NumFactM" required
-                                    maxlength="10" oninput="mayus(this);">
-                            </div>
-                        </div>
-                        <div class="Dos_Columnas">
-                            <div>
-                                <label>Fecha de factura</label>
-                                <input autocomplete="off" type="date" id="FecFactMF" name="FecFactM" required>
-                            </div>
-
-                            <div>
-                                <label>Proveedor</label>
-                                <input autocomplete="off" type="text" id="ProveedorMF" name="ProveedorM" required
-                                    maxlength="45" oninput="mayus(this);">
-                            </div>
-                        </div>
-                        <div class="Dos_Column">
-                            <input type="submit" class="BotonAA" value="Aceptar">
-                        </div>
-
-                    </form>
-                </div>
+    <div class="Contenedor_Modal ContMod2">
+        <div class="modal modal2-close mod2 modC2">
+            <div class="header-modal">
+                <p class="close title_modal" onclick="Cerrar2()">X</p>
             </div>
-        </div>
+            <div>
+                <form id="FacturasMody">
+                    <div class="Dos_Columnas">
+                        <div>
+                            <label>Cantidad</label>
+                            <input autocomplete="off" type="number" id="CantidadPMF" name="CantidadPM" required min="0">
+                        </div>
 
-        <div class="Contenedor_Modal ContMod3">
-            <div class="modal modal3-close mod3 modC3">
-                <div class="header-modal">
-                    <p class="close title_modal" onclick="Cerrar3()">X</p>
-                </div>
-                <div>
-                    <div class="cart">
-                        <h2>Petición de Artículos</h2>
-                        <ul id="cart-items">
-                            <!-- Elementos del carrito se agregan dinámicamente aquí -->
-                        </ul>
-                        <p>Total de artículos: <span id="cart-total">0</span></p>
+                        <div>
+                            <label>Número de factura</label>
+                            <input autocomplete="off" type="text" id="NumFactMF" name="NumFactM" required maxlength="10"
+                                oninput="mayus(this);">
+                        </div>
                     </div>
+                    <div class="Dos_Columnas">
+                        <div>
+                            <label>Fecha de factura</label>
+                            <input autocomplete="off" type="date" id="FecFactMF" name="FecFactM" required>
+                        </div>
+
+                        <div>
+                            <label>Proveedor</label>
+                            <input autocomplete="off" type="text" id="ProveedorMF" name="ProveedorM" required
+                                maxlength="45" oninput="mayus(this);">
+                        </div>
+                    </div>
+                    <div class="Dos_Column">
+                        <input type="submit" class="BotonAA" value="Aceptar">
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="Contenedor_Modal ContMod3">
+        <div class="modal modal3-close mod3 modC3">
+            <div class="header-modal">
+                <p class="close title_modal" onclick="Cerrar3()">X</p>
+            </div>
+            <div>
+                <div class="cart">
+                    <h2>Petición de Artículos</h2>
+                    <ul id="cart-items">
+                        <!-- Elementos del carrito se agregan dinámicamente aquí -->
+                    </ul>
+                    <p>Total de artículos: <span id="cart-total">0</span></p>
                 </div>
             </div>
         </div>
-</body>
-<script src="/javascripts/SocketsC.js" type="text/javascript"></script>
-<script src='https://s3.amazonaws.com/popmotion.io/static/dist/popmotion.min.js'></script>
-<script src="/javascripts/modal.js" type="text/javascript"></script>
+    </div>
+</div>
 <script src="/javascripts/Modal2.js" type="text/javascript"></script>
 <script src="/javascripts/Modal3.js" type="text/javascript"></script>
 <script src="/javascripts/carrito.js" type="text/javascript"></script>
-<script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
-<script type="text/javascript" src="/javascripts/NavEspecializado.js"></script>
-
-</html>

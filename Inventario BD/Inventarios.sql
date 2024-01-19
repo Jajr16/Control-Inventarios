@@ -684,13 +684,11 @@ WHERE
 -- Tabla de solicitudes de almacen
 CREATE TABLE soli_car (
     Cod_Barras_SC VARCHAR(45) PRIMARY KEY,
-    Nombre_SC VARCHAR(45),
     cantidad_SC INT(10),
     emp_SC VARCHAR(45),
-    dir_LLSC VARCHAR(45),
-    soli_Resp BOOLEAN, -- Si la solicitud fue respondida
     Acept BOOLEAN, -- Si la solicitud fue aceptada o no
-    cerrada BOOLEAN -- Si la solicitud ya fue cerrada
+    cerrada BOOLEAN, -- Si la solicitud ya fue cerrada
+    request_date date
     -- FOREIGN KEY (emp_SC) REFERENCES otra_tabla_emp_SC(emp_SC), -- Reemplazar "otra_tabla_emp_SC" con el nombre de la tabla de usuario o empleado y la columna correspondiente
     -- FOREIGN KEY (dir_LLSC) REFERENCES otra_tabla_dir_LLSC(dir_LLSC) -- Reemplazar "otra_tabla_dir_LLSC" con el nombre de la tabla donde se encuentre el director y la columna correspondiente
 );

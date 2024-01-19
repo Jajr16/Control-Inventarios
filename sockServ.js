@@ -81,6 +81,9 @@ io.on('connection', (socket) => {
                             socket.emit('SystemError');
                         }
                         if (res.length > 0) {
+                            db.query("select Área from empleado where Num_emp = ?", [result[0].Num_emp], function (err, area){
+                                
+                            });
                             // Organizar permisos por módulo y enviar al cliente
                             let permisosModulos = {};
                             res.forEach(row => {
@@ -89,7 +92,7 @@ io.on('connection', (socket) => {
                                 }
                                 permisosModulos[row.modulo].push(row.permiso);
                             });
-                            socket.emit('logInOK', { Usuario: result[0].Usuario, permisosModulos });
+                            socket.emit('logInOK', { Usuario: result[0].Usuario, permisosModulos,  });
                         }else {
                             socket.emit('logInError', { mensaje: 'El usuario no cuenta con ningún permiso.' });
                         }
