@@ -171,7 +171,7 @@ io.on('connection', (socket) => {
             } else {
                 if (result.length > 0) {
                     // Enviar mensaje al cliente si el producto ya existe
-                    socket.emit('Producto_Existente', { mensaje: "Este artículo ya estaba registrado.\nEn caso de que quiera agregar más cantidad de este producto, por favor ingrese a la página de 'Ingresar más productos'." });
+                    socket.emit('Producto_Ans', { mensaje: "Este artículo ya estaba registrado.\nEn caso de que quiera agregar más cantidad de este producto, por favor ingrese a la página de 'Ingresar más productos'." });
                 } else {
                     // Agregar un nuevo producto a la base de datos
                     db.query('insert into almacen values (?,?,?,?,?,?,?,?)', [data.CodBarras, data.Cate, data.Producto, data.Marca, data.Descripcion, data.Unidad, data.Cantidad, 0], function (err2, result) {
@@ -195,7 +195,7 @@ io.on('connection', (socket) => {
                                                 } else {
                                                     if (result) {
                                                         console.log("Resultado de inserción de productos: ", result);
-                                                        socket.emit('Producto_Inexistente', { mensaje: 'Producto dado de alta.' });
+                                                        socket.emit('Producto_Ans', { mensaje: 'Producto dado de alta.' });
                                                     }
                                                 }
                                             });
@@ -227,14 +227,14 @@ io.on('connection', (socket) => {
                         } else {
                             if (result.affectedRows > 0) {
                                 console.log("Resultado de eliminacion de productos: ", result);
-                                socket.emit('Producto_Eliminado', { mensaje: 'Producto dado de baja.' });
+                                socket.emit('Delete_Prod_Ans', { mensaje: 'Producto dado de baja.', Res: "Si" });
                             } else {
-                                socket.emit('Error', { mensaje: "Producto no eliminado, inténtelo de nuevo." });
+                                socket.emit('Delete_Prod_Ans', { mensaje: "Producto no eliminado, inténtelo de nuevo." });
                             }
                         }
                     });
                 } else {
-                    socket.emit('Productos_Inexistentes', { mensaje: 'No hay datos para mostrar' });
+                    socket.emit('Delete_Prod_Ans', { mensaje: 'No hay datos para mostrar' });
                 }
             }
         });
@@ -249,9 +249,9 @@ io.on('connection', (socket) => {
                 socket.emit('SystemError');
             } else {
                 if (result.affectedRows > 0) {
-                    socket.emit('Producto_Inexistente', { mensaje: 'Artículo modificado con éxito.' });
+                    socket.emit('Mod_Prod_Ans', { mensaje: 'Artículo modificado con éxito.', Res: "Si" });
                 } else {
-                    socket.emit('Fallo_Mod', { mensaje: "No se pudo modificar el artículo." });
+                    socket.emit('Mod_Prod_Ans', { mensaje: "No se pudo modificar el artículo." });
                 }
             }
         });
@@ -276,16 +276,16 @@ io.on('connection', (socket) => {
                                     socket.emit('SystemError');
                                 } else {
                                     if (result.affectedRows > 0) {
-                                        socket.emit("Factu_Exitosa", { mensaje: "La factura fue modificada con éxito." });
+                                        socket.emit("Update_Fac_Ans", { mensaje: "La factura fue modificada con éxito.", Res: "Si" });
                                     } else {
-                                        socket.emit('Fallo_Fac', { mensaje: "No se pudo modificar la factura." });
+                                        socket.emit('Update_Fac_Ans', { mensaje: "No se pudo modificar la factura." });
                                     }
                                 }
                             });
                         }
                     });
                 } else {
-                    socket.emit('Fallo_ModFac', { mensaje: "No se pudo modificar la factura de almacen." });
+                    socket.emit('Update_Fac_Ans', { mensaje: "No se pudo modificar la factura de almacen." });
                 }
             }
         });
@@ -341,7 +341,7 @@ io.on('connection', (socket) => {
                         } else {
                             if (result1.length > 0) {
                                 // Enviar mensaje al cliente si la factura ya está registrada para este producto
-                                socket.emit('Ya_Registrado', { mensaje: 'Factura registrada anteriormente para este producto.' });
+                                socket.emit('Add_ProdExist_Ans', { mensaje: 'Factura registrada anteriormente para este producto.', Res: "Si" });
                             } else {
                                 // Agregar la relación entre producto y factura
                                 db.query('insert into Factus_Productos values (?,?,?,?)', [data.Cod_Barras, data.NumFactura, data.Cantidad, data.FecAct], function (err, result) {
@@ -357,14 +357,14 @@ io.on('connection', (socket) => {
                                                     socket.emit('SystemError');
                                                 } else {
                                                     if (result.affectedRows > 0) {
-                                                        socket.emit('Factura_Agregada', { mensaje: 'Factura agregada con éxito.' });
+                                                        socket.emit('Add_ProdExist_Ans', { mensaje: 'Factura agregada con éxito.', Res: "Si" });
                                                     } else {
-                                                        socket.emit('Fallo_Factura', { mensaje: "No se pudo actualizar la existencia de productos." });
+                                                        socket.emit('Add_ProdExist_Ans', { mensaje: "No se pudo actualizar la existencia de productos.", Res: "Si" });
                                                     }
                                                 }
                                             });
                                         } else {
-                                            socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura de productos." });
+                                            socket.emit('Add_ProdExist_Ans', { mensaje: "No se pudo agregar la factura de productos.", Res: "Si" });
                                         }
                                     }
                                 });
@@ -387,18 +387,18 @@ io.on('connection', (socket) => {
                                                 socket.emit('SystemError');
                                             } else {
                                                 if (result.affectedRows > 0) {
-                                                    socket.emit('Factura_Agregada', { mensaje: 'Factura agregada con éxito.' });
+                                                    socket.emit('Add_ProdExist_Ans', { mensaje: 'Factura agregada con éxito.', Res: "Si" });
                                                 } else {
-                                                    socket.emit('Fallo_Factura', { mensaje: "No se pudo actualizar la existencia de productos." });
+                                                    socket.emit('Add_ProdExist_Ans', { mensaje: "No se pudo actualizar la existencia de productos.", Res: "Si" });
                                                 }
                                             }
                                         });
                                     } else {
-                                        socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura de productos." });
+                                        socket.emit('Add_ProdExist_Ans', { mensaje: "No se pudo agregar la factura de productos.", Res: "Si" });
                                     }
                                 });
                             } else {
-                                socket.emit('Fallo_Factura', { mensaje: "No se pudo agregar la factura." });
+                                socket.emit('Add_ProdExist_Ans', { mensaje: "No se pudo agregar la factura.", Res: "Si" });
                             }
                         }
                     });
@@ -469,19 +469,19 @@ io.on('connection', (socket) => {
                                             socket.emit('SystemError');
                                         } else {
                                             if (result.affectedRows > 0) {
-                                                socket.emit('Eliminacion_Realizada', { mensaje: 'Productos sacados con éxito.' });
+                                                socket.emit('Del_ProdExists_Ans', { mensaje: 'Productos sacados con éxito.', Res: "Si" });
                                             } else {
-                                                socket.emit('Fallo_BajasExist', { mensaje: "No se pudo actualizar la existencia de productos." });
+                                                socket.emit('Del_ProdExists_Ans', { mensaje: "No se pudo actualizar la existencia de productos.", Res: "Si" });
                                             }
                                         }
                                     });
                                 } else {
-                                    socket.emit('Fallo_BajasExist', { mensaje: "No se encontró ningún empleado con ese nombre, actualice la página." });
+                                    socket.emit('Del_ProdExists_Ans', { mensaje: "No se encontró ningún empleado con ese nombre, actualice la página." });
                                 }
                             }
                         });
                     } else {
-                        socket.emit('Fallo_BajasExist', { mensaje: "Cantidad de productos a sacar superior a existencia." });
+                        socket.emit('Del_ProdExists_Ans', { mensaje: "Cantidad de productos a sacar superior a existencia." });
                     }
                 }
             }
@@ -538,7 +538,7 @@ io.on('connection', (socket) => {
                             socket.emit('SystemError');
                         } else {
                             if (result.length > 0) {
-                                socket.emit('Usuario_Existente', { mensaje: "Este usuario ya está registrado." });
+                                socket.emit('Usuario_Ans', { mensaje: "Este usuario ya está registrado.", Res: "Si" });
                             } else {
                                 // Insertar el nuevo usuario en la tabla de Usuario
                                 db.query('insert into Usuario values (?,?,?)', [resultG[0].Num_emp, data.N_User, data.ContraNueva], function (err, result) {
@@ -568,10 +568,10 @@ io.on('connection', (socket) => {
                                             });
                                         });
                                         if (!errores) {
-                                            socket.emit('Usuario_Agregado', { mensaje: "Usuario agregado con éxito." });
+                                            socket.emit('Usuario_Ans', { mensaje: "Usuario agregado con éxito.", Res: "Si" });
                                         }
                                     } else {
-                                        socket.emit('Usuario_Error', { mensaje: "Error al agregar el usuario." });
+                                        socket.emit('Usuario_Ans', { mensaje: "Error al agregar el usuario.", Res: "Si" });
                                     }
                                 });
                             }
@@ -665,7 +665,7 @@ io.on('connection', (socket) => {
                 socket.emit('SystemError');
             } else {
                 if (result.length > 0) {
-                    socket.emit('Res_Emp', { mensaje: "Este empleado ya está registrado." });
+                    socket.emit('Res_Emp', { mensaje: "Este empleado ya está registrado.", Res: "Si" });
                 } else {
                     // Consultar el número de empleado del jefe
                     db.query('select Num_emp from Empleado where Nom = ?', [data.NomJefe], function (err, result) {
@@ -681,12 +681,12 @@ io.on('connection', (socket) => {
                                         socket.emit('SystemError');
                                     } else {
                                         if (res) {
-                                            socket.emit('Res_Emp', { mensaje: "Empleado dado de alta." });
+                                            socket.emit('Res_Emp', { mensaje: "Empleado dado de alta.", Res: "Si" });
                                         }
                                     }
                                 });
                             } else {
-                                socket.emit('Res_Emp', { mensaje: "El jefe que seleccionó no se encontró, recargue la página o llame al encargado de sistemas." });
+                                socket.emit('Res_Emp', { mensaje: "El jefe que seleccionó no se encontró, recargue la página o llame al encargado de sistemas.", Res: "Si" });
                             }
                         }
                     });
@@ -1378,7 +1378,7 @@ io.on('connection', (socket) => {
                 }
             });
         }
-        socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
+        socket.emit("SacarRespExcel", { mensaje: "Excel descargado en la carpeta Descargas", Res: "Si" });
     });
 
     // Consultas de equipos
@@ -1952,6 +1952,41 @@ io.on('connection', (socket) => {
             }
         });
     });
+
+    socket.on('get_applicants', () => {
+        db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept', function (err, res) {
+            if (err) { Errores(err); socket.emit('SystemError'); }
+            else{
+                if (res) {
+                    socket.emit('return_applicants', res);
+                }
+            } 
+        });
+    
+    })
+
+    socket.on('updateCar', (data) => {
+        console.log(data)
+        if (data.includes('accepted')){
+            db.query("update soli_car set Acept = 1 where Cod_Barras_SC = ? and emp_SC = (select Num_emp from empleado where Nom = ?) and request_date = ?", [data[2], data[6], data[1]], function (err, res) {
+                if (err) { Errores(err); socket.emit('SystemError'); }
+                else {
+                    if (res.affectedRows > 0) {
+                        socket.emit('request_answered', { mensaje: 'La solicitud ha sido aceptada', Res: 'Si' })
+                    }
+                }
+            })
+        }else if (data.includes('declined')){
+            db.query("update soli_car set Acept = 0, cerrada = 1 where Cod_Barras_SC = ? and emp_SC = (select Num_emp from empleado where Nom = ?) and request_date = ?", [data[2], data[6], data[1]], function (err, res) {
+                if (err) { Errores(err); socket.emit('SystemError'); }
+                else {
+                    if (res.affectedRows > 0) {
+                        socket.emit('request_answered', { mensaje: 'La solicitud ha sido denegada', Res: 'Si' })
+                    }
+                }
+            })
+        }
+    })
 
     socket.on('disconnect', () => {
         console.log('Cliente desconectado.');

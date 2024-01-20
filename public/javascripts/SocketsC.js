@@ -58,8 +58,9 @@ function Excel(Excel) {
     socket.emit(Excel);
 
     socket.once("RespExcel", (data) => {
-        alert(data.mensaje);
-        location.reload();
+        Swal.fire(data.mensaje).then(() => {
+            location.reload();
+        });
     });
 }
 
@@ -230,6 +231,7 @@ function checkA(e) {
 //     // Prevent the default copy action
 //     event.preventDefault();
 // }, false);
+
 //ENVIAR SOCKETS
 function enviarSocket(identificador, mensaje) {
     socket.emit(identificador, mensaje);
@@ -237,12 +239,12 @@ function enviarSocket(identificador, mensaje) {
 
 function recibirSocket(identificador) {
     socket.once(identificador, function (Respuesta) {
-        alert(Respuesta.mensaje);
-        if (Respuesta.Res == "Si") {
-            location.reload();
-        }
+        Swal.fire(Respuesta.mensaje).then(() => {
+            if (Respuesta.Res) {
+                location.reload();
+            }
+        });
     });
-
 }
 
 function eliminar(elementoBoton, mensaje, mensajeSocket) {
@@ -315,12 +317,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     socket.emit('Reg_Emp', { NombreEmp: $("#NombreEmp").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val() });
 
-                    socket.once('Res_Emp', (Respuesta) => {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-
-
+                    recibirSocket('Res_Emp')
                 }
             }
         } else if (pathname === "/users/ModEmp" && (Permisos['EMPLEADOS'].includes('4') || Permisos['EMPLEADOS'].includes('2') || Permisos['EMPLEADOS'].includes('3'))) {
@@ -430,20 +427,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 if ($("#NombreEmp").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
                     socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val(), permisos: permisosDados });
 
-                    socket.once('Usuario_Existente', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-
-                    socket.once('Usuario_Agregado', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-
-                    socket.once('Usuario_Error', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
+                    recibirSocket('Usuario_Ans')
                 }
             }
         } else if (pathname === "/users/consulUsuarios" && (Permisos['USUARIOS'].includes('4') || Permisos['USUARIOS'].includes('2') || Permisos['USUARIOS'].includes('3'))) {
@@ -514,7 +498,11 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         // Eliminar la fila de la tabla
                         fila.parentNode.removeChild(fila);
                     } else {
-                        alert("No puedes eliminar tu propio usuario.");
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oye!!!",
+                            text: "No puedes eliminar tu propio usuario.",
+                          });
                     }
 
                 }
@@ -614,15 +602,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     if ($("#UsuarioM").val() != "" && $("#Num_EmpPM").val() != "" && $("#PassM").val() != "") {
                         socket.emit('Cambios_Usuario', { Usuario: $("#UsuarioM").val(), Nom_Emp: $("#Num_EmpPM").val(), Pass: $("#PassM").val(), permisos: permisosDados }, { OLDUser: valores0 });
-
-                        socket.once('Usuario_Inexistente', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                            location.reload();
-                        });
-
-                        socket.once('Fallo_ModUserd', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                        });
                     }
                 }
                 recibirSocket('RespDelUs');
@@ -647,19 +626,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     socket.emit('Alta_Prod', { CodBarras: $("#Cod_Barras").val(), FecAct: $("#FecActu").val(), Cate: $("#Categoria").val(), Producto: $("#NomP").val(), Marca: $("#MarcActi").val(), Descripcion: $("#DescripcionP").val(), Proveedor: $("#Proveedor").val(), NumFactura: $("#NumFact").val(), FechaFac: $("#FecFact").val(), Cantidad: $("#CantidadP").val(), Unidad: $("#UnidadP").val() });
 
-                    socket.once('Fact_Exists', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                    });
-
-                    socket.once('Producto_Existente', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-
-                    socket.once('Producto_Inexistente', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
+                    recibirSocket('Producto_Ans')
                 }
             }
         } else if (pathname === "/users/consulPro" && (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('3'))) {
@@ -772,7 +739,11 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                                     const inputCarrito = palomita.querySelector(".Cantidad_Carrito");
 
                                     if (inputCarrito.value.trim() === '') {
-                                        alert('Ingresa un valor válido');
+                                        Swal.fire({
+                                            icon: "error",
+                                            title: "Ey!!!",
+                                            text: "Ingresa un valor válido.",
+                                          });
                                         return;
                                     }
 
@@ -801,14 +772,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                 }
             });
-
-            socket.once('Producto_Eliminado', (data) => {
-                alert(data.mensaje);
-                location.reload();
-            });
-            socket.once('Error', (data) => {
-                alert(data.mensaje);
-            })
+            recibirSocket('Delete_Prod_Ans')
 
             //Llenar datos en automático
             var valores0 = "";
@@ -930,19 +894,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         }
 
                     });
-                    //Esperamos respuesta del servidor en caso de caso exitoso
-                    socket.once('Factu_Exitosa', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-                    //Esperamos respuesta del servidor en caso de caso fallido
-                    socket.once('Fallo_Fac', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                    });
-                    //Esperamos respuesta del servidor en caso de caso fallido
-                    socket.once('Fallo_ModFac', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                    });
+                    recibirSocket('Update_Fac_Ans')
                 });
 
                 // Cambios de productos
@@ -958,14 +910,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     if ($("#Cod_BarrasM").val() != "" && $("#CategoriaM").val() != "" && $("#NomPM").val() != "" && $("#MarcActiM").val() != "" && $("#DescripcionPM").val() != "" && $("#UnidadPM").val() != "") {
                         socket.emit('Cambios_Prod', { CodBarras: $("#Cod_BarrasM").val(), Cate: $("#CategoriaM").val(), Producto: $("#NomPM").val(), Marca: $("#MarcActiM").val(), Descripcion: $("#DescripcionPM").val(), Unidad: $("#UnidadPM").val() }, { CBO: valores0, CO: valores1, NAO: valores2, MAO: valores3, DO: valores4, UO: valores5 });
 
-                        socket.once('Producto_Inexistente', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                            location.reload();
-                        });
-
-                        socket.once('Fallo_Mod', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                        });
+                        recibirSocket('Mod_Prod_Ans')
                     }
                 }
             });
@@ -1036,19 +981,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     if ($("#FecActu").val() != "" && $("#CantidadPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#FecFact").val() != "") {
                         socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActu").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFact").val(), Existencia: valores1 });
 
-                        socket.once('Factura_Agregada', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                            location.reload();
-                        });
-
-                        socket.once('Fallo_Factura', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                            location.reload();
-                        });
-                        socket.once('Ya_Registrado', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                            location.reload();
-                        });
+                        recibirSocket('Add_ProdExist_Ans')
                     }
                 }
             });
@@ -1078,14 +1011,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         if ($("#CantidadP").val() != "" && $("#NomJefe") != "") {
                             socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val(), Articulo: valores2E });
 
-                            socket.once('Eliminacion_Realizada', function (Respuesta) {
-                                alert(Respuesta.mensaje);
-                                location.reload();
-                            });
-                            socket.once('Fallo_BajasExist', function (Respuesta) {
-                                alert(Respuesta.mensaje);
-                                location.reload();
-                            });
+                            recibirSocket('Del_ProdExists_Ans')
                         }
                     }
                 }
@@ -1151,10 +1077,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                 socket.emit("SacarExcel", { fechaInicio: filtroInicio, fechaFin: filtroFin });
 
-                socket.once("SacarRespExcel", (data) => {
-                    alert(data.mensaje);
-                    location.reload();
-                });
+                recibirSocket('SacarRespExcel')
             }
         } else {
             location.href = "index";
@@ -1828,18 +1751,20 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     enviarSocket('Crea_Resp', { Responsiva: $("#Resp").val(), NombreEmp: $("#NombreEmp").val() });
 
                     socket.on('Responsiva_Respuesta', function (Respuesta) {
-                        alert(Respuesta.mensaje);
+                        
+                        Swal.fire(Respuesta.mensaje).then(() => {
+                            // Crear un blob a partir del PDF buffer recibido
+                            const blob = new Blob([Respuesta.pdfBuffer], { type: 'application/pdf' });
 
-                        // Crear un blob a partir del PDF buffer recibido
-                        const blob = new Blob([Respuesta.pdfBuffer], { type: 'application/pdf' });
+                            // Crear una URL a partir del blob para mostrar el PDF en una nueva ventana del navegador
+                            const pdfUrl = URL.createObjectURL(blob);
 
-                        // Crear una URL a partir del blob para mostrar el PDF en una nueva ventana del navegador
-                        const pdfUrl = URL.createObjectURL(blob);
-
-                        // Abrir el PDF en una nueva ventana o pestaña
-                        window.open(pdfUrl, '_blank');
-
-                        location.reload();
+                            // Abrir el PDF en una nueva ventana o pestaña
+                            window.open(pdfUrl, '_blank');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000)
+                        });
                     });
                 }
             }
@@ -1847,4 +1772,91 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             location.href = "index";
         }
     }
+}else if (pathname == '/users/sol_prod' && Permisos['ALMACÉN'].includes('4')) {
+    enviarSocket('get_applicants')
+    table = $("#Requests")
+    
+    socket.on('return_applicants', async (data) => {
+        // Add requests process
+        $.each(data, function(_, item) {
+            var row = $('<tr></tr>');
+            $.each(item, function(clave, value) {
+                if (clave === 'request_date') {
+                    var fechaFormateada = new Date(value).toISOString().split('T')[0];
+                    row.append("<td>" + fechaFormateada + "</td>")
+                }else if (clave === 'cerrada'){
+                    if (item.cerrada == 1 && item.Acept == 0){
+                        row.addClass('decline')
+                        row.append('<td><div>Rechazada :(</div></td>')
+                    }else if((item.cerrada == 1 && item.Acept == 1)){
+                        row.addClass('accepted')
+                        row.append('<td><div>Aceptada :)</div></td>')
+                    }else if (item.cerrada == 0 && item.Acept == 1){
+                        row.addClass('pending')
+                        row.append('<td><div>Pendiente...</div></td>')
+                    }else
+                        row.append('<td><div><span class="icon-check">✔</span><span class="icon-cross">✘</span></div></td>')
+                }else if(clave === 'Acept'){
+                }else{
+                    row.append("<td>" + value + "</td>");
+                }
+            })
+            table.append(row)
+        })
+        // Continue with all requests events (accept and decline requests)
+        var accepted = document.getElementsByClassName('icon-check')
+        var declined = document.getElementsByClassName('icon-cross')
+
+        for (let i = 0; i < accepted.length; i++){
+            accepted[i].addEventListener("click", getRequestssolicitants)
+            declined[i].addEventListener("click", getRequestssolicitants)
+        }
+
+        var valores = []
+
+        function getRequestssolicitants(e) {
+            class_button = Array.from(e.srcElement.classList)[0]
+            boton = ''
+            if (class_button == 'icon-check'){
+                valores.push('accepted')
+                boton = 'aceptar'
+            } else if (class_button == 'icon-cross') {
+                valores.push('declined')
+                boton = 'denegar'
+            }
+            Swal.fire({
+                title: "¿Estás seguro de " + boton +  " la solicitud?",
+                text: "No puedes revertir el cambio!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, seguro!"
+              }).then((result) => {
+                if (result.isConfirmed) {
+                    
+                    var elementosTD = e.srcElement.parentElement.parentElement.parentElement.getElementsByTagName("td");
+                    // recorremos cada uno de los elementos del array de elementos <td>
+                    for (let i = 0; i < elementosTD.length-1; i++) {
+                        valores.push(elementosTD[i].innerHTML); // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                    }
+        
+                    enviarSocket('updateCar', valores)
+
+                    socket.once('request_answered', (Respuesta) => {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Solicitud exitosa",
+                            text: Respuesta.mensaje}).then(() => {
+                                location.reload();
+                            });
+                    })
+                }else{
+                    valores = []
+                }
+              })
+        }
+
+
+    });
 }

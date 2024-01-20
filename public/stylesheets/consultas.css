@@ -81,7 +81,9 @@ tr:hover:not(#firstrow) {
     transform: scale(1.01); 
 }
 
-
+.icon-cross, .icon-check{
+    padding-left: 0.5rem;
+}
 
 .text-center {
     text-align: center;

@@ -62,3 +62,7 @@ Error: ER_TRUNCATED_WRONG_VALUE: Truncated incorrect DOUBLE value: 'CAJONERA' | 
 Error: ER_TRUNCATED_WRONG_VALUE: Truncated incorrect DOUBLE value: 'ARCHIVERO' | Error obtenido el -> 04/11/2023 20:56
 Error: ER_WRONG_VALUE_COUNT_ON_ROW: Column count doesn't match value count at row 1 | Error obtenido el -> 05/11/2023 13:49
 Error: ER_BAD_FIELD_ERROR: Unknown column 'mobiliario.AreaM' in 'field list' | Error obtenido el -> 21/12/2023 18:12
+Error: ER_BAD_FIELD_ERROR: Unknown column 'Acpet' in 'order clause' | Error obtenido el -> 19/01/2024 19:9
+Error: ER_TRUNCATED_WRONG_VALUE: Incorrect date value: 'accepted' for column 'request_date' at row 1 | Error obtenido el -> 19/01/2024 19:54
+Error: ER_TRUNCATED_WRONG_VALUE: Incorrect date value: 'accepted' for column 'request_date' at row 1 | Error obtenido el -> 19/01/2024 19:58
+Error: ER_TRUNCATED_WRONG_VALUE: Incorrect date value: 'accepted' for column 'request_date' at row 1 | Error obtenido el -> 19/01/2024 20:0

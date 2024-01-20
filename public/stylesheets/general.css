@@ -1038,3 +1038,18 @@ h5 {
 .Cantidad_Carrito {
     margin-bottom: 0!important;
 }
+
+.decline {
+    background-color: darkred!important;
+    color: white;
+}
+
+.accepted {
+    background-color: darkgreen!important;
+    color: white;
+}
+
+.pending {
+    background-color: darkorange!important;
+    color: white;
+}

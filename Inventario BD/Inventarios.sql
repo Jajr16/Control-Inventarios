@@ -50,12 +50,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Equipo`
 -- -----------------------------------------------------
-drop table if exists PCs;
-drop table if exists Monitor;
-drop table if exists Mouse;
-drop table if exists Teclado;
-drop table if exists Accesorio;
-drop table if exists Equipo;
+
 CREATE TABLE `Inventarios`.`Equipo` (
   `N_Inventario` int not null auto_increment,
   `Num_Serie` VARCHAR(45) NOT NULL,
@@ -241,50 +236,6 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Peticion` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `Inventarios`.`Responsivas_M`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Inventarios`.`Responsivas_M` (
-  `Num_Emp` INT NOT NULL,
-  `Num_Inventario` INT NOT NULL,
-  PRIMARY KEY (`Num_Emp`, `Num_Inventario`),
-  INDEX `Num_Inventario_idx` (`Num_Inventario` ASC),
-  CONSTRAINT `Num_empRespM`
-    FOREIGN KEY (`Num_Emp`)
-    REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `Num_Inventario`
-    FOREIGN KEY (`Num_Inventario`)
-    REFERENCES `Inventarios`.`Mobiliario` (`Num_Inventario`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
--- -----------------------------------------------------
--- Table `Inventarios`.`Responsivas_E`
--- -----------------------------------------------------
-drop table if exists Responsivas_E;
-drop table if exists Responsivas_M;
-CREATE TABLE IF NOT EXISTS `Inventarios`.`Responsivas_E` (
-  `Num_emp` INT NOT NULL,
-  Num_Serie VARCHAR(45) not null NOT NULL,
-  PRIMARY KEY (`Num_emp`, `Num_Serie`),
-  INDEX `Num_S_idx` (`Num_Serie` ASC),
-  CONSTRAINT `Num_empRespE`
-    FOREIGN KEY (`Num_emp`)
-    REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `Num_S`
-    FOREIGN KEY (`Num_Serie`)
-    REFERENCES `Inventarios`.`Equipo` (`Num_Serie`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
@@ -325,7 +276,7 @@ create table tokens(
 token nvarchar(20) not null primary key,
 area nvarchar(45) not null
 );
-drop table permisos;
+
 create table permisos(
 permiso enum("1","2","3","4") not null, #Tambien se puede set 1 Altas 2 Bajas 3 Cambios 4 Consultas
 usuario varchar(25),
@@ -347,7 +298,7 @@ insert into tokens values(
 
 alter table Usuario drop constraint FK_Token;
 alter table usuario drop column token;
-drop table tokens;
+
 
 select Área from empleado inner join usuario on empleado.Num_emp = usuario.Num_emp where usuario = 'ajimenez';
 
@@ -531,9 +482,6 @@ create trigger Actualizar_ExistenciasInsercion2 after insert on salidas_producto
         end if; 
 	END
 | DELIMITER ;
-
-drop table responsivas_e;
-drop table responsivas_m;
 
 -- BUSQUEDAS
 select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = 'c') P;
@@ -722,6 +670,7 @@ alter table soli_car add constraint PKSC primary key(Cod_Barras_SC, emp_SC, requ
 alter table soli_car add constraint FKSC_CB foreign key(Cod_Barras_SC) references almacen(Cod_Barras);
 alter table soli_car add constraint FKSC_EM foreign key(emp_SC) references empleado(Num_emp);
 
+-- Table to warehousman requirements
 create table soli_Warehousman_soli(
 	warehousman int,
     delivered tinyint(1),
@@ -729,3 +678,14 @@ create table soli_Warehousman_soli(
     request_date date,
     primary key(warehousman, Cod_Barras_SC, request_date)
 );
+
+insert into soli_car values
+("DDWA35", 10, 202, 0, 1, '2024-01-19'),
+("DDWA35", 10, 95, 0, 0, '2024-01-19'),
+("DDWA35", 10, 62, 0, 0, '2024-01-19'),
+("DDWA35", 10, 107, 0, 0, '2024-01-19');
+
+ update soli_car set Acept = 0, cerrada = 0 where Cod_Barras_SC = 'DDWA35';
+
+select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept;
+select*from empleado;
