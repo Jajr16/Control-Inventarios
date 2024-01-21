@@ -1032,32 +1032,52 @@ h5 {
 
 /* Estilo para el input */
 .Carrito_Cant input {
-    margin-right: 10px; /* Espacio entre el input y los íconos */
+    margin-right: 10px;
+    /* Espacio entre el input y los íconos */
 }
 
 .Cantidad_Carrito {
-    margin-bottom: 0!important;
+    margin-bottom: 0 !important;
 }
 
 .decline {
-    background-color: darkred!important;
+    background-color: darkred !important;
     color: white;
 }
 
 .accepted {
-    background-color: darkgreen!important;
+    background-color: darkgreen !important;
     color: white;
 }
 
 .pending {
-    background-color: darkorange!important;
+    background-color: darkorange !important;
     color: white;
 }
 
-.fa-solid{
+.cart-container:hover {
+    transform: scale(1.4);
+}
+
+.cart-container {
+    position: relative;
+    display: inline-block;
     transition: all 0.5s;
 }
 
-.fa-solid:hover{
-    transform: scale(1.4);
-}
+.notification-circle {
+    position: absolute;
+    top: -5px; /* Ajusta la posición vertical según tus necesidades */
+    right: -5px; /* Ajusta la posición horizontal según tus necesidades */
+    width: 15px;
+    height: 15px;
+    background-color: red; /* Color del círculo */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px; /* Tamaño del texto dentro del círculo */
+    font-weight: bold;
+    visibility: hidden;
+  }

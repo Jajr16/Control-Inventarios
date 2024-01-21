@@ -4,6 +4,17 @@ var area = localStorage.getItem('area');
 var user = localStorage.getItem('user');
 var socket = io.connect("http://localhost:3001");
 var pathname = window.location.pathname;
+//////////////////////// CARRITO //////////////////////
+
+$(document).ready(function () {
+    if (carrito.length > 0){
+        notification = $('.notification-circle')
+        notification.css("visibility", "visible");
+        notification.text(carrito.length)
+    }
+})
+
+
 //////////////////////// PERMISOS /////////////////////
 // Configuración de permisos por módulo
 var permisosPorModulo = [
@@ -696,9 +707,9 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     if (Permisos['ALMACÉN'].includes('3')) {
                         filaHTML += `<td class="BotonMod"> Modificar </td>`;
                     }
-                    if (Permisos['ALMACÉN'].includes('4')) {
-                        filaHTML += `<td class="BotonAC Carrito_Cant" id="Carrito_Cant"> Solicitar artículo </td>`;
-                    }
+                    
+                    filaHTML += `<td class="BotonAC Carrito_Cant" id="Carrito_Cant"> Solicitar artículo </td>`;
+                    
                 }
 
                 // Cierra la fila
@@ -764,9 +775,14 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                                     socket.once('ECBSR', (data) => {
                                         addToCart(fecha, codigoBarras, data.Articulo, data.Marca, parseFloat(inputCarrito.value), carrito);
+                                        
+                                        if (carrito.length > 0){
+                                            notification = $('.notification-circle')
+                                            notification.css("visibility", "visible");
+                                            notification.text(carrito.length)
+                                        }
                                     })
 
-                                    Abrir3();
                                 });
 
                                 const cancel_icon = nuevoContenido.querySelector(".icon-cross");
