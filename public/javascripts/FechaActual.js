@@ -26,3 +26,7 @@ if (document.getElementById("FecActu") && document.getElementById("FecFact")){
     document.getElementById("FecActu").value = formato1;
     document.getElementById("FecFact").value = formato1;
 }
+
+function Fecha(){
+    return formato1
+}

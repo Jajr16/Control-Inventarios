@@ -686,6 +686,6 @@ insert into soli_car values
 ("DDWA35", 10, 107, 0, 0, '2024-01-19');
 
  update soli_car set Acept = 0, cerrada = 0 where Cod_Barras_SC = 'DDWA35';
-
+ 
 select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept;
 select*from empleado;

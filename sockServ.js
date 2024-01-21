@@ -67,7 +67,6 @@ io.on('connection', (socket) => {
     socket.on('LG', async (data) => {
         // Autenticar al usuario utilizando la base de datos
         db.query('select*from usuario where Usuario = BINARY  ? and Pass = BINARY  ?', [data.User, data.Pass], function (err, result) {
-            console.log(result);
             if (err) {
                 Errores(err);
                 socket.emit('SystemError');
@@ -79,20 +78,23 @@ io.on('connection', (socket) => {
                         if (err) {
                             Errores(err);
                             socket.emit('SystemError');
-                        }
-                        if (res.length > 0) {
-                            db.query("select Área from empleado where Num_emp = ?", [result[0].Num_emp], function (err, area){
-                                
-                            });
-                            // Organizar permisos por módulo y enviar al cliente
-                            let permisosModulos = {};
-                            res.forEach(row => {
-                                if (!permisosModulos[row.modulo]) {
-                                    permisosModulos[row.modulo] = [];
+                        }else if (res.length > 0) {
+                            db.query("select Área from empleado where Num_emp = ?", [result[0].Num_Emp], function (err, area){
+                                if(err){
+                                    Errores(err);
+                                    socket.emit('SystemError');
+                                } else if (area.length > 0){
+                                    // Organizar permisos por módulo y enviar al cliente
+                                    let permisosModulos = {};
+                                    res.forEach(row => {
+                                        if (!permisosModulos[row.modulo]) {
+                                            permisosModulos[row.modulo] = [];
+                                        }
+                                        permisosModulos[row.modulo].push(row.permiso);
+                                    });
+                                    socket.emit('logInOK', { Usuario: result[0].Usuario, permisosModulos, area: area[0].Área });
                                 }
-                                permisosModulos[row.modulo].push(row.permiso);
                             });
-                            socket.emit('logInOK', { Usuario: result[0].Usuario, permisosModulos,  });
                         }else {
                             socket.emit('logInError', { mensaje: 'El usuario no cuenta con ningún permiso.' });
                         }
@@ -171,7 +173,7 @@ io.on('connection', (socket) => {
             } else {
                 if (result.length > 0) {
                     // Enviar mensaje al cliente si el producto ya existe
-                    socket.emit('Producto_Ans', { mensaje: "Este artículo ya estaba registrado.\nEn caso de que quiera agregar más cantidad de este producto, por favor ingrese a la página de 'Ingresar más productos'." });
+                    socket.emit('Producto_Ans', { mensaje: "Este artículo ya estaba registrado.\nEn caso de que quiera agregar más cantidad de este producto, por favor ingrese a la página de 'Ingresar más productos'.", Res: "Si" });
                 } else {
                     // Agregar un nuevo producto a la base de datos
                     db.query('insert into almacen values (?,?,?,?,?,?,?,?)', [data.CodBarras, data.Cate, data.Producto, data.Marca, data.Descripcion, data.Unidad, data.Cantidad, 0], function (err2, result) {
@@ -195,7 +197,7 @@ io.on('connection', (socket) => {
                                                 } else {
                                                     if (result) {
                                                         console.log("Resultado de inserción de productos: ", result);
-                                                        socket.emit('Producto_Ans', { mensaje: 'Producto dado de alta.' });
+                                                        socket.emit('Producto_Ans', { mensaje: 'Producto dado de alta.', Res: "Si" });
                                                     }
                                                 }
                                             });
@@ -1986,6 +1988,19 @@ io.on('connection', (socket) => {
                 }
             })
         }
+    })
+
+    socket.on('ECBS', (codigoBarras) => {
+        db.query('select Articulo, Marca from almacen where Cod_Barras = ?', [codigoBarras], function(err, res){
+            if (err) { Errores(err); socket.emit('SystemError'); }
+            else{
+                if (res.length > 0) {
+                    socket.emit('ECBSR', {Articulo: res[0].Articulo, Marca: res[0].Marca})
+                }else {
+                    socket.emit('ECBSRF', {mensaje: 'No existe un articulo con ese código de barras.', Res: "Si"})
+                }
+            }
+        })
     })
 
     socket.on('disconnect', () => {

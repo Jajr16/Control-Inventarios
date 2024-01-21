@@ -1,4 +1,4 @@
-function addToCart(id, name, cantidad, cart) {
+function addToCart(fecha, id, name, marca, cantidad, cart) {
     // Buscar si el producto ya está en el carrito
     const existingItem = cart.find(item => item.id === id);
 
@@ -7,12 +7,19 @@ function addToCart(id, name, cantidad, cart) {
         existingItem.cantidad += cantidad;
     } else {
         // Si el producto no existe en el carrito, añadirlo
-        cart.push({ id, name, cantidad });
+        cart.push({ fecha, id, name, marca, cantidad });
     }
     console.log(cart);
     localStorage.setItem('carrito', JSON.stringify(cart));
     // Actualizar el carrito
     updateCart(cart);
+}
+
+function removeFromCart(id, cart) {
+    // Filtrar el carrito para excluir el artículo con el ID dado
+    const updatedCart = cart.filter(item => item.id !== id);
+    localStorage.setItem('carrito', JSON.stringify(updatedCart));
+    window.location.reload()
 }
 
 function updateCart(cart) {

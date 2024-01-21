@@ -79,4 +79,8 @@ router.get('/sol_prod', function (req, res, next) {
   res.render('dir_car', { title: 'Productos solicitados', layout: 'consul_layout' });
 });
 
+router.get('/carrito', function (req, res, next) {
+  res.render('cart', { title: 'Productos solicitados', layout: 'consul_layout' });
+});
+
 module.exports = router;

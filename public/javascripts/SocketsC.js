@@ -1,5 +1,6 @@
 var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
 var carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+var area = localStorage.getItem('area');
 var user = localStorage.getItem('user');
 var socket = io.connect("http://localhost:3001");
 var pathname = window.location.pathname;
@@ -211,6 +212,11 @@ function checkA(e) {
     patron = /[A-Za-z0-9ñÑ]/;
     tecla_final = String.fromCharCode(tecla);
     return patron.test(tecla_final);
+}
+
+/////////////////// EMPTY TABLE ////////////////////
+function empty_table(tabla, n) {
+    $('#' + tabla + ' tbody').append($('<tr><td colspan="' + n + '"><center><h3>En este momento no hay nada agregado.</h3></center></td></tr>'))
 }
 
 // SEGURIDAD
@@ -502,7 +508,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                             icon: "error",
                             title: "Oye!!!",
                             text: "No puedes eliminar tu propio usuario.",
-                          });
+                        });
                     }
 
                 }
@@ -734,7 +740,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                                 const check_icon = nuevoContenido.querySelector(".icon-check");
 
                                 check_icon.addEventListener("click", function (e) {
-                                    
+
                                     const palomita = this.parentElement.parentElement.parentElement;
                                     const inputCarrito = palomita.querySelector(".Cantidad_Carrito");
 
@@ -743,16 +749,23 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                                             icon: "error",
                                             title: "Ey!!!",
                                             text: "Ingresa un valor válido.",
-                                          });
+                                        });
                                         return;
                                     }
 
                                     const padreInput = palomita.getElementsByTagName("td");
 
                                     var codigoBarras = padreInput[0].innerHTML;
-                                    var nomProducto = padreInput[2].innerHTML;
 
-                                    addToCart(codigoBarras, nomProducto, parseFloat(inputCarrito.value), carrito);
+                                    var fecha = Fecha()
+
+                                    enviarSocket('ECBS', codigoBarras)
+                                    recibirSocket('ECBSRF')
+
+                                    socket.once('ECBSR', (data) => {
+                                        addToCart(fecha, codigoBarras, data.Articulo, data.Marca, parseFloat(inputCarrito.value), carrito);
+                                    })
+
                                     Abrir3();
                                 });
 
@@ -1516,7 +1529,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('3'))) {
 
             socket.emit("Consul_Mobiliario", localStorage.getItem('user'));
-            
+
             //Formulario desplegable
             const ArtiDesp = $('#ArtM');
             const MenuM = $("#DesplegableM");
@@ -1552,7 +1565,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 }
             });
 
-            if(carrito){
+            if (carrito) {
                 console.log(carrito);
             }
             const thead = document.querySelector("#firstrow");
@@ -1653,7 +1666,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         else {
                             socket.emit('Cambios_Mobiliario', { Articulo: $("#ArtM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val() }, { OLDArtM: valores0 });
                         }
-                        
+
                     }
                 }
             });
@@ -1709,7 +1722,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         enviarSocket("Alta_Mob", { Articulo: $("#OtrosM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), User: user });
                     }
                     else {
-                        enviarSocket('Alta_Mob', { Articulo: $("#ArtM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), User: user  });
+                        enviarSocket('Alta_Mob', { Articulo: $("#ArtM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), User: user });
                     }
 
                     recibirSocket('Mobiliario_Respuesta');
@@ -1751,7 +1764,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     enviarSocket('Crea_Resp', { Responsiva: $("#Resp").val(), NombreEmp: $("#NombreEmp").val() });
 
                     socket.on('Responsiva_Respuesta', function (Respuesta) {
-                        
+
                         Swal.fire(Respuesta.mensaje).then(() => {
                             // Crear un blob a partir del PDF buffer recibido
                             const blob = new Blob([Respuesta.pdfBuffer], { type: 'application/pdf' });
@@ -1772,91 +1785,122 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             location.href = "index";
         }
     }
-}else if (pathname == '/users/sol_prod' && Permisos['ALMACÉN'].includes('4')) {
-    enviarSocket('get_applicants')
-    table = $("#Requests")
-    
-    socket.on('return_applicants', async (data) => {
-        // Add requests process
-        $.each(data, function(_, item) {
-            var row = $('<tr></tr>');
-            $.each(item, function(clave, value) {
-                if (clave === 'request_date') {
-                    var fechaFormateada = new Date(value).toISOString().split('T')[0];
-                    row.append("<td>" + fechaFormateada + "</td>")
-                }else if (clave === 'cerrada'){
-                    if (item.cerrada == 1 && item.Acept == 0){
-                        row.addClass('decline')
-                        row.append('<td><div>Rechazada :(</div></td>')
-                    }else if((item.cerrada == 1 && item.Acept == 1)){
-                        row.addClass('accepted')
-                        row.append('<td><div>Aceptada :)</div></td>')
-                    }else if (item.cerrada == 0 && item.Acept == 1){
-                        row.addClass('pending')
-                        row.append('<td><div>Pendiente...</div></td>')
-                    }else
-                        row.append('<td><div><span class="icon-check">✔</span><span class="icon-cross">✘</span></div></td>')
-                }else if(clave === 'Acept'){
-                }else{
-                    row.append("<td>" + value + "</td>");
-                }
-            })
-            table.append(row)
-        })
-        // Continue with all requests events (accept and decline requests)
-        var accepted = document.getElementsByClassName('icon-check')
-        var declined = document.getElementsByClassName('icon-cross')
+} else if (pathname == '/users/sol_prod') {
+    if (area !== 'DIRECCION GENERAL') {
+        window.location.href = "index";
+    } else {
+        enviarSocket('get_applicants')
+        table = $("#Requests")
 
-        for (let i = 0; i < accepted.length; i++){
-            accepted[i].addEventListener("click", getRequestssolicitants)
-            declined[i].addEventListener("click", getRequestssolicitants)
-        }
-
-        var valores = []
-
-        function getRequestssolicitants(e) {
-            class_button = Array.from(e.srcElement.classList)[0]
-            boton = ''
-            if (class_button == 'icon-check'){
-                valores.push('accepted')
-                boton = 'aceptar'
-            } else if (class_button == 'icon-cross') {
-                valores.push('declined')
-                boton = 'denegar'
-            }
-            Swal.fire({
-                title: "¿Estás seguro de " + boton +  " la solicitud?",
-                text: "No puedes revertir el cambio!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Si, seguro!"
-              }).then((result) => {
-                if (result.isConfirmed) {
-                    
-                    var elementosTD = e.srcElement.parentElement.parentElement.parentElement.getElementsByTagName("td");
-                    // recorremos cada uno de los elementos del array de elementos <td>
-                    for (let i = 0; i < elementosTD.length-1; i++) {
-                        valores.push(elementosTD[i].innerHTML); // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+        socket.on('return_applicants', async (data) => {
+            // Add requests process
+            $.each(data, function (_, item) {
+                var row = $('<tr></tr>');
+                $.each(item, function (clave, value) {
+                    if (clave === 'request_date') {
+                        var fechaFormateada = new Date(value).toISOString().split('T')[0];
+                        row.append("<td>" + fechaFormateada + "</td>")
+                    } else if (clave === 'cerrada') {
+                        if (item.cerrada == 1 && item.Acept == 0) {
+                            row.addClass('decline')
+                            row.append('<td><div>Rechazada :(</div></td>')
+                        } else if ((item.cerrada == 1 && item.Acept == 1)) {
+                            row.addClass('accepted')
+                            row.append('<td><div>Aceptada :)</div></td>')
+                        } else if (item.cerrada == 0 && item.Acept == 1) {
+                            row.addClass('pending')
+                            row.append('<td><div>Pendiente...</div></td>')
+                        } else
+                            row.append('<td><div><span class="icon-check">✔</span><span class="icon-cross">✘</span></div></td>')
+                    } else if (clave === 'Acept') {
+                    } else {
+                        row.append("<td>" + value + "</td>");
                     }
-        
-                    enviarSocket('updateCar', valores)
+                })
+                table.append(row)
+            })
+            // Continue with all requests events (accept and decline requests)
+            var accepted = document.getElementsByClassName('icon-check')
+            var declined = document.getElementsByClassName('icon-cross')
 
-                    socket.once('request_answered', (Respuesta) => {
-                        Swal.fire({
-                            icon: "success",
-                            title: "Solicitud exitosa",
-                            text: Respuesta.mensaje}).then(() => {
+            for (let i = 0; i < accepted.length; i++) {
+                accepted[i].addEventListener("click", getRequestssolicitants)
+                declined[i].addEventListener("click", getRequestssolicitants)
+            }
+
+            var valores = []
+
+            function getRequestssolicitants(e) {
+                class_button = Array.from(e.srcElement.classList)[0]
+                boton = ''
+                if (class_button == 'icon-check') {
+                    valores.push('accepted')
+                    boton = 'aceptar'
+                } else if (class_button == 'icon-cross') {
+                    valores.push('declined')
+                    boton = 'denegar'
+                }
+                Swal.fire({
+                    title: "¿Estás seguro de " + boton + " la solicitud?",
+                    text: "No puedes revertir el cambio!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Si, seguro!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        var elementosTD = e.srcElement.parentElement.parentElement.parentElement.getElementsByTagName("td");
+                        // recorremos cada uno de los elementos del array de elementos <td>
+                        for (let i = 0; i < elementosTD.length - 1; i++) {
+                            valores.push(elementosTD[i].innerHTML); // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                        }
+
+                        enviarSocket('updateCar', valores)
+
+                        socket.once('request_answered', (Respuesta) => {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Solicitud exitosa",
+                                text: Respuesta.mensaje
+                            }).then(() => {
                                 location.reload();
                             });
-                    })
-                }else{
-                    valores = []
-                }
-              })
+                        })
+                    } else {
+                        valores = []
+                    }
+                })
+            }
+
+
+        });
+    }
+
+} else if (pathname == '/users/carrito') {
+
+    if (carrito.length > 0) {
+        table = $('#Requests tbody')
+        $.each(carrito, function (_, row) {
+            fila = $('<tr></tr>')
+            $.each(row, function (_, value) {
+                fila.append('<td>' + value + '</td>')
+            })
+            fila.append('<td><div><span class="icon-cross">✘</span><div></td>')
+            table.append(fila)
+        })
+
+        cancel = document.getElementsByClassName('icon-cross')
+
+        for (let i = 0; i < cancel.length; i++){
+            cancel[i].addEventListener("click", () => {
+                removeFromCart(carrito[i].id, carrito)
+            })
         }
 
-
-    });
+    } else {
+        empty_table('Requests', 6)
+    }
 }
+
