@@ -636,7 +636,9 @@ CREATE TABLE soli_car (
     emp_SC VARCHAR(45),
     Acept BOOLEAN, -- Si la solicitud fue aceptada o no
     cerrada BOOLEAN, -- Si la solicitud ya fue cerrada
-    request_date date
+    request_date date,
+    delivered tinyint(1),
+    sended tinyint(1)
     -- FOREIGN KEY (emp_SC) REFERENCES otra_tabla_emp_SC(emp_SC), -- Reemplazar "otra_tabla_emp_SC" con el nombre de la tabla de usuario o empleado y la columna correspondiente
     -- FOREIGN KEY (dir_LLSC) REFERENCES otra_tabla_dir_LLSC(dir_LLSC) -- Reemplazar "otra_tabla_dir_LLSC" con el nombre de la tabla donde se encuentre el director y la columna correspondiente
 );
@@ -670,22 +672,24 @@ alter table soli_car add constraint PKSC primary key(Cod_Barras_SC, emp_SC, requ
 alter table soli_car add constraint FKSC_CB foreign key(Cod_Barras_SC) references almacen(Cod_Barras);
 alter table soli_car add constraint FKSC_EM foreign key(emp_SC) references empleado(Num_emp);
 
--- Table to warehousman requirements
-create table soli_Warehousman_soli(
-	warehousman int,
-    delivered tinyint(1),
-    Cod_Barras_SC varchar(45),
-    request_date date,
-    primary key(warehousman, Cod_Barras_SC, request_date)
-);
-
 insert into soli_car values
+("DDWA35", 10, 758, 0, 0, "2024-01-21",0,0),
 ("DDWA35", 10, 202, 0, 1, '2024-01-19'),
 ("DDWA35", 10, 95, 0, 0, '2024-01-19'),
 ("DDWA35", 10, 62, 0, 0, '2024-01-19'),
 ("DDWA35", 10, 107, 0, 0, '2024-01-19');
 
- update soli_car set Acept = 0, cerrada = 0 where Cod_Barras_SC = 'DDWA35';
- 
-select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept;
-select*from empleado;
+insert into soli_car select Num_Emp, 'DDWA35',
+5, 0, 0, '2024-01-20' from usuario where Usuario = 'ajimenez';
+
+update soli_car set Acept = 0, cerrada = 0 where Cod_Barras_SC = 'DDWA35';
+
+
+select count(distinct Cod_Barras_SC, emp_SC, request_date) as cart_length from soli_car where emp_SC = 758 and sended = 0;
+
+select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 0 and emp_SC = 758;
+select*from soli_car;
+
+drop table soli_warehousman_soli;
+alter table soli_car add column delivered tinyint(1);
+alter table soli_car add column sended tinyint(1);

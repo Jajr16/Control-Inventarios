@@ -1,16 +1,7 @@
 var carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
-function addToCart(fecha, id, name, marca, cantidad, cart) {
-    // Buscar si el producto ya está en el carrito
-    const existingItem = cart.find(item => item.id === id);
-
-    if (existingItem) {
-        // Si el producto ya existe, actualizar la cantidad
-        existingItem.cantidad += cantidad;
-    } else {
-        // Si el producto no existe en el carrito, añadirlo
-        cart.push({ fecha, id, name, marca, cantidad });
-    }
+function addToCart(num, cart) {
+        cart.push({num});
 
     localStorage.setItem('carrito', JSON.stringify(cart));
     // Actualizar el carrito

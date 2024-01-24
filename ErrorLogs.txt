@@ -66,3 +66,6 @@ Error: ER_BAD_FIELD_ERROR: Unknown column 'Acpet' in 'order clause' | Error obte
 Error: ER_TRUNCATED_WRONG_VALUE: Incorrect date value: 'accepted' for column 'request_date' at row 1 | Error obtenido el -> 19/01/2024 19:54
 Error: ER_TRUNCATED_WRONG_VALUE: Incorrect date value: 'accepted' for column 'request_date' at row 1 | Error obtenido el -> 19/01/2024 19:58
 Error: ER_TRUNCATED_WRONG_VALUE: Incorrect date value: 'accepted' for column 'request_date' at row 1 | Error obtenido el -> 19/01/2024 20:0
+Error: ER_DUP_ENTRY: Duplicate entry 'DDWA35-758-2024-01-23' for key 'soli_car.PRIMARY' | Error obtenido el -> 23/01/2024 14:55
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ', Cod_Barras_SC = 'DDWA35', emp_SC = (select Num_Emp from usuario where Usuario ' at line 1 | Error obtenido el -> 23/01/2024 16:59
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.usuairo' doesn't exist | Error obtenido el -> 23/01/2024 18:5

@@ -78,12 +78,12 @@ io.on('connection', (socket) => {
                         if (err) {
                             Errores(err);
                             socket.emit('SystemError');
-                        }else if (res.length > 0) {
-                            db.query("select Área from empleado where Num_emp = ?", [result[0].Num_Emp], function (err, area){
-                                if(err){
+                        } else if (res.length > 0) {
+                            db.query("select Área from empleado where Num_emp = ?", [result[0].Num_Emp], function (err, area) {
+                                if (err) {
                                     Errores(err);
                                     socket.emit('SystemError');
-                                } else if (area.length > 0){
+                                } else if (area.length > 0) {
                                     // Organizar permisos por módulo y enviar al cliente
                                     let permisosModulos = {};
                                     res.forEach(row => {
@@ -95,7 +95,7 @@ io.on('connection', (socket) => {
                                     socket.emit('logInOK', { Usuario: result[0].Usuario, permisosModulos, area: area[0].Área });
                                 }
                             });
-                        }else {
+                        } else {
                             socket.emit('logInError', { mensaje: 'El usuario no cuenta con ningún permiso.' });
                         }
                     });
@@ -1958,18 +1958,18 @@ io.on('connection', (socket) => {
     socket.on('get_applicants', () => {
         db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept', function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
-            else{
+            else {
                 if (res) {
                     socket.emit('return_applicants', res);
                 }
-            } 
+            }
         });
-    
+
     })
 
     socket.on('updateCar', (data) => {
         console.log(data)
-        if (data.includes('accepted')){
+        if (data.includes('accepted')) {
             db.query("update soli_car set Acept = 1 where Cod_Barras_SC = ? and emp_SC = (select Num_emp from empleado where Nom = ?) and request_date = ?", [data[2], data[6], data[1]], function (err, res) {
                 if (err) { Errores(err); socket.emit('SystemError'); }
                 else {
@@ -1978,7 +1978,7 @@ io.on('connection', (socket) => {
                     }
                 }
             })
-        }else if (data.includes('declined')){
+        } else if (data.includes('declined')) {
             db.query("update soli_car set Acept = 0, cerrada = 1 where Cod_Barras_SC = ? and emp_SC = (select Num_emp from empleado where Nom = ?) and request_date = ?", [data[2], data[6], data[1]], function (err, res) {
                 if (err) { Errores(err); socket.emit('SystemError'); }
                 else {
@@ -1990,14 +1990,65 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on('ECBS', (codigoBarras) => {
-        db.query('select Articulo, Marca from almacen where Cod_Barras = ?', [codigoBarras], function(err, res){
+    socket.on('CNPC', (data) => {
+        cart_length(data)
+    })
+
+    socket.on('ECBS', (data) => {
+
+        db.query('insert into soli_car select ?, ?, Num_Emp, ?, ?, ?, ?, ? from usuario where Usuario = ?', [data.CBP, data.CP, 0, 0, data.DATE, 0, 0, data.US], function (err, res) {
+            if (err) {
+                if (err.code === 'ER_DUP_ENTRY') {
+                    /////////////// ME QUEDÉ AQUÍ
+                    db.query('update soli_car set cantidad_SC = cantidad_SC + ? where Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?) and request_date = ?', [data.CP, data.CBP, data.US, data.DATE], function (err, res) {
+                        if (err) { Errores(err); socket.emit('SystemError'); }
+                        else {
+                            if (res) {
+                                cart_length(data.US)
+                            }
+                        }
+                    })
+                } else { Errores(err); socket.emit('SystemError'); }
+            } else {
+                if (res) {
+                    cart_length(data.US)
+                }
+            }
+        })
+    })
+
+    socket.on('RPC', (data) => {
+        db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 0 and emp_SC = (select Num_Emp from usuario where Usuario = ?)', data, function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
-            else{
+            else {
                 if (res.length > 0) {
-                    socket.emit('ECBSR', {Articulo: res[0].Articulo, Marca: res[0].Marca})
+                    socket.emit('RPCR', res)
                 }else {
-                    socket.emit('ECBSRF', {mensaje: 'No existe un articulo con ese código de barras.', Res: "Si"})
+                    socket.emit('RPCRN')
+                }
+            }
+        })
+    })
+
+    socket.on('EPC', (data) => {
+        db.query('delete from soli_car where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function(err, res) {
+            if (err) { Errores(err); socket.emit('SystemError'); }
+            else {
+                if (res) {
+                    cart_length(data.user)
+                }
+            }
+        })
+    })
+
+    socket.on('AAPIC', (data) => {
+        db.query('update soli_car set sended = 1 where emp_SC = (select Num_Emp from usuario where Usuario = ?) and sended = 0', data, function (err, res) {
+            if (err) { Errores(err); socket.emit('SystemError'); }
+            else {
+                if (res) {
+                    socket.emit('AAPICRE', {mensaje: 'Peticiones enviadas al director/directora', Res: "Si"})
+                } else {
+                    socket.emit('AAPICRE', {mensaje: 'No se pudieron enviar las peticiones. Inténtelo de nuevo', Res: "Si"})
                 }
             }
         })
@@ -2006,4 +2057,17 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log('Cliente desconectado.');
     });
+
+    function cart_length(user) {
+        db.query('select count(distinct Cod_Barras_SC, emp_SC, request_date) as cart_length from soli_car where emp_SC = (select Num_Emp from usuario where Usuario = ?) and sended = 0', user, function (err, res) {
+            if (err) { Errores(err); socket.emit('SystemError'); }
+            else {
+                if (res.length > 0) {
+                    socket.emit('ECBSR', res[0].cart_length)
+                } else {
+                    socket.emit('ECBSRF', { mensaje: 'No existe un articulo con ese código de barras.', Res: "Si" })
+                }
+            }
+        })
+    }
 });

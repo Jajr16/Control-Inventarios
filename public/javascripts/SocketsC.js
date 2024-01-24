@@ -7,11 +7,15 @@ var pathname = window.location.pathname;
 //////////////////////// CARRITO //////////////////////
 
 $(document).ready(function () {
-    if (carrito.length > 0){
-        notification = $('.notification-circle')
-        notification.css("visibility", "visible");
-        notification.text(carrito.length)
-    }
+    socket.emit('CNPC', user)
+    
+    socket.once('ECBSR', function (data){
+        if (data !== 0) {
+            notification = $('.notification-circle')
+            notification.css("visibility", "visible");
+            notification.text(parseInt(data))
+        }
+    })   
 })
 
 
@@ -770,19 +774,18 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                                     var fecha = Fecha()
 
-                                    enviarSocket('ECBS', codigoBarras)
+                                    enviarSocket('ECBS', {CBP: codigoBarras, CP: parseFloat(inputCarrito.value), US: user, DATE: fecha})
                                     recibirSocket('ECBSRF')
 
-                                    socket.once('ECBSR', (data) => {
-                                        addToCart(fecha, codigoBarras, data.Articulo, data.Marca, parseFloat(inputCarrito.value), carrito);
-                                        
-                                        if (carrito.length > 0){
+                                    socket.emit('CNPC', user)
+    
+                                    socket.once('ECBSR', function (data){
+                                        if (data !== 0) {
                                             notification = $('.notification-circle')
                                             notification.css("visibility", "visible");
-                                            notification.text(carrito.length)
+                                            notification.text(parseInt(data))
                                         }
-                                    })
-
+                                    })   
                                 });
 
                                 const cancel_icon = nuevoContenido.querySelector(".icon-cross");
@@ -1581,9 +1584,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 }
             });
 
-            if (carrito) {
-                console.log(carrito);
-            }
             const thead = document.querySelector("#firstrow");
 
             let CabHTML = "";
@@ -1895,28 +1895,48 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
     }
 
 } else if (pathname == '/users/carrito') {
+    enviarSocket('RPC', user)
 
-    if (carrito.length > 0) {
-        table = $('#Requests tbody')
-        $.each(carrito, function (_, row) {
-            fila = $('<tr></tr>')
-            $.each(row, function (_, value) {
-                fila.append('<td>' + value + '</td>')
+    socket.on('RPCR', async (data) => {
+        if (data.length > 0){
+            table = $('#Requests tbody')
+            $.each(data, function (_, row) {
+                fila = $('<tr></tr>')
+                $.each(row, function (clave, value) {
+                    if (clave == 'request_date') {
+                        var fechaFormateada = new Date(value).toISOString().split('T')[0];
+                        fila.append("<td>" + fechaFormateada + "</td>")
+                    }else{
+                        fila.append('<td>' + value + '</td>')
+                    }
+                })
+                fila.append('<td><div><span class="icon-cross">✘</span></div></td>')
+                table.append(fila)
             })
-            fila.append('<td><div><span class="icon-cross">✘</span><div></td>')
-            table.append(fila)
-        })
 
-        cancel = document.getElementsByClassName('icon-cross')
+            cancel = document.getElementsByClassName('icon-cross')
 
-        for (let i = 0; i < cancel.length; i++){
-            cancel[i].addEventListener("click", () => {
-                removeFromCart(carrito[i].id, carrito)
+            for (let i = 0; i < cancel.length; i++){
+                cancel[i].addEventListener("click", (e) => {
+                    let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
+                    let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
+                    
+                    enviarSocket('EPC', {fpcdd, pcdd, user})
+                    location.reload()
+                })
+            }
+
+            $('#productos').append('<button class="BotonExcel" style="width: 100%; color: white;">Enviar todo</button>')
+
+            $('.BotonExcel').on('click', function(){
+                enviarSocket('AAPIC', user)
+                recibirSocket('AAPICRE')
             })
         }
+    })
 
-    } else {
+    socket.on('RPCRN', () => {  
         empty_table('Requests', 6)
-    }
+    })
 }
 
