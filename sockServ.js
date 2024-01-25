@@ -1735,6 +1735,7 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Desplegar empleados
     socket.on("DatEmp", async () => {
         db.query('select empleado.Nom, empleado.Área, (select Nom from empleado as Jefe where Jefe.Num_emp = empleado.Num_Jefe) Nom_Jefe from empleado;', async function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
@@ -1750,6 +1751,7 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Eliminar empleados
     socket.on('EmpDelete', async (data) => {
         db.query('select empleado.Nom from empleado inner join usuario on empleado.Num_emp = usuario.Num_Emp where usuario.Usuario = ?', data.Nus, function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
@@ -1774,6 +1776,7 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Modificar empleados
     socket.on('ModEmp', async (dataNew, dataOld) => {
         db.query('update empleado set Nom = ?, Área = ?, Num_Jefe = (select Num_emp from (select Num_Emp from empleado where Nom = ?) Jefe) where Num_emp = (select Num_emp from (select Num_Emp from empleado where Nom = ?) Empleado)', [dataNew.NewName, dataNew.NewArea, dataNew.NewBoss, dataOld.OldName], function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
@@ -1899,6 +1902,7 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Crear responsivas
     socket.on('Crea_Resp', async (data) => {
         console.log(data);
         db.query('SELECT Num_Emp, Área from empleado where Nom = ?', [data.NombreEmp], function (err, res) {
@@ -1944,6 +1948,7 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Buscar CPU
     socket.on('BuscarCPU', (Num_Serie) => {
         db.query('select equipo.Num_Serie, pcs.Hardware, pcs.Software, monitor.Monitor, monitor.Num_Serie_Monitor, monitor.Num_Inv_Mon, mouse.Mouse, teclado.Teclado, accesorio.Accesorio from equipo left join monitor on equipo.Num_Serie = monitor.Num_Serie left join mouse on equipo.Num_Serie = mouse.Num_Serie left join pcs on equipo.Num_Serie = pcs.Num_Serie left join Teclado on equipo.Num_Serie = teclado.Num_Serie left join accesorio on equipo.Num_Serie = accesorio.Num_Serie where equipo = "CPU" and equipo.Num_Serie = ?;', [Num_Serie], function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
@@ -1955,6 +1960,7 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Busca solcitudes de carrito
     socket.on('get_applicants', () => {
         db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept', function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
@@ -1967,6 +1973,7 @@ io.on('connection', (socket) => {
 
     })
 
+    // Actualizar carrito
     socket.on('updateCar', (data) => {
         console.log(data)
         if (data.includes('accepted')) {
@@ -1990,6 +1997,7 @@ io.on('connection', (socket) => {
         }
     })
 
+    // Longitud del carrito
     socket.on('CNPC', (data) => {
         cart_length(data)
     })
@@ -2017,6 +2025,7 @@ io.on('connection', (socket) => {
         })
     })
 
+    // Responder peticion de carrito
     socket.on('RPC', (data) => {
         db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 0 and emp_SC = (select Num_Emp from usuario where Usuario = ?)', data, function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
@@ -2030,6 +2039,7 @@ io.on('connection', (socket) => {
         })
     })
 
+    // Eliminar peticion de carrito
     socket.on('EPC', (data) => {
         db.query('delete from soli_car where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function(err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
@@ -2054,6 +2064,55 @@ io.on('connection', (socket) => {
         })
     })
 
+    // Consulta de almacenista
+    socket.on('consul_almacenista', (data) => {
+        db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, soli_car.sended, soli_car.delivered, soli_car.Acept, soli_car.cerrada from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 0 and emp_SC = (select Num_Emp from usuario where Usuario = ?)', data, function (err, res) {
+            if (err) { Errores(err); socket.emit('SystemError'); }
+            else {
+                if (res.length > 0) {
+                    socket.emit('desplegar_almacenista', res)
+                }else {
+                    socket.emit('error_desplegar')
+                }
+            }
+        })
+    })
+
+    // Enviar peticion
+    socket.on('enviar_peti_alma', (data) => {
+        db.query('UPDATE soli_car SET sended = TRUE where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function(err, res) {
+            if (err) { Errores(err); socket.emit('SystemError'); }
+            else {
+                if (res) {
+                    cart_length(data.user)
+                }
+            }
+        })
+    })
+    // Entregar peticion
+    socket.on('entregar_peti_alma', (data) => {
+        db.query('UPDATE soli_car SET delivered = TRUE where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function(err, res) {
+            if (err) { Errores(err); socket.emit('SystemError'); }
+            else {
+                if (res) {
+                    cart_length(data.user)
+                }
+            }
+        })
+    })
+    // Cerrar peticion
+    socket.on('cerrar_peti_alma', (data) => {
+        db.query('UPDATE soli_car SET cerrada = TRUE where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function(err, res) {
+            if (err) { Errores(err); socket.emit('SystemError'); }
+            else {
+                if (res) {
+                    cart_length(data.user)
+                }
+            }
+        })
+    })
+
+    // Desconectar cliente
     socket.on('disconnect', () => {
         console.log('Cliente desconectado.');
     });

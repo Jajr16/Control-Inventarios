@@ -1938,5 +1938,94 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
     socket.on('RPCRN', () => {  
         empty_table('Requests', 6)
     })
-}
+} else if (pathname == '/users/sol_prod_Almacen') {
+    enviarSocket('consul_almacenista', user)
 
+    socket.on('desplegar_almacenista', async (data) => {
+        if (data.length > 0){
+            table = $('#Requests tbody')
+            $.each(data, function (_, row) {
+                fila = $('<tr></tr>')
+                $.each(row, function (clave, value) {
+                    if (clave == 'request_date') {
+                        var fechaFormateada = new Date(value).toISOString().split('T')[0];
+                        fila.append("<td>" + fechaFormateada + "</td>")
+                    } else if (clave == 'sended'){
+                        if(value == '0'){
+                            fila.append("<td>" + "No enviado" + "</td>")
+                        } else {
+                            fila.append("<td>" + "Enviado" + "</td>")
+                        }
+                    } else if (clave == 'delivered'){
+                        if(value == '0'){
+                            fila.append("<td>" + "No entregado" + "</td>")
+                        } else {
+                            fila.append("<td>" + "Entregado" + "</td>")
+                        }
+                    } else if (clave == 'Acept'){
+                        if(value == '0'){
+                            fila.append("<td>" + "Activa" + "</td>")
+                        } else {
+                            fila.append("<td>" + "Cancelada" + "</td>")
+                        }
+                    } else if (clave == 'cerrada'){
+                        if(value == '0'){
+                            fila.append("<td>" + "Abierta" + "</td>")
+                        } else {
+                            fila.append("<td>" + "Cerrada" + "</td>")
+                        }
+                    }
+                    else{
+                        fila.append('<td>' + value + '</td>')
+                    }
+                })
+                fila.append('<td><div><span class="icon-enviar">Enviar</span></div></td>')
+                fila.append('<td><div><span class="icon-entregar">Entregar</span></div></td>')
+                fila.append('<td><div><span class="icon-cerrar">Cerrar</span></div></td>')
+                table.append(fila)
+            })
+
+            // Proceso a realizar cuando le da clic a un boton
+            enviar = document.getElementsByClassName('icon-enviar')
+            entregar = document.getElementsByClassName('icon-entregar')
+            cerrar = document.getElementsByClassName('icon-cerrar')
+
+            // Enviar peticion
+            for (let i = 0; i < enviar.length; i++){
+                enviar[i].addEventListener("click", (e) => {
+                    let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
+                    let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
+                    
+                    enviarSocket('enviar_peti_alma', {fpcdd, pcdd, user})
+                    location.reload()
+                })
+            }
+
+            // Entregar peticion
+            for (let i = 0; i < entregar.length; i++){
+                entregar[i].addEventListener("click", (e) => {
+                    let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
+                    let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
+                    
+                    enviarSocket('entregar_peti_alma', {fpcdd, pcdd, user})
+                    location.reload()
+                })
+            }
+
+            // Cerrar peticion
+            for (let i = 0; i < cerrar.length; i++){
+                cerrar[i].addEventListener("click", (e) => {
+                    let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
+                    let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
+                    
+                    enviarSocket('cerrar_peti_alma', {fpcdd, pcdd, user})
+                    location.reload()
+                })
+            }
+        }
+    })
+
+    socket.on('error_desplegar', () => {  
+        empty_table('Requests', 6)
+    })
+}

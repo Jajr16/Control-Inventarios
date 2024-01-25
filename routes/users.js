@@ -83,4 +83,8 @@ router.get('/carrito', function (req, res, next) {
   res.render('cart', { title: 'Productos solicitados', layout: 'consul_layout' });
 });
 
+router.get('/sol_prod_Almacen', function (req, res, next) {
+  res.render('almacenista', { title: 'Productos solicitados', layout: 'consul_layout' });
+});
+
 module.exports = router;

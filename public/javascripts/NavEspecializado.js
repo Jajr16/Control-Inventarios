@@ -94,7 +94,9 @@ if (Permisos['RESPONSIVAS']) {
                 <p>Crear responsivas</p>
                 <ul class="menu-vertical_nav">
                 <li>
-                    <div><a href="/users/crear_resp">Responsivas</a></div> 
+                    <div><a href="/users/crear_resp">Responsivas</a></div>
+                    <div><a href="/users/sol_prod">Director</a></div> 
+                    <div><a href="/users/sol_prod_Almacen">Almacenista</a></div> 
                 </li>
                 </ul>
             </li>

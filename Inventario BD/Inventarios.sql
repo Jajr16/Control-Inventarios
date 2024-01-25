@@ -631,9 +631,9 @@ WHERE
   
 -- Tabla de solicitudes de almacen
 CREATE TABLE soli_car (
-    Cod_Barras_SC VARCHAR(45) PRIMARY KEY,
+    Cod_Barras_SC VARCHAR(45),
     cantidad_SC INT(10),
-    emp_SC VARCHAR(45),
+    emp_SC int,
     Acept BOOLEAN, -- Si la solicitud fue aceptada o no
     cerrada BOOLEAN, -- Si la solicitud ya fue cerrada
     request_date date,
@@ -662,22 +662,18 @@ SET soli_Resp = FALSE,
 	cerrada = FALSE;
     
 -- Modify table soli_car
-alter table soli_car drop column Nombre_SC;
-alter table soli_car drop column soli_Resp;
-alter table soli_car drop column dir_LLSC;
-alter table soli_car add column request_date date;
-alter table soli_car modify emp_SC int;
 alter table Salidas_Productos add constraint FKCBS foreign key(Cod_BarrasS) references almacen(Cod_Barras);
 alter table soli_car add constraint PKSC primary key(Cod_Barras_SC, emp_SC, request_date);
 alter table soli_car add constraint FKSC_CB foreign key(Cod_Barras_SC) references almacen(Cod_Barras);
 alter table soli_car add constraint FKSC_EM foreign key(emp_SC) references empleado(Num_emp);
 
 insert into soli_car values
-("DDWA35", 10, 758, 0, 0, "2024-01-21",0,0),
-("DDWA35", 10, 202, 0, 1, '2024-01-19'),
-("DDWA35", 10, 95, 0, 0, '2024-01-19'),
-("DDWA35", 10, 62, 0, 0, '2024-01-19'),
-("DDWA35", 10, 107, 0, 0, '2024-01-19');
+("684F4GFR8", 10, 758, 0, 0, "2024-01-21",0,0);
+
+select*from Soli_car;
+select*from almacen;
+
+UPDATE soli_car SET cerrada = FALSE where Cod_Barras_SC = '684F4GFR8';
 
 insert into soli_car select Num_Emp, 'DDWA35',
 5, 0, 0, '2024-01-20' from usuario where Usuario = 'ajimenez';
