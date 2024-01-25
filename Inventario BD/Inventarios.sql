@@ -630,13 +630,14 @@ WHERE
   REFERENCED_COLUMN_NAME = 'Num_Inventario';
   
 -- Tabla de solicitudes de almacen
+
 CREATE TABLE soli_car (
     Cod_Barras_SC VARCHAR(45),
     cantidad_SC INT(10),
     emp_SC int,
     Acept BOOLEAN, -- Si la solicitud fue aceptada o no
     cerrada BOOLEAN, -- Si la solicitud ya fue cerrada
-    request_date date,
+    request_date datetime,
     delivered tinyint(1),
     sended tinyint(1)
     -- FOREIGN KEY (emp_SC) REFERENCES otra_tabla_emp_SC(emp_SC), -- Reemplazar "otra_tabla_emp_SC" con el nombre de la tabla de usuario o empleado y la columna correspondiente
@@ -678,13 +679,12 @@ UPDATE soli_car SET cerrada = FALSE where Cod_Barras_SC = '684F4GFR8';
 insert into soli_car select Num_Emp, 'DDWA35',
 5, 0, 0, '2024-01-20' from usuario where Usuario = 'ajimenez';
 
-update soli_car set Acept = 0, cerrada = 0 where Cod_Barras_SC = 'DDWA35';
-
-
+update soli_car set Acept = 1, sended = 1 where Cod_Barras_SC = 'DDWA35';
+select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, soli_car.sended, soli_car.delivered, soli_car.Acept, soli_car.cerrada from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 1 and Acept = 1 and emp_SC = (select Num_Emp from usuario where Usuario = 'ajimenez');
 select count(distinct Cod_Barras_SC, emp_SC, request_date) as cart_length from soli_car where emp_SC = 758 and sended = 0;
 
 select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 0 and emp_SC = 758;
-select*from soli_car;
+select*from usuario;
 
 drop table soli_warehousman_soli;
 alter table soli_car add column delivered tinyint(1);

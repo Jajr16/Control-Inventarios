@@ -27,6 +27,12 @@ if (document.getElementById("FecActu") && document.getElementById("FecFact")){
     document.getElementById("FecFact").value = formato1;
 }
 
+var hour = hoy.toLocaleTimeString();
+
 function Fecha(){
     return formato1
+}
+
+function Hora(){
+    return hour
 }

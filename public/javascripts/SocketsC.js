@@ -772,7 +772,8 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                                     var codigoBarras = padreInput[0].innerHTML;
 
-                                    var fecha = Fecha()
+                                    var fecha = Fecha() + ' ' + Hora()
+                                    console.log(fecha)
 
                                     enviarSocket('ECBS', {CBP: codigoBarras, CP: parseFloat(inputCarrito.value), US: user, DATE: fecha})
                                     recibirSocket('ECBSRF')
@@ -2026,6 +2027,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
     })
 
     socket.on('error_desplegar', () => {  
-        empty_table('Requests', 6)
+        empty_table('Requests', 14)
     })
 }

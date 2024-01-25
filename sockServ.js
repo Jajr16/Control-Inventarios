@@ -2003,11 +2003,10 @@ io.on('connection', (socket) => {
     })
 
     socket.on('ECBS', (data) => {
-
+        console.log(data.DATE)
         db.query('insert into soli_car select ?, ?, Num_Emp, ?, ?, ?, ?, ? from usuario where Usuario = ?', [data.CBP, data.CP, 0, 0, data.DATE, 0, 0, data.US], function (err, res) {
             if (err) {
                 if (err.code === 'ER_DUP_ENTRY') {
-                    /////////////// ME QUEDÉ AQUÍ
                     db.query('update soli_car set cantidad_SC = cantidad_SC + ? where Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?) and request_date = ?', [data.CP, data.CBP, data.US, data.DATE], function (err, res) {
                         if (err) { Errores(err); socket.emit('SystemError'); }
                         else {
@@ -2066,7 +2065,7 @@ io.on('connection', (socket) => {
 
     // Consulta de almacenista
     socket.on('consul_almacenista', (data) => {
-        db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, soli_car.sended, soli_car.delivered, soli_car.Acept, soli_car.cerrada from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 0 and emp_SC = (select Num_Emp from usuario where Usuario = ?)', data, function (err, res) {
+        db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, soli_car.sended, soli_car.delivered, soli_car.Acept, soli_car.cerrada from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 1 and Acept = 1 and emp_SC = (select Num_Emp from usuario where Usuario = ?)', data, function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res.length > 0) {
