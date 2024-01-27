@@ -2004,7 +2004,7 @@ io.on('connection', (socket) => {
 
     socket.on('ECBS', (data) => {
         console.log(data.DATE)
-        db.query('insert into soli_car select ?, ?, Num_Emp, ?, ?, ?, ?, ? from usuario where Usuario = ?', [data.CBP, data.CP, 0, 0, data.DATE, 0, 0, data.US], function (err, res) {
+        db.query('insert into soli_car select ?, ?, Num_Emp, ?, ?, ?, ?, ?, ? from usuario where Usuario = ?', [data.CBP, data.CP, 0, 0, data.DATE, 0, 0, 0, data.US], function (err, res) {
             if (err) {
                 if (err.code === 'ER_DUP_ENTRY') {
                     db.query('update soli_car set cantidad_SC = cantidad_SC + ? where Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?) and request_date = ?', [data.CP, data.CBP, data.US, data.DATE], function (err, res) {
@@ -2065,7 +2065,7 @@ io.on('connection', (socket) => {
 
     // Consulta de almacenista
     socket.on('consul_almacenista', (data) => {
-        db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, soli_car.sended, soli_car.delivered, soli_car.Acept, soli_car.cerrada from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 1 and Acept = 1 and emp_SC = (select Num_Emp from usuario where Usuario = ?)', data, function (err, res) {
+        db.query('SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered, soli_car.recibido FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1', data, function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res.length > 0) {
@@ -2076,32 +2076,9 @@ io.on('connection', (socket) => {
             }
         })
     })
-
-    // Enviar peticion
-    socket.on('enviar_peti_alma', (data) => {
-        db.query('UPDATE soli_car SET sended = TRUE where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function(err, res) {
-            if (err) { Errores(err); socket.emit('SystemError'); }
-            else {
-                if (res) {
-                    cart_length(data.user)
-                }
-            }
-        })
-    })
     // Entregar peticion
     socket.on('entregar_peti_alma', (data) => {
         db.query('UPDATE soli_car SET delivered = TRUE where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function(err, res) {
-            if (err) { Errores(err); socket.emit('SystemError'); }
-            else {
-                if (res) {
-                    cart_length(data.user)
-                }
-            }
-        })
-    })
-    // Cerrar peticion
-    socket.on('cerrar_peti_alma', (data) => {
-        db.query('UPDATE soli_car SET cerrada = TRUE where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function(err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res) {

@@ -8,14 +8,14 @@ var pathname = window.location.pathname;
 
 $(document).ready(function () {
     socket.emit('CNPC', user)
-    
-    socket.once('ECBSR', function (data){
+
+    socket.once('ECBSR', function (data) {
         if (data !== 0) {
             notification = $('.notification-circle')
             notification.css("visibility", "visible");
             notification.text(parseInt(data))
         }
-    })   
+    })
 })
 
 
@@ -711,9 +711,9 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     if (Permisos['ALMACÉN'].includes('3')) {
                         filaHTML += `<td class="BotonMod"> Modificar </td>`;
                     }
-                    
+
                     filaHTML += `<td class="BotonAC Carrito_Cant" id="Carrito_Cant"> Solicitar artículo </td>`;
-                    
+
                 }
 
                 // Cierra la fila
@@ -775,18 +775,18 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                                     var fecha = Fecha() + ' ' + Hora()
                                     console.log(fecha)
 
-                                    enviarSocket('ECBS', {CBP: codigoBarras, CP: parseFloat(inputCarrito.value), US: user, DATE: fecha})
+                                    enviarSocket('ECBS', { CBP: codigoBarras, CP: parseFloat(inputCarrito.value), US: user, DATE: fecha })
                                     recibirSocket('ECBSRF')
 
                                     socket.emit('CNPC', user)
-    
-                                    socket.once('ECBSR', function (data){
+
+                                    socket.once('ECBSR', function (data) {
                                         if (data !== 0) {
                                             notification = $('.notification-circle')
                                             notification.css("visibility", "visible");
                                             notification.text(parseInt(data))
                                         }
-                                    })   
+                                    })
                                 });
 
                                 const cancel_icon = nuevoContenido.querySelector(".icon-cross");
@@ -1815,8 +1815,18 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 var row = $('<tr></tr>');
                 $.each(item, function (clave, value) {
                     if (clave === 'request_date') {
-                        var fechaFormateada = new Date(value).toISOString().split('T')[0];
-                        row.append("<td>" + fechaFormateada + "</td>")
+                        // Fecha obtenida
+                        var fechaJS = new Date(value);
+                        var año = fechaJS.getFullYear();
+                        var mes = ('0' + (fechaJS.getMonth() + 1)).slice(-2);
+                        var dia = ('0' + fechaJS.getDate()).slice(-2);
+                        var horas = ('0' + fechaJS.getHours()).slice(-2);
+                        var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
+                        var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
+
+                        var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
+                        row.append("<td>" + fechaFormateada + "</td>");
+
                     } else if (clave === 'cerrada') {
                         if (item.cerrada == 1 && item.Acept == 0) {
                             row.addClass('decline')
@@ -1899,15 +1909,25 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
     enviarSocket('RPC', user)
 
     socket.on('RPCR', async (data) => {
-        if (data.length > 0){
+        if (data.length > 0) {
             table = $('#Requests tbody')
             $.each(data, function (_, row) {
                 fila = $('<tr></tr>')
                 $.each(row, function (clave, value) {
                     if (clave == 'request_date') {
-                        var fechaFormateada = new Date(value).toISOString().split('T')[0];
-                        fila.append("<td>" + fechaFormateada + "</td>")
-                    }else{
+                        // Fecha obtenida
+                        var fechaJS = new Date(value);
+                        var año = fechaJS.getFullYear();
+                        var mes = ('0' + (fechaJS.getMonth() + 1)).slice(-2);
+                        var dia = ('0' + fechaJS.getDate()).slice(-2);
+                        var horas = ('0' + fechaJS.getHours()).slice(-2);
+                        var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
+                        var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
+
+                        var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
+                        fila.append("<td>" + fechaFormateada + "</td>");
+
+                    } else {
                         fila.append('<td>' + value + '</td>')
                     }
                 })
@@ -1917,116 +1937,88 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
             cancel = document.getElementsByClassName('icon-cross')
 
-            for (let i = 0; i < cancel.length; i++){
+            for (let i = 0; i < cancel.length; i++) {
                 cancel[i].addEventListener("click", (e) => {
                     let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
                     let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
-                    
-                    enviarSocket('EPC', {fpcdd, pcdd, user})
+
+                    enviarSocket('EPC', { fpcdd, pcdd, user })
                     location.reload()
                 })
             }
 
             $('#productos').append('<button class="BotonExcel" style="width: 100%; color: white;">Enviar todo</button>')
 
-            $('.BotonExcel').on('click', function(){
+            $('.BotonExcel').on('click', function () {
                 enviarSocket('AAPIC', user)
                 recibirSocket('AAPICRE')
             })
         }
     })
 
-    socket.on('RPCRN', () => {  
+    socket.on('RPCRN', () => {
         empty_table('Requests', 6)
     })
 } else if (pathname == '/users/sol_prod_Almacen') {
     enviarSocket('consul_almacenista', user)
 
     socket.on('desplegar_almacenista', async (data) => {
-        if (data.length > 0){
+        if (data.length > 0) {
             table = $('#Requests tbody')
             $.each(data, function (_, row) {
                 fila = $('<tr></tr>')
                 $.each(row, function (clave, value) {
                     if (clave == 'request_date') {
-                        var fechaFormateada = new Date(value).toISOString().split('T')[0];
-                        fila.append("<td>" + fechaFormateada + "</td>")
-                    } else if (clave == 'sended'){
-                        if(value == '0'){
-                            fila.append("<td>" + "No enviado" + "</td>")
-                        } else {
-                            fila.append("<td>" + "Enviado" + "</td>")
-                        }
-                    } else if (clave == 'delivered'){
-                        if(value == '0'){
+                        // Fecha obtenida
+                        var fechaJS = new Date(value);
+                        var año = fechaJS.getFullYear();
+                        var mes = ('0' + (fechaJS.getMonth() + 1)).slice(-2);
+                        var dia = ('0' + fechaJS.getDate()).slice(-2);
+                        var horas = ('0' + fechaJS.getHours()).slice(-2);
+                        var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
+                        var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
+
+                        var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
+                        fila.append("<td>" + fechaFormateada + "</td>");
+
+                    } else if (clave == 'delivered') {
+                        if (value == '0') {
                             fila.append("<td>" + "No entregado" + "</td>")
                         } else {
                             fila.append("<td>" + "Entregado" + "</td>")
                         }
-                    } else if (clave == 'Acept'){
-                        if(value == '0'){
-                            fila.append("<td>" + "Activa" + "</td>")
+                    } else if (clave == 'recibido') {
+                        if (value == '0') {
+                            fila.append("<td>" + "No recibido" + "</td>")
                         } else {
-                            fila.append("<td>" + "Cancelada" + "</td>")
-                        }
-                    } else if (clave == 'cerrada'){
-                        if(value == '0'){
-                            fila.append("<td>" + "Abierta" + "</td>")
-                        } else {
-                            fila.append("<td>" + "Cerrada" + "</td>")
+                            fila.append("<td>" + "Recibido" + "</td>")
                         }
                     }
-                    else{
+                    else {
                         fila.append('<td>' + value + '</td>')
                     }
                 })
-                fila.append('<td><div><span class="icon-enviar">Enviar</span></div></td>')
-                fila.append('<td><div><span class="icon-entregar">Entregar</span></div></td>')
-                fila.append('<td><div><span class="icon-cerrar">Cerrar</span></div></td>')
+                fila.append('<td class="BotonAC icon-entregar">Entregar</td>')
                 table.append(fila)
             })
 
             // Proceso a realizar cuando le da clic a un boton
-            enviar = document.getElementsByClassName('icon-enviar')
             entregar = document.getElementsByClassName('icon-entregar')
-            cerrar = document.getElementsByClassName('icon-cerrar')
-
-            // Enviar peticion
-            for (let i = 0; i < enviar.length; i++){
-                enviar[i].addEventListener("click", (e) => {
-                    let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
-                    let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
-                    
-                    enviarSocket('enviar_peti_alma', {fpcdd, pcdd, user})
-                    location.reload()
-                })
-            }
 
             // Entregar peticion
-            for (let i = 0; i < entregar.length; i++){
+            for (let i = 0; i < entregar.length; i++) {
                 entregar[i].addEventListener("click", (e) => {
                     let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
                     let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
-                    
-                    enviarSocket('entregar_peti_alma', {fpcdd, pcdd, user})
-                    location.reload()
-                })
-            }
 
-            // Cerrar peticion
-            for (let i = 0; i < cerrar.length; i++){
-                cerrar[i].addEventListener("click", (e) => {
-                    let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
-                    let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
-                    
-                    enviarSocket('cerrar_peti_alma', {fpcdd, pcdd, user})
+                    enviarSocket('entregar_peti_alma', { fpcdd, pcdd, user })
                     location.reload()
                 })
             }
         }
     })
 
-    socket.on('error_desplegar', () => {  
+    socket.on('error_desplegar', () => {
         empty_table('Requests', 14)
     })
 }

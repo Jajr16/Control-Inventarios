@@ -359,6 +359,32 @@ insert into permisos values
 (3,"armando","RESPONSIVAS"),#Cambios
 (4,"armando","RESPONSIVAS");#Consultas
 
+insert into permisos values
+(1,"martha","ALMACÉN"),#Altas
+(2,"martha","ALMACÉN"),#Bajas
+(3,"martha","ALMACÉN"),#Cambios
+(4,"martha","ALMACÉN"),#Consultas
+(1,"martha","MOBILIARIO"),#Altas
+(2,"martha","MOBILIARIO"),#Bajas
+(3,"martha","MOBILIARIO"),#Cambios
+(4,"martha","MOBILIARIO"),#Consultas
+(1,"martha","EQUIPOS"),#Altas
+(2,"martha","EQUIPOS"),#Bajas
+(3,"martha","EQUIPOS"),#Cambios
+(4,"martha","EQUIPOS"),#Consultas
+(1,"martha","USUARIOS"),#Altas
+(2,"martha","USUARIOS"),#Bajas
+(3,"martha","USUARIOS"),#Cambios
+(4,"martha","USUARIOS"),#Consultas
+(1,"martha","EMPLEADOS"),#Altas
+(2,"martha","EMPLEADOS"),#Bajas
+(3,"martha","EMPLEADOS"),#Cambios
+(4,"martha","EMPLEADOS"),#Consultas
+(1,"martha","RESPONSIVAS"),#Altas
+(2,"martha","RESPONSIVAS"),#Bajas
+(3,"martha","RESPONSIVAS"),#Cambios
+(4,"martha","RESPONSIVAS");#Consultas
+
 create table Factus_Productos(
 Cod_Barras nvarchar(45) not null,
 Nfactura nvarchar(10) not null,
@@ -662,6 +688,9 @@ SET soli_Resp = FALSE,
 	Acept = FALSE,
 	cerrada = FALSE;
     
+alter table Soli_car modify column request_date datetime;
+alter table Soli_car add column recibido tinyint(1);
+    
 -- Modify table soli_car
 alter table Salidas_Productos add constraint FKCBS foreign key(Cod_BarrasS) references almacen(Cod_Barras);
 alter table soli_car add constraint PKSC primary key(Cod_Barras_SC, emp_SC, request_date);
@@ -672,9 +701,13 @@ insert into soli_car values
 ("684F4GFR8", 10, 758, 0, 0, "2024-01-21",0,0);
 
 select*from Soli_car;
+delete from Soli_car where request_date = "2024-01-27 01:40:24";
 select*from almacen;
 
-UPDATE soli_car SET cerrada = FALSE where Cod_Barras_SC = '684F4GFR8';
+-- Consulta de almacenista
+SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered, soli_car.recibido FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 AND soli_car.emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?);
+
+UPDATE soli_car SET recibido = FALSE where Cod_Barras_SC = '756981H83';
 
 insert into soli_car select Num_Emp, 'DDWA35',
 5, 0, 0, '2024-01-20' from usuario where Usuario = 'ajimenez';

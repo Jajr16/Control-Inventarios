@@ -33,7 +33,27 @@ if (Permisos['ALMACÉN']) {
             <div><a href="/users/consulPro">Ver productos</a></div> 
         </li>
         <li>
-            <div><a href="/users/FacSacProd">Registro de productos sacados</a></div> 
+            <div><a href="/users/FacSacProd">Registro de productos sacados</a></div>  
+        </li>
+    `;
+    }
+
+    // Peticiones de  productos
+    if (Permisos['ALMACÉN'].includes('1') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('3') || Permisos['ALMACÉN'].includes('4')) {
+        document.getElementById("Linksnav").innerHTML += `
+        <li>
+            <p>Peticiones de productos</p>
+            <ul class="menu-vertical_nav" id = "Alma1">
+                <li>
+                    <div><a href="/users/carrito">Carrito de peticiones</a></div> 
+                </li>
+                <li>
+                    <div><a href="/users/sol_prod">Peticiones a Director</a></div> 
+                </li>
+                <li>
+                    <div><a href="/users/sol_prod_Almacen">Peticiones a Almacenista</a></div> 
+                </li>
+            </ul>
         </li>
     `;
     }
@@ -95,8 +115,6 @@ if (Permisos['RESPONSIVAS']) {
                 <ul class="menu-vertical_nav">
                 <li>
                     <div><a href="/users/crear_resp">Responsivas</a></div>
-                    <div><a href="/users/sol_prod">Director</a></div> 
-                    <div><a href="/users/sol_prod_Almacen">Almacenista</a></div> 
                 </li>
                 </ul>
             </li>
