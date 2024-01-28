@@ -280,32 +280,12 @@ area nvarchar(45) not null
 create table permisos(
 permiso enum("1","2","3","4") not null, #Tambien se puede set 1 Altas 2 Bajas 3 Cambios 4 Consultas
 usuario varchar(25),
-modulo enum("ALMACÉN", "MOBILIARIO", "EQUIPOS","RESPONSIVAS","USUARIOS","EMPLEADOS") not null,
+modulo enum("ALMACÉN", "MOBILIARIO", "EQUIPOS","RESPONSIVAS","USUARIOS","EMPLEADOS", "PETICIONES") not null,
 primary key(permiso, usuario, modulo),
 foreign key (usuario) references usuario(Usuario) on delete cascade on update cascade
 );
 
-
-insert into tokens values(
-"4dnM3k0nl9s", "SISTEMAS"),	#ACCESO TOTAL #Mobiliario
-("4dnM3k0nl9z", "DIRECCION GENERAL"), #No puede dar de alta usuarios #Mobiliario
-("4dnM3k0nl9A", "SERVICIOS GENERALES"),#ALMACEN #Mobiliario
-("4dnM3k0nPl9Z", "PREESCOLAR"),#Mobiliario
-("7sdGRq24GPR", "PRIMARIA"),#Mobiliario
-("57hfGRDGF1HS","SECUNDARIA"),#Mobiliario
-("SADwa14AFESPP","PREPARATORIA"),#Mobiliario
-("FGJYGd42DSAFA","ADMINISTRACIÓN");#TEMPORALMENTE ALMACEN #Mobiliario
-
-alter table Usuario drop constraint FK_Token;
-alter table usuario drop column token;
-
-
-select Área from empleado inner join usuario on empleado.Num_emp = usuario.Num_emp where usuario = 'ajimenez';
-
-select*from usuario;
-select*from permisos;
-
-
+select*from peticion;
 
 insert into permisos values
 (1,"ajimenez","ALMACÉN"),#Altas
@@ -331,7 +311,34 @@ insert into permisos values
 (1,"ajimenez","RESPONSIVAS"),#Altas
 (2,"ajimenez","RESPONSIVAS"),#Bajas
 (3,"ajimenez","RESPONSIVAS"),#Cambios
-(4,"ajimenez","RESPONSIVAS");#Consultas
+(4,"ajimenez","RESPONSIVAS"),
+(1, "ajimenez", "PETICIONES");#Consultas
+
+insert into permisos values
+(1,"MNAVARRO","ALMACÉN"),#Altas
+(2,"MNAVARRO","ALMACÉN"),#Bajas
+(3,"MNAVARRO","ALMACÉN"),#Cambios
+(4,"MNAVARRO","ALMACÉN"),#Consultas
+(1,"MNAVARRO","MOBILIARIO"),#Altas
+(2,"MNAVARRO","MOBILIARIO"),#Bajas
+(3,"MNAVARRO","MOBILIARIO"),#Cambios
+(4,"MNAVARRO","MOBILIARIO"),#Consultas
+(1,"MNAVARRO","EQUIPOS"),#Altas
+(2,"MNAVARRO","EQUIPOS"),#Bajas
+(3,"MNAVARRO","EQUIPOS"),#Cambios
+(4,"MNAVARRO","EQUIPOS"),#Consultas
+(1,"MNAVARRO","USUARIOS"),#Altas
+(2,"MNAVARRO","USUARIOS"),#Bajas
+(3,"MNAVARRO","USUARIOS"),#Cambios
+(4,"MNAVARRO","USUARIOS"),#Consultas
+(1,"MNAVARRO","EMPLEADOS"),#Altas
+(2,"MNAVARRO","EMPLEADOS"),#Bajas
+(3,"MNAVARRO","EMPLEADOS"),#Cambios
+(4,"MNAVARRO","EMPLEADOS"),#Consultas
+(1,"MNAVARRO","RESPONSIVAS"),#Altas
+(2,"MNAVARRO","RESPONSIVAS"),#Bajas
+(3,"MNAVARRO","RESPONSIVAS"),#Cambios
+(4,"MNAVARRO","RESPONSIVAS");#Consultas
 
 insert into permisos values
 (1,"armando","ALMACÉN"),#Altas
@@ -689,7 +696,10 @@ SET soli_Resp = FALSE,
 	cerrada = FALSE;
     
 alter table Soli_car modify column request_date datetime;
-alter table Soli_car add column recibido tinyint(1);
+alter table Soli_car add column delivered_soli tinyint(1);
+alter table Soli_car add column cerrada tinyint(1);
+alter table soli_car change delivered delivered_ware tinyint(1);
+alter table soli_car drop column cerrada;
     
 -- Modify table soli_car
 alter table Salidas_Productos add constraint FKCBS foreign key(Cod_BarrasS) references almacen(Cod_Barras);
@@ -705,16 +715,18 @@ delete from Soli_car where request_date = "2024-01-27 01:40:24";
 select*from almacen;
 
 -- Consulta de almacenista
-SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered, soli_car.recibido FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 AND soli_car.emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?);
+SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 AND soli_car.emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?);
 
-UPDATE soli_car SET recibido = FALSE where Cod_Barras_SC = '756981H83';
+UPDATE soli_car SET delivered_soli = FALSE;
 
 insert into soli_car select Num_Emp, 'DDWA35',
 5, 0, 0, '2024-01-20' from usuario where Usuario = 'ajimenez';
 
 update soli_car set Acept = 1, sended = 1 where Cod_Barras_SC = 'DDWA35';
 select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, soli_car.sended, soli_car.delivered, soli_car.Acept, soli_car.cerrada from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 1 and Acept = 1 and emp_SC = (select Num_Emp from usuario where Usuario = 'ajimenez');
-select count(distinct Cod_Barras_SC, emp_SC, request_date) as cart_length from soli_car where emp_SC = 758 and sended = 0;
+
+select count(distinct Cod_Barras_SC, emp_SC, request_date) as cart_length from soli_car where sended = 1 AND Acept = 1 and (delivered_ware = 0 or delivered_soli = 0);
+select*from soli_car;
 
 select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 0 and emp_SC = 758;
 select*from usuario;

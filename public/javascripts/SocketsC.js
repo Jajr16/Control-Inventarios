@@ -16,6 +16,23 @@ $(document).ready(function () {
             notification.text(parseInt(data))
         }
     })
+
+    if (Permisos['PETICIONES']) {
+        socket.emit('CNPE', 'PETICIONES')
+    }
+
+    if (area === 'DIRECCION GENERAL') {
+        socket.emit('CNPE', 'DIRECCION GENERAL')
+    }
+
+    socket.once('ECNPER', function (data) {
+        console.log(data)
+        if (data != 0) {
+            notificacionD = $('.not_container_request')
+            notificacionD.css("visibility", "visible")
+            notificacionD.text(parseInt(data))
+        }
+    })
 })
 
 
@@ -27,7 +44,7 @@ var permisosPorModulo = [
     { modulo: '#EQUIPOS', contenedor: '#listaCheckboxesEqp', checks: ['[id$="E"]'], permisos: { Altas: '#1E', Bajas: '#2E', Cambios: '#3E', Consultas: '#4E' } },
     { modulo: '#RESPONSIVAS', contenedor: '#listaCheckboxesR', checks: ['[id$="R"]'], permisos: { Altas: '#1R', Bajas: '#2R', Cambios: '#3R', Consultas: '#4R' } },
     { modulo: '#USUARIOS', contenedor: '#listaCheckboxesU', checks: ['[id$="U"]'], permisos: { Altas: '#1U', Bajas: '#2U', Cambios: '#3U', Consultas: '#4U' } },
-    { modulo: '#EMPLEADOS', contenedor: '#listaCheckboxesE', checks: ['[id$="EM"]'], permisos: { Altas: '#1EM', Bajas: '#2EM', Cambios: '#3EM', Consultas: '#4EM' } }
+    { modulo: '#EMPLEADOS', contenedor: '#listaCheckboxesE', checks: ['[id$="EM"]'], permisos: { Altas: '#1EM', Bajas: '#2EM', Cambios: '#3EM', Consultas: '#4EM' } },
 ];
 
 function PermisosGenerales() {
@@ -773,7 +790,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                                     var codigoBarras = padreInput[0].innerHTML;
 
                                     var fecha = Fecha() + ' ' + Hora()
-                                    console.log(fecha)
 
                                     enviarSocket('ECBS', { CBP: codigoBarras, CP: parseFloat(inputCarrito.value), US: user, DATE: fecha })
                                     recibirSocket('ECBSRF')
@@ -1494,7 +1510,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                                 }
                             });
 
-                            console.log(NIMEviejo)
                             // Muestra el contenido del div con id "Desplegable"
                             Menu.show();
                         });
@@ -1814,6 +1829,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             $.each(data, function (_, item) {
                 var row = $('<tr></tr>');
                 $.each(item, function (clave, value) {
+
                     if (clave === 'request_date') {
                         // Fecha obtenida
                         var fechaJS = new Date(value);
@@ -1960,7 +1976,72 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         empty_table('Requests', 6)
     })
 } else if (pathname == '/users/sol_prod_Almacen') {
-    enviarSocket('consul_almacenista', user)
+    if (Permisos['PETICIONES']) {
+        enviarSocket('consul_almacenista', user)
+
+        socket.on('desplegar_almacenista', async (data) => {
+            if (data.length > 0) {
+                table = $('#Requests tbody')
+                $.each(data, function (_, row) {
+                    fila = $('<tr></tr>')
+                    $.each(row, function (clave, value) {
+                        if (clave == 'request_date') {
+                            // Fecha obtenida
+                            var fechaJS = new Date(value);
+                            var año = fechaJS.getFullYear();
+                            var mes = ('0' + (fechaJS.getMonth() + 1)).slice(-2);
+                            var dia = ('0' + fechaJS.getDate()).slice(-2);
+                            var horas = ('0' + fechaJS.getHours()).slice(-2);
+                            var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
+                            var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
+
+                            var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
+                            fila.append("<td>" + fechaFormateada + "</td>");
+
+                        } else if (clave == 'delivered_ware') {
+                            if (value == 0) {
+                                fila.append("<td>" + "No entregado" + "</td>")
+                            } else {
+                                fila.append("<td>" + "Entregado" + "</td>")
+                            }
+                        } else if (clave == 'delivered_soli') {
+                            if (value == 0) {
+                                fila.append("<td>" + "No recibido" + "</td>")
+                            } else {
+                                fila.append("<td>" + "Recibido" + "</td>")
+                            }
+                        }
+                        else {
+                            fila.append('<td>' + value + '</td>')
+                        }
+                    })
+                    fila.append('<td class="BotonAC icon-entregar">Entregado</td>')
+                    table.append(fila)
+                })
+
+                // Proceso a realizar cuando le da clic a un boton
+                entregar = document.getElementsByClassName('icon-entregar')
+
+                // Entregar peticion
+                for (let i = 0; i < entregar.length; i++) {
+                    entregar[i].addEventListener("click", (e) => {
+                        let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
+                        let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
+
+                        enviarSocket('entregar_peti_alma', { fpcdd, pcdd, user, sended: 'A' })
+                        location.reload()
+                    })
+                }
+            }
+        })
+
+        socket.on('error_desplegar', () => {
+            empty_table('Requests', 14)
+        })
+    }
+} else if (pathname == '/users/status_request') {
+
+    enviarSocket('consul_requests', user)
 
     socket.on('desplegar_almacenista', async (data) => {
         if (data.length > 0) {
@@ -1981,14 +2062,14 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
                         fila.append("<td>" + fechaFormateada + "</td>");
 
-                    } else if (clave == 'delivered') {
-                        if (value == '0') {
+                    } else if (clave == 'delivered_ware') {
+                        if (value == 0) {
                             fila.append("<td>" + "No entregado" + "</td>")
                         } else {
                             fila.append("<td>" + "Entregado" + "</td>")
                         }
-                    } else if (clave == 'recibido') {
-                        if (value == '0') {
+                    } else if (clave == 'delivered_soli') {
+                        if (value == 0) {
                             fila.append("<td>" + "No recibido" + "</td>")
                         } else {
                             fila.append("<td>" + "Recibido" + "</td>")
@@ -1998,7 +2079,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         fila.append('<td>' + value + '</td>')
                     }
                 })
-                fila.append('<td class="BotonAC icon-entregar">Entregar</td>')
+                fila.append('<td class="BotonAC icon-entregar">Entregado</td>')
                 table.append(fila)
             })
 
@@ -2011,7 +2092,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
                     let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
 
-                    enviarSocket('entregar_peti_alma', { fpcdd, pcdd, user })
+                    enviarSocket('entregar_peti_alma', { fpcdd, pcdd, user, sended: 'S' })
                     location.reload()
                 })
             }
@@ -2021,4 +2102,5 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
     socket.on('error_desplegar', () => {
         empty_table('Requests', 14)
     })
+
 }

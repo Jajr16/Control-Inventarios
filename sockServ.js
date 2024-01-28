@@ -2003,8 +2003,8 @@ io.on('connection', (socket) => {
     })
 
     socket.on('ECBS', (data) => {
-        console.log(data.DATE)
-        db.query('insert into soli_car select ?, ?, Num_Emp, ?, ?, ?, ?, ?, ? from usuario where Usuario = ?', [data.CBP, data.CP, 0, 0, data.DATE, 0, 0, 0, data.US], function (err, res) {
+        console.log(data)
+        db.query('insert into soli_car select ?, ?, Num_Emp, ?, ?, ?, ?, ?, ? from usuario where Usuario = ?', [data.CBP, data.CP, 0, data.DATE, 0, 0, 0, 0, data.US], function (err, res) {
             if (err) {
                 if (err.code === 'ER_DUP_ENTRY') {
                     db.query('update soli_car set cantidad_SC = cantidad_SC + ? where Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?) and request_date = ?', [data.CP, data.CBP, data.US, data.DATE], function (err, res) {
@@ -2031,7 +2031,7 @@ io.on('connection', (socket) => {
             else {
                 if (res.length > 0) {
                     socket.emit('RPCR', res)
-                }else {
+                } else {
                     socket.emit('RPCRN')
                 }
             }
@@ -2040,7 +2040,7 @@ io.on('connection', (socket) => {
 
     // Eliminar peticion de carrito
     socket.on('EPC', (data) => {
-        db.query('delete from soli_car where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function(err, res) {
+        db.query('delete from soli_car where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res) {
@@ -2055,9 +2055,9 @@ io.on('connection', (socket) => {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res) {
-                    socket.emit('AAPICRE', {mensaje: 'Peticiones enviadas al director/directora', Res: "Si"})
+                    socket.emit('AAPICRE', { mensaje: 'Peticiones enviadas al director/directora', Res: "Si" })
                 } else {
-                    socket.emit('AAPICRE', {mensaje: 'No se pudieron enviar las peticiones. Inténtelo de nuevo', Res: "Si"})
+                    socket.emit('AAPICRE', { mensaje: 'No se pudieron enviar las peticiones. Inténtelo de nuevo', Res: "Si" })
                 }
             }
         })
@@ -2065,27 +2065,58 @@ io.on('connection', (socket) => {
 
     // Consulta de almacenista
     socket.on('consul_almacenista', (data) => {
-        db.query('SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered, soli_car.recibido FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1', data, function (err, res) {
+        db.query('SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered_ware, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1', data, function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res.length > 0) {
                     socket.emit('desplegar_almacenista', res)
-                }else {
+                } else {
                     socket.emit('error_desplegar')
                 }
             }
         })
     })
-    // Entregar peticion
-    socket.on('entregar_peti_alma', (data) => {
-        db.query('UPDATE soli_car SET delivered = TRUE where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function(err, res) {
+
+    // Consulta de peticiones
+    socket.on('consul_requests', (data) => { /////////////// ME QUEDÉ AQUÍ
+        db.query('SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered_ware, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 and', data, function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
-                if (res) {
-                    cart_length(data.user)
+                if (res.length > 0) {
+                    socket.emit('desplegar_almacenista', res)
+                } else {
+                    socket.emit('error_desplegar')
                 }
             }
         })
+    })
+
+    // Entregar peticion
+    socket.on('entregar_peti_alma', (data) => {
+        if (data.sended == "S") {
+            db.query('UPDATE soli_car SET delivered_ware = TRUE where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function (err, res) {
+                if (err) { Errores(err); socket.emit('SystemError'); }
+                else {
+                    if (res) {
+                        cart_length(data.user)
+                    }
+                }
+            })
+        } else if (data.sended == "A") {
+            db.query('UPDATE soli_car SET delivered_soli = TRUE where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function (err, res) {
+                if (err) { Errores(err); socket.emit('SystemError'); }
+                else {
+                    if (res) {
+                        cart_length(data.user)
+                    }
+                }
+            })
+        }
+        
+    })
+
+    socket.on('CNPE', (data) => {
+        bell_lenght(data)
     })
 
     // Desconectar cliente
@@ -2100,9 +2131,35 @@ io.on('connection', (socket) => {
                 if (res.length > 0) {
                     socket.emit('ECBSR', res[0].cart_length)
                 } else {
-                    socket.emit('ECBSRF', { mensaje: 'No existe un articulo con ese código de barras.', Res: "Si" })
+                    socket.emit('ECBSRF', { mensaje: 'No hay productos agregados al carrito.', Res: "Si" })
                 }
             }
         })
+    }
+
+    function bell_lenght(permiso) {
+        if (permiso == 'DIRECCION GENERAL') {
+            db.query('select count(distinct Cod_Barras_SC, emp_SC, request_date) as bell_length from soli_car where Acept = 0 and cerrada = 0;', function (err, res) {
+                if (err) { Errores(err); socket.emit('SystemError'); }
+                else {
+                    if (res.length > 0) {
+                        socket.emit('ECNPER', res[0].bell_length)
+                    } else {
+                        socket.emit('ECNPERF', { mensaje: 'No hay peticiones de más empleados.', Res: "Si" })
+                    }
+                }
+            })
+        } else if (permiso == 'PETICIONES') {
+            db.query('select count(distinct Cod_Barras_SC, emp_SC, request_date) as bell_length from soli_car where sended = 1 AND Acept = 1 and (delivered_ware = 0 or delivered_soli = 0);', function (err, res) {
+                if (err) { Errores(err); socket.emit('SystemError'); }
+                else {
+                    if (res.length > 0) {
+                        socket.emit('ECNPER', res[0].bell_length)
+                    } else {
+                        socket.emit('ECNPERF', { mensaje: 'No hay peticiones de más empleados.', Res: "Si" })
+                    }
+                }
+            })
+        }
     }
 });

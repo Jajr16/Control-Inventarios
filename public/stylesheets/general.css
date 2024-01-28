@@ -1055,17 +1055,25 @@ h5 {
     color: white;
 }
 
-.cart-container:hover {
+.truck-container{
+    margin-left: 2rem;
+}
+
+.request-container{
+    margin-right: 2rem;
+}
+
+.cart-container:hover, .request-container:hover, .truck-container:hover {
     transform: scale(1.4);
 }
 
-.cart-container {
+.cart-container, .request-container, .truck-container {
     position: relative;
     display: inline-block;
     transition: all 0.5s;
 }
 
-.notification-circle {
+.notification-circle, .not_container_request, .truck_not_container {
     position: absolute;
     top: -5px; /* Ajusta la posición vertical según tus necesidades */
     right: -5px; /* Ajusta la posición horizontal según tus necesidades */

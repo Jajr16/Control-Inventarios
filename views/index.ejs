@@ -1,207 +1,212 @@
-  <main class="Contenedor Contenido-centrado Seccion">
-    <h2 class="FW-300" style="text-align: center;">¡Bienvenido!</h2>
-    <h2 class="FW-300" style="text-align: center;">¿Qué deseas hacer?</h2>
-    <div class="Dos_Column" id="Almacen">
-      <div class="CampoForm">
-        <h5 class="BotonIZ" id="Productos">Registrar productos</h5>
-        <div class="Dos_Columnas Separacion" id="RegistrosProd"></div>
-      </div>
+<main class="Contenedor Contenido-centrado Seccion">
+  <h2 class="FW-300" style="text-align: center;">¡Bienvenido!</h2>
+  <h2 class="FW-300" style="text-align: center;">¿Qué deseas hacer?</h2>
+  <div class="Dos_Column" id="Almacen">
+    <div class="CampoForm">
+      <h5 class="BotonIZ" id="Productos">Registrar productos</h5>
+      <div class="Dos_Columnas Separacion" id="RegistrosProd"></div>
     </div>
-    <div class="Dos_Column" id="Mobiliario">
-      <div class="CampoForm">
-        <h5 class="BotonMOB">Registrar Mobiliario</h5>
-        <div class="Dos_Columnas Separacion" id="RegistrosMob"></div>
-      </div>
+  </div>
+  <div class="Dos_Column" id="Mobiliario">
+    <div class="CampoForm">
+      <h5 class="BotonMOB">Registrar Mobiliario</h5>
+      <div class="Dos_Columnas Separacion" id="RegistrosMob"></div>
     </div>
-    <div class="Dos_Column" id="Equipos">
-      <div class="CampoForm">
-        <h5 class="BotonEQP">Registrar Equipos</h5>
-        <div class="Dos_Columnas Separacion" id="RegistrosEqp"></div>
-      </div>
+  </div>
+  <div class="Dos_Column" id="Equipos">
+    <div class="CampoForm">
+      <h5 class="BotonEQP">Registrar Equipos</h5>
+      <div class="Dos_Columnas Separacion" id="RegistrosEqp"></div>
     </div>
-    <div class="Dos_Column" id="Responsivas">
-      <div class="CampoForm">
-        <h5 class="BotonCrearResp">Crear responsivas</h5>
-        <div class="Dos_Columnas Separacion" id="crear_resps"></div>
-      </div>
+  </div>
+  <div class="Dos_Column" id="Responsivas">
+    <div class="CampoForm">
+      <h5 class="BotonCrearResp">Crear responsivas</h5>
+      <div class="Dos_Columnas Separacion" id="crear_resps"></div>
     </div>
-    <div class="Dos_Column" id="Mas_Opciones">
-      <div class="CampoForm">
-        <h5 class="BotonDE" id="TituloOpciones">Más opciones</h5>
-        <div class="Separacion" id="RegistrosGenerales"></div>
-      </div>
+  </div>
+  <div class="Dos_Column" id="Mas_Opciones">
+    <div class="CampoForm">
+      <h5 class="BotonDE" id="TituloOpciones">Más opciones</h5>
+      <div class="Separacion" id="RegistrosGenerales"></div>
     </div>
-  </main>
-  <script>
-    var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
-    document.querySelector("#Mas_Opciones").style.display = "none";
-    var Options1 = '', Options2 = '';
-    var cont = 0, n = 0;
-    var divOpciones;
+  </div>
+</main>
+<script>
+  var area = localStorage.getItem('area');
+  var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
+  document.querySelector("#Mas_Opciones").style.display = "none";
+  var Options1 = '', Options2 = '';
+  var cont = 0, n = 0;
+  var divOpciones;
 
-    function AgregarDivs(divModify, n, Options, cont) {
-      if (n === 0) {
-        divModify.append(Options.Options1);
-        divModify.append(Options.Options2);
-      } else {
-
-        for (let i = 0; i < 2; i++) {
-          const divOpcion = document.createElement('div');
-          divModify.append(divOpcion);
-        }
-        divModify.children().eq(0).html(Options.Options1);
-        divModify.children().eq(1).html(Options.Options2);
-
-        if (cont == 3) {
-          divModify.css("display", "block");
-          divModify.css("margin-left", "3rem");
-
-          divModify.children().eq(0).addClass("Dos_Columnas");
-        } else if (cont == 4) {
-          divModify.addClass("Dos_Columnas");
-        }
-      }
-
-    }
-
-    if (Permisos['ALMACÉN']) {
-      Options1 = '';
-      Options2 = '';
-      cont = 0;
-      divOpciones = $("#RegistrosProd");
-
-      if (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('3')) {
-        Options1 += `<a href="/users/consulPro" class="BotonAG TamBAG">Ver productos</a>`;
-        cont++;
-      }
-      if (Permisos['ALMACÉN'].includes('1')) {
-        Options1 += `<a href="/users/ABPE" class="BotonAG TamBAG">Agregar productos existentes</a>`;
-        cont++;
-      }
-      if (Permisos['ALMACÉN'].includes('1')) {
-        Options2 += `<a href="/users/altasPro" class="BotonAG TamBAG">Registrar Productos</a>`;
-        cont++;
-      }
-      if (Permisos['ALMACÉN'].includes('4')) {
-        Options2 += `<a href="/users/FacSacProd" class="BotonAG TamBAG">Registro de productos sacados</a>`;
-        cont++;
-      }
-      if (cont === 1 || cont === 2) {
-        n = 0;
-      } else {
-        n = 1;
-      }
-      AgregarDivs(divOpciones, n, { Options1, Options2 }, cont);
+  function AgregarDivs(divModify, n, Options, cont) {
+    if (n === 0) {
+      divModify.append(Options.Options1);
+      divModify.append(Options.Options2);
     } else {
-      // El usuario no tiene ninguno de los permisos, puedes ocultar o deshabilitar el menú aquí
-      $("#Almacen").hide();
+
+      for (let i = 0; i < 2; i++) {
+        const divOpcion = document.createElement('div');
+        divModify.append(divOpcion);
+      }
+      divModify.children().eq(0).html(Options.Options1);
+      divModify.children().eq(1).html(Options.Options2);
+
+      if (cont == 3) {
+        divModify.css("display", "block");
+        divModify.css("margin-left", "3rem");
+
+        divModify.children().eq(0).addClass("Dos_Columnas");
+      } else if (cont == 4) {
+        divModify.addClass("Dos_Columnas");
+      }
     }
 
-    if (Permisos['USUARIOS'] || Permisos['EMPLEADOS']) {
-      cont = 0;
-      document.querySelector("#Mas_Opciones").style.display = "flex";
-      divOpciones = $("#RegistrosGenerales");
-      Options1 = '';
-      Options2 = '';
-      if (Permisos['USUARIOS']) {
-        if (Permisos['USUARIOS'].includes('1')) {
-          Options1 += `<a href="/users/RegistrarUsuario" class="BotonABE TamBAG">Registrar Usuario</a>`;
-          cont++;
-        }
-        if (Permisos['USUARIOS'].includes('4') || Permisos['USUARIOS'].includes('2') || Permisos['USUARIOS'].includes('3')) {
-          Options1 += `<a href="/users/consulUsuarios" class="BotonABE TamBAG">Modificar Usuario</a>`;
-          cont++;
-        }
-      }
-      if (Permisos['EMPLEADOS']) {
-        if (Permisos['EMPLEADOS'].includes('1')) {
-          Options2 += `<a href="/users/RegistroEmpleado" class="BotonABE TamBAG">Registrar Empleado</a>`;
-          cont++;
-        }
-        if (Permisos['EMPLEADOS'].includes('4') || Permisos['EMPLEADOS'].includes('2') || Permisos['EMPLEADOS'].includes('3')) {
-          Options2 += `<a href="/users/ModEmp" class="BotonABE TamBAG">Modificar Empleado</a>`;
-          cont++;
-        }
-      }
-      if (cont === 1 || cont === 2) {
-        n = 0;
-      } else {
-        n = 1;
-      }
-      AgregarDivs(divOpciones, n, { Options1, Options2 }, cont);
+  }
+
+  if (area === 'DIRECCION GENERAL') {
+    $('#RegistrosGenerales').parent(this).append(`<div style="display: flex;" class="Separacion "><a href="/users/sol_prod" class="BotonABE TamBAG">Peticiones de Empelados</a></div>`)
+  }
+
+  if (Permisos['ALMACÉN']) {
+    Options1 = '';
+    Options2 = '';
+    cont = 0;
+    divOpciones = $("#RegistrosProd");
+
+    if (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('3')) {
+      Options1 += `<a href="/users/consulPro" class="BotonAG TamBAG">Ver productos</a>`;
+      cont++;
+    }
+    if (Permisos['ALMACÉN'].includes('1')) {
+      Options1 += `<a href="/users/ABPE" class="BotonAG TamBAG">Agregar productos existentes</a>`;
+      cont++;
+    }
+    if (Permisos['ALMACÉN'].includes('1')) {
+      Options2 += `<a href="/users/altasPro" class="BotonAG TamBAG">Registrar Productos</a>`;
+      cont++;
+    }
+    if (Permisos['ALMACÉN'].includes('4')) {
+      Options2 += `<a href="/users/FacSacProd" class="BotonAG TamBAG">Registro de productos sacados</a>`;
+      cont++;
+    }
+    if (cont === 1 || cont === 2) {
+      n = 0;
     } else {
-      // El usuario no tiene ninguno de los permisos, puedes ocultar o deshabilitar el menú aquí
-      $("#Mas_Opciones").hide();
+      n = 1;
     }
+    AgregarDivs(divOpciones, n, { Options1, Options2 }, cont);
+  } else {
+    // El usuario no tiene ninguno de los permisos, puedes ocultar o deshabilitar el menú aquí
+    $("#Almacen").hide();
+  }
 
-    if (Permisos['EQUIPOS']) {
-      Options1 = '';
-      Options2 = '';
-      cont = 0;
-      divOpciones = $("#RegistrosEqp");
-
-      if (Permisos['EQUIPOS'].includes('1')) {
-        Options1 += `<a href="/users/altasEqp" class="BotonEQPA TamBAG">Registrar Equipos</a>`;
+  if (Permisos['USUARIOS'] || Permisos['EMPLEADOS']) {
+    cont = 0;
+    document.querySelector("#Mas_Opciones").style.display = "flex";
+    divOpciones = $("#RegistrosGenerales");
+    Options1 = '';
+    Options2 = '';
+    if (Permisos['USUARIOS']) {
+      if (Permisos['USUARIOS'].includes('1')) {
+        Options1 += `<a href="/users/RegistrarUsuario" class="BotonABE TamBAG">Registrar Usuario</a>`;
         cont++;
       }
-      if (Permisos['EQUIPOS'].includes('4') || Permisos['EQUIPOS'].includes('2') || Permisos['EQUIPOS'].includes('3')) {
-        Options1 += `<a href="/users/consulEqp" class="BotonEQPA TamBAG">Ver Equipos</a>`;
+      if (Permisos['USUARIOS'].includes('4') || Permisos['USUARIOS'].includes('2') || Permisos['USUARIOS'].includes('3')) {
+        Options1 += `<a href="/users/consulUsuarios" class="BotonABE TamBAG">Modificar Usuario</a>`;
         cont++;
       }
-      if (cont === 1 || cont === 2) {
-        n = 0;
-      } else {
-        n = 1;
+    }
+    if (Permisos['EMPLEADOS']) {
+      if (Permisos['EMPLEADOS'].includes('1')) {
+        Options2 += `<a href="/users/RegistroEmpleado" class="BotonABE TamBAG">Registrar Empleado</a>`;
+        cont++;
       }
-      AgregarDivs(divOpciones, n, { Options1, Options2 }, cont);
+      if (Permisos['EMPLEADOS'].includes('4') || Permisos['EMPLEADOS'].includes('2') || Permisos['EMPLEADOS'].includes('3')) {
+        Options2 += `<a href="/users/ModEmp" class="BotonABE TamBAG">Modificar Empleado</a>`;
+        cont++;
+      }
+    }
+    if (cont === 1 || cont === 2) {
+      n = 0;
     } else {
-      // El usuario no tiene ninguno de los permisos, puedes ocultar o deshabilitar el menú aquí
-      $("#Equipos").hide();
+      n = 1;
     }
+    AgregarDivs(divOpciones, n, { Options1, Options2 }, cont);
+  } else {
+    // El usuario no tiene ninguno de los permisos, puedes ocultar o deshabilitar el menú aquí
+    $("#Mas_Opciones").hide();
+  }
 
-    if (Permisos['MOBILIARIO']) {
-      Options1 = '';
-      Options2 = '';
-      cont = 0;
-      divOpciones = $("#RegistrosMob");
+  if (Permisos['EQUIPOS']) {
+    Options1 = '';
+    Options2 = '';
+    cont = 0;
+    divOpciones = $("#RegistrosEqp");
 
-      if (Permisos['MOBILIARIO'].includes('1')) {
-        Options1 += `<a href="/users/altasMob" class="BotonMOBA TamBAG">Registrar Mobiliario</a>`;
-        cont++;
-      }
-      if (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('3')) {
-        Options1 += `<a href="/users/consulMob" class="BotonMOBA TamBAG">Ver Mobiliario</a>`;
-        cont++;
-      }
-      if (cont === 1 || cont === 2) {
-        n = 0;
-      } else {
-        n = 1;
-      }
-      AgregarDivs(divOpciones, n, { Options1, Options2 }, cont);
+    if (Permisos['EQUIPOS'].includes('1')) {
+      Options1 += `<a href="/users/altasEqp" class="BotonEQPA TamBAG">Registrar Equipos</a>`;
+      cont++;
+    }
+    if (Permisos['EQUIPOS'].includes('4') || Permisos['EQUIPOS'].includes('2') || Permisos['EQUIPOS'].includes('3')) {
+      Options1 += `<a href="/users/consulEqp" class="BotonEQPA TamBAG">Ver Equipos</a>`;
+      cont++;
+    }
+    if (cont === 1 || cont === 2) {
+      n = 0;
     } else {
-      // El usuario no tiene ninguno de los permisos, puedes ocultar o deshabilitar el menú aquí
-      $("#Mobiliario").hide();
+      n = 1;
     }
+    AgregarDivs(divOpciones, n, { Options1, Options2 }, cont);
+  } else {
+    // El usuario no tiene ninguno de los permisos, puedes ocultar o deshabilitar el menú aquí
+    $("#Equipos").hide();
+  }
 
-    if (Permisos['RESPONSIVAS']) {
-      Options1 = '';
-      Options2 = '';
-      cont = 0;
-      divOpciones = $("#crear_resps");
+  if (Permisos['MOBILIARIO']) {
+    Options1 = '';
+    Options2 = '';
+    cont = 0;
+    divOpciones = $("#RegistrosMob");
 
-      if (Permisos['RESPONSIVAS'].includes('1')) {
-        Options1 += `<a href="/users/crear_resp" class="BotonResp TamBAG">Responsivas</a>`;
-        cont++;
-      }
-      if (cont === 1 || cont === 2) {
-        n = 0;
-      } else {
-        n = 1;
-      }
-      AgregarDivs(divOpciones, n, { Options1, Options2 }, cont);
+    if (Permisos['MOBILIARIO'].includes('1')) {
+      Options1 += `<a href="/users/altasMob" class="BotonMOBA TamBAG">Registrar Mobiliario</a>`;
+      cont++;
+    }
+    if (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('3')) {
+      Options1 += `<a href="/users/consulMob" class="BotonMOBA TamBAG">Ver Mobiliario</a>`;
+      cont++;
+    }
+    if (cont === 1 || cont === 2) {
+      n = 0;
     } else {
-      // El usuario no tiene ninguno de los permisos, puedes ocultar o deshabilitar el menú aquí
-      $("#Responsivas").hide();
+      n = 1;
     }
-  </script>
+    AgregarDivs(divOpciones, n, { Options1, Options2 }, cont);
+  } else {
+    // El usuario no tiene ninguno de los permisos, puedes ocultar o deshabilitar el menú aquí
+    $("#Mobiliario").hide();
+  }
+
+  if (Permisos['RESPONSIVAS']) {
+    Options1 = '';
+    Options2 = '';
+    cont = 0;
+    divOpciones = $("#crear_resps");
+
+    if (Permisos['RESPONSIVAS'].includes('1')) {
+      Options1 += `<a href="/users/crear_resp" class="BotonResp TamBAG">Responsivas</a>`;
+      cont++;
+    }
+    if (cont === 1 || cont === 2) {
+      n = 0;
+    } else {
+      n = 1;
+    }
+    AgregarDivs(divOpciones, n, { Options1, Options2 }, cont);
+  } else {
+    // El usuario no tiene ninguno de los permisos, puedes ocultar o deshabilitar el menú aquí
+    $("#Responsivas").hide();
+  }
+</script>

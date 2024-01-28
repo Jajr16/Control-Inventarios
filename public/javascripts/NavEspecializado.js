@@ -1,5 +1,6 @@
 // Variable de permisos
 var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
+var area = localStorage.getItem('area');
 
 // Esto aplica para todos los usuarios
 document.getElementById("Linksnav").innerHTML += `
@@ -39,17 +40,11 @@ if (Permisos['ALMACÉN']) {
     }
 
     // Peticiones de  productos
-    if (Permisos['ALMACÉN'].includes('1') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('3') || Permisos['ALMACÉN'].includes('4')) {
+    if (Permisos['ALMACÉN'].includes('1') && Permisos['ALMACÉN'].includes('2') && Permisos['ALMACÉN'].includes('3') && Permisos['ALMACÉN'].includes('4')) {
         document.getElementById("Linksnav").innerHTML += `
         <li>
             <p>Peticiones de productos</p>
             <ul class="menu-vertical_nav" id = "Alma1">
-                <li>
-                    <div><a href="/users/carrito">Carrito de peticiones</a></div> 
-                </li>
-                <li>
-                    <div><a href="/users/sol_prod">Peticiones a Director</a></div> 
-                </li>
                 <li>
                     <div><a href="/users/sol_prod_Almacen">Peticiones a Almacenista</a></div> 
                 </li>
@@ -58,6 +53,28 @@ if (Permisos['ALMACÉN']) {
     `;
     }
 }
+/////// DIRECCION GENERAL ////////
+if (area === 'DIRECCION GENERAL'){
+    $('.request-container').append('<div><div class="not_container_request"></div><a href="/users/sol_prod"><i class="fa-solid fa-bell"></i></a></div>')
+    document.getElementById("Linksnav").innerHTML += `
+    <li>
+        <p>Peticiones de empleados</p>
+        <ul class="menu-vertical_nav" id = "Alma1">
+            <li>
+                <div><a href="/users/sol_prod">Peticiones de Empelados</a></div> 
+            </li>
+        </ul>
+    </li>
+    `
+}
+
+if (Permisos['PETICIONES']){
+    $('.request-container').append('<div><div class="not_container_request"></div><a href="/users/sol_prod_Almacen"><i class="fa-solid fa-bell"></i></a></div>')
+}
+
+$('.truck-container').append('<div><div class="truck_not_container"></div><a href="/users/status_request"><i class="fa-solid fa-truck-arrow-right"></i></a></div>')
+
+
 // Usuarios con permisos de Mobiliario
 if (Permisos['MOBILIARIO']) {
     // Permisos de altas
@@ -163,4 +180,4 @@ if (Permisos['EMPLEADOS']) {
         </li>
     `;
     }
-}
+}   
