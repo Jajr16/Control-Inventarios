@@ -669,10 +669,11 @@ CREATE TABLE soli_car (
     cantidad_SC INT(10),
     emp_SC int,
     Acept BOOLEAN, -- Si la solicitud fue aceptada o no
-    cerrada BOOLEAN, -- Si la solicitud ya fue cerrada
     request_date datetime,
-    delivered tinyint(1),
-    sended tinyint(1)
+    delivered_ware tinyint(1),
+    sended tinyint(1),
+    delivered_soli tinyint(1),
+    cerrada BOOLEAN -- Si la solicitud ya fue cerrada
     -- FOREIGN KEY (emp_SC) REFERENCES otra_tabla_emp_SC(emp_SC), -- Reemplazar "otra_tabla_emp_SC" con el nombre de la tabla de usuario o empleado y la columna correspondiente
     -- FOREIGN KEY (dir_LLSC) REFERENCES otra_tabla_dir_LLSC(dir_LLSC) -- Reemplazar "otra_tabla_dir_LLSC" con el nombre de la tabla donde se encuentre el director y la columna correspondiente
 );
@@ -695,45 +696,11 @@ SET soli_Resp = FALSE,
 	Acept = FALSE,
 	cerrada = FALSE;
     
-alter table Soli_car modify column request_date datetime;
-alter table Soli_car add column delivered_soli tinyint(1);
-alter table Soli_car add column cerrada tinyint(1);
-alter table soli_car change delivered delivered_ware tinyint(1);
-alter table soli_car drop column cerrada;
-    
 -- Modify table soli_car
 alter table Salidas_Productos add constraint FKCBS foreign key(Cod_BarrasS) references almacen(Cod_Barras);
 alter table soli_car add constraint PKSC primary key(Cod_Barras_SC, emp_SC, request_date);
 alter table soli_car add constraint FKSC_CB foreign key(Cod_Barras_SC) references almacen(Cod_Barras);
 alter table soli_car add constraint FKSC_EM foreign key(emp_SC) references empleado(Num_emp);
-
-insert into soli_car values
-("684F4GFR8", 10, 758, 0, 0, "2024-01-21",0,0);
-
-select*from Soli_car;
-delete from Soli_car where request_date = "2024-01-27 01:40:24";
-select*from almacen;
-
--- Consulta de almacenista
-SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 AND soli_car.emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?);
-
-UPDATE soli_car SET delivered_soli = FALSE;
-
-insert into soli_car select Num_Emp, 'DDWA35',
-5, 0, 0, '2024-01-20' from usuario where Usuario = 'ajimenez';
-
-update soli_car set Acept = 1, sended = 1 where Cod_Barras_SC = 'DDWA35';
-select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, soli_car.sended, soli_car.delivered, soli_car.Acept, soli_car.cerrada from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 1 and Acept = 1 and emp_SC = (select Num_Emp from usuario where Usuario = 'ajimenez');
-
-select count(distinct Cod_Barras_SC, emp_SC, request_date) as cart_length from soli_car where sended = 1 AND Acept = 1 and (delivered_ware = 0 or delivered_soli = 0);
-select*from soli_car;
-SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered_ware, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 and Usuario = 'ajimenez';
-select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 0 and emp_SC = 758;
-
--- UPDATE soli_car SET cantidad_SC = cantidad_SC + ? WHERE Cod_Barras_SC = ? AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) AND sended = 0 AND CAST(request_date AS DATE) = CAST(? AS DATE) AND EXISTS (SELECT 1 FROM soli_car WHERE Cod_Barras_SC = ? AND emp_SC = ? AND CAST(request_date AS DATE) = CAST(? AS DATE) AND sended = 0);
-SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, soli_car.delivered_ware, soli_car.delivered_soli, soli_car.Acept, soli_car.cerrada FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras WHERE soli_car.sended = 1 and soli_car.emp_SC = (select Num_Emp from usuario where Usuario = 'ajimenez');
-update soli_car set delivered_ware = 0;
-update soli_car set delivered_soli = 0;
 
 DELIMITER |
 create trigger ASEPSE before update on soli_car
