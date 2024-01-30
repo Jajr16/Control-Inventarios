@@ -8,23 +8,7 @@ var pathname = window.location.pathname;
 
 $(document).ready(function () {
     socket.emit('CNPC', user)
-
-    socket.once('ECBSR', function (data) {
-        if (data !== 0) {
-            notification = $('.notification-circle')
-            notification.css("visibility", "visible");
-            notification.text(parseInt(data))
-        }
-    })
-
     socket.emit('CTPSPE', user)
-    socket.once('CTPSPERR', function (data) {
-        if (data != 0) {
-            notificationT = $('.truck_not_container')
-            notificationT.css("visibility", "visible");
-            notificationT.text(parseInt(data))
-        }
-    })
 
     if (Permisos['PETICIONES']) {
         socket.emit('CNPE', 'PETICIONES')
@@ -33,14 +17,6 @@ $(document).ready(function () {
     if (area === 'DIRECCION GENERAL') {
         socket.emit('CNPE', 'DIRECCION GENERAL')
     }
-
-    socket.once('ECNPER', function (data) {
-        if (data != 0) {
-            notificacionD = $('.not_container_request')
-            notificacionD.css("visibility", "visible")
-            notificacionD.text(parseInt(data))
-        }
-    })
 })
 
 
@@ -345,6 +321,31 @@ function eliminarEquipo(elementoBoton, mensaje, mensajeSocket) {
         fila.parentNode.removeChild(fila);
     }
 }
+
+socket.once('ECBSR', function (data) {
+    if (data !== 0) {
+        notification = $('.notification-circle')
+        notification.css("visibility", "visible");
+        notification.text(parseInt(data))
+    }
+})
+
+socket.once('CTPSPERR', function (data) {
+    if (data != 0) {
+        notificationT = $('.truck_not_container')
+        notificationT.css("visibility", "visible");
+        notificationT.text(parseInt(data))
+    }
+})
+
+socket.once('ECNPER', function (data) {
+    if (data != 0) {
+        notificacionD = $('.not_container_request')
+        notificacionD.css("visibility", "visible")
+        notificacionD.text(parseInt(data))
+    }
+})
+
 if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
     if (!Permisos['EMPLEADOS']) {
         window.history.back();
@@ -803,14 +804,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                                     recibirSocket('ECBSRF')
 
                                     socket.emit('CNPC', user)
-
-                                    socket.once('ECBSR', function (data) {
-                                        if (data !== 0) {
-                                            notification = $('.notification-circle')
-                                            notification.css("visibility", "visible");
-                                            notification.text(parseInt(data))
-                                        }
-                                    })
                                 });
 
                                 const cancel_icon = nuevoContenido.querySelector(".icon-cross");
@@ -1833,99 +1826,101 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         table = $("#Requests")
 
         socket.on('return_applicants', async (data) => {
-            // Add requests process
-            $.each(data, function (_, item) {
-                var row = $('<tr></tr>');
-                $.each(item, function (clave, value) {
-
-                    if (clave === 'request_date') {
-                        // Fecha obtenida
-                        var fechaJS = new Date(value);
-                        var año = fechaJS.getFullYear();
-                        var mes = ('0' + (fechaJS.getMonth() + 1)).slice(-2);
-                        var dia = ('0' + fechaJS.getDate()).slice(-2);
-                        var horas = ('0' + fechaJS.getHours()).slice(-2);
-                        var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
-                        var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
-
-                        var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
-                        row.append("<td>" + fechaFormateada + "</td>");
-
-                    } else if (clave === 'cerrada') {
-                        if (item.cerrada == 1 && item.Acept == 0) {
-                            row.addClass('decline')
-                            row.append('<td><div>Rechazada :(</div></td>')
-                        } else if ((item.cerrada == 1 && item.Acept == 1)) {
-                            row.addClass('accepted')
-                            row.append('<td><div>Aceptada :)</div></td>')
-                        } else if (item.cerrada == 0 && item.Acept == 1) {
-                            row.addClass('pending')
-                            row.append('<td><div>Pendiente...</div></td>')
-                        } else
-                            row.append('<td><div><span class="icon-check">✔</span><span class="icon-cross">✘</span></div></td>')
-                    } else if (clave === 'Acept') {
-                    } else {
-                        row.append("<td>" + value + "</td>");
-                    }
-                })
-                table.append(row)
-            })
-            // Continue with all requests events (accept and decline requests)
-            var accepted = document.getElementsByClassName('icon-check')
-            var declined = document.getElementsByClassName('icon-cross')
-
-            for (let i = 0; i < accepted.length; i++) {
-                accepted[i].addEventListener("click", getRequestssolicitants)
-                declined[i].addEventListener("click", getRequestssolicitants)
-            }
-
-            var valores = []
-
-            function getRequestssolicitants(e) {
-                class_button = Array.from(e.srcElement.classList)[0]
-                boton = ''
-                if (class_button == 'icon-check') {
-                    valores.push('accepted')
-                    boton = 'aceptar'
-                } else if (class_button == 'icon-cross') {
-                    valores.push('declined')
-                    boton = 'denegar'
-                }
-                Swal.fire({
-                    title: "¿Estás seguro de " + boton + " la solicitud?",
-                    text: "No puedes revertir el cambio!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Si, seguro!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-
-                        var elementosTD = e.srcElement.parentElement.parentElement.parentElement.getElementsByTagName("td");
-                        // recorremos cada uno de los elementos del array de elementos <td>
-                        for (let i = 0; i < elementosTD.length - 1; i++) {
-                            valores.push(elementosTD[i].innerHTML); // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+            if (data.length > 0){
+                // Add requests process
+                $.each(data, function (_, item) {
+                    var row = $('<tr></tr>');
+                    $.each(item, function (clave, value) {
+    
+                        if (clave === 'request_date') {
+                            // Fecha obtenida
+                            var fechaJS = new Date(value);
+                            var año = fechaJS.getFullYear();
+                            var mes = ('0' + (fechaJS.getMonth() + 1)).slice(-2);
+                            var dia = ('0' + fechaJS.getDate()).slice(-2);
+                            var horas = ('0' + fechaJS.getHours()).slice(-2);
+                            var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
+                            var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
+    
+                            var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
+                            row.append("<td>" + fechaFormateada + "</td>");
+    
+                        } else if (clave === 'cerrada') {
+                            if (item.cerrada == 1 && item.Acept == 0) {
+                                row.addClass('decline')
+                                row.append('<td><div>Rechazada :(</div></td>')
+                            } else if ((item.cerrada == 1 && item.Acept == 1)) {
+                                row.addClass('accepted')
+                                row.append('<td><div>Aceptada :)</div></td>')
+                            } else if (item.cerrada == 0 && item.Acept == 1) {
+                                row.addClass('pending')
+                                row.append('<td><div>Pendiente...</div></td>')
+                            } else
+                                row.append('<td><div><span class="icon-check">✔</span><span class="icon-cross">✘</span></div></td>')
+                        } else if (clave === 'Acept') {
+                        } else {
+                            row.append("<td>" + value + "</td>");
                         }
-
-                        enviarSocket('updateCar', valores)
-
-                        socket.once('request_answered', (Respuesta) => {
-                            Swal.fire({
-                                icon: "success",
-                                title: "Solicitud exitosa",
-                                text: Respuesta.mensaje
-                            }).then(() => {
-                                location.reload();
-                            });
-                        })
-                    } else {
-                        valores = []
-                    }
+                    })
+                    table.append(row)
                 })
+                // Continue with all requests events (accept and decline requests)
+                var accepted = document.getElementsByClassName('icon-check')
+                var declined = document.getElementsByClassName('icon-cross')
+    
+                for (let i = 0; i < accepted.length; i++) {
+                    accepted[i].addEventListener("click", getRequestssolicitants)
+                    declined[i].addEventListener("click", getRequestssolicitants)
+                }
+    
+                var valores = []
+    
+                function getRequestssolicitants(e) {
+                    class_button = Array.from(e.srcElement.classList)[0]
+                    boton = ''
+                    if (class_button == 'icon-check') {
+                        valores.push('accepted')
+                        boton = 'aceptar'
+                    } else if (class_button == 'icon-cross') {
+                        valores.push('declined')
+                        boton = 'denegar'
+                    }
+                    Swal.fire({
+                        title: "¿Estás seguro de " + boton + " la solicitud?",
+                        text: "No puedes revertir el cambio!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Si, seguro!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+    
+                            var elementosTD = e.srcElement.parentElement.parentElement.parentElement.getElementsByTagName("td");
+                            // recorremos cada uno de los elementos del array de elementos <td>
+                            for (let i = 0; i < elementosTD.length - 1; i++) {
+                                valores.push(elementosTD[i].innerHTML); // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                            }
+    
+                            enviarSocket('updateCar', valores)
+    
+                            socket.once('request_answered', (Respuesta) => {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Solicitud exitosa",
+                                    text: Respuesta.mensaje
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            })
+                        } else {
+                            valores = []
+                        }
+                    })
+                }
+            }else {
+                empty_table('Requests', 7)
             }
-
-
         });
     }
 

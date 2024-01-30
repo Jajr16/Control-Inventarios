@@ -678,26 +678,7 @@ CREATE TABLE soli_car (
     -- FOREIGN KEY (dir_LLSC) REFERENCES otra_tabla_dir_LLSC(dir_LLSC) -- Reemplazar "otra_tabla_dir_LLSC" con el nombre de la tabla donde se encuentre el director y la columna correspondiente
 );
 
--- Se añade otra columna a empleado para que se activen las solicitudes
-ALTER TABLE empleado
-drop COLUMN Soli_Car ,
-drop COLUMN Acept_Dir ,
-drop COLUMN Soli_cerrada 
-;
-
--- Se cambian todos los valores a false
-UPDATE empleado
-SET Soli_Car = FALSE,
-	Acept_Dir = FALSE,
-	Soli_cerrada = FALSE;
-
-UPDATE soli_car
-SET soli_Resp = FALSE,
-	Acept = FALSE,
-	cerrada = FALSE;
-    
 -- Modify table soli_car
-alter table Salidas_Productos add constraint FKCBS foreign key(Cod_BarrasS) references almacen(Cod_Barras);
 alter table soli_car add constraint PKSC primary key(Cod_Barras_SC, emp_SC, request_date);
 alter table soli_car add constraint FKSC_CB foreign key(Cod_Barras_SC) references almacen(Cod_Barras);
 alter table soli_car add constraint FKSC_EM foreign key(emp_SC) references empleado(Num_emp);
@@ -710,3 +691,5 @@ create trigger ASEPSE before update on soli_car
 		end if;
 	END
 | DELIMITER ;
+
+select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept
