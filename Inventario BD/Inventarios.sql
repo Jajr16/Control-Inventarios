@@ -31,13 +31,6 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Empleado` (
 ENGINE = InnoDB
 COMMENT = '			';
 
-select*from Usuario;
-select*from Empleado;
-select*from Mobiliario;
-
-SELECT Num_Emp, Área, Nom, AP, AM FROM empleado WHERE Nom = "armando";
-SELECT empleado.Num_Emp, empleado.Área, empleado.Nom FROM empleado inner join Usuario on empleado.Num_emp = usuario.Num_emp where usuario.usuario = 'ajimenez';
-SELECT e.Num_Emp, e.Área, e.Nom FROM empleado e WHERE e.Num_Emp = (SELECT u.Num_Emp FROM Usuario u WHERE u.Usuario = 'ajimenez');
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Usuario`
 -- -----------------------------------------------------
@@ -57,12 +50,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Equipo`
 -- -----------------------------------------------------
-drop table if exists PCs;
-drop table if exists Monitor;
-drop table if exists Mouse;
-drop table if exists Teclado;
-drop table if exists Accesorio;
-drop table if exists Equipo;
+
 CREATE TABLE `Inventarios`.`Equipo` (
   `N_Inventario` int not null auto_increment,
   `Num_Serie` VARCHAR(45) NOT NULL,
@@ -248,49 +236,6 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Peticion` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `Inventarios`.`Responsivas_M`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Inventarios`.`Responsivas_M` (
-  `Num_Emp` INT NOT NULL,
-  `Num_Inventario` INT NOT NULL,
-  PRIMARY KEY (`Num_Emp`, `Num_Inventario`),
-  INDEX `Num_Inventario_idx` (`Num_Inventario` ASC),
-  CONSTRAINT `Num_empRespM`
-    FOREIGN KEY (`Num_Emp`)
-    REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `Num_Inventario`
-    FOREIGN KEY (`Num_Inventario`)
-    REFERENCES `Inventarios`.`Mobiliario` (`Num_Inventario`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
--- -----------------------------------------------------
--- Table `Inventarios`.`Responsivas_E`
--- -----------------------------------------------------
-drop table if exists Responsivas_E;
-CREATE TABLE IF NOT EXISTS `Inventarios`.`Responsivas_E` (
-  `Num_emp` INT NOT NULL,
-  Num_Serie VARCHAR(45) not null NOT NULL,
-  PRIMARY KEY (`Num_emp`, `Num_Serie`),
-  INDEX `Num_S_idx` (`Num_Serie` ASC),
-  CONSTRAINT `Num_empRespE`
-    FOREIGN KEY (`Num_emp`)
-    REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `Num_S`
-    FOREIGN KEY (`Num_Serie`)
-    REFERENCES `Inventarios`.`Equipo` (`Num_Serie`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
@@ -331,36 +276,16 @@ create table tokens(
 token nvarchar(20) not null primary key,
 area nvarchar(45) not null
 );
-drop table permisos;
+
 create table permisos(
 permiso enum("1","2","3","4") not null, #Tambien se puede set 1 Altas 2 Bajas 3 Cambios 4 Consultas
 usuario varchar(25),
-modulo enum("ALMACÉN", "MOBILIARIO", "EQUIPOS","RESPONSIVAS","USUARIOS","EMPLEADOS") not null,
+modulo enum("ALMACÉN", "MOBILIARIO", "EQUIPOS","RESPONSIVAS","USUARIOS","EMPLEADOS", "PETICIONES") not null,
 primary key(permiso, usuario, modulo),
 foreign key (usuario) references usuario(Usuario) on delete cascade on update cascade
 );
 
-
-insert into tokens values(
-"4dnM3k0nl9s", "SISTEMAS"),	#ACCESO TOTAL #Mobiliario
-("4dnM3k0nl9z", "DIRECCION GENERAL"), #No puede dar de alta usuarios #Mobiliario
-("4dnM3k0nl9A", "SERVICIOS GENERALES"),#ALMACEN #Mobiliario
-("4dnM3k0nPl9Z", "PREESCOLAR"),#Mobiliario
-("7sdGRq24GPR", "PRIMARIA"),#Mobiliario
-("57hfGRDGF1HS","SECUNDARIA"),#Mobiliario
-("SADwa14AFESPP","PREPARATORIA"),#Mobiliario
-("FGJYGd42DSAFA","ADMINISTRACIÓN");#TEMPORALMENTE ALMACEN #Mobiliario
-
-alter table Usuario drop constraint FK_Token;
-alter table usuario drop column token;
-drop table tokens;
-
-select Área from empleado inner join usuario on empleado.Num_emp = usuario.Num_emp where usuario = 'ajimenez';
-
-select*from usuario;
-select*from permisos;
-
-
+select*from peticion;
 
 insert into permisos values
 (1,"ajimenez","ALMACÉN"),#Altas
@@ -386,7 +311,34 @@ insert into permisos values
 (1,"ajimenez","RESPONSIVAS"),#Altas
 (2,"ajimenez","RESPONSIVAS"),#Bajas
 (3,"ajimenez","RESPONSIVAS"),#Cambios
-(4,"ajimenez","RESPONSIVAS");#Consultas
+(4,"ajimenez","RESPONSIVAS"),
+(1, "ajimenez", "PETICIONES");#Consultas
+
+insert into permisos values
+(1,"MNAVARRO","ALMACÉN"),#Altas
+(2,"MNAVARRO","ALMACÉN"),#Bajas
+(3,"MNAVARRO","ALMACÉN"),#Cambios
+(4,"MNAVARRO","ALMACÉN"),#Consultas
+(1,"MNAVARRO","MOBILIARIO"),#Altas
+(2,"MNAVARRO","MOBILIARIO"),#Bajas
+(3,"MNAVARRO","MOBILIARIO"),#Cambios
+(4,"MNAVARRO","MOBILIARIO"),#Consultas
+(1,"MNAVARRO","EQUIPOS"),#Altas
+(2,"MNAVARRO","EQUIPOS"),#Bajas
+(3,"MNAVARRO","EQUIPOS"),#Cambios
+(4,"MNAVARRO","EQUIPOS"),#Consultas
+(1,"MNAVARRO","USUARIOS"),#Altas
+(2,"MNAVARRO","USUARIOS"),#Bajas
+(3,"MNAVARRO","USUARIOS"),#Cambios
+(4,"MNAVARRO","USUARIOS"),#Consultas
+(1,"MNAVARRO","EMPLEADOS"),#Altas
+(2,"MNAVARRO","EMPLEADOS"),#Bajas
+(3,"MNAVARRO","EMPLEADOS"),#Cambios
+(4,"MNAVARRO","EMPLEADOS"),#Consultas
+(1,"MNAVARRO","RESPONSIVAS"),#Altas
+(2,"MNAVARRO","RESPONSIVAS"),#Bajas
+(3,"MNAVARRO","RESPONSIVAS"),#Cambios
+(4,"MNAVARRO","RESPONSIVAS");#Consultas
 
 insert into permisos values
 (1,"armando","ALMACÉN"),#Altas
@@ -413,6 +365,32 @@ insert into permisos values
 (2,"armando","RESPONSIVAS"),#Bajas
 (3,"armando","RESPONSIVAS"),#Cambios
 (4,"armando","RESPONSIVAS");#Consultas
+
+insert into permisos values
+(1,"martha","ALMACÉN"),#Altas
+(2,"martha","ALMACÉN"),#Bajas
+(3,"martha","ALMACÉN"),#Cambios
+(4,"martha","ALMACÉN"),#Consultas
+(1,"martha","MOBILIARIO"),#Altas
+(2,"martha","MOBILIARIO"),#Bajas
+(3,"martha","MOBILIARIO"),#Cambios
+(4,"martha","MOBILIARIO"),#Consultas
+(1,"martha","EQUIPOS"),#Altas
+(2,"martha","EQUIPOS"),#Bajas
+(3,"martha","EQUIPOS"),#Cambios
+(4,"martha","EQUIPOS"),#Consultas
+(1,"martha","USUARIOS"),#Altas
+(2,"martha","USUARIOS"),#Bajas
+(3,"martha","USUARIOS"),#Cambios
+(4,"martha","USUARIOS"),#Consultas
+(1,"martha","EMPLEADOS"),#Altas
+(2,"martha","EMPLEADOS"),#Bajas
+(3,"martha","EMPLEADOS"),#Cambios
+(4,"martha","EMPLEADOS"),#Consultas
+(1,"martha","RESPONSIVAS"),#Altas
+(2,"martha","RESPONSIVAS"),#Bajas
+(3,"martha","RESPONSIVAS"),#Cambios
+(4,"martha","RESPONSIVAS");#Consultas
 
 create table Factus_Productos(
 Cod_Barras nvarchar(45) not null,
@@ -538,9 +516,6 @@ create trigger Actualizar_ExistenciasInsercion2 after insert on salidas_producto
 	END
 | DELIMITER ;
 
-drop table responsivas_e;
-drop table responsivas_m;
-
 -- BUSQUEDAS
 select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = 'c') P;
 -- Busquedas almacen
@@ -636,10 +611,135 @@ SELECT mob.*, e.Nom FROM mobiliario mob JOIN empleado e ON mob.Num_emp = e.Num_e
 
 select*from mobiliario;
 select empleado.Nom, empleado.Área, empleado.Num_emp from empleado;
+select*from usuario;
 select*from empleado;
-
+SELECT empleado.Num_Emp, empleado.Área FROM empleado where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = 'ajimenez');
 insert into Empleado values(663, 'NAVARRO JIMENEZ MARTHA LIDIA', 'DIRECCION GENERAL', 663);
 update empleado set Num_Jefe = 663;
 
 update empleado set Nom = replace(Nom,'Ã‘','Ñ');
-select*from usuario;
+
+ALTER TABLE `Inventarios`.`Mobiliario`
+ADD COLUMN `articulos` VARCHAR(100) NULL AFTER `Num_Inventario`;
+
+ALTER TABLE `Inventarios`.`Mobiliario`
+CHANGE COLUMN `articulos` `Articulo` VARCHAR(100) NULL;
+
+ALTER TABLE `Inventarios`.`Mobiliario`
+DROP COLUMN `NombreCom`;
+
+SELECT empleado.Num_Emp FROM empleado inner join usuario on usuario.Num_Emp = empleado.Num_emp;
+
+SELECT empleado.Num_Emp, empleado.Área FROM empleado inner join usuario on usuario.Num_Emp = empleado.Num_emp;
+
+DELETE FROM `Mobiliario`;
+
+-- Cambio de llave primaria de Mobiliario
+select*from Mobiliario;
+
+-- Se quita el autoincrement
+ALTER TABLE Mobiliario
+MODIFY COLUMN Num_Inventario INT;
+
+-- Se elimina la anterior llave primaria
+ALTER TABLE Mobiliario
+DROP PRIMARY KEY;
+
+-- Se crea una llave primaria de 3 columnas
+ALTER TABLE Mobiliario
+ADD PRIMARY KEY (Articulo, Descripcion, Num_emp);
+
+-- Se busca una tabla que tenga referenciada la llave primaria
+SELECT
+  TABLE_NAME,
+  COLUMN_NAME,
+  CONSTRAINT_NAME,
+  REFERENCED_TABLE_NAME,
+  REFERENCED_COLUMN_NAME
+FROM
+  INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE
+  REFERENCED_TABLE_NAME = 'Mobiliario' AND
+  REFERENCED_COLUMN_NAME = 'Num_Inventario';
+  
+-- Tabla de solicitudes de almacen
+
+CREATE TABLE soli_car (
+    Cod_Barras_SC VARCHAR(45),
+    cantidad_SC INT(10),
+    emp_SC int,
+    Acept BOOLEAN, -- Si la solicitud fue aceptada o no
+    cerrada BOOLEAN, -- Si la solicitud ya fue cerrada
+    request_date datetime,
+    delivered tinyint(1),
+    sended tinyint(1)
+    -- FOREIGN KEY (emp_SC) REFERENCES otra_tabla_emp_SC(emp_SC), -- Reemplazar "otra_tabla_emp_SC" con el nombre de la tabla de usuario o empleado y la columna correspondiente
+    -- FOREIGN KEY (dir_LLSC) REFERENCES otra_tabla_dir_LLSC(dir_LLSC) -- Reemplazar "otra_tabla_dir_LLSC" con el nombre de la tabla donde se encuentre el director y la columna correspondiente
+);
+
+-- Se añade otra columna a empleado para que se activen las solicitudes
+ALTER TABLE empleado
+drop COLUMN Soli_Car ,
+drop COLUMN Acept_Dir ,
+drop COLUMN Soli_cerrada 
+;
+
+-- Se cambian todos los valores a false
+UPDATE empleado
+SET Soli_Car = FALSE,
+	Acept_Dir = FALSE,
+	Soli_cerrada = FALSE;
+
+UPDATE soli_car
+SET soli_Resp = FALSE,
+	Acept = FALSE,
+	cerrada = FALSE;
+    
+alter table Soli_car modify column request_date datetime;
+alter table Soli_car add column delivered_soli tinyint(1);
+alter table Soli_car add column cerrada tinyint(1);
+alter table soli_car change delivered delivered_ware tinyint(1);
+alter table soli_car drop column cerrada;
+    
+-- Modify table soli_car
+alter table Salidas_Productos add constraint FKCBS foreign key(Cod_BarrasS) references almacen(Cod_Barras);
+alter table soli_car add constraint PKSC primary key(Cod_Barras_SC, emp_SC, request_date);
+alter table soli_car add constraint FKSC_CB foreign key(Cod_Barras_SC) references almacen(Cod_Barras);
+alter table soli_car add constraint FKSC_EM foreign key(emp_SC) references empleado(Num_emp);
+
+insert into soli_car values
+("684F4GFR8", 10, 758, 0, 0, "2024-01-21",0,0);
+
+select*from Soli_car;
+delete from Soli_car where request_date = "2024-01-27 01:40:24";
+select*from almacen;
+
+-- Consulta de almacenista
+SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 AND soli_car.emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?);
+
+UPDATE soli_car SET delivered_soli = FALSE;
+
+insert into soli_car select Num_Emp, 'DDWA35',
+5, 0, 0, '2024-01-20' from usuario where Usuario = 'ajimenez';
+
+update soli_car set Acept = 1, sended = 1 where Cod_Barras_SC = 'DDWA35';
+select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, soli_car.sended, soli_car.delivered, soli_car.Acept, soli_car.cerrada from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 1 and Acept = 1 and emp_SC = (select Num_Emp from usuario where Usuario = 'ajimenez');
+
+select count(distinct Cod_Barras_SC, emp_SC, request_date) as cart_length from soli_car where sended = 1 AND Acept = 1 and (delivered_ware = 0 or delivered_soli = 0);
+select*from soli_car;
+SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered_ware, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 and Usuario = 'ajimenez';
+select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 0 and emp_SC = 758;
+
+-- UPDATE soli_car SET cantidad_SC = cantidad_SC + ? WHERE Cod_Barras_SC = ? AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) AND sended = 0 AND CAST(request_date AS DATE) = CAST(? AS DATE) AND EXISTS (SELECT 1 FROM soli_car WHERE Cod_Barras_SC = ? AND emp_SC = ? AND CAST(request_date AS DATE) = CAST(? AS DATE) AND sended = 0);
+SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, soli_car.delivered_ware, soli_car.delivered_soli, soli_car.Acept, soli_car.cerrada FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras WHERE soli_car.sended = 1 and soli_car.emp_SC = (select Num_Emp from usuario where Usuario = 'ajimenez');
+update soli_car set delivered_ware = 0;
+update soli_car set delivered_soli = 0;
+
+DELIMITER |
+create trigger ASEPSE before update on soli_car
+	FOR EACH ROW BEGIN
+		IF NEW.delivered_ware = 1 AND NEW.delivered_soli = 1 THEN
+        SET NEW.cerrada = 1;
+		end if;
+	END
+| DELIMITER ;

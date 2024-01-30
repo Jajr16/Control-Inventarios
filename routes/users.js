@@ -11,24 +11,18 @@ router.get('/index', function (req, res, next) {
   res.render('index', { title: 'Menú' });
 });
 
-/* productos */
-router.get('/productos', function (req, res, next) {
-  res.render('productos', { title: 'Productos' });
-});
-
-
 /*** Consultas ***/
 // Consulta de equipos
 router.get('/consulEqp', function (req, res, next) {
-  res.render('consulEqp', { title: 'Consultar Equipos' });
+  res.render('consulEqp', { title: 'Consultar Equipos', layout: 'consul_layout' });
 });
 // Consulta de mobiliario
 router.get('/consulMob', function (req, res, next) {
-  res.render('consulMob', { title: 'Consultar Mobiliario' });
+  res.render('consulMob', { title: 'Consultar Mobiliario', layout: 'consul_layout' });
 });
 // Consulta de productos
 router.get('/consulPro', function (req, res, next) {
-  res.render('consulPro', { title: 'Consultar Productos' });
+  res.render('consulPro', { title: 'Consultar Productos', layout: 'consul_layout' });
 });
 /*** Finaliza consultas ***/
 
@@ -48,47 +42,14 @@ router.get('/altasPro', function (req, res, next) {
 });
 /*** Finaliza altas ***/
 
-
-/*** Bajas ***/
-// Bajas de equipos
-router.get('/bajasEqp', function (req, res, next) {
-  res.render('bajasEqp', { title: 'Eliminar Equipos' });
-});
-// Bajas de mobiliario
-router.get('/bajasMob', function (req, res, next) {
-  res.render('bajasMob', { title: 'Eliminar Mobiliario' });
-});
-// Bajas de productos
-router.get('/bajasPro', function (req, res, next) {
-  res.render('bajasPro', { title: 'Eliminar Productos' });
-});
-/*** Finaliza bajas ***/
-
-
-/*** Cambios ***/
-// cambios de equipos
-router.get('/cambiosEqp', function (req, res, next) {
-  res.render('cambiosEqp', { title: 'Modificar Equipos' });
-});
-// cambios de mobiliario
-router.get('/cambiosMob', function (req, res, next) {
-  res.render('cambiosMob', { title: 'Modificar Mobiliario' });
-});
-// cambios de productos
-router.get('/cambiosPro', function (req, res, next) {
-  res.render('cambiosPro', { title: 'Modificar Productos' });
-});
-/*** Finaliza cambios ***/
-
-
 /*** Añadir o borrar registros existentes ***/
 router.get('/ABPE', function (req, res, next) {
-  res.render('ABPE', { title: 'Productos registrados' });
+  res.render('ABPE', { title: 'Productos registrados', layout: 'consul_layout' });
 });
 
 /*** Consultar registro de productos sacados ***/
 router.get('/FacSacProd', function (req, res, next) {
-  res.render('FacSacProd', { title: 'Registro de productos sacados' });
+  res.render('FacSacProd', { title: 'Registro de productos sacados', layout: 'consul_layout' });
 });
 
 // Usuario nuevo
@@ -97,7 +58,7 @@ router.get('/RegistrarUsuario', function (req, res, next) {
 });
 // Consultar usuarios
 router.get('/consulUsuarios', function (req, res, next) {
-  res.render('consulUsuarios', { title: 'Usuarios registrados' });
+  res.render('consulUsuarios', { title: 'Usuarios registrados', layout: 'consul_layout' });
 });
 //Empleado nuevo
 router.get('/RegistroEmpleado', function (req, res, next) {
@@ -105,12 +66,29 @@ router.get('/RegistroEmpleado', function (req, res, next) {
 });
 // Modificar empleados
 router.get('/ModEmp', function (req, res, next) {
-  res.render('ModEmp', { title: 'Modificar Empleado' });
+  res.render('ModEmp', { title: 'Modificar Empleado', layout: 'consul_layout' });
 });
 
 /*** Crear responsivas ***/
 router.get('/crear_resp', function (req, res, next) {
   res.render('crear_resp', { title: 'Crear responsivas' });
+});
+
+/*** Carritos solicitados ***/
+router.get('/sol_prod', function (req, res, next) {
+  res.render('dir_car', { title: 'Productos solicitados por Empleados', layout: 'consul_layout' });
+});
+
+router.get('/carrito', function (req, res, next) {
+  res.render('cart', { title: 'Productos solicitados', layout: 'consul_layout' });
+});
+
+router.get('/sol_prod_Almacen', function (req, res, next) {
+  res.render('almacenista', { title: 'Productos requeridos', layout: 'consul_layout' });
+});
+
+router.get('/status_request', function (req, res, next) {
+  res.render('truck_request', { title: 'Estatus de productos', layout: 'consul_layout' });
 });
 
 module.exports = router;

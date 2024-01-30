@@ -22,5 +22,17 @@ formato1 = `${anio}-${mes}-${dia}`;
 console.log(formato1);
 
 // Asignar la fecha actual a elementos HTML con los IDs "FecActu" y "FecFact"
-document.getElementById("FecActu").value = formato1;
-document.getElementById("FecFact").value = formato1;
+if (document.getElementById("FecActu") && document.getElementById("FecFact")){
+    document.getElementById("FecActu").value = formato1;
+    document.getElementById("FecFact").value = formato1;
+}
+
+var hour = hoy.toLocaleTimeString();
+
+function Fecha(){
+    return formato1
+}
+
+function Hora(){
+    return hour
+}

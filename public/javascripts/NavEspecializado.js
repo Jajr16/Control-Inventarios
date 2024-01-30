@@ -1,5 +1,6 @@
 // Variable de permisos
 var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
+var area = localStorage.getItem('area');
 
 // Esto aplica para todos los usuarios
 document.getElementById("Linksnav").innerHTML += `
@@ -33,11 +34,23 @@ if (Permisos['ALMACÉN']) {
             <div><a href="/users/consulPro">Ver productos</a></div> 
         </li>
         <li>
-            <div><a href="/users/FacSacProd">Registro de productos sacados</a></div> 
+            <div><a href="/users/FacSacProd">Registro de productos sacados</a></div>  
         </li>
     `;
     }
 }
+/////// DIRECCION GENERAL ////////
+if (area === 'DIRECCION GENERAL'){
+    $('.request-container').append('<div><div class="not_container_request"></div><a href="/users/sol_prod"><i class="fa-solid fa-bell"></i></a></div>')
+}
+
+if (Permisos['PETICIONES']){
+    $('.request-container').append('<div><div class="not_container_request"></div><a href="/users/sol_prod_Almacen"><i class="fa-solid fa-bell"></i></a></div>')
+}
+
+$('.truck-container').append('<div><div class="truck_not_container"></div><a href="/users/status_request"><i class="fa-solid fa-truck-arrow-right"></i></a></div>')
+
+
 // Usuarios con permisos de Mobiliario
 if (Permisos['MOBILIARIO']) {
     // Permisos de altas
@@ -94,7 +107,7 @@ if (Permisos['RESPONSIVAS']) {
                 <p>Crear responsivas</p>
                 <ul class="menu-vertical_nav">
                 <li>
-                    <div><a href="/users/crear_resp">Responsivas</a></div> 
+                    <div><a href="/users/crear_resp">Responsivas</a></div>
                 </li>
                 </ul>
             </li>
@@ -143,4 +156,4 @@ if (Permisos['EMPLEADOS']) {
         </li>
     `;
     }
-}
+}   

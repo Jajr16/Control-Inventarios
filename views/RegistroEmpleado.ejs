@@ -1,87 +1,37 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <title>
-        <%= title%>
-    </title>
-    <meta http-equiv="Expires" content="0">
-    <meta http-equiv="Last-Modified" content="0">
-    <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap"
-        rel="stylesheet">
-    <link rel='stylesheet' href='/stylesheets/general.css' />
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    <script src="/socket.io/socket.io.js" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css">
-</head>
-
-<body>
-    <header class="header">
-        <div class="logo">
-            <img src="/images/logoC.png" alt="Logo de la empresa">
-        </div>
-        <nav class="Dos_Column">
-            <ul class="nav-links" id="Linksnav">
-            </ul>
-        </nav>
-        <a onclick="CerrarSesion()" class="btn"><button>Cerrar sesión</button></a>
-        <a onclick="openNav()" class="menu"><button>Menu</button></a>
-        <div id="mobile-menu" class="overlay">
-            <a onclick="closeNav()" href="" class="close">&times;</a>
-            <div class="overlay-content" id="MenuCel">
-                <a href="/users/index">Inicio</a>
-                <a onclick="CerrarSesion()">Cerrar Sesión</a>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<main class="Seccion">
+    <center style="padding: 6rem;">
+        <form name="Registro" id="Registro" class="Registro FS-M">
+            <h1 class="title">Crear nuevo empleado</h1>
+            <!--Nombre empleado-->
+            <div class="field">
+                <label class="label">Nombre completo de empleado</label>
+                <input autocomplete="off" type="text" name="NombreEmp" id="NombreEmp" placeholder="Nombre de empleado"
+                    required maxlength="135" oninput="mayus(this);" onkeypress="return check(event)">
             </div>
-        </div>
-    </header>
-    <script type="text/javascript" src="/javascripts/navbar.js"></script>
-    <script type="text/javascript" src="/javascripts/ValidarSesion.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <main class="Seccion">
-        <center style="padding: 6rem;">
-            <form name="Registro" id="Registro" class="Registro FS-M">
-                <h1 class="title">Crear nuevo empleado</h1>
-                <!--Nombre empleado-->
-                <div class="field">
-                    <label class="label">Nombre completo de empleado</label>
-                    <input autocomplete="off" type="text" name="NombreEmp" id="NombreEmp"
-                        placeholder="Nombre de empleado" required maxlength="135" oninput="mayus(this);"
-                        onkeypress="return check(event)">
-                </div>
-                <!--Area-->
-                <div class="field">
-                    <label class="label">Área</label>
-                    <select id="Area" required>
-                        <option value=""></option>
-                        <option>ADMINISTRACIÓN</option>
-                        <option>PREESCOLAR</option>
-                        <option>PRIMARIA</option>
-                        <option>SECUNDARIA</option>
-                        <option>PREPARATORIA</option>
-                        <option>SERVICIOS GENERALES</option>
-                        <option>SISTEMAS</option>
-                    </select>
-                </div>
-                <!--Numero de jefe-->
-                <div class="field" style="padding-bottom: 3rem;">
-                    <label class="label">Nombre de jefe</label>
-                    <select id="NomJefe" required>
-                        <option value=""></option>
-                    </select>
-                </div>
-                <input type="submit" value="Aceptar" class="BotonAE">
-            </form>
-        </center>
-    </main>
-    <script src="/javascripts/SocketsC.js" type="text/javascript"></script>
-    <script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
-    <script type="text/javascript" src="/javascripts/NavEspecializado.js"></script>
-</body>
-
-</html>
+            <!--Area-->
+            <div class="field">
+                <label class="label">Área</label>
+                <select id="Area" required>
+                    <option value=""></option>
+                    <option>ADMINISTRACIÓN</option>
+                    <option>PREESCOLAR</option>
+                    <option>PRIMARIA</option>
+                    <option>SECUNDARIA</option>
+                    <option>PREPARATORIA</option>
+                    <option>SERVICIOS GENERALES</option>
+                    <option>SISTEMAS</option>
+                </select>
+            </div>
+            <!--Numero de jefe-->
+            <div class="field" style="padding-bottom: 3rem;">
+                <label class="label">Nombre de jefe</label>
+                <select id="NomJefe" required>
+                    <option value=""></option>
+                </select>
+            </div>
+            <input type="submit" value="Aceptar" class="BotonAE">
+        </form>
+    </center>
+</main>

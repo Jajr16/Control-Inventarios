@@ -7,6 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 //var session_middleware = require("./routes/middleware");
+const layout = require('express-ejs-layouts')
 
 var app = express();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(layout)
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

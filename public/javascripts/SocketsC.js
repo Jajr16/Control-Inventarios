@@ -1,6 +1,49 @@
 var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
+var carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+var area = localStorage.getItem('area');
+var user = localStorage.getItem('user');
 var socket = io.connect("http://localhost:3001");
 var pathname = window.location.pathname;
+//////////////////////// CARRITO //////////////////////
+
+$(document).ready(function () {
+    socket.emit('CNPC', user)
+
+    socket.once('ECBSR', function (data) {
+        if (data !== 0) {
+            notification = $('.notification-circle')
+            notification.css("visibility", "visible");
+            notification.text(parseInt(data))
+        }
+    })
+
+    socket.emit('CTPSPE', user)
+    socket.once('CTPSPERR', function (data) {
+        if (data != 0) {
+            notificationT = $('.truck_not_container')
+            notificationT.css("visibility", "visible");
+            notificationT.text(parseInt(data))
+        }
+    })
+
+    if (Permisos['PETICIONES']) {
+        socket.emit('CNPE', 'PETICIONES')
+    }
+
+    if (area === 'DIRECCION GENERAL') {
+        socket.emit('CNPE', 'DIRECCION GENERAL')
+    }
+
+    socket.once('ECNPER', function (data) {
+        if (data != 0) {
+            notificacionD = $('.not_container_request')
+            notificacionD.css("visibility", "visible")
+            notificacionD.text(parseInt(data))
+        }
+    })
+})
+
+
 //////////////////////// PERMISOS /////////////////////
 // Configuración de permisos por módulo
 var permisosPorModulo = [
@@ -9,7 +52,7 @@ var permisosPorModulo = [
     { modulo: '#EQUIPOS', contenedor: '#listaCheckboxesEqp', checks: ['[id$="E"]'], permisos: { Altas: '#1E', Bajas: '#2E', Cambios: '#3E', Consultas: '#4E' } },
     { modulo: '#RESPONSIVAS', contenedor: '#listaCheckboxesR', checks: ['[id$="R"]'], permisos: { Altas: '#1R', Bajas: '#2R', Cambios: '#3R', Consultas: '#4R' } },
     { modulo: '#USUARIOS', contenedor: '#listaCheckboxesU', checks: ['[id$="U"]'], permisos: { Altas: '#1U', Bajas: '#2U', Cambios: '#3U', Consultas: '#4U' } },
-    { modulo: '#EMPLEADOS', contenedor: '#listaCheckboxesE', checks: ['[id$="EM"]'], permisos: { Altas: '#1EM', Bajas: '#2EM', Cambios: '#3EM', Consultas: '#4EM' } }
+    { modulo: '#EMPLEADOS', contenedor: '#listaCheckboxesE', checks: ['[id$="EM"]'], permisos: { Altas: '#1EM', Bajas: '#2EM', Cambios: '#3EM', Consultas: '#4EM' } },
 ];
 
 function PermisosGenerales() {
@@ -56,8 +99,9 @@ function Excel(Excel) {
     socket.emit(Excel);
 
     socket.once("RespExcel", (data) => {
-        alert(data.mensaje);
-        location.reload();
+        Swal.fire(data.mensaje).then(() => {
+            location.reload();
+        });
     });
 }
 
@@ -205,9 +249,14 @@ function checkA(e) {
     }
 
     // Patrón de entrada, en este caso solo acepta numeros y letras
-    patron = /[A-Za-z0-9]/;
+    patron = /[A-Za-z0-9ñÑ]/;
     tecla_final = String.fromCharCode(tecla);
     return patron.test(tecla_final);
+}
+
+/////////////////// EMPTY TABLE ////////////////////
+function empty_table(tabla, n) {
+    $('#' + tabla + ' tbody').append($('<tr><td colspan="' + n + '"><center><h3>En este momento no hay nada agregado.</h3></center></td></tr>'))
 }
 
 // SEGURIDAD
@@ -228,6 +277,7 @@ function checkA(e) {
 //     // Prevent the default copy action
 //     event.preventDefault();
 // }, false);
+
 //ENVIAR SOCKETS
 function enviarSocket(identificador, mensaje) {
     socket.emit(identificador, mensaje);
@@ -235,12 +285,12 @@ function enviarSocket(identificador, mensaje) {
 
 function recibirSocket(identificador) {
     socket.once(identificador, function (Respuesta) {
-        alert(Respuesta.mensaje);
-        if (Respuesta.Res == "Si") {
-            location.reload();
-        }
+        Swal.fire(Respuesta.mensaje).then(() => {
+            if (Respuesta.Res) {
+                location.reload();
+            }
+        });
     });
-
 }
 
 function eliminar(elementoBoton, mensaje, mensajeSocket) {
@@ -297,7 +347,7 @@ function eliminarEquipo(elementoBoton, mensaje, mensajeSocket) {
 }
 if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
     if (!Permisos['EMPLEADOS']) {
-        location.href = "index";
+        window.history.back();
     } else {
         if (pathname === "/users/RegistroEmpleado" && Permisos['EMPLEADOS'].includes('1')) {
             cargarSelect2('#NomJefe');
@@ -313,12 +363,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     socket.emit('Reg_Emp', { NombreEmp: $("#NombreEmp").val(), Area: $("#Area").val(), NomJefe: $("#NomJefe").val() });
 
-                    socket.once('Res_Emp', (Respuesta) => {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-
-
+                    recibirSocket('Res_Emp')
                 }
             }
         } else if (pathname === "/users/ModEmp" && (Permisos['EMPLEADOS'].includes('4') || Permisos['EMPLEADOS'].includes('2') || Permisos['EMPLEADOS'].includes('3'))) {
@@ -403,12 +448,12 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
             recibirSocket('MensajeEmp');
         } else {
-            location.href = "index";
+            window.history.back();
         }
     }
 } else if (pathname === "/users/RegistrarUsuario" || pathname === "/users/consulUsuarios") {
     if (!Permisos['USUARIOS']) {
-        location.href = 'index';
+        window.history.back();
     } else {
         if (pathname === "/users/RegistrarUsuario" && Permisos['USUARIOS'].includes('1')) {
             cargarSelect('#NombreEmp');
@@ -428,20 +473,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 if ($("#NombreEmp").val() != "" && $("#NombreUser").val() != "" && $("#ContraNueva").val() != "") {
                     socket.emit('Registro_Usuario', { NombreEmp: $("#NombreEmp").val(), N_User: $("#NombreUser").val(), ContraNueva: $("#ContraNueva").val(), permisos: permisosDados });
 
-                    socket.once('Usuario_Existente', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-
-                    socket.once('Usuario_Agregado', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-
-                    socket.once('Usuario_Error', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
+                    recibirSocket('Usuario_Ans')
                 }
             }
         } else if (pathname === "/users/consulUsuarios" && (Permisos['USUARIOS'].includes('4') || Permisos['USUARIOS'].includes('2') || Permisos['USUARIOS'].includes('3'))) {
@@ -471,7 +503,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
             socket.emit("Consul_Usuario");
 
-            // Consulta de productos
+            // Consulta de usuarios
             socket.on('Desp_Usuario', async (data) => {
                 const tbody = document.querySelector("#DatosProd tbody");
                 let filaHTML = `
@@ -512,7 +544,11 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         // Eliminar la fila de la tabla
                         fila.parentNode.removeChild(fila);
                     } else {
-                        alert("No puedes eliminar tu propio usuario.");
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oye!!!",
+                            text: "No puedes eliminar tu propio usuario.",
+                        });
                     }
 
                 }
@@ -551,7 +587,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     enviarSocket('PermisosUser', valores0);
                     PermisosGenerales();
-                    
+
                     socket.on('Desp_Permisos', async (data) => {
                         $(`#${data.modulos}`).prop('checked', true);
                         // Mostrar solo el contenedor del módulo correspondiente
@@ -612,15 +648,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     if ($("#UsuarioM").val() != "" && $("#Num_EmpPM").val() != "" && $("#PassM").val() != "") {
                         socket.emit('Cambios_Usuario', { Usuario: $("#UsuarioM").val(), Nom_Emp: $("#Num_EmpPM").val(), Pass: $("#PassM").val(), permisos: permisosDados }, { OLDUser: valores0 });
-
-                        socket.once('Usuario_Inexistente', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                            location.reload();
-                        });
-
-                        socket.once('Fallo_ModUserd', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                        });
                     }
                 }
                 recibirSocket('RespDelUs');
@@ -645,19 +672,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     socket.emit('Alta_Prod', { CodBarras: $("#Cod_Barras").val(), FecAct: $("#FecActu").val(), Cate: $("#Categoria").val(), Producto: $("#NomP").val(), Marca: $("#MarcActi").val(), Descripcion: $("#DescripcionP").val(), Proveedor: $("#Proveedor").val(), NumFactura: $("#NumFact").val(), FechaFac: $("#FecFact").val(), Cantidad: $("#CantidadP").val(), Unidad: $("#UnidadP").val() });
 
-                    socket.once('Fact_Exists', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                    });
-
-                    socket.once('Producto_Existente', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-
-                    socket.once('Producto_Inexistente', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
+                    recibirSocket('Producto_Ans')
                 }
             }
         } else if (pathname === "/users/consulPro" && (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('3'))) {
@@ -681,6 +696,9 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             }
             if (Permisos['ALMACÉN'].includes('3')) {
                 CabHTML += `<th>Modificar</th>`;
+            }
+            if (Permisos['ALMACÉN'].includes('4')) {
+                CabHTML += `<th>Solicitar Artículo</th>`;
             }
 
             thead.innerHTML += CabHTML;
@@ -707,6 +725,9 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     if (Permisos['ALMACÉN'].includes('3')) {
                         filaHTML += `<td> - </td>`;
                     }
+                    if (Permisos['ALMACÉN'].includes('4')) {
+                        filaHTML += `<td> - </td>`;
+                    }
                 } else {
                     // Verifica los permisos y agrega los botones correspondientes
                     if (Permisos['ALMACÉN'].includes('2')) {
@@ -715,6 +736,9 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     if (Permisos['ALMACÉN'].includes('3')) {
                         filaHTML += `<td class="BotonMod"> Modificar </td>`;
                     }
+
+                    filaHTML += `<td class="BotonAC Carrito_Cant" id="Carrito_Cant"> Solicitar artículo </td>`;
+
                 }
 
                 // Cierra la fila
@@ -722,6 +746,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                 // Agrega la fila completa al tbody
                 tbody.innerHTML += filaHTML;
+
 
                 if (Permisos['ALMACÉN'].includes('2')) {
                     // Volver a asignar el evento de clic a los botones de eliminar
@@ -733,15 +758,78 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         });
                     }
                 }
-            });
 
-            socket.once('Producto_Eliminado', (data) => {
-                alert(data.mensaje);
-                location.reload();
+                if (Permisos['ALMACÉN'].includes('4')) {
+                    const botonesCarritos = document.getElementsByClassName("BotonAC");
+
+                    for (let i = 0; i < botonesCarritos.length; i++) {
+                        botonesCarritos[i].addEventListener("click", function (e) {
+                            const btnClickeado = this;
+
+                            if (btnClickeado.classList.contains('BotonAC')) {
+                                // Elimina la clase 'BotonAC'
+                                btnClickeado.classList.remove('BotonAC');
+                                // Crea un nuevo elemento <div> con el input y los íconos
+                                const nuevoContenido = document.createElement('div');
+                                nuevoContenido.innerHTML = '<input type="text" class="Cantidad_Carrito" id="Cantidad_Carrito" name="Cantidad_Carrito" autocomplete="off" onkeypress="return checkN(event)"><span class="icon-check">✔</span><span class="icon-cross">✘</span>';
+
+                                // Reemplaza el contenido del td con el nuevo elemento
+                                btnClickeado.innerHTML = '';
+                                btnClickeado.appendChild(nuevoContenido);
+
+                                const check_icon = nuevoContenido.querySelector(".icon-check");
+
+                                check_icon.addEventListener("click", function (e) {
+
+                                    const palomita = this.parentElement.parentElement.parentElement;
+                                    const inputCarrito = palomita.querySelector(".Cantidad_Carrito");
+
+                                    if (inputCarrito.value.trim() === '') {
+                                        Swal.fire({
+                                            icon: "error",
+                                            title: "Ey!!!",
+                                            text: "Ingresa un valor válido.",
+                                        });
+                                        return;
+                                    }
+
+                                    const padreInput = palomita.getElementsByTagName("td");
+
+                                    var codigoBarras = padreInput[0].innerHTML;
+
+                                    var fecha = Fecha() + ' ' + Hora()
+
+                                    enviarSocket('ECBS', { CBP: codigoBarras, CP: parseFloat(inputCarrito.value), US: user, DATE: fecha })
+                                    recibirSocket('ECBSRF')
+
+                                    socket.emit('CNPC', user)
+
+                                    socket.once('ECBSR', function (data) {
+                                        if (data !== 0) {
+                                            notification = $('.notification-circle')
+                                            notification.css("visibility", "visible");
+                                            notification.text(parseInt(data))
+                                        }
+                                    })
+                                });
+
+                                const cancel_icon = nuevoContenido.querySelector(".icon-cross");
+
+                                cancel_icon.addEventListener("click", function (e) {
+                                    e.stopPropagation(); // Detener la propagación del clic en el ícono
+                                    if (!btnClickeado.classList.contains('BotonAC')) {
+                                        nuevoContenido.remove();
+                                        btnClickeado.classList.add('BotonAC');
+                                        btnClickeado.innerHTML = 'Solicitar articulo';
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                }
             });
-            socket.once('Error', (data) => {
-                alert(data.mensaje);
-            })
+            recibirSocket('Delete_Prod_Ans')
 
             //Llenar datos en automático
             var valores0 = "";
@@ -863,19 +951,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         }
 
                     });
-                    //Esperamos respuesta del servidor en caso de caso exitoso
-                    socket.once('Factu_Exitosa', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                        location.reload();
-                    });
-                    //Esperamos respuesta del servidor en caso de caso fallido
-                    socket.once('Fallo_Fac', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                    });
-                    //Esperamos respuesta del servidor en caso de caso fallido
-                    socket.once('Fallo_ModFac', function (Respuesta) {
-                        alert(Respuesta.mensaje);
-                    });
+                    recibirSocket('Update_Fac_Ans')
                 });
 
                 // Cambios de productos
@@ -891,14 +967,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     if ($("#Cod_BarrasM").val() != "" && $("#CategoriaM").val() != "" && $("#NomPM").val() != "" && $("#MarcActiM").val() != "" && $("#DescripcionPM").val() != "" && $("#UnidadPM").val() != "") {
                         socket.emit('Cambios_Prod', { CodBarras: $("#Cod_BarrasM").val(), Cate: $("#CategoriaM").val(), Producto: $("#NomPM").val(), Marca: $("#MarcActiM").val(), Descripcion: $("#DescripcionPM").val(), Unidad: $("#UnidadPM").val() }, { CBO: valores0, CO: valores1, NAO: valores2, MAO: valores3, DO: valores4, UO: valores5 });
 
-                        socket.once('Producto_Inexistente', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                            location.reload();
-                        });
-
-                        socket.once('Fallo_Mod', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                        });
+                        recibirSocket('Mod_Prod_Ans')
                     }
                 }
             });
@@ -969,19 +1038,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     if ($("#FecActu").val() != "" && $("#CantidadPM").val() != "" && $("#ProveedorM").val() != "" && $("#NumFactM").val() != "" && $("#FecFact").val() != "") {
                         socket.emit('Altas_ProdExist', { Cod_Barras: valores0, FecAct: $("#FecActu").val(), Cantidad: $("#CantidadPM").val(), Proveedor: $("#ProveedorM").val(), NumFactura: $("#NumFactM").val(), FechaFac: $("#FecFact").val(), Existencia: valores1 });
 
-                        socket.once('Factura_Agregada', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                            location.reload();
-                        });
-
-                        socket.once('Fallo_Factura', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                            location.reload();
-                        });
-                        socket.once('Ya_Registrado', function (Respuesta) {
-                            alert(Respuesta.mensaje);
-                            location.reload();
-                        });
+                        recibirSocket('Add_ProdExist_Ans')
                     }
                 }
             });
@@ -1011,14 +1068,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         if ($("#CantidadP").val() != "" && $("#NomJefe") != "") {
                             socket.emit('Bajas_ProdExist', { Cod_Barras: valores0E, Cantidad: $("#CantidadP").val(), Emp: $("#NombreEmp").val(), Articulo: valores2E });
 
-                            socket.once('Eliminacion_Realizada', function (Respuesta) {
-                                alert(Respuesta.mensaje);
-                                location.reload();
-                            });
-                            socket.once('Fallo_BajasExist', function (Respuesta) {
-                                alert(Respuesta.mensaje);
-                                location.reload();
-                            });
+                            recibirSocket('Del_ProdExists_Ans')
                         }
                     }
                 }
@@ -1084,10 +1134,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                 socket.emit("SacarExcel", { fechaInicio: filtroInicio, fechaFin: filtroFin });
 
-                socket.once("SacarRespExcel", (data) => {
-                    alert(data.mensaje);
-                    location.reload();
-                });
+                recibirSocket('SacarRespExcel')
             }
         } else {
             location.href = "index";
@@ -1471,7 +1518,6 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                                 }
                             });
 
-                            console.log(NIMEviejo)
                             // Muestra el contenido del div con id "Desplegable"
                             Menu.show();
                         });
@@ -1527,6 +1573,41 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
             socket.emit("Consul_Mobiliario", localStorage.getItem('user'));
 
+            //Formulario desplegable
+            const ArtiDesp = $('#ArtM');
+            const MenuM = $("#DesplegableM");
+
+            const otrosM = $('#OtrosM');
+
+            MenuM.hide();
+            //Formulario.reset();
+            ArtiDesp.on('change', function () {
+                if (ArtiDesp.val() == 'OTRO') {
+                    MenuM.slideDown();//Lo abre
+                } else {
+                    MenuM.slideUp();//Lo cierra
+                    //Quita los required
+                    otrosM.prop('required', false);
+
+                    //Pone valores vacío
+                    otrosM.val('');
+                }
+            });
+            //VALIDAR FORMULARIO DEPENDIENDO SI LLENAN CAMPOS
+            //Funcion general
+            function Listeners(elemento, evento, funcion) {
+                elemento.on(evento, funcion);
+            }
+
+            Listeners(otrosM, 'input', function (e) {
+
+                if (otrosM.val() != "") {
+                    otrosM.prop('required', true);
+                } else {
+                    otrosM.prop('required', false);
+                }
+            });
+
             const thead = document.querySelector("#firstrow");
 
             let CabHTML = "";
@@ -1545,10 +1626,10 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 const tbody = document.querySelector("#DatosProd tbody");
                 let filaHTML = `
                 <tr>
+                    <td>${data.Articulo}</td>
                     <td>${data.Descripcion}</td>
                     <td>${data.Ubicacion}</td>
                     <td>${data.Cantidad}</td>
-                    <td>${data.NombreCom}</td>
                     <td>${data.Area}</td>
                     `;
 
@@ -1600,9 +1681,10 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         valores2 = elementosTD[2].innerHTML;
                         valores3 = elementosTD[3].innerHTML;
                     }
-                    document.getElementById("DescM").value = valores0;
-                    document.getElementById("UbiM").value = valores1;
-                    document.getElementById("CantidadM").value = valores2;
+                    document.getElementById("ArtM").value = valores0;
+                    document.getElementById("DescM").value = valores1;
+                    document.getElementById("UbiM").value = valores2;
+                    document.getElementById("CantidadM").value = valores3;
                 }
 
                 // Cambios de mobiliario
@@ -1615,27 +1697,73 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     e.preventDefault();
 
-                    if ($("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "") {
-                        socket.emit('Cambios_Mobiliario', { Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), Empleado: valores3.replace(/\s+$/, '') }, { OLDDesc: valores0 });
+                    if ($("#ArtM").val() != "" && $("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "") {
+
+                        //Si pone otros
+                        if ($("#OtrosM").val() != "") {
+                            socket.emit('Cambios_Mobiliario', { Articulo: $("#OtrosM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val() }, { OLDArtM: valores0 });
+                        }
+                        else {
+                            socket.emit('Cambios_Mobiliario', { Articulo: $("#ArtM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val() }, { OLDArtM: valores0 });
+                        }
+
                     }
                 }
             });
             recibirSocket('RespDelMob');
         } else if (pathname == "/users/altasMob" && Permisos['MOBILIARIO'].includes('1')) {
 
-            // Recupera el nombre del usuario
-            const nombreUsuario = localStorage.getItem('user');
-
             const FormProduct = document.querySelector("#AltaMobiliario");
+
+            //Formulario desplegable
+            const ArtiDesp = $('#ArtM');
+            const MenuM = $("#DesplegableM");
+
+            const otrosM = $('#OtrosM');
+
+            MenuM.hide();
+            //Formulario.reset();
+            ArtiDesp.on('change', function () {
+                if (ArtiDesp.val() == 'OTRO') {
+                    MenuM.slideDown();//Lo abre
+                } else {
+                    MenuM.slideUp();//Lo cierra
+                    //Quita los required
+                    otrosM.prop('required', false);
+
+                    //Pone valores vacío
+                    otrosM.val('');
+                }
+            });
+            //VALIDAR FORMULARIO DEPENDIENDO SI LLENAN CAMPOS
+            //Funcion general
+            function Listeners(elemento, evento, funcion) {
+                elemento.on(evento, funcion);
+            }
+
+            Listeners(otrosM, 'input', function (e) {
+
+                if (otrosM.val() != "") {
+                    otrosM.prop('required', true);
+                } else {
+                    otrosM.prop('required', false);
+                }
+            });
 
             // Altas de mobiliario
             FormProduct.addEventListener("submit", Enviar);
 
             function Enviar(e) {
                 e.preventDefault();
-                if ($("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "" && nombreUsuario != "") {
+                if ($("#ArtM").val() != "" && $("#DescM").val() != "" && $("#UbiM").val() != "" && $("#CantidadM").val() != "") {
 
-                    enviarSocket('Alta_Mob', { Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), NombreEmp: nombreUsuario });
+                    //Si pone otros
+                    if ($("#OtrosM").val() != "") {
+                        enviarSocket("Alta_Mob", { Articulo: $("#OtrosM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), User: user });
+                    }
+                    else {
+                        enviarSocket('Alta_Mob', { Articulo: $("#ArtM").val(), Descripcion: $("#DescM").val(), Ubicacion: $("#UbiM").val(), Cantidad: $("#CantidadM").val(), User: user });
+                    }
 
                     recibirSocket('Mobiliario_Respuesta');
                 }
@@ -1676,18 +1804,20 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     enviarSocket('Crea_Resp', { Responsiva: $("#Resp").val(), NombreEmp: $("#NombreEmp").val() });
 
                     socket.on('Responsiva_Respuesta', function (Respuesta) {
-                        alert(Respuesta.mensaje);
 
-                        // Crear un blob a partir del PDF buffer recibido
-                        const blob = new Blob([Respuesta.pdfBuffer], { type: 'application/pdf' });
+                        Swal.fire(Respuesta.mensaje).then(() => {
+                            // Crear un blob a partir del PDF buffer recibido
+                            const blob = new Blob([Respuesta.pdfBuffer], { type: 'application/pdf' });
 
-                        // Crear una URL a partir del blob para mostrar el PDF en una nueva ventana del navegador
-                        const pdfUrl = URL.createObjectURL(blob);
+                            // Crear una URL a partir del blob para mostrar el PDF en una nueva ventana del navegador
+                            const pdfUrl = URL.createObjectURL(blob);
 
-                        // Abrir el PDF en una nueva ventana o pestaña
-                        window.open(pdfUrl, '_blank');
-
-                        location.reload();
+                            // Abrir el PDF en una nueva ventana o pestaña
+                            window.open(pdfUrl, '_blank');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000)
+                        });
                     });
                 }
             }
@@ -1695,4 +1825,302 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             location.href = "index";
         }
     }
+} else if (pathname == '/users/sol_prod') {
+    if (area !== 'DIRECCION GENERAL') {
+        window.location.href = "index";
+    } else {
+        enviarSocket('get_applicants')
+        table = $("#Requests")
+
+        socket.on('return_applicants', async (data) => {
+            // Add requests process
+            $.each(data, function (_, item) {
+                var row = $('<tr></tr>');
+                $.each(item, function (clave, value) {
+
+                    if (clave === 'request_date') {
+                        // Fecha obtenida
+                        var fechaJS = new Date(value);
+                        var año = fechaJS.getFullYear();
+                        var mes = ('0' + (fechaJS.getMonth() + 1)).slice(-2);
+                        var dia = ('0' + fechaJS.getDate()).slice(-2);
+                        var horas = ('0' + fechaJS.getHours()).slice(-2);
+                        var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
+                        var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
+
+                        var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
+                        row.append("<td>" + fechaFormateada + "</td>");
+
+                    } else if (clave === 'cerrada') {
+                        if (item.cerrada == 1 && item.Acept == 0) {
+                            row.addClass('decline')
+                            row.append('<td><div>Rechazada :(</div></td>')
+                        } else if ((item.cerrada == 1 && item.Acept == 1)) {
+                            row.addClass('accepted')
+                            row.append('<td><div>Aceptada :)</div></td>')
+                        } else if (item.cerrada == 0 && item.Acept == 1) {
+                            row.addClass('pending')
+                            row.append('<td><div>Pendiente...</div></td>')
+                        } else
+                            row.append('<td><div><span class="icon-check">✔</span><span class="icon-cross">✘</span></div></td>')
+                    } else if (clave === 'Acept') {
+                    } else {
+                        row.append("<td>" + value + "</td>");
+                    }
+                })
+                table.append(row)
+            })
+            // Continue with all requests events (accept and decline requests)
+            var accepted = document.getElementsByClassName('icon-check')
+            var declined = document.getElementsByClassName('icon-cross')
+
+            for (let i = 0; i < accepted.length; i++) {
+                accepted[i].addEventListener("click", getRequestssolicitants)
+                declined[i].addEventListener("click", getRequestssolicitants)
+            }
+
+            var valores = []
+
+            function getRequestssolicitants(e) {
+                class_button = Array.from(e.srcElement.classList)[0]
+                boton = ''
+                if (class_button == 'icon-check') {
+                    valores.push('accepted')
+                    boton = 'aceptar'
+                } else if (class_button == 'icon-cross') {
+                    valores.push('declined')
+                    boton = 'denegar'
+                }
+                Swal.fire({
+                    title: "¿Estás seguro de " + boton + " la solicitud?",
+                    text: "No puedes revertir el cambio!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Si, seguro!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        var elementosTD = e.srcElement.parentElement.parentElement.parentElement.getElementsByTagName("td");
+                        // recorremos cada uno de los elementos del array de elementos <td>
+                        for (let i = 0; i < elementosTD.length - 1; i++) {
+                            valores.push(elementosTD[i].innerHTML); // obtenemos cada uno de los valores y los ponemos en la variable "valores"
+                        }
+
+                        enviarSocket('updateCar', valores)
+
+                        socket.once('request_answered', (Respuesta) => {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Solicitud exitosa",
+                                text: Respuesta.mensaje
+                            }).then(() => {
+                                location.reload();
+                            });
+                        })
+                    } else {
+                        valores = []
+                    }
+                })
+            }
+
+
+        });
+    }
+
+} else if (pathname == '/users/carrito') {
+    enviarSocket('RPC', user)
+
+    socket.on('RPCR', async (data) => {
+        if (data.length > 0) {
+            table = $('#Requests tbody')
+            $.each(data, function (_, row) {
+                fila = $('<tr></tr>')
+                $.each(row, function (clave, value) {
+                    if (clave == 'request_date') {
+                        // Fecha obtenida
+                        var fechaJS = new Date(value);
+                        var año = fechaJS.getFullYear();
+                        var mes = ('0' + (fechaJS.getMonth() + 1)).slice(-2);
+                        var dia = ('0' + fechaJS.getDate()).slice(-2);
+                        var horas = ('0' + fechaJS.getHours()).slice(-2);
+                        var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
+                        var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
+
+                        var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
+                        fila.append("<td>" + fechaFormateada + "</td>");
+
+                    } else {
+                        fila.append('<td>' + value + '</td>')
+                    }
+                })
+                fila.append('<td><div><span class="icon-cross">✘</span></div></td>')
+                table.append(fila)
+            })
+
+            cancel = document.getElementsByClassName('icon-cross')
+
+            for (let i = 0; i < cancel.length; i++) {
+                cancel[i].addEventListener("click", (e) => {
+                    let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
+                    let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
+
+                    enviarSocket('EPC', { fpcdd, pcdd, user })
+                    location.reload()
+                })
+            }
+
+            $('#productos').append('<button class="BotonExcel" style="width: 100%; color: white;">Enviar todo</button>')
+
+            $('.BotonExcel').on('click', function () {
+                enviarSocket('AAPIC', user)
+                recibirSocket('AAPICRE')
+            })
+        }
+    })
+
+    socket.on('RPCRN', () => {
+        empty_table('Requests', 6)
+    })
+} else if (pathname == '/users/sol_prod_Almacen') {
+    if (Permisos['PETICIONES']) {
+        enviarSocket('consul_almacenista', user)
+
+        socket.on('desplegar_almacenista', async (data) => {
+            if (data.length > 0) {
+                table = $('#Requests tbody')
+                $.each(data, function (_, row) {
+                    fila = $('<tr></tr>')
+                    $.each(row, function (clave, value) {
+                        if (clave == 'request_date') {
+                            // Fecha obtenida
+                            var fechaJS = new Date(value);
+                            var año = fechaJS.getFullYear();
+                            var mes = ('0' + (fechaJS.getMonth() + 1)).slice(-2);
+                            var dia = ('0' + fechaJS.getDate()).slice(-2);
+                            var horas = ('0' + fechaJS.getHours()).slice(-2);
+                            var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
+                            var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
+
+                            var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
+                            fila.append("<td>" + fechaFormateada + "</td>");
+
+                        } else if (clave == 'delivered_ware') {
+                            if (value == 0) {
+                                fila.append("<td>" + "No entregado" + "</td>")
+                            } else {
+                                fila.append("<td>" + "Entregado" + "</td>")
+                            }
+                        } else if (clave == 'delivered_soli') {
+                            if (value == 0) {
+                                fila.append("<td>" + "No recibido" + "</td>")
+                            } else {
+                                fila.append("<td>" + "Recibido" + "</td>")
+                            }
+                        } else {
+                            fila.append('<td>' + value + '</td>')
+                        }
+                    })
+
+                    if (row.delivered_ware == 0) {
+                        fila.append('<td class="BotonAC icon-entregar">Entregado</td>')
+                    }
+
+                    table.append(fila)
+                })
+
+                // Proceso a realizar cuando le da clic a un boton
+                entregar = document.getElementsByClassName('icon-entregar')
+
+                // Entregar peticion
+                for (let i = 0; i < entregar.length; i++) {
+                    entregar[i].addEventListener("click", (e) => {
+                        let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
+                        let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
+                        let usPet = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[5].innerHTML;
+
+                        enviarSocket('entregar_peti_alma', { fpcdd, pcdd, usPet, sended: 'A' })
+                        location.reload()
+                    })
+                }
+            }
+        })
+
+        socket.on('error_desplegar', () => {
+            empty_table('Requests', 14)
+        })
+    } else {
+        window.history.back();
+    }
+} else if (pathname == '/users/status_request') {
+
+    enviarSocket('consul_requests', user)
+
+    socket.on('desplegar_almacenista', async (data) => {
+        if (data.length > 0) {
+            table = $('#Requests tbody')
+            $.each(data, function (_, row) {
+                fila = $('<tr></tr>')
+                $.each(row, function (clave, value) {
+                    if (clave == 'request_date') {
+                        // Fecha obtenida
+                        var fechaJS = new Date(value);
+                        var año = fechaJS.getFullYear();
+                        var mes = ('0' + (fechaJS.getMonth() + 1)).slice(-2);
+                        var dia = ('0' + fechaJS.getDate()).slice(-2);
+                        var horas = ('0' + fechaJS.getHours()).slice(-2);
+                        var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
+                        var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
+
+                        var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
+                        fila.append("<td>" + fechaFormateada + "</td>");
+
+                    } else if (clave == 'delivered_ware' || clave == 'cerrada' || clave == 'delivered_soli' || clave == 'Acept') {
+                        if (clave == 'Acept') {
+                            if (row.Acept == 0 && row.cerrada == 0) {
+                                fila.append('<td>La solicitud aún no ha sido aceptada</td>')
+                            } else if (row.Acept == 0 && row.cerrada == 1) {
+                                fila.append('<td>La solicitud fue rechazada</td>')
+                                fila.addClass('decline')
+                            } else if (row.Acept == 1 && row.cerrada == 1) {
+                                fila.append('<td>Solicitud cerrada</td>')
+                                fila.addClass('accepted')
+                            } else if (row.Acept == 1 && row.cerrada == 0) {
+                                if (row.delivered_ware == 0 && row.delivered_soli == 0) {
+                                    fila.append('<td>Solicitud enviada al almacenista</td>')
+                                } else if (row.delivered_ware == 1 && row.delivered_soli == 0) {
+                                    fila.append('<td>Solicitud etregada por el almacenista</td>')
+                                }
+                                fila.append('<td class="BotonAC icon-entregar">Entregado</td>')
+                            }
+                        }
+                    } else {
+                        fila.append('<td>' + value + '</td>')
+                    }
+                })
+
+                table.append(fila)
+            })
+
+            // Proceso a realizar cuando le da clic a un boton
+            entregar = document.getElementsByClassName('icon-entregar')
+
+            // Entregar peticion
+            for (let i = 0; i < entregar.length; i++) {
+                entregar[i].addEventListener("click", (e) => {
+                    let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
+                    let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
+
+                    enviarSocket('entregar_peti_alma', { fpcdd, pcdd, user, sended: 'S' })
+                    location.reload()
+                })
+            }
+        }
+    })
+
+    socket.on('error_desplegar', () => {
+        empty_table('Requests', 14)
+    })
+
 }

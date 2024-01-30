@@ -639,6 +639,21 @@ h5 {
     transform: scale(1.1);
 }
 
+.BotonAC {
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background: linear-gradient(to top, #64cbf3, #0084b8);
+    color: rgb(199, 236, 245);
+    border-radius: 10%;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonAC:hover {
+    background: linear-gradient(to top, #64cbf3, #c2eafa);
+    color: rgb(0, 101, 104);
+}
+
 .BotonERR {
     text-decoration: none;
     padding: 0.5rem;
@@ -1007,3 +1022,70 @@ h5 {
 #NombreEmp {
     width: 100% !important;
 }
+
+/* Estilos para el contenedor div */
+.Carrito_Cant div {
+    margin-bottom: 0;
+    display: flex;
+    vertical-align: middle;
+}
+
+/* Estilo para el input */
+.Carrito_Cant input {
+    margin-right: 10px;
+    /* Espacio entre el input y los íconos */
+}
+
+.Cantidad_Carrito {
+    margin-bottom: 0 !important;
+}
+
+.decline {
+    background-color: darkred !important;
+    color: white;
+}
+
+.accepted {
+    background-color: darkgreen !important;
+    color: white;
+}
+
+.pending {
+    background-color: darkorange !important;
+    color: white;
+}
+
+.truck-container{
+    margin-left: 2rem;
+}
+
+.request-container{
+    margin-right: 2rem;
+}
+
+.cart-container:hover, .request-container:hover, .truck-container:hover {
+    transform: scale(1.4);
+}
+
+.cart-container, .request-container, .truck-container {
+    position: relative;
+    display: inline-block;
+    transition: all 0.5s;
+}
+
+.notification-circle, .not_container_request, .truck_not_container {
+    position: absolute;
+    top: -5px; /* Ajusta la posición vertical según tus necesidades */
+    right: -5px; /* Ajusta la posición horizontal según tus necesidades */
+    width: 15px;
+    height: 15px;
+    background-color: red; /* Color del círculo */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px; /* Tamaño del texto dentro del círculo */
+    font-weight: bold;
+    visibility: hidden;
+  }

@@ -21,6 +21,7 @@ InicioSesion.addEventListener('submit', (e) => {
             // Usuario autenticado correctamente, guardar el nombre de usuario y los permisos en localStorage
             localStorage.setItem('user', Respuesta.Usuario);
             localStorage.setItem('permisosModulos', JSON.stringify(Respuesta.permisosModulos)); // Guardar el objeto completo
+            localStorage.setItem('area', Respuesta.area)
             console.log(Respuesta.permisosModulos);
             // Redirigir a la página de inicio de sesión exitosa
             location.href = "/users/index";
