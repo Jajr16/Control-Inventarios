@@ -69,6 +69,10 @@
     $('#RegistrosGenerales').parent(this).append(`<div style="display: flex;" class="Separacion "><a href="/users/sol_prod" class="BotonABE TamBAG">Peticiones de Empelados</a></div>`)
   }
 
+  if (Permisos['PETICIONES']) {
+    $('#RegistrosGenerales').parent(this).append(`<div style="display: flex;" class="Separacion "><a href="/users/sol_prod_Almacen" class="BotonABE TamBAG">Entregas pendientes</a></div>`)
+  }
+
   if (Permisos['ALMACÉN']) {
     Options1 = '';
     Options2 = '';

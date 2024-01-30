@@ -100,7 +100,6 @@ io.on('connection', (socket) => {
                         }
                     });
                 } else {
-                    console.log(result);
                     socket.emit('logInError', { mensaje: 'Nombre de usuario o contraseña incorrectos.' });
                 }
             }
@@ -196,7 +195,6 @@ io.on('connection', (socket) => {
                                                     socket.emit('SystemError');
                                                 } else {
                                                     if (result) {
-                                                        console.log("Resultado de inserción de productos: ", result);
                                                         socket.emit('Producto_Ans', { mensaje: 'Producto dado de alta.', Res: "Si" });
                                                     }
                                                 }
@@ -228,7 +226,6 @@ io.on('connection', (socket) => {
                             socket.emit('SystemError');
                         } else {
                             if (result.affectedRows > 0) {
-                                console.log("Resultado de eliminacion de productos: ", result);
                                 socket.emit('Delete_Prod_Ans', { mensaje: 'Producto dado de baja.', Res: "Si" });
                             } else {
                                 socket.emit('Delete_Prod_Ans', { mensaje: "Producto no eliminado, inténtelo de nuevo." });
@@ -557,7 +554,6 @@ io.on('connection', (socket) => {
                                             else if (permisoUser.accion === 'Cambios') accion = 3;
                                             else if (permisoUser.accion === 'Consultas') accion = 4;
 
-                                            console.log(permisoUser.modulo.slice(1));
                                             // Insertar permisos en la tabla de permisos
                                             db.query('insert into permisos values (?,?,?)', [accion, data.N_User, permisoUser.modulo.slice(1)], function (err, res) {
                                                 if (err) {
@@ -596,14 +592,12 @@ io.on('connection', (socket) => {
             } else {
                 if (result.length > 0) {
                     // Eliminar el usuario de la tabla Usuario
-                    console.log(data);
                     db.query('delete from Usuario where Usuario = ?', data, function (err, result) {
                         if (err) {
                             Errores(err);
                             socket.emit('SystemError');
                         } else {
                             if (result.affectedRows > 0) {
-                                console.log("Resultado de eliminación de usuario: ", result);
                                 socket.emit('RespDelUs', { mensaje: 'Usuario dado de baja.' });
                             } else {
                                 socket.emit('RespDelUs', { mensaje: "Usuario no eliminado, inténtelo de nuevo." });
@@ -643,7 +637,6 @@ io.on('connection', (socket) => {
                                         }
                                     });
                                 });
-                                console.log(errores);
                                 if (!errores) {
                                     socket.emit('RespDelUs', { mensaje: 'Usuario modificado con éxito.', Res: 'Si' });//Mandar mensaje a cliente
                                 }
@@ -659,7 +652,6 @@ io.on('connection', (socket) => {
 
     // Altas de empleado
     socket.on('Reg_Emp', async (data) => {
-        console.log(data);
         // Consultar si el empleado ya está registrado
         db.query('select * from Empleado where Nom = ?', [data.NombreEmp], function (err, result) {
             if (err) {
@@ -832,7 +824,6 @@ io.on('connection', (socket) => {
                 }
             }
         });
-        console.log("File is written");
     });
 
     // Crear excel de consultas de almacen
@@ -1036,7 +1027,6 @@ io.on('connection', (socket) => {
                 }
             }
         });
-        console.log("File is written");
     });
 
     // Crear excel de consultas de almacen
@@ -1154,7 +1144,6 @@ io.on('connection', (socket) => {
                 }
             }
         });
-        console.log("File is written");
     });
 
     // Consulta de registro de productos
@@ -1275,7 +1264,6 @@ io.on('connection', (socket) => {
                         //Ruta del archivo
                         const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contadorS + '.xlsx');
                         workbook.xlsx.writeFile(pathExcel);
-                        console.log("b", pathExcel);
                         contadorS = contadorS + 1;
                     }
                 }
@@ -1291,7 +1279,6 @@ io.on('connection', (socket) => {
                 { header: 'Cantidad a sacar', key: 'CantSac', width: 30, },
                 { header: 'Fecha de salida', key: 'FecSac', width: 30, }
             ];
-            console.log(data);
             db.query('select Salidas_Productos.Cod_BarrasS, almacen.Articulo, almacen.Existencia, empleado.Nom, salidas_productos.Cantidad_Salida, salidas_productos.FSalida from salidas_productos inner join almacen on salidas_productos.Cod_BarrasS = almacen.Cod_Barras inner join empleado on salidas_productos.Num_EmpS = empleado.Num_emp where FSalida BETWEEN ? and ?', [data.fechaInicio, data.fechaFin], function (err, result) {
                 // If si marca error
                 if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
@@ -1374,7 +1361,6 @@ io.on('connection', (socket) => {
                         //Ruta del archivo
                         const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contadorS + '.xlsx');
                         workbook.xlsx.writeFile(pathExcel);
-                        console.log("b", pathExcel);
                         contadorS = contadorS + 1;
                     }
                 }
@@ -1413,7 +1399,6 @@ io.on('connection', (socket) => {
                         if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (result.affectedRows > 0) {
-                                console.log("Resultado de eliminacion de equipos: ", result);
                                 socket.emit('RespDelEqp', { mensaje: 'Equipo dado de baja.' });//Mandar mensaje de éxito a cliente
                             } else {
                                 socket.emit('RespDelEqp', { mensaje: "Equipo no eliminado, inténtelo de nuevo." });
@@ -1480,9 +1465,6 @@ io.on('connection', (socket) => {
     });
     // Cambios de monitor
     socket.on('CambiosMon', async (data, dataOld) => {
-        console.log(data);
-        console.log(dataOld);
-
         db.query('select * from monitor where Num_Serie = ?', [data.Num_S], async function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
@@ -1621,7 +1603,6 @@ io.on('connection', (socket) => {
                         if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (result) {
-                                console.log("Resultado de inserción de productos: ", result);
                                 socket.emit('Equipo_Respuesta', { mensaje: 'Equipo dado de alta.', Res: 'Si' });//Mandar mensaje de error a cliente
                             } else {
                                 socket.emit('Equipo_Respuesta', { mensaje: 'No se pudo dar de alta el equipo, inténtelo de nuevo.', Res: 'Si' });
@@ -1815,7 +1796,6 @@ io.on('connection', (socket) => {
                             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
                             else {
                                 if (result.length > 0) {//Si sí hizo una búsqueda
-                                    console.log(result);
                                     for (var i = 0; i < result.length; i++) {
                                         socket.emit('Desp_Mobiliario', { Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].AreaM });//Mandar usuario y token al cliente
                                     }
@@ -1833,7 +1813,6 @@ io.on('connection', (socket) => {
 
     // Altas de mobiliario
     socket.on('Alta_Mob', async (data) => {
-        console.log(data.NumE);
         db.query('SELECT empleado.Num_Emp, empleado.Área FROM empleado where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = ?)', [data.User], function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
@@ -1846,8 +1825,6 @@ io.on('connection', (socket) => {
                         if (err2) { Errores(err2); socket.emit('SystemError'); } // Se hace un control de errores
                         else {
                             if (result) {
-                                console.log("Resultado de inserción de productos: ", result);
-
                                 socket.emit('Mobiliario_Respuesta', { mensaje: 'Mobiliario dado de alta.', Res: 'Si' });//Mandar mensaje de error a cliente
                             }
                         }
@@ -1904,7 +1881,6 @@ io.on('connection', (socket) => {
 
     // Crear responsivas
     socket.on('Crea_Resp', async (data) => {
-        console.log(data);
         db.query('SELECT Num_Emp, Área from empleado where Nom = ?', [data.NombreEmp], function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
@@ -1975,7 +1951,6 @@ io.on('connection', (socket) => {
 
     // Actualizar carrito
     socket.on('updateCar', (data) => {
-        console.log(data)
         if (data.includes('accepted')) {
             db.query("update soli_car set Acept = 1 where Cod_Barras_SC = ? and emp_SC = (select Num_emp from empleado where Nom = ?) and request_date = ?", [data[2], data[6], data[1]], function (err, res) {
                 if (err) { Errores(err); socket.emit('SystemError'); }
@@ -2003,23 +1978,29 @@ io.on('connection', (socket) => {
     })
 
     socket.on('ECBS', (data) => {
-        console.log(data)
-        db.query('insert into soli_car select ?, ?, Num_Emp, ?, ?, ?, ?, ?, ? from usuario where Usuario = ?', [data.CBP, data.CP, 0, data.DATE, 0, 0, 0, 0, data.US], function (err, res) {
-            if (err) {
-                if (err.code === 'ER_DUP_ENTRY') {
-                    db.query('update soli_car set cantidad_SC = cantidad_SC + ? where Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?) and request_date = ?', [data.CP, data.CBP, data.US, data.DATE], function (err, res) {
-                        if (err) { Errores(err); socket.emit('SystemError'); }
-                        else {
-                            if (res) {
-                                cart_length(data.US)
-                            }
-                        }
-                    })
-                } else { Errores(err); socket.emit('SystemError'); }
+        db.query('UPDATE soli_car SET cantidad_SC = cantidad_SC + ? WHERE Cod_Barras_SC = ? AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) AND sended = 0 AND CAST(request_date AS DATE) = CAST(? AS DATE) AND EXISTS (SELECT 1 FROM (SELECT 1 FROM soli_car WHERE Cod_Barras_SC = ? AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) AND CAST(request_date AS DATE) = CAST(? AS DATE) AND sended = 0) as derived_table);', [data.CP, data.CBP, data.US, data.DATE, data.CBP, data.US, data.DATE], function(err, res){
+            if (err) { Errores(err); socket.emit('SystemError'); }
+            else if (res.affectedRows > 0) {
+                cart_length(data.user)
             } else {
-                if (res) {
-                    cart_length(data.US)
-                }
+                db.query('insert into soli_car select ?, ?, Num_Emp, ?, ?, ?, ?, ?, ? from usuario where Usuario = ?', [data.CBP, data.CP, 0, data.DATE, 0, 0, 0, 0, data.US], function (err, res) {
+                    if (err) {
+                        if (err.code === 'ER_DUP_ENTRY') {
+                            db.query('update soli_car set cantidad_SC = cantidad_SC + ? where Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?) and request_date = ?', [data.CP, data.CBP, data.US, data.DATE], function (err, res) {
+                                if (err) { Errores(err); socket.emit('SystemError'); }
+                                else {
+                                    if (res) {
+                                        cart_length(data.US)
+                                    }
+                                }
+                            })
+                        } else { Errores(err); socket.emit('SystemError'); }
+                    } else {
+                        if (res) {
+                            cart_length(data.US)
+                        }
+                    }
+                })
             }
         })
     })
@@ -2065,7 +2046,7 @@ io.on('connection', (socket) => {
 
     // Consulta de almacenista
     socket.on('consul_almacenista', (data) => {
-        db.query('SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered_ware, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1', data, function (err, res) {
+        db.query('SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered_ware, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 ORDER BY soli_car.delivered_soli ASC, soli_car.delivered_ware ASC;', data, function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res.length > 0) {
@@ -2078,8 +2059,8 @@ io.on('connection', (socket) => {
     })
 
     // Consulta de peticiones
-    socket.on('consul_requests', (data) => { /////////////// ME QUEDÉ AQUÍ
-        db.query('SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered_ware, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 and', data, function (err, res) {
+    socket.on('consul_requests', (data) => {
+        db.query('SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, soli_car.delivered_ware, soli_car.delivered_soli, soli_car.Acept, soli_car.cerrada FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras WHERE soli_car.sended = 1 and soli_car.emp_SC = (select Num_Emp from usuario where Usuario = ?) ORDER BY soli_car.cerrada asc, soli_car.Acept desc;', [data], function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res.length > 0) {
@@ -2093,8 +2074,9 @@ io.on('connection', (socket) => {
 
     // Entregar peticion
     socket.on('entregar_peti_alma', (data) => {
+        console.log(data)
         if (data.sended == "S") {
-            db.query('UPDATE soli_car SET delivered_ware = TRUE where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function (err, res) {
+            db.query('UPDATE soli_car SET delivered_soli = TRUE where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function (err, res) {
                 if (err) { Errores(err); socket.emit('SystemError'); }
                 else {
                     if (res) {
@@ -2103,7 +2085,7 @@ io.on('connection', (socket) => {
                 }
             })
         } else if (data.sended == "A") {
-            db.query('UPDATE soli_car SET delivered_soli = TRUE where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.user], function (err, res) {
+            db.query('UPDATE soli_car SET delivered_ware = TRUE where request_date = ? and Cod_Barras_SC = ? and emp_SC = (select Num_Emp from usuario where Usuario = ?)', [data.fpcdd, data.pcdd, data.usPet], function (err, res) {
                 if (err) { Errores(err); socket.emit('SystemError'); }
                 else {
                     if (res) {
@@ -2119,19 +2101,36 @@ io.on('connection', (socket) => {
         bell_lenght(data)
     })
 
+    socket.on('CTPSPE', function (data) {
+        truck_length(data)
+    })
+
     // Desconectar cliente
     socket.on('disconnect', () => {
         console.log('Cliente desconectado.');
     });
 
     function cart_length(user) {
-        db.query('select count(distinct Cod_Barras_SC, emp_SC, request_date) as cart_length from soli_car where emp_SC = (select Num_Emp from usuario where Usuario = ?) and sended = 0', user, function (err, res) {
+        db.query('select count(distinct Cod_Barras_SC, emp_SC, request_date) as cart_length from soli_car where emp_SC = (select Num_Emp from usuario where Usuario = ?) and sended = 0', [user], function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res.length > 0) {
                     socket.emit('ECBSR', res[0].cart_length)
                 } else {
                     socket.emit('ECBSRF', { mensaje: 'No hay productos agregados al carrito.', Res: "Si" })
+                }
+            }
+        })
+    }
+
+    function truck_length(user) {
+        db.query('select count(distinct Cod_Barras_SC, emp_SC, request_date) as truck_length from soli_car where emp_SC = (select Num_Emp from usuario where Usuario = ?) and delivered_soli = 0 and Acept = 1;', [user], function (err, res) {
+            if (err) { Errores(err); socket.emit('SystemError'); }
+            else {
+                if (res.length > 0) {
+                    socket.emit('CTPSPERR', res[0].truck_length)
+                } else {
+                    socket.emit('CTPSPERRF', { mensaje: 'No hay productos agregados al carrito.', Res: "Si" })
                 }
             }
         })

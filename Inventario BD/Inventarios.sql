@@ -727,10 +727,19 @@ select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.
 
 select count(distinct Cod_Barras_SC, emp_SC, request_date) as cart_length from soli_car where sended = 1 AND Acept = 1 and (delivered_ware = 0 or delivered_soli = 0);
 select*from soli_car;
-
+SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered_ware, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 and Usuario = 'ajimenez';
 select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 0 and emp_SC = 758;
-select*from usuario;
 
-drop table soli_warehousman_soli;
-alter table soli_car add column delivered tinyint(1);
-alter table soli_car add column sended tinyint(1);
+-- UPDATE soli_car SET cantidad_SC = cantidad_SC + ? WHERE Cod_Barras_SC = ? AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) AND sended = 0 AND CAST(request_date AS DATE) = CAST(? AS DATE) AND EXISTS (SELECT 1 FROM soli_car WHERE Cod_Barras_SC = ? AND emp_SC = ? AND CAST(request_date AS DATE) = CAST(? AS DATE) AND sended = 0);
+SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, soli_car.delivered_ware, soli_car.delivered_soli, soli_car.Acept, soli_car.cerrada FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras WHERE soli_car.sended = 1 and soli_car.emp_SC = (select Num_Emp from usuario where Usuario = 'ajimenez');
+update soli_car set delivered_ware = 0;
+update soli_car set delivered_soli = 0;
+
+DELIMITER |
+create trigger ASEPSE before update on soli_car
+	FOR EACH ROW BEGIN
+		IF NEW.delivered_ware = 1 AND NEW.delivered_soli = 1 THEN
+        SET NEW.cerrada = 1;
+		end if;
+	END
+| DELIMITER ;

@@ -38,34 +38,10 @@ if (Permisos['ALMACÉN']) {
         </li>
     `;
     }
-
-    // Peticiones de  productos
-    if (Permisos['ALMACÉN'].includes('1') && Permisos['ALMACÉN'].includes('2') && Permisos['ALMACÉN'].includes('3') && Permisos['ALMACÉN'].includes('4')) {
-        document.getElementById("Linksnav").innerHTML += `
-        <li>
-            <p>Peticiones de productos</p>
-            <ul class="menu-vertical_nav" id = "Alma1">
-                <li>
-                    <div><a href="/users/sol_prod_Almacen">Peticiones a Almacenista</a></div> 
-                </li>
-            </ul>
-        </li>
-    `;
-    }
 }
 /////// DIRECCION GENERAL ////////
 if (area === 'DIRECCION GENERAL'){
     $('.request-container').append('<div><div class="not_container_request"></div><a href="/users/sol_prod"><i class="fa-solid fa-bell"></i></a></div>')
-    document.getElementById("Linksnav").innerHTML += `
-    <li>
-        <p>Peticiones de empleados</p>
-        <ul class="menu-vertical_nav" id = "Alma1">
-            <li>
-                <div><a href="/users/sol_prod">Peticiones de Empelados</a></div> 
-            </li>
-        </ul>
-    </li>
-    `
 }
 
 if (Permisos['PETICIONES']){

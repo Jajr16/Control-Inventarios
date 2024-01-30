@@ -1,0 +1,1 @@
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'count(distinct Cod_Barras_SC, emp_SC, request_date) as truck_length from soli_ca' at line 1 | Error obtenido el -> 29/01/2024 18:26

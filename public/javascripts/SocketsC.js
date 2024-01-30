@@ -17,6 +17,15 @@ $(document).ready(function () {
         }
     })
 
+    socket.emit('CTPSPE', user)
+    socket.once('CTPSPERR', function (data) {
+        if (data != 0) {
+            notificationT = $('.truck_not_container')
+            notificationT.css("visibility", "visible");
+            notificationT.text(parseInt(data))
+        }
+    })
+
     if (Permisos['PETICIONES']) {
         socket.emit('CNPE', 'PETICIONES')
     }
@@ -26,7 +35,6 @@ $(document).ready(function () {
     }
 
     socket.once('ECNPER', function (data) {
-        console.log(data)
         if (data != 0) {
             notificacionD = $('.not_container_request')
             notificacionD.css("visibility", "visible")
@@ -339,7 +347,7 @@ function eliminarEquipo(elementoBoton, mensaje, mensajeSocket) {
 }
 if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
     if (!Permisos['EMPLEADOS']) {
-        location.href = "index";
+        window.history.back();
     } else {
         if (pathname === "/users/RegistroEmpleado" && Permisos['EMPLEADOS'].includes('1')) {
             cargarSelect2('#NomJefe');
@@ -440,12 +448,12 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
             recibirSocket('MensajeEmp');
         } else {
-            location.href = "index";
+            window.history.back();
         }
     }
 } else if (pathname === "/users/RegistrarUsuario" || pathname === "/users/consulUsuarios") {
     if (!Permisos['USUARIOS']) {
-        location.href = 'index';
+        window.history.back();
     } else {
         if (pathname === "/users/RegistrarUsuario" && Permisos['USUARIOS'].includes('1')) {
             cargarSelect('#NombreEmp');
@@ -2010,12 +2018,15 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                             } else {
                                 fila.append("<td>" + "Recibido" + "</td>")
                             }
-                        }
-                        else {
+                        } else {
                             fila.append('<td>' + value + '</td>')
                         }
                     })
-                    fila.append('<td class="BotonAC icon-entregar">Entregado</td>')
+
+                    if (row.delivered_ware == 0) {
+                        fila.append('<td class="BotonAC icon-entregar">Entregado</td>')
+                    }
+
                     table.append(fila)
                 })
 
@@ -2027,8 +2038,9 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     entregar[i].addEventListener("click", (e) => {
                         let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
                         let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
+                        let usPet = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[5].innerHTML;
 
-                        enviarSocket('entregar_peti_alma', { fpcdd, pcdd, user, sended: 'A' })
+                        enviarSocket('entregar_peti_alma', { fpcdd, pcdd, usPet, sended: 'A' })
                         location.reload()
                     })
                 }
@@ -2038,6 +2050,8 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         socket.on('error_desplegar', () => {
             empty_table('Requests', 14)
         })
+    } else {
+        window.history.back();
     }
 } else if (pathname == '/users/status_request') {
 
@@ -2062,24 +2076,30 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
                         fila.append("<td>" + fechaFormateada + "</td>");
 
-                    } else if (clave == 'delivered_ware') {
-                        if (value == 0) {
-                            fila.append("<td>" + "No entregado" + "</td>")
-                        } else {
-                            fila.append("<td>" + "Entregado" + "</td>")
+                    } else if (clave == 'delivered_ware' || clave == 'cerrada' || clave == 'delivered_soli' || clave == 'Acept') {
+                        if (clave == 'Acept') {
+                            if (row.Acept == 0 && row.cerrada == 0) {
+                                fila.append('<td>La solicitud aún no ha sido aceptada</td>')
+                            } else if (row.Acept == 0 && row.cerrada == 1) {
+                                fila.append('<td>La solicitud fue rechazada</td>')
+                                fila.addClass('decline')
+                            } else if (row.Acept == 1 && row.cerrada == 1) {
+                                fila.append('<td>Solicitud cerrada</td>')
+                                fila.addClass('accepted')
+                            } else if (row.Acept == 1 && row.cerrada == 0) {
+                                if (row.delivered_ware == 0 && row.delivered_soli == 0) {
+                                    fila.append('<td>Solicitud enviada al almacenista</td>')
+                                } else if (row.delivered_ware == 1 && row.delivered_soli == 0) {
+                                    fila.append('<td>Solicitud etregada por el almacenista</td>')
+                                }
+                                fila.append('<td class="BotonAC icon-entregar">Entregado</td>')
+                            }
                         }
-                    } else if (clave == 'delivered_soli') {
-                        if (value == 0) {
-                            fila.append("<td>" + "No recibido" + "</td>")
-                        } else {
-                            fila.append("<td>" + "Recibido" + "</td>")
-                        }
-                    }
-                    else {
+                    } else {
                         fila.append('<td>' + value + '</td>')
                     }
                 })
-                fila.append('<td class="BotonAC icon-entregar">Entregado</td>')
+
                 table.append(fila)
             })
 
