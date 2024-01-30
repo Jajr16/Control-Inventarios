@@ -58,6 +58,10 @@ body::-webkit-scrollbar-thumb:hover {
     border-radius: 7px;
 }
 
+a:visited {
+    color: blue;
+}
+
 .header {
     background-color: #eceff1;
     display: flex;
