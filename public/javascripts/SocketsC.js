@@ -1987,7 +1987,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
     })
 } else if (pathname == '/users/sol_prod_Almacen') {
     if (Permisos['PETICIONES']) {
-        enviarSocket('consul_almacenista', user)
+        enviarSocket('consul_almacenista')
 
         socket.on('desplegar_almacenista', async (data) => {
             if (data.length > 0) {
