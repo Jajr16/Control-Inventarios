@@ -804,6 +804,13 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                                     recibirSocket('ECBSRF')
 
                                     socket.emit('CNPC', user)
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Producto agregado al carrito!!!",
+                                        text: "Ingresa a tu carrito para visualizarlo.",
+                                    }).then(() => {
+                                        location.reload();
+                                    });
                                 });
 
                                 const cancel_icon = nuevoContenido.querySelector(".icon-cross");
@@ -2031,9 +2038,11 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 // Entregar peticion
                 for (let i = 0; i < entregar.length; i++) {
                     entregar[i].addEventListener("click", (e) => {
-                        let fpcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[0].innerHTML;
-                        let pcdd = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[1].innerHTML;
-                        let usPet = e.srcElement.parentNode.parentNode.parentNode.getElementsByTagName("td")[5].innerHTML;
+                        let fila = e.target.closest('tr');
+
+                        let fpcdd = fila.getElementsByTagName("td")[0].innerHTML;
+                        let pcdd = fila.getElementsByTagName("td")[1].innerHTML;
+                        let usPet = fila.getElementsByTagName("td")[5].innerHTML;
 
                         enviarSocket('entregar_peti_alma', { fpcdd, pcdd, usPet, sended: 'A' })
                         location.reload()

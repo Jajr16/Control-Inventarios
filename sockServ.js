@@ -2036,7 +2036,7 @@ io.on('connection', (socket) => {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res) {
-                    socket.emit('AAPICRE', { mensaje: 'Peticiones enviadas al director/directora', Res: "Si" })
+                    socket.emit('AAPICRE', { mensaje: 'Peticiones enviadas para su revisión.', Res: "Si" })
                 } else {
                     socket.emit('AAPICRE', { mensaje: 'No se pudieron enviar las peticiones. Inténtelo de nuevo', Res: "Si" })
                 }

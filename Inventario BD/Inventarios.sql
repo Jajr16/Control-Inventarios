@@ -692,4 +692,5 @@ create trigger ASEPSE before update on soli_car
 	END
 | DELIMITER ;
 
+update soli_car set delivered_soli = 0, delivered_ware = 0;
 select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept
