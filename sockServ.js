@@ -1146,6 +1146,148 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Crear excel de solicitudes de almacenista
+    socket.on('ExcelSoli', async () => {
+        const workbook = new Excel.Workbook();
+        const worksheet = workbook.addWorksheet("My Sheet");
+        var deli_ware;
+        var deli_soli;
+
+        worksheet.columns = [
+            { header: 'Fecha', key: 'Fecha', width: 20 },
+            { header: 'Código de barras', key: 'codbarras', width: 50 },
+            { header: 'Nombre del artículo', key: 'nombreArt', width: 50 },
+            { header: 'Marca del artículo', key: 'marcaArt', width: 40 },
+            { header: 'Cantidad', key: 'Cant', width: 15 },
+            { header: 'Solicitante', key: 'solicitante', width: 40 },
+            { header: 'Estatus de entrega', key: 'delivered_ware', width: 40 },
+            { header: 'Recibido por solicitante', key: 'delivered_soli', width: 40 }
+        ];
+
+        db.query('SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered_ware, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 ORDER BY soli_car.delivered_soli ASC, soli_car.delivered_ware ASC;', async function (err, res) {
+            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+            else {
+                if (res.length > 0) {
+                    for (var i = 0; i < res.length; i++) {
+                        if (res[i].delivered_ware == 0) {
+                            deli_ware = "No entregado"
+                        } else {
+                            deli_ware = "Entregado"
+                        }
+
+                        if (res[i].delivered_soli == 0) {
+                            deli_soli = "No recibido"
+                        } else {
+                            deli_soli = "Recibido"
+                        }
+                        worksheet.addRow({ Fecha: res[i].request_date, codbarras: res[i].Cod_Barras_SC, nombreArt: res[i].Articulo, marcaArt: res[i].Marca, Cant: res[i].cantidad_SC, solicitante: res[i].Usuario, delivered_ware: deli_ware, delivered_soli: deli_soli });
+                    }
+
+                    //ESTILO DE EXCEL
+                    worksheet.getCell('A1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('A1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('B1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('B1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('C1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('C1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('D1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('D1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('E1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('E1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('F1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('F1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('G1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('G1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getCell('H1').fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'F003A9E' }
+                    };
+                    worksheet.getCell('H1').font = {
+                        name: 'Arial',
+                        color: { argb: 'FFFFFF' },
+                        bold: true
+                    };
+
+                    worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.autoFilter = 'A:H';
+
+                    //Ruta del archivo
+                    var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
+                    const pathExcel = path.join(DOWNLOAD_DIR, nombreArchivoM + '_' + contador + '.xlsx');
+                    await workbook.xlsx.writeFile(pathExcel);
+                    socket.emit("RespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
+                    contador++;
+                } else {
+                    socket.emit("RespExcel", { mensaje: "No se puede descargar un excel de un registro vacío" });
+                }
+            }
+        });
+    });
+
     // Consulta de registro de productos
     socket.on('Consul_RegProSac', async () => {
 
@@ -1978,7 +2120,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('ECBS', (data) => {
-        db.query('UPDATE soli_car SET cantidad_SC = cantidad_SC + ? WHERE Cod_Barras_SC = ? AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) AND sended = 0 AND CAST(request_date AS DATE) = CAST(? AS DATE) AND EXISTS (SELECT 1 FROM (SELECT 1 FROM soli_car WHERE Cod_Barras_SC = ? AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) AND CAST(request_date AS DATE) = CAST(? AS DATE) AND sended = 0) as derived_table);', [data.CP, data.CBP, data.US, data.DATE, data.CBP, data.US, data.DATE], function(err, res){
+        db.query('UPDATE soli_car SET cantidad_SC = cantidad_SC + ? WHERE Cod_Barras_SC = ? AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) AND sended = 0 AND CAST(request_date AS DATE) = CAST(? AS DATE) AND EXISTS (SELECT 1 FROM (SELECT 1 FROM soli_car WHERE Cod_Barras_SC = ? AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) AND CAST(request_date AS DATE) = CAST(? AS DATE) AND sended = 0) as derived_table);', [data.CP, data.CBP, data.US, data.DATE, data.CBP, data.US, data.DATE], function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else if (res.affectedRows > 0) {
                 cart_length(data.user)
@@ -2094,7 +2236,7 @@ io.on('connection', (socket) => {
                 }
             })
         }
-        
+
     })
 
     socket.on('CNPE', (data) => {

@@ -277,6 +277,7 @@ token nvarchar(20) not null primary key,
 area nvarchar(45) not null
 );
 
+drop table permisos;
 create table permisos(
 permiso enum("1","2","3","4") not null, #Tambien se puede set 1 Altas 2 Bajas 3 Cambios 4 Consultas
 usuario varchar(25),
@@ -286,6 +287,7 @@ foreign key (usuario) references usuario(Usuario) on delete cascade on update ca
 );
 
 select*from peticion;
+select*from permisos;
 
 insert into permisos values
 (1,"ajimenez","ALMACÉN"),#Altas
@@ -364,7 +366,8 @@ insert into permisos values
 (1,"armando","RESPONSIVAS"),#Altas
 (2,"armando","RESPONSIVAS"),#Bajas
 (3,"armando","RESPONSIVAS"),#Cambios
-(4,"armando","RESPONSIVAS");#Consultas
+(4,"armando","RESPONSIVAS"),#Consultas
+(1,"armando","PETICIONES");#Consultas
 
 insert into permisos values
 (1,"martha","ALMACÉN"),#Altas
@@ -390,7 +393,10 @@ insert into permisos values
 (1,"martha","RESPONSIVAS"),#Altas
 (2,"martha","RESPONSIVAS"),#Bajas
 (3,"martha","RESPONSIVAS"),#Cambios
-(4,"martha","RESPONSIVAS");#Consultas
+(4,"martha","RESPONSIVAS"),#Consultas
+(1,"martha","PETICIONES");#Consultas
+
+delete from permisos where usuario = "armando";
 
 create table Factus_Productos(
 Cod_Barras nvarchar(45) not null,
@@ -699,7 +705,7 @@ alter table Soli_car modify column request_date datetime;
 alter table Soli_car add column delivered_soli tinyint(1);
 alter table Soli_car add column cerrada tinyint(1);
 alter table soli_car change delivered delivered_ware tinyint(1);
-alter table soli_car drop column cerrada;
+alter table soli_car drop column recibido;
     
 -- Modify table soli_car
 alter table Salidas_Productos add constraint FKCBS foreign key(Cod_BarrasS) references almacen(Cod_Barras);
