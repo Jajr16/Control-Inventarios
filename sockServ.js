@@ -2078,9 +2078,9 @@ io.on('connection', (socket) => {
         });
     });
 
-    // Busca solcitudes de carrito
+    // Busca solcitudes de carrito  
     socket.on('get_applicants', () => {
-        db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept', function (err, res) {
+        db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC where sended = 1 order by cerrada, Acept', function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res) {
@@ -2149,7 +2149,7 @@ io.on('connection', (socket) => {
 
     // Responder peticion de carrito
     socket.on('RPC', (data) => {
-        db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 0 and emp_SC = (select Num_Emp from usuario where Usuario = ?)', data, function (err, res) {
+        db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras where sended = 0 and emp_SC = (select Num_Emp from usuario where Usuario = ?)', data, function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res.length > 0) {
@@ -2178,7 +2178,7 @@ io.on('connection', (socket) => {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res) {
-                    socket.emit('AAPICRE', { mensaje: 'Peticiones enviadas al director/directora', Res: "Si" })
+                    socket.emit('AAPICRE', { mensaje: 'Peticiones enviadas para su revisión.', Res: "Si" })
                 } else {
                     socket.emit('AAPICRE', { mensaje: 'No se pudieron enviar las peticiones. Inténtelo de nuevo', Res: "Si" })
                 }
@@ -2187,8 +2187,8 @@ io.on('connection', (socket) => {
     })
 
     // Consulta de almacenista
-    socket.on('consul_almacenista', (data) => {
-        db.query('SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered_ware, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 ORDER BY soli_car.delivered_soli ASC, soli_car.delivered_ware ASC;', data, function (err, res) {
+    socket.on('consul_almacenista', () => {
+        db.query('SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, empleado.Nom, soli_car.delivered_ware, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN empleado ON soli_car.emp_SC = empleado.Num_emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 ORDER BY soli_car.delivered_soli ASC, soli_car.delivered_ware ASC;', function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
             else {
                 if (res.length > 0) {
@@ -2280,7 +2280,7 @@ io.on('connection', (socket) => {
 
     function bell_lenght(permiso) {
         if (permiso == 'DIRECCION GENERAL') {
-            db.query('select count(distinct Cod_Barras_SC, emp_SC, request_date) as bell_length from soli_car where Acept = 0 and cerrada = 0;', function (err, res) {
+            db.query('select count(distinct Cod_Barras_SC, emp_SC, request_date) as bell_length from soli_car where sended = 1 AND Acept = 0 and cerrada = 0;', function (err, res) {
                 if (err) { Errores(err); socket.emit('SystemError'); }
                 else {
                     if (res.length > 0) {
