@@ -1164,7 +1164,7 @@ io.on('connection', (socket) => {
             { header: 'Recibido por solicitante', key: 'delivered_soli', width: 40 }
         ];
 
-        db.query('SELECT soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, almacen.Marca, soli_car.cantidad_SC, usuario.Usuario, soli_car.delivered_ware, soli_car.delivered_soli FROM soli_car INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras INNER JOIN usuario ON soli_car.emp_SC = usuario.Num_Emp WHERE soli_car.sended = 1 AND soli_car.Acept = 1 ORDER BY soli_car.delivered_soli ASC, soli_car.delivered_ware ASC;', async function (err, res) {
+        db.query('select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept;', async function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
                 if (res.length > 0) {
@@ -1180,7 +1180,7 @@ io.on('connection', (socket) => {
                         } else {
                             deli_soli = "Recibido"
                         }
-                        worksheet.addRow({ Fecha: res[i].request_date, codbarras: res[i].Cod_Barras_SC, nombreArt: res[i].Articulo, marcaArt: res[i].Marca, Cant: res[i].cantidad_SC, solicitante: res[i].Usuario, delivered_ware: deli_ware, delivered_soli: deli_soli });
+                        worksheet.addRow({ Fecha: res[i].request_date, codbarras: res[i].Cod_Barras_SC, nombreArt: res[i].Articulo, marcaArt: res[i].Marca, Cant: res[i].cantidad_SC, solicitante: res[i].Nom, delivered_ware: deli_ware, delivered_soli: deli_soli });
                     }
 
                     //ESTILO DE EXCEL
