@@ -62,6 +62,7 @@ io.on('connection', (socket) => {
     let nombreArchivoM = "Mobiliario" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
     let nombreArchivoE = "Equipo" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
     let nombreSacarProd = "Retiro_Almacen" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
+    let carrito = "Productos_Entregar" + "-" + fechaDia + "_" + fechaMes + "_" + fechaAño + "--" + fechaHora + "-" + fechaMinutos;
 
     // Manejar eventos de inicio de sesión (Login)
     socket.on('LG', async (data) => {
@@ -1154,7 +1155,7 @@ io.on('connection', (socket) => {
         var deli_soli;
 
         worksheet.columns = [
-            { header: 'Fecha', key: 'Fecha', width: 20 },
+            { header: 'Fecha', key: 'Fecha', width: 25 },
             { header: 'Código de barras', key: 'codbarras', width: 50 },
             { header: 'Nombre del artículo', key: 'nombreArt', width: 50 },
             { header: 'Marca del artículo', key: 'marcaArt', width: 40 },
@@ -1275,9 +1276,17 @@ io.on('connection', (socket) => {
                     worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
                     worksheet.autoFilter = 'A:H';
 
+                    // Aplica formato de fecha y hora a partir de la celda A2 hasta el final de la columna A
+                    const columnA = worksheet.getColumn('A');
+                    columnA.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+                        if (rowNumber > 1) {
+                            cell.numFmt = 'dd/mm/yyyy hh:mm:ss AM/PM';
+                        }
+                    });
+
                     //Ruta del archivo
                     var DOWNLOAD_DIR = path.join(process.env.HOME || process.env.USERPROFILE, 'downloads/');
-                    const pathExcel = path.join(DOWNLOAD_DIR, nombreArchivoM + '_' + contador + '.xlsx');
+                    const pathExcel = path.join(DOWNLOAD_DIR, carrito + '_' + contador + '.xlsx');
                     await workbook.xlsx.writeFile(pathExcel);
                     socket.emit("RespExcel", { mensaje: "Excel descargado en la carpeta Descargas" });
                     contador++;
@@ -1403,6 +1412,14 @@ io.on('connection', (socket) => {
                         worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
                         worksheet.autoFilter = 'A:F';
 
+                        // Aplica formato de fecha y hora a partir de la celda F2 hasta el final de la columna F
+                        const columnF = worksheet.getColumn('F');
+                        columnF.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+                            if (rowNumber > 1) {
+                                cell.numFmt = 'dd/mm/yyyy hh:mm:ss AM/PM';
+                            }
+                        });
+
                         //Ruta del archivo
                         const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contadorS + '.xlsx');
                         workbook.xlsx.writeFile(pathExcel);
@@ -1499,6 +1516,14 @@ io.on('connection', (socket) => {
 
                         worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
                         worksheet.autoFilter = 'A:F';
+
+                        // Aplica formato de fecha y hora a partir de la celda F2 hasta el final de la columna F
+                        const columnF = worksheet.getColumn('F');
+                        columnF.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+                            if (rowNumber > 1) {
+                                cell.numFmt = 'dd/mm/yyyy hh:mm:ss AM/PM';
+                            }
+                        });
 
                         //Ruta del archivo
                         const pathExcel = path.join(DOWNLOAD_DIR, nombreSacarProd + '_' + contadorS + '.xlsx');

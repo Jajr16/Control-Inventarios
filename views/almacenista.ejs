@@ -6,8 +6,27 @@
         <div class="card-header">
             <h4>Productos a Entregar</h4>
         </div>
-        <input type="text" id="buscar" oninput="buscar()" placeholder="BUSCAR EN TABLA"
-            title="Empieza a escribir para buscar">
+        <div class="Dos_Columnas">
+            <span>
+                <center>
+                    <h1 id="Adverticement"></h1>
+                </center>
+            </span>
+        </div>
+        <div class="Tres_Column">
+            <div>
+                <label id="start-date">Fecha de inicio:</label>
+                <input type="date" id="fechaInicio">
+            </div>
+            <div>
+                <label id="end-date">Fecha de fin:</label>
+                <input type="date" id="fechaFin">
+            </div>
+            <div>
+                <label><br></label>
+                <button class="BotonFiltro" onclick="FiltrarFechas()">Filtrar</button>
+            </div>
+        </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table id="Requests">

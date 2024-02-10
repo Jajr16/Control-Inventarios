@@ -1078,17 +1078,28 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             socket.emit("Consul_RegProSac");
             // Consulta de productos
             socket.on('Desp_Productos', async (data) => {
+                // Limpia la fecha
+                var fechaSal = data.FSalida;
+                var fechaJS = new Date(fechaSal);
+                var año = fechaJS.getFullYear();
+                var mes = ('0' + (fechaJS.getMonth() + 1)).slice(-2);
+                var dia = ('0' + fechaJS.getDate()).slice(-2);
+                var horas = ('0' + fechaJS.getHours()).slice(-2);
+                var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
+                var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
+
+                var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
 
                 document.querySelector("#DatosProSac tbody").innerHTML += `
-        <tr>
-            <td id="Cod_BarrasS">${data.Cod_BarrasS}</td>
-            <td id="ArticuloS">${data.Articulo}</td>
-            <td id="ExistenciaS">${data.Existencia}</td>
-            <td id="EncargadoS">${data.Nom}</td>
-            <td id="Cantidad_Salida">${data.Cantidad_Salida}</td>
-            <td id="FSalida">${data.FSalida}</td>
-        </tr>
-        `;
+                    <tr>
+                        <td id="Cod_BarrasS">${data.Cod_BarrasS}</td>
+                        <td id="ArticuloS">${data.Articulo}</td>
+                        <td id="ExistenciaS">${data.Existencia}</td>
+                        <td id="EncargadoS">${data.Nom}</td>
+                        <td id="Cantidad_Salida">${data.Cantidad_Salida}</td>
+                        <td id="FSalida">${fechaFormateada}</td>
+                    </tr>
+                `;
             });
 
             // Buscar por fecha
@@ -1833,12 +1844,12 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         table = $("#Requests")
 
         socket.on('return_applicants', async (data) => {
-            if (data.length > 0){
+            if (data.length > 0) {
                 // Add requests process
                 $.each(data, function (_, item) {
                     var row = $('<tr></tr>');
                     $.each(item, function (clave, value) {
-    
+
                         if (clave === 'request_date') {
                             // Fecha obtenida
                             var fechaJS = new Date(value);
@@ -1848,10 +1859,10 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                             var horas = ('0' + fechaJS.getHours()).slice(-2);
                             var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
                             var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
-    
+
                             var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
                             row.append("<td>" + fechaFormateada + "</td>");
-    
+
                         } else if (clave === 'cerrada') {
                             if (item.cerrada == 1 && item.Acept == 0) {
                                 row.addClass('decline')
@@ -1874,14 +1885,14 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 // Continue with all requests events (accept and decline requests)
                 var accepted = document.getElementsByClassName('icon-check')
                 var declined = document.getElementsByClassName('icon-cross')
-    
+
                 for (let i = 0; i < accepted.length; i++) {
                     accepted[i].addEventListener("click", getRequestssolicitants)
                     declined[i].addEventListener("click", getRequestssolicitants)
                 }
-    
+
                 var valores = []
-    
+
                 function getRequestssolicitants(e) {
                     class_button = Array.from(e.srcElement.classList)[0]
                     boton = ''
@@ -1902,15 +1913,15 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         confirmButtonText: "Si, seguro!"
                     }).then((result) => {
                         if (result.isConfirmed) {
-    
+
                             var elementosTD = e.srcElement.parentElement.parentElement.parentElement.getElementsByTagName("td");
                             // recorremos cada uno de los elementos del array de elementos <td>
                             for (let i = 0; i < elementosTD.length - 1; i++) {
                                 valores.push(elementosTD[i].innerHTML); // obtenemos cada uno de los valores y los ponemos en la variable "valores"
                             }
-    
+
                             enviarSocket('updateCar', valores)
-    
+
                             socket.once('request_answered', (Respuesta) => {
                                 Swal.fire({
                                     icon: "success",
@@ -1925,7 +1936,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         }
                     })
                 }
-            }else {
+            } else {
                 empty_table('Requests', 7)
             }
         });
@@ -2050,6 +2061,40 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 }
             }
         })
+
+        // Buscar por fecha
+        function FiltrarFechas() {
+            if ($("#fechaInicio").val() != "" && $("#fechaFin").val() != "") {
+                $("#Adverticement").removeClass("anuncio");
+                $("#Adverticement").text('');
+
+                var filtroInicio = new Date($("#fechaInicio").val()); // Obtener la fecha de inicio como objeto Date
+                var filtroFin = new Date($("#fechaFin").val()); // Obtener la fecha de fin como objeto Date
+                filtroFin.setDate(filtroFin.getDate() + 1);
+
+                $("#Requests td").each(function () {
+                    var fechaEnTd = new Date($(this).text());
+
+                    // Comprobar si la fecha en el td está dentro del rango filtrado
+                    if (!isNaN(fechaEnTd) && fechaEnTd >= filtroInicio && fechaEnTd <= filtroFin) {
+                        $(this).addClass("existe");
+                    } else {
+                        $(this).removeClass("existe");
+                    }
+                });
+
+                $("#Requests tbody tr").each(function () {
+                    if ($(this).children(".existe").length > 0) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            } else {
+                $("#Adverticement").text('Llene todos los campos.');
+                $("#Adverticement").addClass("anuncio");
+            }
+        }
 
         socket.on('error_desplegar', () => {
             empty_table('Requests', 14)
