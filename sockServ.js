@@ -1955,6 +1955,7 @@ io.on('connection', (socket) => {
 
     // Altas de mobiliario
     socket.on('Alta_Mob', async (data) => {
+        console.log(data)
         db.query('SELECT empleado.Num_Emp, empleado.Área FROM empleado where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = ?)', [data.User], function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {

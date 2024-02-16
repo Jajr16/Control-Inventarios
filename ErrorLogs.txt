@@ -3,3 +3,8 @@ Error: ER_BAD_FIELD_ERROR: Unknown column 'empleado.Num_emp' in 'where clause' |
 Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'INNER JOIN empleado ON soli_car.emp_SC = empleado.Num_emp ORDER BY soli_car.cerr' at line 1 | Error obtenido el -> 31/01/2024 22:8
 Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'INNER JOIN empleado ON soli_car.emp_SC = empleado.Num_emp ORDER BY soli_car.cerr' at line 1 | Error obtenido el -> 31/01/2024 22:9
 Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ON soli_car.Cod_Barras_SC = almacen.Cod_Barras WHERE soli_car.sended = 1 and sol' at line 1 | Error obtenido el -> 31/01/2024 22:9
+Error: ER_BAD_NULL_ERROR: Column 'Num_Inventario' cannot be null | Error obtenido el -> 15/02/2024 23:18
+Error: ER_BAD_NULL_ERROR: Column 'Num_Inventario' cannot be null | Error obtenido el -> 15/02/2024 23:27
+Error: ER_WRONG_VALUE_COUNT_ON_ROW: Column count doesn't match value count at row 1 | Error obtenido el -> 15/02/2024 23:27
+Error: ER_DUP_ENTRY: Duplicate entry 'P-DWA-758' for key 'mobiliario.PRIMARY' | Error obtenido el -> 15/02/2024 23:27
+Error: ER_DUP_ENTRY: Duplicate entry 'PRUEBA-DWA-758' for key 'mobiliario.PRIMARY' | Error obtenido el -> 15/02/2024 23:27
