@@ -1926,7 +1926,7 @@ io.on('connection', (socket) => {
                             else {
                                 if (result.length > 0) {//Si sí hizo una búsqueda
                                     for (var i = 0; i < result.length; i++) {
-                                        socket.emit('Desp_Mobiliario', { Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].Area });//Mandar usuario y token al cliente
+                                        socket.emit('Desp_Mobiliario', { Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].Área });//Mandar usuario y token al cliente
                                     }
                                     socket.emit('ButtonUp');
                                 }
@@ -1939,7 +1939,7 @@ io.on('connection', (socket) => {
                             else {
                                 if (result.length > 0) {//Si sí hizo una búsqueda
                                     for (var i = 0; i < result.length; i++) {
-                                        socket.emit('Desp_Mobiliario', { Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].AreaM });//Mandar usuario y token al cliente
+                                        socket.emit('Desp_Mobiliario', { Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].Área });//Mandar usuario y token al cliente
                                     }
                                     socket.emit('ButtonUp');
                                 }

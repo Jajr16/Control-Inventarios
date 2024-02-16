@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS Inventarios.`Mobiliario` (
   Num_emp INT NOT NULL,
   Ubicacion varchar(400),
   Cantidad int,
-  Area VARCHAR(200) NULL,
+  Área VARCHAR(200) NULL,
   PRIMARY KEY (Articulo, Descripcion, Num_emp),
   INDEX Num_emp_idx (Num_emp ASC),
   CONSTRAINT Num_RespM
@@ -700,6 +700,8 @@ create trigger ASEPSE before update on soli_car
 | DELIMITER ;
 
 select*from mobiliario;
+
+
 
 update soli_car set delivered_soli = 0, delivered_ware = 0;
 select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept
