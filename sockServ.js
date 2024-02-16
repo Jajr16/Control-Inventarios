@@ -53,6 +53,28 @@ async function Errores(Data) {
     });
 }
 
+// Función para cargar el archivo JSON
+function cargarArchivoJSON() {
+    try {
+        const data = fs.readFileSync('./public/javascripts/almacen_mobiliario.json');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error al cargar el archivo JSON:', error);
+        return [];
+    }
+}
+
+// Función para guardar el archivo JSON
+function guardarArchivoJSON(data) {
+    try {
+        fs.writeFileSync('./public/javascripts/almacen_mobiliario.json', JSON.stringify(data, null, 4));
+        console.log('Datos agregados al archivo JSON exitosamente.');
+    } catch (error) {
+        console.error('Error al guardar el archivo JSON:', error);
+    }
+}
+
+
 // Configuración de Socket.io para manejar conexiones de clientes
 io.on('connection', (socket) => {
     console.log('Cliente conectado');
@@ -1969,6 +1991,11 @@ io.on('connection', (socket) => {
                         else {
                             if (result) {
                                 socket.emit('Mobiliario_Respuesta', { mensaje: 'Mobiliario dado de alta.', Res: 'Si' });//Mandar mensaje de error a cliente
+                                let articulos = cargarArchivoJSON();
+
+                                articulos.push({ "ARTICULO": data.Articulo });
+                                
+                                guardarArchivoJSON(articulos);
                             }
                         }
                     });

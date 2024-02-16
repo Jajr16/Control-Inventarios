@@ -1,4 +1,4 @@
-﻿[
+[
     {
         "ARTICULO": "AMPLIFICADOR DE SONIDO"
     },
@@ -343,5 +343,8 @@
     },
     {
         "ARTICULO": "VITRINA"
+    },
+    {
+        "ARTICULO": "PRUEBA7"
     }
 ]
