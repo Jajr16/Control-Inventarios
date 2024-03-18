@@ -182,7 +182,6 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Almacen` (
   PRIMARY KEY (`Cod_Barras`))
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Salida_Almacen`
 -- -----------------------------------------------------
@@ -399,7 +398,7 @@ insert into permisos values
 
 delete from permisos where usuario = "armando";
 
-create table Factus_Productos(
+create table factus_Productos(
 Cod_Barras nvarchar(45) not null,
 Nfactura nvarchar(10) not null,
 Cantidad int not null,
@@ -700,8 +699,26 @@ create trigger ASEPSE before update on soli_car
 | DELIMITER ;
 
 select*from mobiliario;
+select*from soli_car;
+select*from soli_com;
+select*from almacen;
+select*from facturas_almacen;
+select*from factus_productos;
 
+CREATE TABLE soli_com (
+    Cod_Barras_SCom VARCHAR(45),
+    emp_SCom int,
+    request_date_SCom datetime,
+    Acept BOOLEAN, -- Si la solicitud fue aceptada o no
+    recibida tinyint(1), -- Si ya se recibió el pedido
+    almacenada tinyint(1), -- Si el pedido ya fue almacenado
+    cerrada BOOLEAN -- Si la solicitud ya fue cerrada
+);
 
+-- Modify table soli_com
+alter table soli_com add constraint SoliComPK primary key(Cod_Barras_SCom, emp_SCom, request_date_SCom);
+alter table soli_com add constraint CodBFK foreign key(Cod_Barras_SCom) references almacen(Cod_Barras);
+alter table soli_com add constraint EmpFK foreign key(emp_SCom) references empleado(Num_emp);
 
 update soli_car set delivered_soli = 0, delivered_ware = 0;
 select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept

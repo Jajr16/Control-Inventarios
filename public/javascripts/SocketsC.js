@@ -669,9 +669,9 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
             function Enviar(e) {
                 e.preventDefault();
-                if ($("#Cod_Barras").val() != "" && $("#FecActu").val() != "" && $("#Categoria").val() != "" && $("#NomP").val() != "" && $("#MarcActi").val() != "" && $("#DescripcionP").val() != "" && $("#Proveedor").val() != "" && $("#NumFact").val() != "" && $("#CantidadP").val() != "" && $("#UnidadP").val() != "" && $("#FecFact").val()) {
+                if ($("#Cod_Barras").val() != "" && $("#Categoria").val() != "" && $("#NomP").val() != "" && $("#MarcActi").val() != "" && $("#DescripcionP").val() != "" && $("#UnidadP").val() != "" && $("#CantidadP").val() != "" && $("#FecActu").val() != "" && $("#Proveedor").val() != "" && $("#NumFact").val() != "" && $("#FecFact").val() != "") {
 
-                    socket.emit('Alta_Prod', { CodBarras: $("#Cod_Barras").val(), FecAct: $("#FecActu").val(), Cate: $("#Categoria").val(), Producto: $("#NomP").val(), Marca: $("#MarcActi").val(), Descripcion: $("#DescripcionP").val(), Proveedor: $("#Proveedor").val(), NumFactura: $("#NumFact").val(), FechaFac: $("#FecFact").val(), Cantidad: $("#CantidadP").val(), Unidad: $("#UnidadP").val() });
+                    socket.emit('Alta_Prod', { Cod_Barras: $("#Cod_Barras").val(), Categoria: $("#Categoria").val(), Articulo: $("#NomP").val(), Marca: $("#MarcActi").val(), Descripcion: $("#DescripcionP").val(), Unidad: $("#UnidadP").val(), Cantidad: $("#CantidadP").val(), FIngreso: $("#FecActu").val(), Proveedor: $("#Proveedor").val(), NFact: $("#NumFact").val(), FechaFac: $("#FecFact").val() });
 
                     recibirSocket('Producto_Ans')
                 }
@@ -701,6 +701,10 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
             if (Permisos['ALMACÉN'].includes('4')) {
                 CabHTML += `<th>Solicitar Artículo</th>`;
             }
+            if (Permisos['ALMACÉN'].includes('4')) {
+                CabHTML += `<th>Solicitud de compra</th>`;
+            }
+
 
             thead.innerHTML += CabHTML;
 
@@ -740,6 +744,14 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
 
                     filaHTML += `<td class="BotonAC Carrito_Cant" id="Carrito_Cant"> Solicitar artículo </td>`;
 
+                    if (data.Existencia == 1) {
+                        filaHTML += '<td class="BotonSoliCom" id="BotonSoliCom"> Crear solicitud de compra </td>';
+                    } else if (data.Existencia <= 5) {
+                        filaHTML += `<td class="BotonArtiPorAgo" id="BotonArtiPorAgo"> Artículos por agotarse </td>`;
+                    } else if (data.Existencia > 5) {
+                        filaHTML += `<td class="BotonCantNormal" id="BotonCantNormal"> Cantidad suficiente </td>`;
+                    }
+
                 }
 
                 // Cierra la fila
@@ -760,6 +772,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     }
                 }
 
+                // Se pueden añadir productos en solicitar productos
                 if (Permisos['ALMACÉN'].includes('4')) {
                     const botonesCarritos = document.getElementsByClassName("BotonAC");
 
@@ -826,7 +839,64 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                             }
                         });
                     }
+                }
 
+                // Se mandan las solicitudes de compra
+                if (Permisos['ALMACÉN'].includes('4')) {
+                    const botones_Soli_Com = document.getElementsByClassName("BotonSoliCom");
+
+                    for (let i = 0; i < botones_Soli_Com.length; i++) {
+                        botones_Soli_Com[i].addEventListener("click", function (e) {
+                            const btnClickeado = this;
+
+                            if (btnClickeado.classList.contains('BotonSoliCom')) {
+                                // Elimina la clase 'BotonSoliCom'
+                                btnClickeado.classList.remove('BotonSoliCom');
+                                // Crea un nuevo elemento <div> con el input y los íconos
+                                const nuevoContenido = document.createElement('div');
+                                nuevoContenido.innerHTML = '<span class="icon-check">✔</span><span class="icon-cross">✘</span>';
+                                
+                                // Reemplaza el contenido del td con el nuevo elemento
+                                btnClickeado.innerHTML = '';
+                                btnClickeado.appendChild(nuevoContenido);
+
+                                const CompraCheck = nuevoContenido.querySelector(".icon-check");
+                                
+                                CompraCheck.addEventListener("click", function (e) {
+                                    
+                                    const Compra = this.parentElement.parentElement.parentElement;
+
+                                    const padreInput = Compra.getElementsByTagName("td");
+
+                                    var codigoBarras = padreInput[0].innerHTML;
+
+                                    var fecha = Fecha() + ' ' + Hora()
+
+                                    enviarSocket('CSCom', { CodigoBarras: codigoBarras, User: user, FechaSCom: fecha })
+                                    recibirSocket('CSCom_Respuesta')
+
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Solicitud de compra creada con éxito",
+                                        text: "Ingresa a la sección de solicitud de compra para visualizarlo.",
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                });   
+
+                                const cancel_icon = nuevoContenido.querySelector(".icon-cross");
+
+                                cancel_icon.addEventListener("click", function (e) {
+                                    e.stopPropagation(); // Detener la propagación del clic en el ícono
+                                    if (!btnClickeado.classList.contains('BotonSoliCom')) {
+                                        nuevoContenido.remove();
+                                        btnClickeado.classList.add('BotonSoliCom');
+                                        btnClickeado.innerHTML = 'Crear solicitud de compra';
+                                    }
+                                });
+                            }
+                        });
+                    }
                 }
             });
             recibirSocket('Delete_Prod_Ans')
@@ -1833,12 +1903,12 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
         table = $("#Requests")
 
         socket.on('return_applicants', async (data) => {
-            if (data.length > 0){
+            if (data.length > 0) {
                 // Add requests process
                 $.each(data, function (_, item) {
                     var row = $('<tr></tr>');
                     $.each(item, function (clave, value) {
-    
+
                         if (clave === 'request_date') {
                             // Fecha obtenida
                             var fechaJS = new Date(value);
@@ -1848,10 +1918,10 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                             var horas = ('0' + fechaJS.getHours()).slice(-2);
                             var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
                             var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
-    
+
                             var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
                             row.append("<td>" + fechaFormateada + "</td>");
-    
+
                         } else if (clave === 'cerrada') {
                             if (item.cerrada == 1 && item.Acept == 0) {
                                 row.addClass('decline')
@@ -1874,14 +1944,14 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                 // Continue with all requests events (accept and decline requests)
                 var accepted = document.getElementsByClassName('icon-check')
                 var declined = document.getElementsByClassName('icon-cross')
-    
+
                 for (let i = 0; i < accepted.length; i++) {
                     accepted[i].addEventListener("click", getRequestssolicitants)
                     declined[i].addEventListener("click", getRequestssolicitants)
                 }
-    
+
                 var valores = []
-    
+
                 function getRequestssolicitants(e) {
                     class_button = Array.from(e.srcElement.classList)[0]
                     boton = ''
@@ -1902,15 +1972,15 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         confirmButtonText: "Si, seguro!"
                     }).then((result) => {
                         if (result.isConfirmed) {
-    
+
                             var elementosTD = e.srcElement.parentElement.parentElement.parentElement.getElementsByTagName("td");
                             // recorremos cada uno de los elementos del array de elementos <td>
                             for (let i = 0; i < elementosTD.length - 1; i++) {
                                 valores.push(elementosTD[i].innerHTML); // obtenemos cada uno de los valores y los ponemos en la variable "valores"
                             }
-    
+
                             enviarSocket('updateCar', valores)
-    
+
                             socket.once('request_answered', (Respuesta) => {
                                 Swal.fire({
                                     icon: "success",
@@ -1925,7 +1995,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         }
                     })
                 }
-            }else {
+            } else {
                 empty_table('Requests', 7)
             }
         });
@@ -2081,6 +2151,7 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                         fila.append("<td>" + fechaFormateada + "</td>");
 
                     } else if (clave == 'delivered_ware' || clave == 'cerrada' || clave == 'delivered_soli' || clave == 'Acept') {
+                        // Si ya fue aceptada
                         if (clave == 'Acept') {
                             if (row.Acept == 0 && row.cerrada == 0) {
                                 fila.append('<td>La solicitud aún no ha sido aceptada</td>')
@@ -2120,6 +2191,90 @@ if (pathname === "/users/RegistroEmpleado" || pathname === "/users/ModEmp") {
                     location.reload()
                 })
             }
+        }
+    })
+
+    socket.on('error_desplegar', () => {
+        empty_table('Requests', 14)
+    })
+
+} else if (pathname == '/users/Soli_Compra') {
+
+    enviarSocket('consul_soli_com', user)
+
+    socket.on('desplegar_soli_com', async (data) => {
+        if (data.length > 0) {
+            table = $('#Requests tbody')
+            $.each(data, function (_, row) {
+                fila = $('<tr></tr>')
+                $.each(row, function (clave, value) {
+                    if (clave == 'request_date') {
+                        // Fecha obtenida
+                        var fechaJS = new Date(value);
+                        var año = fechaJS.getFullYear();
+                        var mes = ('0' + (fechaJS.getMonth() + 1)).slice(-2);
+                        var dia = ('0' + fechaJS.getDate()).slice(-2);
+                        var horas = ('0' + fechaJS.getHours()).slice(-2);
+                        var minutos = ('0' + fechaJS.getMinutes()).slice(-2);
+                        var segundos = ('0' + fechaJS.getSeconds()).slice(-2);
+
+                        var fechaFormateada = año + '-' + mes + '-' + dia + ' ' + horas + ':' + minutos + ':' + segundos;
+                        fila.append("<td>" + fechaFormateada + "</td>");
+
+                    } else if (clave == 'recibida' || clave == 'cerrada' || clave == 'almacenada' || clave == 'Acept') {
+                        // Si ya fue aceptada
+                        if (clave == 'Acept') {
+                            if (row.Acept == 0 && row.cerrada == 0) {
+                                fila.append('<td>La solicitud aún no ha sido aceptada</td>')
+                            } else if (row.Acept == 0 && row.cerrada == 1) {
+                                fila.append('<td>La solicitud fue rechazada</td>')
+                                fila.addClass('decline')
+                            } else if (row.Acept == 1 && row.cerrada == 1) {
+                                fila.append('<td>Solicitud cerrada</td>')
+                                fila.addClass('accepted')
+                            } else if (row.Acept == 1 && row.cerrada == 0) {
+                                if (row.delivered_ware == 0 && row.delivered_soli == 0) {
+                                    fila.append('<td>Solicitud enviada al almacenista</td>')
+                                } else if (row.delivered_ware == 1 && row.delivered_soli == 0) {
+                                    fila.append('<td>Solicitud etregada por el almacenista</td>')
+                                }
+                                fila.append('<td class="BotonAC icon-entregar">Entregado</td>')
+                            }
+                        }
+                        // Si ya fue recibida
+                        if(clave == 'recibida'){
+                            if (row.recibida == 0 && row.cerrada == 0) {
+                                fila.append('<td>La solicitud aún no ha sido recibida</td>')
+                            } else if (row.recibida == 0 && row.cerrada == 1) {
+                                fila.append('<td>La solicitud fue rechazada</td>')
+                                fila.addClass('decline')
+                            } else if (row.recibida == 1 && row.cerrada == 1) {
+                                fila.append('<td>Solicitud cerrada</td>')
+                                fila.addClass('accepted')
+                            } else if (row.recibida == 1 && row.cerrada == 0) {
+                                fila.append('<td>La solicitud ya fue recibida</td>')
+                            }
+                        }
+                        // Si ya fue almacenada
+                        if(clave == 'almacenada'){
+                            if (row.almacenada == 0 && row.cerrada == 0) {
+                                fila.append('<td>La solicitud aún no ha sido almacenada</td>')
+                            } else if (row.almacenada == 0 && row.cerrada == 1) {
+                                fila.append('<td>La solicitud fue rechazada</td>')
+                                fila.addClass('decline')
+                            } else if (row.almacenada == 1 && row.cerrada == 1) {
+                                fila.append('<td>Solicitud cerrada</td>')
+                                fila.addClass('accepted')
+                            } else if (row.almacenada == 1 && row.cerrada == 0) {
+                                fila.append('<td>La solicitud ya fue almacenada</td>')
+                            }
+                        }
+                    } else {
+                        fila.append('<td>' + value + '</td>')
+                    }
+                })
+                table.append(fila)
+            })
         }
     })
 

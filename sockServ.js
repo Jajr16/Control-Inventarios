@@ -3,6 +3,12 @@ var app = require('./app');  // Importar la aplicación Express definida en 'app
 var http = require('http');   // Importar el módulo HTTP de Node.js
 var server = http.createServer(app);  // Crear un servidor HTTP utilizando la aplicación Express
 
+// Middleware de seguridad Helmet
+// se instala con: npm install helmet
+const helmet = require('helmet');
+// Se le pide que use Helmet como Middleware
+app.use(helmet());
+
 const io = require('socket.io')(server);  // Configurar Socket.io para trabajar con el servidor HTTP
 
 // Importar Base de datos y otras dependencias
@@ -197,21 +203,21 @@ io.on('connection', (socket) => {
                     socket.emit('Producto_Ans', { mensaje: "Este artículo ya estaba registrado.\nEn caso de que quiera agregar más cantidad de este producto, por favor ingrese a la página de 'Ingresar más productos'.", Res: "Si" });
                 } else {
                     // Agregar un nuevo producto a la base de datos
-                    db.query('insert into almacen values (?,?,?,?,?,?,?,?)', [data.CodBarras, data.Cate, data.Producto, data.Marca, data.Descripcion, data.Unidad, data.Cantidad, 0], function (err2, result) {
+                    db.query('insert into almacen values (?,?,?,?,?,?,?,?)', [data.Cod_Barras, data.Categoria, data.Articulo, data.Marca, data.Descripcion, data.Unidad, data.Cantidad, 0], function (err2, result) {
                         if (err2) {
                             Errores(err2);
                             socket.emit('SystemError');
                         } else {
                             if (result) {
                                 // Insertar la factura relacionada con el producto
-                                db.query('insert into Facturas_Almacen values(?,?,?)', [data.NumFactura, data.FechaFac, data.Proveedor], function (err1, result) {
+                                db.query('insert into facturas_almacen values(?,?,?)', [data.NFact, data.FechaFac, data.Proveedor], function (err1, result) {
                                     if (err1) {
                                         Errores(err1);
                                         socket.emit('SystemError');
                                     } else {
                                         if (result) {
                                             // Insertar la relación entre producto y factura
-                                            db.query('insert into factus_productos values(?,?,?,?)', [data.CodBarras, data.NumFactura, data.Cantidad, data.FecAct], function (err, result) {
+                                            db.query('insert into factus_productos values(?,?,?,?)', [data.Cod_Barras, data.NFact, data.Cantidad, data.FIngreso], function (err, result) {
                                                 if (err) {
                                                     Errores(err);
                                                     socket.emit('SystemError');
@@ -2147,6 +2153,7 @@ io.on('connection', (socket) => {
         cart_length(data)
     })
 
+    // Solicitar articulo del carrito
     socket.on('ECBS', (data) => {
         db.query('UPDATE soli_car SET cantidad_SC = cantidad_SC + ? WHERE Cod_Barras_SC = ? AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) AND sended = 0 AND CAST(request_date AS DATE) = CAST(? AS DATE) AND EXISTS (SELECT 1 FROM (SELECT 1 FROM soli_car WHERE Cod_Barras_SC = ? AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) AND CAST(request_date AS DATE) = CAST(? AS DATE) AND sended = 0) as derived_table);', [data.CP, data.CBP, data.US, data.DATE, data.CBP, data.US, data.DATE], function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
@@ -2174,6 +2181,32 @@ io.on('connection', (socket) => {
             }
         })
     })
+
+    // Crear solicitud de compra
+    socket.on('CSCom', async (data) => {
+        db.query('SELECT empleado.Num_Emp, empleado.Área FROM empleado where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = ?)', [data.User], function (err, result) {
+            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+            else {
+                if (result.length > 0) {//Si sí hizo una búsqueda
+                    
+                    var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
+                    
+                    db.query('select * from soli_com where Cod_Barras_SCom = ?', [data.CodigoBarras], async function (err, res) {
+                        if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+                        else {
+                            if (res.length > 0) {//Si sí hizo una búsqueda
+                                socket.emit('CSCom_Respuesta', { mensaje: 'No se pudo crear la solicitud de compra.', Res: 'Si' })
+                            } else {
+                                db.query('insert into soli_com values (?,?,?,?,?,?,?)', [data.CodigoBarras, num_emp, data.FechaSCom, 0, 0, 0, 0], function (err, res) {
+                                    if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+                                });
+                            }
+                        }
+                    })
+                }
+            }
+        });
+    });
 
     // Responder peticion de carrito
     socket.on('RPC', (data) => {
@@ -2235,6 +2268,20 @@ io.on('connection', (socket) => {
             else {
                 if (res.length > 0) {
                     socket.emit('desplegar_almacenista', res)
+                } else {
+                    socket.emit('error_desplegar')
+                }
+            }
+        })
+    })
+
+    // Consulta de solicitudes de compra
+    socket.on('consul_soli_com', (data) => {
+        db.query('SELECT soli_com.Cod_Barras_SCom, soli_com.request_date_SCom, soli_com.Acept, soli_com.recibida, soli_com.almacenada, soli_com.cerrada FROM soli_com WHERE soli_com.emp_SCom = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) ORDER BY soli_com.cerrada ASC, soli_com.Acept DESC;', [data], function (err, res) {
+            if (err) { Errores(err); socket.emit('SystemError'); }
+            else {
+                if (res.length > 0) {
+                    socket.emit('desplegar_soli_com', res)
                 } else {
                     socket.emit('error_desplegar')
                 }

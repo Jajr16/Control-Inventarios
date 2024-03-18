@@ -78,17 +78,21 @@ router.get('/crear_resp', function (req, res, next) {
 router.get('/sol_prod', function (req, res, next) {
   res.render('dir_car', { title: 'Productos solicitados por Empleados', layout: 'consul_layout' });
 });
-
+//        Carrito
 router.get('/carrito', function (req, res, next) {
   res.render('cart', { title: 'Productos solicitados', layout: 'consul_layout' });
 });
-
+//        Almacenista
 router.get('/sol_prod_Almacen', function (req, res, next) {
   res.render('almacenista', { title: 'Productos requeridos', layout: 'consul_layout' });
 });
-
+//        Estatus de productos
 router.get('/status_request', function (req, res, next) {
   res.render('truck_request', { title: 'Estatus de productos', layout: 'consul_layout' });
+});
+//        Solicitud de compra
+router.get('/Soli_Compra', function (req, res, next) {
+  res.render('soli_compra', { title: 'Solicitudes de compras', layout: 'consul_layout' });
 });
 
 module.exports = router;
