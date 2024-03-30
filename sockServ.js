@@ -15,6 +15,7 @@ const io = require('socket.io')(server);  // Configurar Socket.io para trabajar 
 var db = require("./Conexion/BaseDatos"); // Importar la conexión a la base de datos
 const Excel = require('exceljs');  // Importar la librería para trabajar con archivos Excel
 const path = require('path');   // Importar el módulo 'path' de Node.js para trabajar con rutas de archivos
+const db_mong = require("./Conexion/mongo.js")
 
 const fs = require('fs');  // Importar el módulo 'fs' para trabajar con el sistema de archivos
 
@@ -25,6 +26,10 @@ let fechaMes = date.getMonth() + 1;
 let fechaAño = date.getFullYear();
 let fechaHora = date.getHours();
 let fechaMinutos = date.getMinutes();
+
+// Modelo Imágenes
+const Imagen = require('./model/imageModel.js');
+const mime = require('mime-types');
 
 // Formatear la fecha y hora para que tengan dos dígitos en caso necesario
 if (fechaMes < 10) {
@@ -69,6 +74,38 @@ function cargarArchivoJSON() {
         return [];
     }
 }
+
+// Leer la imagen para poder guardarla
+function leerImagen(path) {
+    return new Promise((resolve, reject) => {
+      fs.readFile(path, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          const tipoMIME = mime.lookup(path) || 'application/octet-stream';
+          resolve({ datos: data, tipoMIME });
+        }
+      });
+    });
+  }
+
+  async function guardarImagen() {
+    try {
+      const { datos: datosImagen, tipoMIME } = await leerImagen('ruta_a_tu_imagen.jpg');
+      const nuevaImagen = new Imagen({
+        nombre: 'nombre_de_la_imagen.jpg',
+        datos: datosImagen,
+        contentType: tipoMIME,
+      });
+  
+      const imagenGuardada = await nuevaImagen.save();
+      console.log('Imagen guardada correctamente:', imagenGuardada);
+    } catch (error) {
+      console.error('Error al guardar la imagen:', error);
+    } finally {
+      db.close();
+    }
+  }
 
 // Función para guardar el archivo JSON
 function guardarArchivoJSON(data) {
