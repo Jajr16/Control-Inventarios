@@ -396,6 +396,33 @@ insert into permisos values
 (4,"martha","RESPONSIVAS"),#Consultas
 (1,"martha","PETICIONES");#Consultas
 
+insert into permisos values
+(1,"Moises","ALMACÉN"),#Altas
+(2,"Moises","ALMACÉN"),#Bajas
+(3,"Moises","ALMACÉN"),#Cambios
+(4,"Moises","ALMACÉN"),#Consultas
+(1,"Moises","MOBILIARIO"),#Altas
+(2,"Moises","MOBILIARIO"),#Bajas
+(3,"Moises","MOBILIARIO"),#Cambios
+(4,"Moises","MOBILIARIO"),#Consultas
+(1,"Moises","EQUIPOS"),#Altas
+(2,"Moises","EQUIPOS"),#Bajas
+(3,"Moises","EQUIPOS"),#Cambios
+(4,"Moises","EQUIPOS"),#Consultas
+(1,"Moises","USUARIOS"),#Altas
+(2,"Moises","USUARIOS"),#Bajas
+(3,"Moises","USUARIOS"),#Cambios
+(4,"Moises","USUARIOS"),#Consultas
+(1,"Moises","EMPLEADOS"),#Altas
+(2,"Moises","EMPLEADOS"),#Bajas
+(3,"Moises","EMPLEADOS"),#Cambios
+(4,"Moises","EMPLEADOS"),#Consultas
+(1,"Moises","RESPONSIVAS"),#Altas
+(2,"Moises","RESPONSIVAS"),#Bajas
+(3,"Moises","RESPONSIVAS"),#Cambios
+(4,"Moises","RESPONSIVAS"),#Consultas
+(1,"Moises","PETICIONES");#Consultas
+
 delete from permisos where usuario = "armando";
 
 create table factus_Productos(
@@ -621,6 +648,8 @@ select*from usuario;
 select*from empleado;
 SELECT empleado.Num_Emp, empleado.Área FROM empleado where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = 'ajimenez');
 insert into Empleado values(663, 'NAVARRO JIMENEZ MARTHA LIDIA', 'DIRECCION GENERAL', 663);
+insert into Empleado values(775, 'Moises', 'SISTEMAS', 663);
+insert into usuario values(775, 'Moises', 'clarac');
 update empleado set Num_Jefe = 663;
 
 update empleado set Nom = replace(Nom,'Ã‘','Ñ');

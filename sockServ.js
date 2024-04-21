@@ -18,6 +18,45 @@ const path = require('path');   // Importar el módulo 'path' de Node.js para tr
 const db_mong = require("./Conexion/mongo.js")
 
 const fs = require('fs');  // Importar el módulo 'fs' para trabajar con el sistema de archivos
+const { exec } = require('child_process'); // La función exec() es parte del módulo child_process de Node.js y se utiliza para ejecutar comandos en el sistema operativo desde un script de Node.js.
+//const CronJob = require('cron').CronJob; // Libreria Cron para ejecuciones periodicas, se instala con: "npm install cron"
+const schedule = require('node-schedule'); // Libreria Cron para poner fechas especificas para los respaldos, se instala con: "npm install node-schedule"
+
+const BACKUP_DIR = 'RespaldosSQL'; // Constante para la ruta de los respaldos
+
+// Función para realizar el respaldo
+const backupDatabase = async () => {
+    const date = new Date();
+    const backupFileName = `${BACKUP_DIR}/${date.toISOString().slice(0, 19).replace(/:/g, '-')}_Inventarios.sql`;
+  
+    try {
+      // Ejecutar el comando mysqldump para crear el respaldo
+      exec(`mysqldump -uroot -pBocchi26## Inventarios > ${backupFileName}`, (error, stdout, stderr) => { // Cambiar la contraseña por la de MySQL activa
+        if (error) {
+          console.error('Error al crear el respaldo:', error);
+          return;
+        }
+        console.log(`Respaldo creado exitosamente en: ${backupFileName}`);
+      });
+    } catch (error) {
+      console.error('Error al crear el respaldo:', error);
+    }
+};
+
+/***** Ocupar solo si se requiere poner que los respaldos se hagan a fin de cada mes *****/
+// Programar la ejecución del respaldo cada mes
+//const job = new CronJob('0 0 1 * *', backupDatabase); // Ejecutar el 1er día de cada mes a la medianoche (0:00)
+// Iniciar el trabajo
+//job.start();
+//console.log('Tarea programada para realizar el respaldo cada mes.');
+
+/***** Ocupar solo si se requiere poner una fecha y hora especifica para hacer los respaldos *****/
+// Programar la ejecución del respaldo en una fecha y hora específicas
+const backupDate = new Date('2024-04-21T03:32:00'); // Fecha y hora específica para realizar el respaldo
+const job = schedule.scheduleJob(backupDate, backupDatabase);
+console.log(`Tarea programada para realizar el respaldo el ${backupDate}`);
+  
+
 
 // Definir variables de fecha y contador
 const date = new Date();  // Obtener la fecha y hora actual
