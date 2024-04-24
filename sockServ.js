@@ -15,7 +15,7 @@ const io = require('socket.io')(server);  // Configurar Socket.io para trabajar 
 var db = require("./Conexion/BaseDatos"); // Importar la conexión a la base de datos
 const Excel = require('exceljs');  // Importar la librería para trabajar con archivos Excel
 const path = require('path');   // Importar el módulo 'path' de Node.js para trabajar con rutas de archivos
-const db_mong = require("./Conexion/mongo.js")
+const db_mong = require("./Conexion/mongo.js") // importar la conexión con MongoDB
 
 const fs = require('fs');  // Importar el módulo 'fs' para trabajar con el sistema de archivos
 const { exec } = require('child_process'); // La función exec() es parte del módulo child_process de Node.js y se utiliza para ejecutar comandos en el sistema operativo desde un script de Node.js.
@@ -23,6 +23,7 @@ const { exec } = require('child_process'); // La función exec() es parte del m�
 const schedule = require('node-schedule'); // Libreria Cron para poner fechas especificas para los respaldos, se instala con: "npm install node-schedule"
 
 const BACKUP_DIR = 'RespaldosSQL'; // Constante para la ruta de los respaldos
+const mysqlPassword = 'Bocchi26##'; // **** Cambiar por la contraseña de la computadora
 
 // Función para realizar el respaldo
 const backupDatabase = async () => {
@@ -31,7 +32,7 @@ const backupDatabase = async () => {
   
     try {
       // Ejecutar el comando mysqldump para crear el respaldo
-      exec(`mysqldump -uroot -pBocchi26## Inventarios > ${backupFileName}`, (error, stdout, stderr) => { // Cambiar la contraseña por la de MySQL activa
+      exec(`"C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump" -u root --password=${mysqlPassword} Inventarios > ${backupFileName}`, (error, stdout, stderr) => { // Cambiar la contraseña por la de MySQL activa
         if (error) {
           console.error('Error al crear el respaldo:', error);
           return;
@@ -52,7 +53,7 @@ const backupDatabase = async () => {
 
 /***** Ocupar solo si se requiere poner una fecha y hora especifica para hacer los respaldos *****/
 // Programar la ejecución del respaldo en una fecha y hora específicas
-const backupDate = new Date('2024-04-21T03:32:00'); // Fecha y hora específica para realizar el respaldo
+const backupDate = new Date('2024-04-23T23:49:30'); // Fecha y hora específica para realizar el respaldo
 const job = schedule.scheduleJob(backupDate, backupDatabase);
 console.log(`Tarea programada para realizar el respaldo el ${backupDate}`);
   
