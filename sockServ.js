@@ -3,14 +3,61 @@ var app = require('./app');  // Importar la aplicación Express definida en 'app
 var http = require('http');   // Importar el módulo HTTP de Node.js
 var server = http.createServer(app);  // Crear un servidor HTTP utilizando la aplicación Express
 
+// Middleware de seguridad Helmet
+// se instala con: npm install helmet
+const helmet = require('helmet');
+// Se le pide que use Helmet como Middleware
+app.use(helmet());
+
 const io = require('socket.io')(server);  // Configurar Socket.io para trabajar con el servidor HTTP
 
 // Importar Base de datos y otras dependencias
 var db = require("./Conexion/BaseDatos"); // Importar la conexión a la base de datos
 const Excel = require('exceljs');  // Importar la librería para trabajar con archivos Excel
 const path = require('path');   // Importar el módulo 'path' de Node.js para trabajar con rutas de archivos
+const db_mong = require("./Conexion/mongo.js") // importar la conexión con MongoDB
 
 const fs = require('fs');  // Importar el módulo 'fs' para trabajar con el sistema de archivos
+const { exec } = require('child_process'); // La función exec() es parte del módulo child_process de Node.js y se utiliza para ejecutar comandos en el sistema operativo desde un script de Node.js.
+//const CronJob = require('cron').CronJob; // Libreria Cron para ejecuciones periodicas, se instala con: "npm install cron"
+const schedule = require('node-schedule'); // Libreria Cron para poner fechas especificas para los respaldos, se instala con: "npm install node-schedule"
+
+const BACKUP_DIR = 'RespaldosSQL'; // Constante para la ruta de los respaldos
+const mysqlPassword = 'Bocchi26##'; // **** Cambiar por la contraseña de la computadora
+
+// Función para realizar el respaldo
+const backupDatabase = async () => {
+    const date = new Date();
+    const backupFileName = `${BACKUP_DIR}/${date.toISOString().slice(0, 19).replace(/:/g, '-')}_Inventarios.sql`;
+  
+    try {
+      // Ejecutar el comando mysqldump para crear el respaldo
+      exec(`"C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump" -u root --password=${mysqlPassword} Inventarios > ${backupFileName}`, (error, stdout, stderr) => { // Cambiar la contraseña por la de MySQL activa
+        if (error) {
+          console.error('Error al crear el respaldo:', error);
+          return;
+        }
+        console.log(`Respaldo creado exitosamente en: ${backupFileName}`);
+      });
+    } catch (error) {
+      console.error('Error al crear el respaldo:', error);
+    }
+};
+
+/***** Ocupar solo si se requiere poner que los respaldos se hagan a fin de cada mes *****/
+// Programar la ejecución del respaldo cada mes
+//const job = new CronJob('0 0 1 * *', backupDatabase); // Ejecutar el 1er día de cada mes a la medianoche (0:00)
+// Iniciar el trabajo
+//job.start();
+//console.log('Tarea programada para realizar el respaldo cada mes.');
+
+/***** Ocupar solo si se requiere poner una fecha y hora especifica para hacer los respaldos *****/
+// Programar la ejecución del respaldo en una fecha y hora específicas
+const backupDate = new Date('2024-04-23T23:49:30'); // Fecha y hora específica para realizar el respaldo
+const job = schedule.scheduleJob(backupDate, backupDatabase);
+console.log(`Tarea programada para realizar el respaldo el ${backupDate}`);
+  
+
 
 // Definir variables de fecha y contador
 const date = new Date();  // Obtener la fecha y hora actual
@@ -19,6 +66,10 @@ let fechaMes = date.getMonth() + 1;
 let fechaAño = date.getFullYear();
 let fechaHora = date.getHours();
 let fechaMinutos = date.getMinutes();
+
+// Modelo Imágenes
+const Imagen = require('./model/imageModel.js');
+const mime = require('mime-types');
 
 // Formatear la fecha y hora para que tengan dos dígitos en caso necesario
 if (fechaMes < 10) {
@@ -52,6 +103,60 @@ async function Errores(Data) {
         console.log('Errores escritos');
     });
 }
+
+// Función para cargar el archivo JSON
+function cargarArchivoJSON() {
+    try {
+        const data = fs.readFileSync('./public/javascripts/almacen_mobiliario.json');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error al cargar el archivo JSON:', error);
+        return [];
+    }
+}
+
+// Leer la imagen para poder guardarla
+function leerImagen(path) {
+    return new Promise((resolve, reject) => {
+      fs.readFile(path, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          const tipoMIME = mime.lookup(path) || 'application/octet-stream';
+          resolve({ datos: data, tipoMIME });
+        }
+      });
+    });
+  }
+
+  async function guardarImagen() {
+    try {
+      const { datos: datosImagen, tipoMIME } = await leerImagen('ruta_a_tu_imagen.jpg');
+      const nuevaImagen = new Imagen({
+        nombre: 'nombre_de_la_imagen.jpg',
+        datos: datosImagen,
+        contentType: tipoMIME,
+      });
+  
+      const imagenGuardada = await nuevaImagen.save();
+      console.log('Imagen guardada correctamente:', imagenGuardada);
+    } catch (error) {
+      console.error('Error al guardar la imagen:', error);
+    } finally {
+      db.close();
+    }
+  }
+
+// Función para guardar el archivo JSON
+function guardarArchivoJSON(data) {
+    try {
+        fs.writeFileSync('./public/javascripts/almacen_mobiliario.json', JSON.stringify(data, null, 4));
+        console.log('Datos agregados al archivo JSON exitosamente.');
+    } catch (error) {
+        console.error('Error al guardar el archivo JSON:', error);
+    }
+}
+
 
 // Configuración de Socket.io para manejar conexiones de clientes
 io.on('connection', (socket) => {
@@ -176,21 +281,21 @@ io.on('connection', (socket) => {
                     socket.emit('Producto_Ans', { mensaje: "Este artículo ya estaba registrado.\nEn caso de que quiera agregar más cantidad de este producto, por favor ingrese a la página de 'Ingresar más productos'.", Res: "Si" });
                 } else {
                     // Agregar un nuevo producto a la base de datos
-                    db.query('insert into almacen values (?,?,?,?,?,?,?,?)', [data.CodBarras, data.Cate, data.Producto, data.Marca, data.Descripcion, data.Unidad, data.Cantidad, 0], function (err2, result) {
+                    db.query('insert into almacen values (?,?,?,?,?,?,?,?)', [data.Cod_Barras, data.Categoria, data.Articulo, data.Marca, data.Descripcion, data.Unidad, data.Cantidad, 0], function (err2, result) {
                         if (err2) {
                             Errores(err2);
                             socket.emit('SystemError');
                         } else {
                             if (result) {
                                 // Insertar la factura relacionada con el producto
-                                db.query('insert into Facturas_Almacen values(?,?,?)', [data.NumFactura, data.FechaFac, data.Proveedor], function (err1, result) {
+                                db.query('insert into facturas_almacen values(?,?,?)', [data.NFact, data.FechaFac, data.Proveedor], function (err1, result) {
                                     if (err1) {
                                         Errores(err1);
                                         socket.emit('SystemError');
                                     } else {
                                         if (result) {
                                             // Insertar la relación entre producto y factura
-                                            db.query('insert into factus_productos values(?,?,?,?)', [data.CodBarras, data.NumFactura, data.Cantidad, data.FecAct], function (err, result) {
+                                            db.query('insert into factus_productos values(?,?,?,?)', [data.Cod_Barras, data.NFact, data.Cantidad, data.FIngreso], function (err, result) {
                                                 if (err) {
                                                     Errores(err);
                                                     socket.emit('SystemError');
@@ -1951,7 +2056,7 @@ io.on('connection', (socket) => {
                             else {
                                 if (result.length > 0) {//Si sí hizo una búsqueda
                                     for (var i = 0; i < result.length; i++) {
-                                        socket.emit('Desp_Mobiliario', { Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].Area });//Mandar usuario y token al cliente
+                                        socket.emit('Desp_Mobiliario', { Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].Área });//Mandar usuario y token al cliente
                                     }
                                     socket.emit('ButtonUp');
                                 }
@@ -1964,7 +2069,7 @@ io.on('connection', (socket) => {
                             else {
                                 if (result.length > 0) {//Si sí hizo una búsqueda
                                     for (var i = 0; i < result.length; i++) {
-                                        socket.emit('Desp_Mobiliario', { Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].AreaM });//Mandar usuario y token al cliente
+                                        socket.emit('Desp_Mobiliario', { Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].Área });//Mandar usuario y token al cliente
                                     }
                                     socket.emit('ButtonUp');
                                 }
@@ -1980,6 +2085,7 @@ io.on('connection', (socket) => {
 
     // Altas de mobiliario
     socket.on('Alta_Mob', async (data) => {
+        console.log(data)
         db.query('SELECT empleado.Num_Emp, empleado.Área FROM empleado where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = ?)', [data.User], function (err, result) {
             if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
             else {
@@ -1993,6 +2099,11 @@ io.on('connection', (socket) => {
                         else {
                             if (result) {
                                 socket.emit('Mobiliario_Respuesta', { mensaje: 'Mobiliario dado de alta.', Res: 'Si' });//Mandar mensaje de error a cliente
+                                let articulos = cargarArchivoJSON();
+
+                                articulos.push({ "ARTICULO": data.Articulo });
+                                
+                                guardarArchivoJSON(articulos);
                             }
                         }
                     });
@@ -2144,6 +2255,7 @@ io.on('connection', (socket) => {
         cart_length(data)
     })
 
+    // Solicitar articulo del carrito
     socket.on('ECBS', (data) => {
         db.query('UPDATE soli_car SET cantidad_SC = cantidad_SC + ? WHERE Cod_Barras_SC = ? AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) AND sended = 0 AND CAST(request_date AS DATE) = CAST(? AS DATE) AND EXISTS (SELECT 1 FROM (SELECT 1 FROM soli_car WHERE Cod_Barras_SC = ? AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) AND CAST(request_date AS DATE) = CAST(? AS DATE) AND sended = 0) as derived_table);', [data.CP, data.CBP, data.US, data.DATE, data.CBP, data.US, data.DATE], function (err, res) {
             if (err) { Errores(err); socket.emit('SystemError'); }
@@ -2171,6 +2283,32 @@ io.on('connection', (socket) => {
             }
         })
     })
+
+    // Crear solicitud de compra
+    socket.on('CSCom', async (data) => {
+        db.query('SELECT empleado.Num_Emp, empleado.Área FROM empleado where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = ?)', [data.User], function (err, result) {
+            if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+            else {
+                if (result.length > 0) {//Si sí hizo una búsqueda
+                    
+                    var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
+                    
+                    db.query('select * from soli_com where Cod_Barras_SCom = ?', [data.CodigoBarras], async function (err, res) {
+                        if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+                        else {
+                            if (res.length > 0) {//Si sí hizo una búsqueda
+                                socket.emit('CSCom_Respuesta', { mensaje: 'No se pudo crear la solicitud de compra.', Res: 'Si' })
+                            } else {
+                                db.query('insert into soli_com values (?,?,?,?,?,?,?)', [data.CodigoBarras, num_emp, data.FechaSCom, 0, 0, 0, 0], function (err, res) {
+                                    if (err) { Errores(err); socket.emit('SystemError'); } // Se hace un control de errores
+                                });
+                            }
+                        }
+                    })
+                }
+            }
+        });
+    });
 
     // Responder peticion de carrito
     socket.on('RPC', (data) => {
@@ -2232,6 +2370,20 @@ io.on('connection', (socket) => {
             else {
                 if (res.length > 0) {
                     socket.emit('desplegar_almacenista', res)
+                } else {
+                    socket.emit('error_desplegar')
+                }
+            }
+        })
+    })
+
+    // Consulta de solicitudes de compra
+    socket.on('consul_soli_com', (data) => {
+        db.query('SELECT soli_com.Cod_Barras_SCom, soli_com.request_date_SCom, soli_com.Acept, soli_com.recibida, soli_com.almacenada, soli_com.cerrada FROM soli_com WHERE soli_com.emp_SCom = (SELECT Num_Emp FROM usuario WHERE Usuario = ?) ORDER BY soli_com.cerrada ASC, soli_com.Acept DESC;', [data], function (err, res) {
+            if (err) { Errores(err); socket.emit('SystemError'); }
+            else {
+                if (res.length > 0) {
+                    socket.emit('desplegar_soli_com', res)
                 } else {
                     socket.emit('error_desplegar')
                 }

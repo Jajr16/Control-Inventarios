@@ -127,18 +127,19 @@ create table Accesorio(
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Mobiliario`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Inventarios`.`Mobiliario` (
-  `Num_Inventario` INT NOT NULL AUTO_INCREMENT,
-  `Descripcion` VARCHAR(400) NULL,
-  `Num_emp` INT NULL,
-  `Ubicacion` varchar(400),
-  `Cantidad` int,
-  `AreaM` VARCHAR(200) NULL,
-  PRIMARY KEY (`Num_Inventario`),
-  INDEX `Num_emp_idx` (`Num_emp` ASC),
-  CONSTRAINT `Num_RespM`
-    FOREIGN KEY (`Num_emp`)
-    REFERENCES `Inventarios`.`Empleado` (`Num_emp`)
+CREATE TABLE IF NOT EXISTS Inventarios.`Mobiliario` (
+  Num_Inventario INT AUTO_INCREMENT UNIQUE,
+  Articulo varchar(100) NOT NULL,
+  Descripcion VARCHAR(400) NOT NULL,
+  Num_emp INT NOT NULL,
+  Ubicacion varchar(400),
+  Cantidad int,
+  Área VARCHAR(200) NULL,
+  PRIMARY KEY (Articulo, Descripcion, Num_emp),
+  INDEX Num_emp_idx (Num_emp ASC),
+  CONSTRAINT Num_RespM
+    FOREIGN KEY (Num_emp)
+    REFERENCES Inventarios.`Empleado` (Num_emp)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -180,7 +181,6 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Almacen` (
   `eliminado` tinyint(1) not null default 0,
   PRIMARY KEY (`Cod_Barras`))
 ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Salida_Almacen`
@@ -396,9 +396,36 @@ insert into permisos values
 (4,"martha","RESPONSIVAS"),#Consultas
 (1,"martha","PETICIONES");#Consultas
 
+insert into permisos values
+(1,"Moises","ALMACÉN"),#Altas
+(2,"Moises","ALMACÉN"),#Bajas
+(3,"Moises","ALMACÉN"),#Cambios
+(4,"Moises","ALMACÉN"),#Consultas
+(1,"Moises","MOBILIARIO"),#Altas
+(2,"Moises","MOBILIARIO"),#Bajas
+(3,"Moises","MOBILIARIO"),#Cambios
+(4,"Moises","MOBILIARIO"),#Consultas
+(1,"Moises","EQUIPOS"),#Altas
+(2,"Moises","EQUIPOS"),#Bajas
+(3,"Moises","EQUIPOS"),#Cambios
+(4,"Moises","EQUIPOS"),#Consultas
+(1,"Moises","USUARIOS"),#Altas
+(2,"Moises","USUARIOS"),#Bajas
+(3,"Moises","USUARIOS"),#Cambios
+(4,"Moises","USUARIOS"),#Consultas
+(1,"Moises","EMPLEADOS"),#Altas
+(2,"Moises","EMPLEADOS"),#Bajas
+(3,"Moises","EMPLEADOS"),#Cambios
+(4,"Moises","EMPLEADOS"),#Consultas
+(1,"Moises","RESPONSIVAS"),#Altas
+(2,"Moises","RESPONSIVAS"),#Bajas
+(3,"Moises","RESPONSIVAS"),#Cambios
+(4,"Moises","RESPONSIVAS"),#Consultas
+(1,"Moises","PETICIONES");#Consultas
+
 delete from permisos where usuario = "armando";
 
-create table Factus_Productos(
+create table factus_Productos(
 Cod_Barras nvarchar(45) not null,
 Nfactura nvarchar(10) not null,
 Cantidad int not null,
@@ -621,6 +648,8 @@ select*from usuario;
 select*from empleado;
 SELECT empleado.Num_Emp, empleado.Área FROM empleado where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = 'ajimenez');
 insert into Empleado values(663, 'NAVARRO JIMENEZ MARTHA LIDIA', 'DIRECCION GENERAL', 663);
+insert into Empleado values(775, 'Moises', 'SISTEMAS', 663);
+insert into usuario values(775, 'Moises', 'clarac');
 update empleado set Num_Jefe = 663;
 
 update empleado set Nom = replace(Nom,'Ã‘','Ñ');
@@ -697,6 +726,28 @@ create trigger ASEPSE before update on soli_car
 		end if;
 	END
 | DELIMITER ;
+
+select*from mobiliario;
+select*from soli_car;
+select*from soli_com;
+select*from almacen;
+select*from facturas_almacen;
+select*from factus_productos;
+
+CREATE TABLE soli_com (
+    Cod_Barras_SCom VARCHAR(45),
+    emp_SCom int,
+    request_date_SCom datetime,
+    Acept BOOLEAN, -- Si la solicitud fue aceptada o no
+    recibida tinyint(1), -- Si ya se recibió el pedido
+    almacenada tinyint(1), -- Si el pedido ya fue almacenado
+    cerrada BOOLEAN -- Si la solicitud ya fue cerrada
+);
+
+-- Modify table soli_com
+alter table soli_com add constraint SoliComPK primary key(Cod_Barras_SCom, emp_SCom, request_date_SCom);
+alter table soli_com add constraint CodBFK foreign key(Cod_Barras_SCom) references almacen(Cod_Barras);
+alter table soli_com add constraint EmpFK foreign key(emp_SCom) references empleado(Num_emp);
 
 update soli_car set delivered_soli = 0, delivered_ware = 0;
 select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept

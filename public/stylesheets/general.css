@@ -658,6 +658,51 @@ h5 {
     color: rgb(0, 101, 104);
 }
 
+.BotonSoliCom {
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background: linear-gradient(to top, #ff00aa, #9c0068);
+    color: rgb(245, 199, 227);
+    border-radius: 10%;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonSoliCom:hover {
+    background: linear-gradient(to top, #ff00aa, #ffc5ec);
+    color: rgb(104, 0, 90);
+}
+
+.BotonArtiPorAgo {
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background: linear-gradient(to top, #9900ff, #500085);
+    color: rgb(237, 199, 245);
+    border-radius: 10%;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonArtiPorAgo:hover {
+    background: linear-gradient(to top, #9900ff, #d9a6fc);
+    color: rgb(71, 0, 104);
+}
+
+.BotonCantNormal {
+    text-decoration: none;
+    padding: 0.5rem;
+    text-align: center;
+    background: linear-gradient(to top, #00ffd5, #007763);
+    color: rgb(199, 245, 243);
+    border-radius: 10%;
+    transition: all 0.3s ease 0s;
+}
+
+.BotonCantNormal:hover {
+    background: linear-gradient(to top, #00ffd5, #a7fff0);
+    color: rgb(0, 95, 95);
+}
+
 .BotonERR {
     text-decoration: none;
     padding: 0.5rem;
@@ -1067,17 +1112,21 @@ h5 {
     margin-right: 2rem;
 }
 
-.cart-container:hover, .request-container:hover, .truck-container:hover {
+.compra-container{
+    margin-right: 2rem;
+}
+
+.cart-container:hover, .compra-container:hover, .request-container:hover, .truck-container:hover {
     transform: scale(1.4);
 }
 
-.cart-container, .request-container, .truck-container {
+.cart-container, .compra-container, .request-container, .truck-container {
     position: relative;
     display: inline-block;
     transition: all 0.5s;
 }
 
-.notification-circle, .not_container_request, .truck_not_container {
+.notification-circle, .not-compra-soli, .not_container_request, .truck_not_container {
     position: absolute;
     top: -5px; /* Ajusta la posición vertical según tus necesidades */
     right: -5px; /* Ajusta la posición horizontal según tus necesidades */

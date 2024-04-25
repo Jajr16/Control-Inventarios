@@ -47,8 +47,8 @@ if (area === 'DIRECCION GENERAL'){
 if (Permisos['PETICIONES']){
     $('.request-container').append('<div><div class="not_container_request"></div><a href="/users/sol_prod_Almacen"><i class="fa-solid fa-bell"></i></a></div>')
 }
-
 $('.truck-container').append('<div><div class="truck_not_container"></div><a href="/users/status_request"><i class="fa-solid fa-truck-arrow-right"></i></a></div>')
+$('.compra-container').append('<div><div class="not-compra-soli"></div><a href="/users/Soli_Compra"><i class="fa-solid fa-shopping-bag"></i></a></div>')
 
 
 // Usuarios con permisos de Mobiliario
