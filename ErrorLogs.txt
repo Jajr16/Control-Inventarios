@@ -1,1 +1,4 @@
 Error: ER_NO_SUCH_TABLE: Table 'inventarios.soli_com' doesn't exist | Error obtenido el -> 29/03/2024 15:38
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.soli_com' doesn't exist | Error obtenido el -> 02/05/2024 11:52
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.soli_com' doesn't exist | Error obtenido el -> 02/05/2024 11:52
+Error: ER_NO_SUCH_TABLE: Table 'inventarios.soli_com' doesn't exist | Error obtenido el -> 02/05/2024 11:52

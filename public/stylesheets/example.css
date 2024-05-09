@@ -1,0 +1,196 @@
+* {
+    font-family: Verdana;
+}
+
+html {
+    font-size: 94%;
+}
+
+body {
+    background: #eee;
+    border-radius: 1rem;
+}
+
+main {
+    margin: 7rem 3rem;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: 90%;
+    margin: auto 2rem;
+}
+
+td:nth-child(n + 3),
+th:nth-child(n + 3) {
+    text-align: center;
+}
+
+td:first-child {
+    border-left: 1px solid #ccc;
+}
+
+td:last-child {
+    border-right: 1px solid #ccc;
+}
+
+thead {
+    text-transform: uppercase;
+}
+
+thead th:first-child{
+    border-top-left-radius: 1rem;
+}
+
+thead th:last-child{
+    border-top-right-radius: 1rem;
+}
+
+th,
+td {
+    padding: 1rem;
+    font-size: 1rem;
+}
+
+tr {
+    background: hsl(0, 0%, 100%);
+}
+
+tr,
+td {
+    transition: .3s ease-in;
+}
+
+thead tr:first-child {
+    background: linear-gradient(to top, #0A8EBC, #001781);
+    color: white;
+}
+
+tr:nth-child(even) {
+    background: hsla(0, 0%, 93%, 0.7);
+}
+
+td:empty {
+    background: hsla(0, 0%, 93%, 0.7);
+}
+
+tr:hover:not(#firstrow),
+tr:hover td:empty {
+    pointer-events: visible;
+}
+
+tr:hover:not(#firstrow) {
+    transform: scale(1.01);
+}
+
+header .logo {
+    cursor: pointer;
+    margin-right: auto;
+}
+
+header .logo img {
+    margin: 0.7rem 0 0 0.5rem;
+    height: 50px;
+    width: auto;
+    transition: all 0.3s;
+}
+
+header .logo img:hover {
+    transform: scale(1.2);
+}
+
+header {
+    display: flex;
+}
+
+nav{
+    width: 95.5%;
+    height: 10%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: #fff
+}
+
+label {
+    display: block;
+    font-weight: 700;
+    color: black;
+    text-transform: uppercase;
+    margin-right: 0.5rem;
+}
+
+/* CSS PANTALLA MOBILIARIO */
+
+.sidebar {
+    top: 0;
+    height: 100%;
+    width: 4.5%;
+    position: fixed;
+    background: #fff;
+    overflow-x: hidden;
+}
+
+.item1 {
+    flex: 1 1 40%;
+    margin-right: 2rem;
+}
+
+.item2 {
+    flex: 1 1 45%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 1rem;
+    padding: 1.3rem 1.2rem;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+}
+
+.furniture-image {
+    width: 10rem;
+	height: 10rem;
+	object-fit: cover;
+	border-radius: 10%;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.208);
+}
+
+.table-responsive {
+    display: block;
+    width: 100%;
+    height: 28rem;
+    scrollbar-width: none;
+    overflow-x: auto;
+    overflow-y: auto;
+    border-radius: 1rem;
+}
+
+.table-responsive table {
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.table-responsive thead {
+    position: sticky;
+    top: 0;
+}
+
+.named-furniture {
+    display: flex;
+    align-items: center;
+}
+
+.named-furniture img {
+    margin-right: 1rem;
+}
+
+.Columns {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 1rem 4rem;
+    justify-content: space-between;
+}
+
+.Fname {
+    text-transform: capitalize;
+}

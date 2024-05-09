@@ -17,9 +17,15 @@ router.get('/consulEqp', function (req, res, next) {
   res.render('consulEqp', { title: 'Consultar Equipos', layout: 'consul_layout' });
 });
 // Consulta de mobiliario
+router.get('/consulMob2', function (req, res, next) {
+  res.render('consulMob2', { title: 'Consultar Mobiliario', layout: 'other_layout' });
+});
+
+// Consulta de mobiliario
 router.get('/consulMob', function (req, res, next) {
   res.render('consulMob', { title: 'Consultar Mobiliario', layout: 'consul_layout' });
 });
+
 // Consulta de productos
 router.get('/consulPro', function (req, res, next) {
   res.render('consulPro', { title: 'Consultar Productos', layout: 'consul_layout' });
