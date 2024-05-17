@@ -23,6 +23,12 @@ main {
     margin: 7rem 3rem 0 3rem;
 }
 
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 table {
     border-spacing: 0;
     border-collapse: collapse;
